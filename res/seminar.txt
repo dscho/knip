@@ -1,0 +1,117 @@
+Anforderung an Code:
+- n-dimensionalität wo möglich
+- Exception handling
+- Alles in ImgLib/KNIPLib/KNIP-Plugin
+- Evaluierung des Algorithmus + vergleich mit bestehenden implementierungen + UnitTests
+- Thema soll weiter recherchiert werden ...
+- blahblahblah
+
+InterestingPoints (Team)
+- Result: 2 Nodes Interesting points (Labeling/BitTypeImg output) & PointDescriptors (table)
+- Fancy example: Image categorization
+- SURF/SIFT/HarrisCorner/Mops + Descriptoren
+- http://fiji.sc/wiki/index.php/Feature_Extraction
+- http://fiji.sc/wiki/index.php/Linear_Stack_Alignment_with_SIFT
+
+PixelFeatures (Single)
+- Result: PixelFeatures node
+- Fancy example: ISBI challenge + vergleich mit trainable segmentation
+- Trainable Segmentation Features + X?
+
+BoundaryFeatures
+- Result: PropabilityMap
+
+Denoising (Single)
+- Result: thorsten
+- Example: http://rsb.info.nih.gov/ij/plugins/kalman.html
+- Für tracking. Rausfinden was der macht usw. etc.
+- http://rsb.info.nih.gov/ij/plugins/kalman.html
+- http://fiji.sc/wiki/index.php/Stochastic_Denoising
+- Particle Tracking (schönes Beispiel thorsten, bzw. sogar betreuung thorsten?)
+
+Edge Detection (Single)
+- Result: Effcient Canny edge FeatureSet for PixelFeature node
+- Fancy example: Broadinstitute + Lucia
+- Hyserese Knoten + Non-Maxima-Supression Knoten (wiki)
+- PixelFeatures for Edges
+
+Watershed (Single - Jan-Dirk Verbeek)
+- Result: Efficient Watershed segmentation node (powerwatershed?! zusammenhang?!)
+- Fancy Example: Tanja, Lucia
+- 2D, 3D, N-D? 
+- ImageJ / Imglib implementierung vergleichen 
+- http://fiji.sc/wiki/index.php/Watershed_Algorithm_%28ImageJ_plugin%29
+
+ImageSegment / Segment Features (Single)
+- Result: Featue Sets
+- Example: Mitose Videos
+- e.g. http://www.cellprofiler.org/CPmanual/MeasureObjectSizeShape.html, ImageJ, CellCognition etc pp., Harder
+- Statistical Geometric Features - Extensions for Cytological Texture Analysis
+
+Ransac + HoughTransform (Single)
+- Result: 2 Knoten
+- Example: Thorsten Solar Project + Lucia (circular hough)
+- Circular/Linien How to represent the lines
+
+VoronoiCell Knoten (Single)
+- Result: Knoten
+- Example: Voronoi Measurement for cells
+- Korea paper von slawek
+
+3D thinning algorithm (Single)
+- Result Knoten
+- Beispiel: http://fiji.sc/wiki/index.php/Skeletonize3D
+- Analyse Skeleton dazu?
+
+Local Thresholder (Single)
+- Result Knoten
+- Beispiel: http://fiji.sc/wiki/index.php/Auto_Local_Threshold
+- http://fiji.sc/wiki/index.php/Multi_Otsu_Threshold
+- http://fiji.sc/wiki/index.php/Mixture_Modeling_Thresholding
+
+Shadow Reduction (Single)
+- Result: Knoten
+- Beispiel: Lucia + Paper
+
+Granulometric Filtering (Single)
+- Result: Knoten
+- MitoseVideos Binary Img
+- Anpassung auf Labeling
+- http://fiji.sc/wiki/index.php/Granulometric_Filtering
+
+Image Stabelizer (Single)
+- Result Aligner
+- AnwendungsFall: z.B. DNA Repair
+- http://fiji.sc/wiki/index.php/Image_Stabilizer
+
+Edge-Preserving Filters (Single)
+- Result: Knoten
+- Example: Any
+- http://rsbweb.nih.gov/ij/plugins/kuwahara.html
+- http://fiji.sc/wiki/index.php/Sigma_Filter
+- Bilateral (FAST)
+
+Local Thickness (Single)
+- Result: Knoten (binary img input)
+- Example: Neurite?
+- http://fiji.sc/wiki/index.php/Local_Thickness
+
+Rolling Ball Algorithm (Single)
+- Result: Node
+- Example anything...
+- http://fiji.sc/wiki/index.php/Rolling_Ball_Background_Subtraction
+
+Block variation of local correlation coeffcients (Single)
+- Coloc?
+- http://fiji.sc/wiki/index.php/Colocalization_Analysis
+
+Cell Splitter 3D (Single)
+- Result: Splitted Cells
+- http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2818.2010.03482.x/full
+
+Snakes (Team)
+- Result: Improved functionality für Annotator
+- http://bigwww.epfl.ch/publications/thevenaz1101.html
+- http://icy.bioimageanalysis.org/index.php?display=detailPlugin&pluginId=135
+- ggf. 3D
+

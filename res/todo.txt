@@ -1,0 +1,88 @@
+TODO:
+- Slawek coloc zu verfügung stellen
+
+- Splitting base from algorithms 
+
+- Extension Points
+	* ImageJ2
+	* JEP + Generalisierung
+
+- Image Reader
+	* Read In as (Type, Factory) but efficient using MinMax from BioFormats (if provided)
+	* If BioFormats/Scifio provides MinMax: What about new fields in ImgPlusCell min/max (faster rendering possible) / or even: do it anyway?
+
+- ImgGroupBy Aggregation methods
+	* including correct implementation of equals vs compareTo
+	* Ask Bernd how they are treated in KNIME
+	
+- CellClumpSplitter (JENS)
+
+- Contour Detector Seed In Optional (CHR)
+
+- Binary & Morphological Ops clean up + finish (FELIX)
+
+- Filter/Convolution Framework (FELIX)
+	* Convolve method is very very slow
+	* FilterProducer (MexianHat, Sobel, Gabor, CurvedGabor, Prewitt, Laplace, etc pp.)
+	* Konfigurierbare Filter werden erzeugt (direkt sichtbar was man eigtl. erzeugt, sprich leicht zu erzeugen für user
+	* Convolver:
+		**	 Spalte der Filter wird gewählt, Gefilterte Bilder als Dimension angehangen (Orginalformat).
+		**   Overflow/Clipping muss von user gewählt werden was gemacht wird
+	* Gaussfilter muss von ImgLib2 noch integriert werden
+	* verschiedene kernels noch anbieten (BOx/Sphere in BinaryKernels umbennen)
+	* Arbitrary Shape Kernel (ggf. wenn JHotDraw Annotator fertig ist)
+	* BugFixing (leere Tabelle sollte erzeugt werden dürfen)
+	
+	
+- Labeling Factories/Types to Nodes (MICHA S.)
+
+- Icons
+
+- Haralick features generalisieren (Held)
+
+- Labeling Depedencies
+
+- Segment Cropper
+	* Setting if source img or binary img
+	
+- FileReference
+	* Bernd?
+	
+- Annotator (MICHAEL)
+	* JHotDraw integration
+
+- ImgReader layout (MAX)
+
+- Hilite + Viewer (MAX)
+	* Fix bug
+	* Measurement Tool in ImgViewer (Metadata)
+	* Plane direkt eingeben in PlaneSelection
+	* Testing
+	* Dual View (SynchronizedView)
+	* PlayButton in PlaneSelection
+	* Farbchooser für BoundingBox
+		
+- Anisotropic Diffusion integration
+	* Imglib2
+
+- Watershed integration
+	* ImgLib2?
+
+- Metanodes
+	* Filter labeling
+	* Extend Img (using resampler etc)
+	* Count objects
+	* Merge segmentations
+	* Folder reader
+	* etc pp.?
+
+- Update workflows for wegpage
+	
+- Bugs:
+	* Resampling WITH MetaData
+	* Merger (Definition, Merger: RowWise/ColumnWise)
+	* Background Color einstellen bei binary operations + open/close überprüfen
+	* Image Reader: Read in as? (type+factory)
+	* Efficient implementation of Table2Labeling#
+
+
