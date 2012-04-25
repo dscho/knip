@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   6 Jul 2010 (hornm): created
  */
@@ -69,7 +69,7 @@ import org.kniplib.io.serialization.BufferedDataInputStream;
 import org.kniplib.io.serialization.BufferedDataOutputStream;
 
 /**
- * 
+ *
  * @author hornm, dietzc University of Konstanz
  */
 public class ImgDeSerializer {
@@ -116,14 +116,18 @@ public class ImgDeSerializer {
                         final BufferedDataInputStream in) throws IOException,
                         ClassNotFoundException {
 
-                switch (SupportedImgs.values()[in.readInt()]) {
-                case NATIVEIMG:
-                        return NATIVEIMGDESERIALIZER.deserialize(in);
-                case LISTIMG:
-                        return deserializeListImg(in);
-                default:
-                        throw new IllegalArgumentException(
-                                        "This type of image is can't be deserialized, yet! Supported types are: NativeImg, ListImg");
+                try {
+                        switch (SupportedImgs.values()[in.readInt()]) {
+                        case NATIVEIMG:
+                                return NATIVEIMGDESERIALIZER.deserialize(in);
+                        case LISTIMG:
+                                return deserializeListImg(in);
+                        default:
+                                throw new IllegalArgumentException(
+                                                "This type of image is can't be deserialized, yet! Supported types are: NativeImg, ListImg");
+                        }
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
                 }
 
         }
