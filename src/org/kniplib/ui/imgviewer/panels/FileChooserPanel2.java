@@ -17,6 +17,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,20 +32,16 @@ import org.kniplib.ui.event.EventService;
 import org.kniplib.ui.imgviewer.events.FileChooserSelectedFilesChgEvent;
 
 public class FileChooserPanel2 extends JPanel {
+
+        // list and its model keeping the selected files
         private final JList m_selectedFileList;
-
-        private final FileListModel m_fileListModel;
-
+        private final FileListModel m_selectedFileListModel;
         private final TitledBorder m_selectedFileListBorder;
 
-        private final FileListModel m_selectedFileListModel;
-
+        // buttons to selected/remove files
         private final JButton m_addButton;
-
         private final JButton m_remButton;
-
         private final JButton m_addAllButton;
-
         private final JButton m_remAllButton;
 
         private final ImagePreviewPanel m_imagePreviewPanel;
@@ -62,12 +59,12 @@ public class FileChooserPanel2 extends JPanel {
                 m_remButton = new JButton("remove");
                 m_remAllButton = new JButton("    remove all    ");
                 m_selectedFileList = new JList();
-                m_fileListModel = new FileListModel();
                 m_selectedFileListModel = new FileListModel();
                 m_selectedFileListBorder = BorderFactory
                                 .createTitledBorder("Selected files");
                 final JScrollPane jspSelFileList = new JScrollPane(
                                 m_selectedFileList);
+                m_selectedFileList.setModel(m_selectedFileListModel);
 
                 // arrange the components
                 final JPanel left = new JPanel();
@@ -313,6 +310,17 @@ public class FileChooserPanel2 extends JPanel {
                 public int compare(final File o1, final File o2) {
                         return o1.getName().compareToIgnoreCase(o2.getName());
                 }
+        }
+
+        public static void main(String[] args) {
+
+                JFrame f = new JFrame();
+                f.add(new FileChooserPanel2());
+
+                f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                f.pack();
+                f.setVisible(true);
+
         }
 
 }
