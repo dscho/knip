@@ -66,7 +66,7 @@ import net.imglib2.subimg.SubImg;
 import net.imglib2.type.Type;
 
 /**
- * 
+ *
  * @author dietzc, hornm, schonenbergerf University of Konstanz
  * @param <T>
  */
@@ -157,7 +157,7 @@ public class DetailedImgRenderer<T extends Type<T>, II extends IterableInterval<
                         break;
                 }
                 if (name != null) {
-                        sb.append("Image Name=" + name.getName());
+                        sb.append("Image Name=" + name.getName() + "\n");
                 }
 
                 if (source != null) {
