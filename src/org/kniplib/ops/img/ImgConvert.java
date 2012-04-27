@@ -159,7 +159,11 @@ public class ImgConvert<I extends RealType<I>, O extends RealType<O>>
                 case SCALE:
                         convertOp = new Convert<I, O>(m_inType, m_outType,
                                         TypeConversionTypes.SCALE);
+                        break;
 
+                default:
+                        throw new IllegalArgumentException(
+                                        "Normalization type unknown");
                 }
 
                 UnaryOperationAssignment<I, O> map = new UnaryOperationAssignment<I, O>(

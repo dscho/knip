@@ -65,7 +65,12 @@ public class FilterBank<T extends RealType<T>, K extends RealType<K>>
                         return r;
                 case 1:
                         m_conv.setKernel(m_kernels[0]);
-                        m_conv.compute(op, r);
+                        if (m_conv instanceof DirectImageConvolution)
+                                m_conv.compute(op, r);
+                        else if (m_conv instanceof ImgLibImageConvolution) {
+                                m_conv.compute(op);
+                                new CopyImgOperation<T>().compute(op, r);
+                        }
                         return r;
                 default:
                         final long[] min = new long[r.numDimensions()];
@@ -84,7 +89,7 @@ public class FilterBank<T extends RealType<T>, K extends RealType<K>>
                                 // TODO: Hack until fourier is a op
                                 if (m_conv instanceof DirectImageConvolution)
                                         m_conv.compute(op, subimg);
-                                else {
+                                else if (m_conv instanceof ImgLibImageConvolution) {
                                         m_conv.compute(op);
                                         new CopyImgOperation<T>().compute(op,
                                                         subimg);
