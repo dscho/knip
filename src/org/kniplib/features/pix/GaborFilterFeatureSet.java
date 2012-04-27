@@ -455,8 +455,7 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements FeatureSet 
                 ImageConvolution<DoubleType, DoubleType, Img<DoubleType>, Img<DoubleType>> ics = new ImgLibImageConvolution<DoubleType, DoubleType>(
                                 (int) Math.ceil(Runtime.getRuntime()
                                                 .availableProcessors() / 2));
-                // ImageConvolution<DoubleType, DoubleType> ics = new
-                // SSTImageConvolution<DoubleType, DoubleType>();
+
                 ImgConvert<T, DoubleType> imgConvert = new ImgConvert<T, DoubleType>(
                                 m_img.firstElement().createVariable(),
                                 new DoubleType(), ImgConversionTypes.DIRECT);
@@ -469,12 +468,6 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements FeatureSet 
                                         ImgUtils.createEmptyImg(srcImg));
                         m_convolvedImgRandAccess[i] = m_convolvedImgs[i]
                                         .randomAccess();
-
-                        // Image<DoubleType> img = m_convolvedImgs[i].clone();
-                        // ContrastEnhancer.enhance(ContrastEnhancementType.NORMALIZE,
-                        // 0,
-                        // img.createLocalizableCursor());
-                        // AWTImageTools.showInFrame(img, "conv", .7);
                 }
         }
 
