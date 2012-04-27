@@ -106,8 +106,7 @@ public class ImgConvert<I extends RealType<I>, O extends RealType<O>>
                                         .create(dims,
                                                         m_outType.createVariable());
                 } catch (IncompatibleTypeException e) {
-                        e.printStackTrace();
-                        return null;
+                        throw new RuntimeException(e);
                 }
 
         }
