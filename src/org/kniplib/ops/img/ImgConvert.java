@@ -137,7 +137,8 @@ public class ImgConvert<I extends RealType<I>, O extends RealType<O>>
                                         TypeConversionTypes.SCALE);
 
                         convertOp.setFactor(convertOp.getFactor() / normPar[0]);
-                        convertOp.setInMin(normPar[1]);
+                        convertOp.setInMin(0);
+                        convertOp.setOutMin(0);
                         break;
                 case NORMALIZESCALE:
                         normPar = new ImgNormalize<I, Img<I>>()
@@ -146,6 +147,7 @@ public class ImgConvert<I extends RealType<I>, O extends RealType<O>>
                         convertOp = new Convert<I, O>(m_inType, m_outType,
                                         TypeConversionTypes.SCALE);
                         convertOp.setFactor(convertOp.getFactor() / normPar[0]);
+                        convertOp.setInMin(normPar[1]);
                         break;
                 case NORMALIZEDIRECTCLIP:
                         normPar = new ImgNormalize<I, Img<I>>()
