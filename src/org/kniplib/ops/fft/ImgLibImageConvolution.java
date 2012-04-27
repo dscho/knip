@@ -50,20 +50,13 @@
  */
 package org.kniplib.ops.fft;
 
-import net.imglib2.IterableInterval;
 import net.imglib2.algorithm.fft.FourierConvolution;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
-import net.imglib2.ops.image.UnaryOperationAssignment;
-import net.imglib2.ops.operation.unary.real.RealCopy;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.real.FloatType;
 
 import org.kniplib.ops.img.ExtendDimensionality;
-import org.kniplib.ops.img.ImgUtils;
-import org.kniplib.ops.misc.Convert;
-import org.kniplib.types.TypeConversionTypes;
 
 /**
  *
@@ -71,8 +64,6 @@ import org.kniplib.types.TypeConversionTypes;
  */
 public class ImgLibImageConvolution<T extends RealType<T>, K extends RealType<K> & NativeType<K>>
                 extends ImageConvolution<T, K, Img<T>, Img<K>> {
-
-        private final boolean m_dofloat;
 
         protected Img<K> m_kernel;
 
@@ -82,31 +73,24 @@ public class ImgLibImageConvolution<T extends RealType<T>, K extends RealType<K>
 
         private int m_numThreads = -1;
 
-        public ImgLibImageConvolution(final boolean dofloat) {
-                super();
-                m_dofloat = dofloat;
-        }
-
-        public ImgLibImageConvolution(final boolean dofloat, final Img<K> kernel) {
-                this(dofloat);
+        public ImgLibImageConvolution(final Img<K> kernel) {
                 setKernel(kernel);
         }
 
-        public ImgLibImageConvolution(final boolean dofloat,
-                        final int numThreads) {
-                this(dofloat);
+        public ImgLibImageConvolution(final int numThreads) {
                 m_numThreads = numThreads;
         }
 
-        public ImgLibImageConvolution(final boolean dofloat,
-                        final int numThreads, final Img<K> kernel) {
-                this(dofloat, kernel);
+        public ImgLibImageConvolution(final int numThreads, final Img<K> kernel) {
+                this(kernel);
                 m_numThreads = numThreads;
         }
 
         @Override
         public final void setKernel(final Img<K> kernel) {
                 m_kernel = kernel;
+
+                // TODO: Why disabled? Unessacary?
                 // FilterTools.normalize(m_kernel);
         }
 
@@ -117,58 +101,8 @@ public class ImgLibImageConvolution<T extends RealType<T>, K extends RealType<K>
          */
         @Override
         public final Img<T> compute(final Img<T> op, final Img<T> r) {
-
-                final Img<K> kernel = new ExtendDimensionality<K>(
-                                op.numDimensions()).compute(m_kernel);
-
-                if (m_lastImg != op) {
-                        m_lastImg = op;
-                        try {
-                                if (m_dofloat) {
-                                        final Img<FloatType> f =
-
-                                        m_lastImg.factory()
-                                                        .imgFactory(new FloatType())
-                                                        .create(m_lastImg,
-                                                                        new FloatType());
-                                        new UnaryOperationAssignment<T, FloatType>(
-                                                        new Convert<T, FloatType>(
-                                                                        m_lastImg.firstElement()
-                                                                                        .createVariable(),
-                                                                        new FloatType(),
-                                                                        TypeConversionTypes.DIRECT))
-                                                        .compute(m_lastImg, f);
-                                        m_fc = new FourierConvolution<FloatType, K>(
-                                                        f, kernel);
-                                } else {
-                                        m_fc = new FourierConvolution<T, K>(
-                                                        m_lastImg, kernel);
-                                }
-                                if (m_numThreads != -1) {
-                                        m_fc.setNumThreads(m_numThreads);
-                                }
-                        } catch (final IncompatibleTypeException e) {
-                                throw new RuntimeException(e);
-                        }
-                }
-                m_fc.replaceKernel(kernel);
-
-                m_fc.process();
-                if (m_dofloat) {
-                        new UnaryOperationAssignment<FloatType, T>(
-                                        new Convert<FloatType, T>(
-                                                        new FloatType(),
-                                                        op.firstElement()
-                                                                        .createVariable(),
-                                                        TypeConversionTypes.DIRECTCLIP))
-                                        .compute((Img<FloatType>) m_fc
-                                                        .getResult(), r);
-                } else {
-                        new UnaryOperationAssignment<T, T>(new RealCopy<T, T>())
-                                        .compute((IterableInterval<T>) m_fc
-                                                        .getResult(), r);
-                }
-                return r;
+                throw new UnsupportedOperationException(
+                                "This methid is not supported for now. Will be changed as soon as FourierTransform is an Operation");
         }
 
         /**
@@ -184,22 +118,46 @@ public class ImgLibImageConvolution<T extends RealType<T>, K extends RealType<K>
          */
         @Override
         public String getHint(final String name) {
-                return null;
+                return "ImgLib2 convolution";
         }
 
         @Override
         public ImgLibImageConvolution<T, K> copy() {
-                return new ImgLibImageConvolution<T, K>(m_dofloat,
-                                m_numThreads, m_kernel.copy());
+                return new ImgLibImageConvolution<T, K>(m_numThreads,
+                                m_kernel.copy());
         }
 
+        // TODO: This is a hack caused by the img convolution framework
+        // which doesn't provide the possibility that a result is filled
         @Override
         public Img<T> createEmptyOutput(final Img<T> in) {
-                return ImgUtils.createEmptyImg(in);
+                throw new UnsupportedOperationException(
+                                "This methid is not supported for now. Will be changed as soon as FourierTransform is an Operation");
         }
 
+        // TODO: This is a hack caused by the img convolution framework
+        // which doesn't provide the possibility that a result is filled
         @Override
-        public Img<T> compute(final Img<T> in) {
-                return compute(in, createEmptyOutput(in));
+        public Img<T> compute(final Img<T> op) {
+
+                final Img<K> kernel = new ExtendDimensionality<K>(
+                                op.numDimensions()).compute(m_kernel);
+
+                if (m_lastImg != op) {
+                        m_lastImg = op;
+                        try {
+                                m_fc = new FourierConvolution<T, K>(m_lastImg,
+                                                kernel);
+                                if (m_numThreads != -1) {
+                                        m_fc.setNumThreads(m_numThreads);
+                                }
+                        } catch (final IncompatibleTypeException e) {
+                                throw new RuntimeException(e);
+                        }
+                }
+                m_fc.replaceKernel(kernel);
+                m_fc.process();
+
+                return (Img<T>) m_fc.getResult();
         }
 }

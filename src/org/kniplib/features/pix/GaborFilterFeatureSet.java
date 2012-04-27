@@ -68,7 +68,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 import org.kniplib.features.FeatureSet;
 import org.kniplib.features.FeatureTargetListener;
 import org.kniplib.filter.linear.Gabor;
-import org.kniplib.ops.fft.DirectImageConvolution;
+import org.kniplib.ops.fft.DirectConvolver;
 import org.kniplib.ops.fft.ImageConvolution;
 import org.kniplib.ops.fft.ImgLibImageConvolution;
 import org.kniplib.ops.img.ImgConvert;
@@ -392,7 +392,7 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements FeatureSet 
                 } else {
                         if (m_averageAngles) {
                                 for (int a = 0; a < m_halfNumAng; a++) {
-                                        double tmp = DirectImageConvolution
+                                        double tmp = DirectConvolver
                                                         .convolve(m_tmpRandAccess,
                                                                         m_filterCursors[a
                                                                                         % m_halfNumAng
@@ -404,8 +404,7 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements FeatureSet 
                                         res = Math.max(-tmp, res);
                                 }
                         } else {
-                                res = DirectImageConvolution.convolve(
-                                                m_tmpRandAccess,
+                                res = DirectConvolver.convolve(m_tmpRandAccess,
                                                 m_filterCursors[m_currentAngID
                                                                 % m_halfNumAng
                                                                 * m_numFeatures
@@ -454,7 +453,7 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements FeatureSet 
                 m_convolvedImgRandAccess = new RandomAccess[m_filters.length];
 
                 ImageConvolution<DoubleType, DoubleType, Img<DoubleType>, Img<DoubleType>> ics = new ImgLibImageConvolution<DoubleType, DoubleType>(
-                                false, (int) Math.ceil(Runtime.getRuntime()
+                                (int) Math.ceil(Runtime.getRuntime()
                                                 .availableProcessors() / 2));
                 // ImageConvolution<DoubleType, DoubleType> ics = new
                 // SSTImageConvolution<DoubleType, DoubleType>();

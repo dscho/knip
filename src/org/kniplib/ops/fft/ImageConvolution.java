@@ -52,14 +52,8 @@ package org.kniplib.ops.fft;
 
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.UnaryOutputOperation;
-import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.ComplexType;
-import net.imglib2.type.numeric.real.DoubleType;
-
-import org.kniplib.filter.linear.DerivativeOfGaussian;
 
 /**
  *
@@ -89,37 +83,39 @@ public abstract class ImageConvolution<T extends ComplexType<T>, V extends Compl
          */
         public abstract String getHint(String name);
 
-        /**
-         * Some speed tests
-         *
-         * @param args
-         */
-        public static void main(String[] args) {
-                Img<BitType> img = new ArrayImgFactory<BitType>().create(
-                                new long[] { 10000, 1000 }, new BitType());
-
-                // Init stuff
-                DirectImageConvolution<BitType, DoubleType> direct = new DirectImageConvolution<BitType, DoubleType>();
-                DerivativeOfGaussian kernel = new DerivativeOfGaussian(1, 0, 1,
-                                0);
-
-                direct.setKernel(kernel);
-
-                long curr = System.nanoTime();
-                direct.compute(img, img);
-                long res = (System.nanoTime() - curr) / 1000 / 1000;
-
-                System.out.println("Direct convolution (ms)" + res);
-
-                ImgLibImageConvolution<BitType, DoubleType> fft = new ImgLibImageConvolution<BitType, DoubleType>(
-                                false, 1);
-
-                fft.setKernel(kernel);
-
-                curr = System.nanoTime();
-                fft.compute(img, img);
-                res = (System.nanoTime() - curr) / 1000 / 1000;
-
-                System.out.println("FFT (ms)" + res);
-        }
+        // /**
+        // * Some speed tests
+        // *
+        // * @param args
+        // */
+        // public static void main(String[] args) {
+        // Img<BitType> img = new ArrayImgFactory<BitType>().create(
+        // new long[] { 10000, 1000 }, new BitType());
+        //
+        // // Init stuff
+        // DirectImageConvolution<BitType, DoubleType> direct = new
+        // DirectImageConvolution<BitType, DoubleType>();
+        // DerivativeOfGaussian kernel = new DerivativeOfGaussian(1, 0, 1,
+        // 0);
+        //
+        // direct.setKernel(kernel);
+        //
+        // long curr = System.nanoTime();
+        // direct.compute(img, img);
+        // long res = (System.nanoTime() - curr) / 1000 / 1000;
+        //
+        // System.out.println("Direct convolution (ms)" + res);
+        //
+        // ImgLibImageConvolution<BitType, DoubleType> fft = new
+        // ImgLibImageConvolution<BitType, DoubleType>(
+        // false, 1);
+        //
+        // fft.setKernel(kernel);
+        //
+        // curr = System.nanoTime();
+        // fft.compute(img, img);
+        // res = (System.nanoTime() - curr) / 1000 / 1000;
+        //
+        // System.out.println("FFT (ms)" + res);
+        // }
 }

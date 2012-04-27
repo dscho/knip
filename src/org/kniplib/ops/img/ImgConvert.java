@@ -61,7 +61,7 @@ import org.kniplib.types.ImgConversionTypes;
 import org.kniplib.types.TypeConversionTypes;
 
 /**
- * Converts the pixel-types of images.
+ * Converts complete images from one type into another
  *
  * @author hornm, dietzc, University of Konstanz
  */

@@ -50,13 +50,11 @@
  */
 package org.kniplib.ops.fft;
 
-import net.imglib2.Cursor;
-import net.imglib2.ExtendedRandomAccessibleInterval;
-import net.imglib2.RandomAccess;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
+import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.image.ConcatenatedBufferedUnaryOperation;
 import net.imglib2.ops.image.UnaryOperationAssignment;
-import net.imglib2.outofbounds.OutOfBoundsConstantValueFactory;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
@@ -125,53 +123,30 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
         public Img<T> compute(final Img<T> op, final Img<T> r) {
                 final ExtendDimensionality<DoubleType> ext = new ExtendDimensionality<DoubleType>(
                                 op.numDimensions());
-                Img<FloatType> tmp = convolve(op, ext.compute(m_kernels[0],
-                                ext.createEmptyOutput(m_kernels[0])));
-                for (int i = 1; i < m_kernels.length; i++) {
-                        tmp = convolve(tmp, ext.compute(m_kernels[i],
-                                        ext.createEmptyOutput(m_kernels[i])));
-                }
-                new UnaryOperationAssignment<FloatType, T>(
-                                new Convert<FloatType, T>(new FloatType(), op
-                                                .firstElement()
-                                                .createVariable(),
-                                                TypeConversionTypes.DIRECTCLIP))
-                                .compute(tmp, r);
-                return r;
-        }
 
-        private static final <R extends RealType<R>> Img<FloatType> convolve(
-                        final Img<R> img, final Img<DoubleType> kernel) {
-                final R min = img.firstElement().createVariable();
-                min.setReal(min.getMinValue());
-                final RandomAccess<R> srcRA = new ExtendedRandomAccessibleInterval<R, Img<R>>(
-                                img,
-                                new OutOfBoundsConstantValueFactory<R, Img<R>>(
-                                                min)).randomAccess();
+                DirectConvolver<T, DoubleType, Img<DoubleType>, Img<T>>[] convolver = new DirectConvolver[m_kernels.length];
 
-                final Cursor<DoubleType> kernelC = kernel.localizingCursor();
-
-                Img<FloatType> res = null;
-                try {
-                        res = img.factory().imgFactory(new FloatType())
-                                        .create(img, new FloatType());
-                } catch (final IncompatibleTypeException e) {
-                        //
+                for (int d = 0; d < convolver.length; d++) {
+                        convolver[d] = new DirectConvolver<T, DoubleType, Img<DoubleType>, Img<T>>(
+                                        m_kernels[d]);
                 }
 
-                final Cursor<FloatType> resC = res.localizingCursor();
-                final long[] pos = new long[img.numDimensions()];
-                final long[] kernelRadius = new long[kernel.numDimensions()];
-                for (int i = 0; i < kernelRadius.length; i++) {
-                        kernelRadius[i] = kernel.dimension(i) / 2;
-                }
-                while (resC.hasNext()) {
-                        resC.fwd();
-                        resC.localize(pos);
-                        resC.get().set(convolve(srcRA, kernelC, pos,
-                                        kernelRadius));
-                }
-                return res;
+                ConcatenatedBufferedUnaryOperation<Img<T>> bufferedOp = new ConcatenatedBufferedUnaryOperation<Img<T>>(
+                                convolver) {
+
+                        @Override
+                        protected Img<T> getBuffer(Img<T> input) {
+                                return ImgUtils.createEmptyCopy(input);
+                        }
+
+                        @Override
+                        public UnaryOperation<Img<T>, Img<T>> copy() {
+                                return this;
+                        }
+
+                };
+
+                return bufferedOp.compute(op, r);
         }
 
         @SuppressWarnings("unchecked")
@@ -257,43 +232,6 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
                                                 TypeConversionTypes.DIRECT))
                                 .compute(kernel, res);
                 return new Img[] { res };
-        }
-
-        /**
-         * Straightforward convolution. For small kernels faster than the
-         * convolution in the frequency domain for small images.
-         *
-         * @param img
-         *                the image in the spatial domain
-         *
-         * @param kerC
-         *                the kernel in the spatial domain
-         *
-         * @param pos
-         *                the position to apply the kernel
-         *
-         * @return
-         */
-        public static final <R extends RealType<R>> float convolve(
-                        final RandomAccess<R> srcRA,
-                        final Cursor<DoubleType> kerC, final long[] pos,
-                        final long[] kernelRadii) {
-                srcRA.setPosition(pos);
-                float val = 0;
-                kerC.reset();
-                while (kerC.hasNext()) {
-                        kerC.fwd();
-                        for (int i = 0; i < kernelRadii.length; i++) {
-                                srcRA.setPosition(
-                                                pos[i]
-                                                                + kerC.getLongPosition(i)
-                                                                - kernelRadii[i],
-                                                i);
-                        }
-                        val += srcRA.get().getRealFloat()
-                                        * kerC.get().getRealFloat();
-                }
-                return val;
         }
 
         /**
