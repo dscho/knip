@@ -5,6 +5,7 @@ import java.util.Arrays;
 import net.imglib2.FinalInterval;
 import net.imglib2.img.Img;
 import net.imglib2.ops.UnaryOutputOperation;
+import net.imglib2.ops.operation.unary.img.CopyImgOperation;
 import net.imglib2.subimg.SubImg;
 import net.imglib2.type.numeric.RealType;
 
@@ -13,9 +14,9 @@ import org.kniplib.ops.img.IterableIntervalCopy;
 /**
  * Perform multiple convolution operations and projects the results into one
  * image.
- * 
+ *
  * @author schoenen
- * 
+ *
  * @param <T>
  * @param <K>
  */
@@ -27,7 +28,7 @@ public class FilterBank<T extends RealType<T>, K extends RealType<K>>
         private final Img<K>[] m_kernels;
 
         /**
-         * 
+         *
          * @param conv
          *                ImageConvolution implementation.
          * @param op
@@ -77,8 +78,18 @@ public class FilterBank<T extends RealType<T>, K extends RealType<K>>
                                 final SubImg<T> subimg = new SubImg<T>(r,
                                                 new FinalInterval(min, max),
                                                 false);
+
                                 m_conv.setKernel(m_kernels[i]);
-                                m_conv.compute(op, subimg);
+
+                                // TODO: Hack until fourier is a op
+                                if (m_conv instanceof DirectImageConvolution)
+                                        m_conv.compute(op, subimg);
+                                else {
+                                        m_conv.compute(op);
+                                        new CopyImgOperation<T>().compute(op,
+                                                        subimg);
+                                }
+
                         }
                         return r;
                 }
