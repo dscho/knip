@@ -89,6 +89,7 @@ public class FilterBank<T extends RealType<T>, K extends RealType<K>>
                                 // TODO: Hack until fourier is a op
                                 if (m_conv instanceof DirectImageConvolution)
                                         m_conv.compute(op, subimg);
+
                                 else if (m_conv instanceof ImgLibImageConvolution) {
                                         new CopyImgOperation<T>().compute(
                                                         m_conv.compute(op),
