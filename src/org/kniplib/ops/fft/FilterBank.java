@@ -68,8 +68,8 @@ public class FilterBank<T extends RealType<T>, K extends RealType<K>>
                         if (m_conv instanceof DirectImageConvolution)
                                 m_conv.compute(op, r);
                         else if (m_conv instanceof ImgLibImageConvolution) {
-                                m_conv.compute(op);
-                                new CopyImgOperation<T>().compute(op, r);
+                                new CopyImgOperation<T>().compute(
+                                                m_conv.compute(op), r);
                         }
                         return r;
                 default:
@@ -90,8 +90,8 @@ public class FilterBank<T extends RealType<T>, K extends RealType<K>>
                                 if (m_conv instanceof DirectImageConvolution)
                                         m_conv.compute(op, subimg);
                                 else if (m_conv instanceof ImgLibImageConvolution) {
-                                        m_conv.compute(op);
-                                        new CopyImgOperation<T>().compute(op,
+                                        new CopyImgOperation<T>().compute(
+                                                        m_conv.compute(op),
                                                         subimg);
                                 }
 

@@ -6,15 +6,6 @@ public enum ImgConversionTypes {
                         "Normalize and direct"), NORMALIZEDIRECTCLIP(
                         "Normalize and direct(clipped)");
 
-        private String m_name;
-
         private ImgConversionTypes(String name) {
-
-                m_name = name;
-        }
-
-        @Override
-        public String toString() {
-                return m_name;
         }
 }
