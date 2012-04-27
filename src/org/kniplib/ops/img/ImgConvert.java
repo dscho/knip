@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   13 May 2011 (hornm): created
  */
@@ -52,53 +52,45 @@ package org.kniplib.ops.img;
 
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImg;
 import net.imglib2.ops.UnaryOutputOperation;
 import net.imglib2.ops.image.UnaryOperationAssignment;
 import net.imglib2.type.numeric.RealType;
 
 import org.kniplib.ops.misc.Convert;
+import org.kniplib.types.ImgConversionTypes;
+import org.kniplib.types.TypeConversionTypes;
 
 /**
  * Converts the pixel-types of images.
- * 
+ *
  * @author hornm, dietzc, University of Konstanz
  */
 public class ImgConvert<I extends RealType<I>, O extends RealType<O>>
                 implements UnaryOutputOperation<Img<I>, Img<O>> {
 
-        private UnaryOperationAssignment<I, O> m_map;
+        private final O m_outType;
 
-        private O m_type;
+        private final I m_inType;
 
-        private I m_scaleFrom;
-
-        /**
-         * Convert to the new type. Result will be an {@link ArrayImg}.
-         * 
-         * @param type
-         *                The new type.
-         */
-        public ImgConvert(final O type) {
-                this(null, type);
-        }
+        private final ImgConversionTypes m_conversionType;
 
         /**
          * Convert to the new type. Scale values with respect to the old type
          * range.
-         * 
-         * @param type
+         *
+         * @param outType
          *                The new type.
-         * @param scaleFrom
+         * @param inType
          *                The old type.
          * @param imgFac
          *                the image factory to produce the image
          */
-        public ImgConvert(final I scaleFrom, final O type) {
-                m_type = type;
-                m_scaleFrom = scaleFrom;
-                m_map = new UnaryOperationAssignment<I, O>(new Convert<I, O>(
-                                type, scaleFrom));
+        public ImgConvert(final I inType, final O outType,
+                        ImgConversionTypes type) {
+                m_outType = outType;
+                m_conversionType = type;
+                m_inType = inType;
+
         }
 
         /**
@@ -109,8 +101,10 @@ public class ImgConvert<I extends RealType<I>, O extends RealType<O>>
                 try {
                         long[] dims = new long[op.numDimensions()];
                         op.dimensions(dims);
-                        return op.factory().imgFactory(m_type)
-                                        .create(dims, m_type.createVariable());
+                        return op.factory()
+                                        .imgFactory(m_outType)
+                                        .create(dims,
+                                                        m_outType.createVariable());
                 } catch (IncompatibleTypeException e) {
                         e.printStackTrace();
                         return null;
@@ -122,14 +116,61 @@ public class ImgConvert<I extends RealType<I>, O extends RealType<O>>
          * {@inheritDoc}
          */
         @Override
-        public Img<O> compute(Img<I> op, Img<O> r) {
-                m_map.compute(op, r);
+        public Img<O> compute(Img<I> img, Img<O> r) {
+
+                double[] normPar;
+                Convert<I, O> convertOp = null;
+                switch (m_conversionType) {
+                case DIRECT:
+                        convertOp = new Convert<I, O>(m_inType, m_outType,
+                                        TypeConversionTypes.DIRECT);
+                        break;
+                case DIRECTCLIP:
+                        convertOp = new Convert<I, O>(m_inType, m_outType,
+                                        TypeConversionTypes.DIRECTCLIP);
+                        break;
+                case NORMALIZEDIRECT:
+                        normPar = new ImgNormalize<I, Img<I>>()
+                                        .getNormalizationProperties(img, 0);
+
+                        convertOp = new Convert<I, O>(m_inType, m_outType,
+                                        TypeConversionTypes.SCALE);
+
+                        convertOp.setFactor(convertOp.getFactor() / normPar[0]);
+                        convertOp.setInMin(normPar[1]);
+                        break;
+                case NORMALIZESCALE:
+                        normPar = new ImgNormalize<I, Img<I>>()
+                                        .getNormalizationProperties(img, 0);
+
+                        convertOp = new Convert<I, O>(m_inType, m_outType,
+                                        TypeConversionTypes.SCALE);
+                        convertOp.setFactor(convertOp.getFactor() / normPar[0]);
+                        break;
+                case NORMALIZEDIRECTCLIP:
+                        normPar = new ImgNormalize<I, Img<I>>()
+                                        .getNormalizationProperties(img, 0);
+                        convertOp = new Convert<I, O>(m_inType, m_outType,
+                                        TypeConversionTypes.SCALECLIP);
+                        convertOp.setFactor(convertOp.getFactor() / normPar[0]);
+                        convertOp.setInMin(normPar[1]);
+                        break;
+                case SCALE:
+                        convertOp = new Convert<I, O>(m_inType, m_outType,
+                                        TypeConversionTypes.SCALE);
+
+                }
+
+                UnaryOperationAssignment<I, O> map = new UnaryOperationAssignment<I, O>(
+                                convertOp);
+                map.compute(img, r);
                 return r;
         }
 
         @Override
         public UnaryOutputOperation<Img<I>, Img<O>> copy() {
-                return new ImgConvert<I, O>(m_scaleFrom.copy(), m_type.copy());
+                return new ImgConvert<I, O>(m_inType.copy(), m_outType.copy(),
+                                m_conversionType);
         }
 
         @Override

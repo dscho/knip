@@ -63,6 +63,7 @@ import net.imglib2.type.numeric.real.FloatType;
 import org.kniplib.ops.img.ExtendDimensionality;
 import org.kniplib.ops.img.ImgUtils;
 import org.kniplib.ops.misc.Convert;
+import org.kniplib.types.TypeConversionTypes;
 
 /**
  *
@@ -132,7 +133,10 @@ public class ImgLibImageConvolution<T extends RealType<T>, K extends RealType<K>
                                                                         new FloatType());
                                         new UnaryOperationAssignment<T, FloatType>(
                                                         new Convert<T, FloatType>(
-                                                                        new FloatType()))
+                                                                        m_lastImg.firstElement()
+                                                                                        .createVariable(),
+                                                                        new FloatType(),
+                                                                        TypeConversionTypes.DIRECT))
                                                         .compute(m_lastImg, f);
                                         m_fc = new FourierConvolution<FloatType, K>(
                                                         f, kernel);
@@ -152,9 +156,11 @@ public class ImgLibImageConvolution<T extends RealType<T>, K extends RealType<K>
                 m_fc.process();
                 if (m_dofloat) {
                         new UnaryOperationAssignment<FloatType, T>(
-                                        new Convert<FloatType, T>(op
-                                                        .firstElement()
-                                                        .createVariable(), true))
+                                        new Convert<FloatType, T>(
+                                                        new FloatType(),
+                                                        op.firstElement()
+                                                                        .createVariable(),
+                                                        TypeConversionTypes.DIRECTCLIP))
                                         .compute((Img<FloatType>) m_fc
                                                         .getResult(), r);
                 } else {

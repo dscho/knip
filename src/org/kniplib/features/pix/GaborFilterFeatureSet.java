@@ -75,6 +75,7 @@ import org.kniplib.ops.img.ImgConvert;
 import org.kniplib.ops.img.ImgNormalize;
 import org.kniplib.ops.img.ImgUtils;
 import org.kniplib.ops.iterable.Sum;
+import org.kniplib.types.ImgConversionTypes;
 
 /**
  *
@@ -82,8 +83,7 @@ import org.kniplib.ops.iterable.Sum;
  * @param <T>
  *                image type
  */
-public class GaborFilterFeatureSet<T extends RealType<T>> implements
-                FeatureSet {
+public class GaborFilterFeatureSet<T extends RealType<T>> implements FeatureSet {
 
         private Img<DoubleType>[] m_filters;
 
@@ -311,9 +311,10 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements
                 } else {
 
                         ImgConvert<T, DoubleType> imgConvert = new ImgConvert<T, DoubleType>(
-                                        new DoubleType());
-                        Img<DoubleType> srcImg = new ImgConvert<T, DoubleType>(
-                                        new DoubleType()).compute(img,
+                                        img.firstElement().createVariable(),
+                                        new DoubleType(),
+                                        ImgConversionTypes.DIRECT);
+                        Img<DoubleType> srcImg = imgConvert.compute(img,
                                         imgConvert.createEmptyOutput(img));
                         DoubleType min = srcImg.firstElement().createVariable();
                         min.setReal(min.getMinValue());
@@ -458,9 +459,9 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements
                 // ImageConvolution<DoubleType, DoubleType> ics = new
                 // SSTImageConvolution<DoubleType, DoubleType>();
                 ImgConvert<T, DoubleType> imgConvert = new ImgConvert<T, DoubleType>(
-                                new DoubleType());
-                Img<DoubleType> srcImg = new ImgConvert<T, DoubleType>(
-                                new DoubleType()).compute(m_img,
+                                m_img.firstElement().createVariable(),
+                                new DoubleType(), ImgConversionTypes.DIRECT);
+                Img<DoubleType> srcImg = imgConvert.compute(m_img,
                                 imgConvert.createEmptyOutput(m_img));
 
                 for (int i = 0; i < m_filters.length; i++) {

@@ -72,6 +72,7 @@ import org.kniplib.ops.misc.Convert;
 import org.kniplib.tools.ApacheMathTools;
 import org.kniplib.tools.FilterTools;
 import org.kniplib.tools.ImgBasedRealMatrix;
+import org.kniplib.types.TypeConversionTypes;
 
 /**
  *
@@ -106,8 +107,7 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
                 try {
                         m_kernels = decomposeKernel(kernel);
                 } catch (final IncompatibleTypeException e) {
-                        // TODO Handle exception for real
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                 }
                 if (m_normalize) {
                         for (final Img<DoubleType> k : m_kernels) {
@@ -132,8 +132,10 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
                                         ext.createEmptyOutput(m_kernels[i])));
                 }
                 new UnaryOperationAssignment<FloatType, T>(
-                                new Convert<FloatType, T>(op.firstElement()
-                                                .createVariable(), true))
+                                new Convert<FloatType, T>(new FloatType(), op
+                                                .firstElement()
+                                                .createVariable(),
+                                                TypeConversionTypes.DIRECTCLIP))
                                 .compute(tmp, r);
                 return r;
         }
@@ -181,7 +183,10 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
                                         .create(kernel, new DoubleType());
                         new UnaryOperationAssignment<K, DoubleType>(
                                         new Convert<K, DoubleType>(
-                                                        new DoubleType()))
+                                                        kernel.firstElement()
+                                                                        .createVariable(),
+                                                        new DoubleType(),
+                                                        TypeConversionTypes.DIRECT))
                                         .compute(kernel, res);
                         return new Img[] { res };
                 }
@@ -204,7 +209,10 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
                                 // svd.getRank());
                                 new UnaryOperationAssignment<K, DoubleType>(
                                                 new Convert<K, DoubleType>(
-                                                                new DoubleType()))
+                                                                kernel.firstElement()
+                                                                                .createVariable(),
+                                                                new DoubleType(),
+                                                                TypeConversionTypes.DIRECT))
                                                 .compute(kernel, res);
                                 return new Img[] { res };
                         }
@@ -243,7 +251,10 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
                                 .imgFactory(new FloatType())
                                 .create(kernel, new FloatType());
                 new UnaryOperationAssignment<K, FloatType>(
-                                new Convert<K, FloatType>(new FloatType()))
+                                new Convert<K, FloatType>(kernel.firstElement()
+                                                .createVariable(),
+                                                new FloatType(),
+                                                TypeConversionTypes.DIRECT))
                                 .compute(kernel, res);
                 return new Img[] { res };
         }

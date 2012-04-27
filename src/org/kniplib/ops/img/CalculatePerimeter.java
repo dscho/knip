@@ -11,12 +11,13 @@ import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;
 
 import org.kniplib.ops.fft.DirectImageConvolution;
+import org.kniplib.types.ImgConversionTypes;
 
 /**
  * Input: Outline Image {@link ExtractOutlineImg}
- * 
+ *
  * @author Christian Dietz, Felix Schoenenberger
- * 
+ *
  */
 public class CalculatePerimeter implements
                 UnaryOutputOperation<Img<BitType>, DoubleType> {
@@ -29,7 +30,8 @@ public class CalculatePerimeter implements
                 m_conv = new DirectImageConvolution<UnsignedShortType, UnsignedShortType>(
                                 getKernel(), false);
                 m_convert = new ImgConvert<BitType, UnsignedShortType>(
-                                new UnsignedShortType());
+                                new BitType(), new UnsignedShortType(),
+                                ImgConversionTypes.DIRECT);
         }
 
         private static synchronized Img<UnsignedShortType> getKernel() {
