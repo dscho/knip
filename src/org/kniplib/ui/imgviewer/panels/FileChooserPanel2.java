@@ -21,12 +21,14 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.ListModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.kniplib.ui.event.EventService;
 import org.kniplib.ui.imgviewer.events.FileChooserSelectedFilesChgEvent;
@@ -79,8 +81,12 @@ public class FileChooserPanel2 extends JPanel {
                 center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
 
                 JPanel buttonPan = new JPanel();
-                buttonPan.setLayout(new BoxLayout(buttonPan, BoxLayout.Y_AXIS));
+                buttonPan.setLayout(new BoxLayout(buttonPan, BoxLayout.X_AXIS));
                 buttonPan.add(Box.createVerticalStrut(20));
+                JPanel delButtonPan = new JPanel();
+                delButtonPan.setLayout(new BoxLayout(delButtonPan,
+                                BoxLayout.X_AXIS));
+                delButtonPan.add(Box.createVerticalStrut(20));
                 m_addButton.setMaximumSize(new Dimension(150, 25));
                 m_addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 buttonPan.add(m_addButton);
@@ -91,27 +97,42 @@ public class FileChooserPanel2 extends JPanel {
                 buttonPan.add(Box.createVerticalStrut(20));
                 m_remButton.setMaximumSize(new Dimension(150, 25));
                 m_remButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                buttonPan.add(m_remButton);
-                buttonPan.add(Box.createVerticalStrut(20));
+                delButtonPan.add(m_remButton);
+                delButtonPan.add(Box.createVerticalStrut(20));
                 m_remAllButton.setMaximumSize(new Dimension(150, 25));
                 m_remAllButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                buttonPan.add(m_remAllButton);
-                buttonPan.add(Box.createVerticalStrut(20));
+                delButtonPan.add(m_remAllButton);
+                delButtonPan.add(Box.createVerticalStrut(20));
 
                 m_imagePreviewPanel = new ImagePreviewPanel();
 
-                buttonPan.add(m_imagePreviewPanel);
+                // buttonPan.add(m_imagePreviewPanel);
                 // buttonPan.add(Box.createGlue());
-
+                m_FileChooser.setPreferredSize(new Dimension(300, 100));
                 JPanel browsePane = new JPanel();
+                browsePane.setLayout(new BoxLayout(browsePane, BoxLayout.Y_AXIS));
                 browsePane.add(m_FileChooser);
 
+                m_FileChooser.setFileFilter(new FileNameExtensionFilter(
+                                "images", "jpg", "png", "tif", "jpeg", "bmp"));
+                JTabbedPane rightTab = new JTabbedPane();
                 m_FileChooser.setMultiSelectionEnabled(true);
                 m_FileChooser.setControlButtonsAreShown(false);
                 m_FileChooser.setPreferredSize(new Dimension(450, 340));
-                center.add(buttonPan);
-                right.add(jspSelFileList);
+                // center.add(buttonPan);
+                right.add(rightTab);
                 left.add(browsePane);
+                browsePane.add(buttonPan);
+
+                JPanel selectedPane = new JPanel();
+                selectedPane.setLayout(new BoxLayout(selectedPane,
+                                BoxLayout.Y_AXIS));
+                selectedPane.add(jspSelFileList);
+                selectedPane.add(delButtonPan);
+
+                // browsePane.add(m_addAllButton);
+                rightTab.add("Selected Files", selectedPane);
+                rightTab.add("Preview/Meta-Data", m_imagePreviewPanel);
 
                 setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
                 add(left);
@@ -216,6 +237,29 @@ public class FileChooserPanel2 extends JPanel {
                         m_eventService.publish(new FileChooserSelectedFilesChgEvent(
                                         getSelectedFiles()));
 
+        }
+
+        /**
+         * Updates the selected files list after removing or adding files
+         *
+         * @param selectedFiles
+         */
+
+        public void update(final String[] selectedFiles) {
+                // applying the model settings to the components
+                if (selectedFiles.length > 0) {
+                        File[] files = new File[selectedFiles.length];
+                        for (int i = 0; i < selectedFiles.length; i++) {
+                                files[i] = new File(selectedFiles[i]);
+                        }
+                        m_selectedFileListModel.removeAll();
+                        m_selectedFileListModel.addFiles(files);
+
+                }
+
+                if (m_eventService != null)
+                        m_eventService.publish(new FileChooserSelectedFilesChgEvent(
+                                        getSelectedFiles()));
         }
 
         /**
