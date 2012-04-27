@@ -56,8 +56,8 @@ public class FileChooserPanel2 extends JPanel {
         public FileChooserPanel2() {
                 // create instances
                 m_FileChooser = new JFileChooser();
-                m_addButton = new JButton("add >>");
-                m_addAllButton = new JButton("add all >>");
+                m_addButton = new JButton("add");
+                m_addAllButton = new JButton("add all");
                 m_remButton = new JButton("remove");
                 m_remAllButton = new JButton("    remove all    ");
                 m_selectedFileList = new JList();
@@ -120,6 +120,8 @@ public class FileChooserPanel2 extends JPanel {
                 m_FileChooser.setControlButtonsAreShown(false);
                 m_FileChooser.setPreferredSize(new Dimension(450, 340));
                 // center.add(buttonPan);
+                rightTab.setPreferredSize(new Dimension(400, 300));
+                browsePane.setPreferredSize(new Dimension(600, 500));
                 right.add(rightTab);
                 left.add(browsePane);
                 browsePane.add(buttonPan);
