@@ -673,7 +673,8 @@ public class BioFormatsImgSource<V> implements ImgSource {
                 PositiveFloat zCal = meta.getPixelsPhysicalSizeZ(0);
                 PositiveFloat tCal = new PositiveFloat(
                                 meta.getPixelsTimeIncrement(0) == null ? Double.NaN
-                                                : meta.getPixelsTimeIncrement(0));
+                                                : Math.max(meta.getPixelsTimeIncrement(0),
+                                                                1));
                 if (xCal == null)
                         xCal = new PositiveFloat(Double.NaN);
                 if (yCal == null)

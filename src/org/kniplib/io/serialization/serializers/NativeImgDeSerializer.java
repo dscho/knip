@@ -131,7 +131,7 @@ public class NativeImgDeSerializer {
                 NativeType<?> type = (NativeType<?>) ImgDeSerializer
                                 .readClass(in);
 
-                ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = (ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>>) new ArrayImgFactory()
+                ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new ArrayImgFactory()
                                 .create(dims, type);
                 in.readLArray(((ArrayDataAccess<?>) img.update(null))
                                 .getCurrentStorageArray());
@@ -151,7 +151,7 @@ public class NativeImgDeSerializer {
 
                 PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
 
-                PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> planar = (PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>>) img;
+                PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> planar = img;
                 for (int n = 0; n < planar.numSlices(); n++) {
                         sampler.fwd();
                         out.writeArray(((ArrayDataAccess<?>) planar
@@ -170,7 +170,7 @@ public class NativeImgDeSerializer {
 
                 PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
 
-                PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = (PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>>) new PlanarImgFactory()
+                PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new PlanarImgFactory()
                                 .create(dims, type);
 
                 for (int i = 0; i < img.numSlices(); i++) {
@@ -232,8 +232,7 @@ public class NativeImgDeSerializer {
 
                                 }).getCurrentStorageNtree();
 
-                NtreeNode<? extends Comparable<?>> root = (NtreeNode<? extends Comparable<?>>) tree
-                                .getRootNode();
+                NtreeNode<? extends Comparable<?>> root = tree.getRootNode();
 
                 deserializeNtreeNode(new ObjectInputStream(in),
                                 (NtreeNode<Object>) root, numChildren);
@@ -342,7 +341,7 @@ public class NativeImgDeSerializer {
                 NativeType<?> type = (NativeType<?>) ImgDeSerializer
                                 .readClass(in);
 
-                CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cellImg = (CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) new CellImgFactory()
+                CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cellImg = new CellImgFactory()
                                 .create(dims, type);
 
                 DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursor = new DirectCellCursor(
