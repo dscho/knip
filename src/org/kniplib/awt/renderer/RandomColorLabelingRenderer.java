@@ -297,7 +297,7 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
                         } else {
                                 return m_isHiliteMode ? SegmentColorTable.NOTSELECTED_RGB
                                                 : SegmentColorTable
-                                                                .getColor(m_filteredLabels);
+                                                                .getColor(labeling);
                         }
                 }
 
