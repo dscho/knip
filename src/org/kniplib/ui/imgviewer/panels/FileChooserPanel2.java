@@ -120,8 +120,8 @@ public class FileChooserPanel2 extends JPanel {
                 m_FileChooser.setControlButtonsAreShown(false);
                 m_FileChooser.setPreferredSize(new Dimension(450, 340));
                 // center.add(buttonPan);
-                rightTab.setPreferredSize(new Dimension(400, 300));
-                browsePane.setPreferredSize(new Dimension(600, 500));
+                // rightTab.setPreferredSize(new Dimension(400, 300));
+                // browsePane.setPreferredSize(new Dimension(600, 500));
                 right.add(rightTab);
                 left.add(browsePane);
                 browsePane.add(buttonPan);
