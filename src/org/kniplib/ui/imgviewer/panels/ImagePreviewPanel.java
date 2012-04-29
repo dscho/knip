@@ -62,8 +62,8 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
@@ -74,13 +74,13 @@ import loci.formats.gui.BufferedImageReader;
 
 /**
  * A JPanel to provide a preview of the image itself or the meta data.
- * 
+ *
  * @author hornm, University of Konstanz
  */
-public class ImagePreviewPanel extends JTabbedPane implements Runnable {
+public class ImagePreviewPanel extends JPanel implements Runnable {
 
         /**
-	 * 
+	 *
 	 */
         private static final long serialVersionUID = 1L;
 
@@ -100,7 +100,7 @@ public class ImagePreviewPanel extends JTabbedPane implements Runnable {
                         "IsInterleaved" };
 
         /**
-	 * 
+	 *
 	 */
         public ImagePreviewPanel() {
                 super();
@@ -112,11 +112,11 @@ public class ImagePreviewPanel extends JTabbedPane implements Runnable {
                 m_iconLabel = new JLabel();
                 m_iconLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 
-                addTab("Image", m_iconLabel);
+                add("Image", m_iconLabel);
                 m_metadata = new String[][] { { "", "" } };
                 m_metadataTable = new JTable(new AbstractTableModel() {
                         /**
-			 * 
+			 *
 			 */
                         private static final long serialVersionUID = 1L;
 
@@ -148,16 +148,17 @@ public class ImagePreviewPanel extends JTabbedPane implements Runnable {
                         }
                 });
                 final JScrollPane sp = new JScrollPane(m_metadataTable);
+                sp.setPreferredSize(new Dimension(270, 200));
                 // table.setTableHeader(null);
                 // sp.setColumnHeaderView(null);
-                addTab("Metadata", sp);
+                add("Metadata", sp);
 
         }
 
         /**
          * Sets the preview to the specified file. This methods opens the file
          * and updates the preview panel.
-         * 
+         *
          * @param filename
          */
         public void setImage(final String filename) {
@@ -178,6 +179,7 @@ public class ImagePreviewPanel extends JTabbedPane implements Runnable {
         public void run() {
                 try { // catch-all for unanticipated exceptions
                         try {
+
                                 m_reader.setId(m_openedFile);
                                 m_iconLabel.setIcon(new ImageIcon(m_reader
                                                 .openThumbImage(0)));
