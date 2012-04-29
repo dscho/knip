@@ -138,7 +138,7 @@ public class FileChooserPanel2 extends JPanel {
 
                 setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
                 add(left);
-                add(center);
+                // add(center);
                 add(right);
 
                 m_FileChooser.addActionListener(new ActionListener() {
