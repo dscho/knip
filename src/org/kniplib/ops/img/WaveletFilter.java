@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   30 Dec 2010 (hornm): created
  */
@@ -61,6 +61,9 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.exception.IncompatibleTypeException;
+import net.imglib2.img.Img;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.roi.RectangleRegionOfInterest;
 import net.imglib2.type.numeric.RealType;
@@ -68,7 +71,7 @@ import net.imglib2.view.Views;
 
 /**
  * Image projection.
- * 
+ *
  * @author jmetzner, University of Konstanz
  */
 public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> & RandomAccessibleInterval<T>>
@@ -124,8 +127,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
 
         private Cursor<T> m_tempCursor;
 
-        private K m_tmp;
-
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public K compute(final K src, final K res) {
                 final int numDim = src.numDimensions();
@@ -149,8 +151,19 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                         } else
                                 dims[i] = d;
                 }
-
-                m_tempRandomAccess = m_tmp.randomAccess();
+                Img<T> temp;
+                try {
+                        temp = new ArrayImgFactory()
+                                        .imgFactory(src.firstElement()
+                                                        .createVariable())
+                                        .create(dims,
+                                                        src.firstElement()
+                                                                        .createVariable());
+                        m_tempRandomAccess = temp.randomAccess();
+                } catch (IncompatibleTypeException e1) {
+                        throw new IllegalArgumentException(
+                                        "Cannot create temp img.");
+                }
                 m_srcCursor = src.cursor();
 
                 while (m_srcCursor.hasNext()) {
@@ -183,14 +196,14 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                                         }
                                         for (int d = 0; d < numDim; d++) {
                                                 if (dim == d) {
-                                                        m_rowLength = (int) m_tmp
+                                                        m_rowLength = (int) temp
                                                                         .dimension(d);
-                                                        m_SelectedRowRoiExtend[d] = m_tmp
+                                                        m_SelectedRowRoiExtend[d] = temp
                                                                         .dimension(d);
                                                         m_BeginRoiExtend[d] = 1;
                                                 } else {
                                                         m_SelectedRowRoiExtend[d] = 1;
-                                                        m_BeginRoiExtend[d] = m_tmp
+                                                        m_BeginRoiExtend[d] = temp
                                                                         .dimension(d);
                                                 }
                                                 m_SelectedRowRoiOrigin[d] = 0;
@@ -202,7 +215,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                                         m_BeginTempRoiCur = m_BeginRoi
                                                         .getIterableIntervalOverROI(
                                                                         Views.extendValue(
-                                                                                        m_tmp,
+                                                                                        temp,
                                                                                         obj))
                                                         .cursor();
                                         m_BeginRoi.setOrigin(m_BeginRoiOrigin);
@@ -213,7 +226,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                                         m_SelectedRowTempRoiCur = m_SelectedRowRoi
                                                         .getIterableIntervalOverROI(
                                                                         Views.extendValue(
-                                                                                        m_tmp,
+                                                                                        temp,
                                                                                         obj))
                                                         .cursor();
                                         // m_SelectedRowRoi.setOrigin(m_SelectedRowRoiOrigin);
@@ -295,7 +308,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                         /**
                          * Wavelet Filter
                          */
-                        m_tempCursor = m_tmp.cursor();
+                        m_tempCursor = temp.cursor();
 
                         while (m_tempCursor.hasNext()) {
                                 if (m_tempCursor.next().getRealDouble() < m_lambda
@@ -325,14 +338,14 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                                         }
                                         for (int d = 0; d < numDim; d++) {
                                                 if (dim == d) {
-                                                        m_rowLength = (int) m_tmp
+                                                        m_rowLength = (int) temp
                                                                         .dimension(d);
-                                                        m_SelectedRowRoiExtend[d] = m_tmp
+                                                        m_SelectedRowRoiExtend[d] = temp
                                                                         .dimension(d);
                                                         m_BeginRoiExtend[d] = 1;
                                                 } else {
                                                         m_SelectedRowRoiExtend[d] = 1;
-                                                        m_BeginRoiExtend[d] = m_tmp
+                                                        m_BeginRoiExtend[d] = temp
                                                                         .dimension(d);
                                                 }
                                                 m_SelectedRowRoiOrigin[d] = 0;
@@ -344,7 +357,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                                         m_BeginTempRoiCur = m_BeginRoi
                                                         .getIterableIntervalOverROI(
                                                                         Views.extendValue(
-                                                                                        m_tmp,
+                                                                                        temp,
                                                                                         obj))
                                                         .cursor();
                                         m_BeginRoi.setOrigin(m_BeginRoiOrigin);
@@ -355,7 +368,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                                         m_SelectedRowTempRoiCur = m_SelectedRowRoi
                                                         .getIterableIntervalOverROI(
                                                                         Views.extendValue(
-                                                                                        m_tmp,
+                                                                                        temp,
                                                                                         obj))
                                                         .cursor();
                                         // m_SelectedRowRoi.setOrigin(m_SelectedRowRoiOrigin);
@@ -430,7 +443,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                         }
                 }
 
-                m_tempRandomAccess = m_tmp.randomAccess();
+
                 m_resCursor = res.cursor();
 
                 while (m_resCursor.hasNext()) {
@@ -537,15 +550,14 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                 }
         }
 
-        public WaveletFilter(K tmp, final ExecutorService executor,
+        public WaveletFilter(final ExecutorService executor,
                         final double lambda) {
-                m_tmp = tmp;
                 m_executor = executor;
                 m_lambda = lambda;
         }
 
         @Override
         public UnaryOperation<K, K> copy() {
-                return new WaveletFilter<T, K>(m_tmp, m_executor, m_lambda);
+                return new WaveletFilter<T, K>(m_executor, m_lambda);
         }
 }
