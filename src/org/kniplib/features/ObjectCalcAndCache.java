@@ -56,7 +56,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.subimg.SubImg;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 

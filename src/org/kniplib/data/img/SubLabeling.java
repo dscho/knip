@@ -53,6 +53,7 @@ package org.kniplib.data.img;
 import java.util.Collection;
 
 import net.imglib2.Interval;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.labeling.DefaultROIStrategy;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingFactory;
@@ -60,7 +61,6 @@ import net.imglib2.labeling.LabelingROIStrategy;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.roi.RegionOfInterest;
-import net.imglib2.subimg.SubImg;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 
 /**

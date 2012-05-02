@@ -4,8 +4,8 @@ import net.imglib2.Cursor;
 import net.imglib2.FinalInterval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.ops.UnaryOperation;
-import net.imglib2.subimg.SubImg;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 

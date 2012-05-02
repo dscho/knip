@@ -62,9 +62,9 @@ import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.ImgPlus;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.ops.UnaryOutputOperation;
 import net.imglib2.ops.operation.unary.img.CopyImgOperation;
-import net.imglib2.subimg.SubImg;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 

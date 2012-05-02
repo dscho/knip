@@ -55,10 +55,10 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.NativeImgLabeling;
 import net.imglib2.ops.UnaryOperation;
-import net.imglib2.subimg.SubImg;
 import net.imglib2.type.Type;
 
 import org.kniplib.data.img.SubImgPlus;

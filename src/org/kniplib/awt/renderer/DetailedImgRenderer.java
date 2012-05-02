@@ -59,10 +59,10 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-import net.imglib2.subimg.SubImg;
 import net.imglib2.type.Type;
 
 /**

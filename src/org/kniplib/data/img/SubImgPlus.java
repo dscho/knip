@@ -55,7 +55,7 @@ import java.util.List;
 
 import net.imglib2.Interval;
 import net.imglib2.img.ImgPlus;
-import net.imglib2.subimg.SubImg;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.type.Type;
 
 /**

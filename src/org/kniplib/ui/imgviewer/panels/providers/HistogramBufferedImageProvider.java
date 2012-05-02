@@ -6,7 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import net.imglib2.img.Img;
-import net.imglib2.subimg.SubImg;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.type.numeric.RealType;
 
 import org.kniplib.awt.AWTImageTools;

@@ -56,8 +56,8 @@ import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.ops.UnaryOperation;
-import net.imglib2.subimg.SubImg;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 

@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 import net.imglib2.FinalInterval;
 import net.imglib2.img.Img;
+import net.imglib2.img.subimg.SubImg;
 import net.imglib2.ops.UnaryOutputOperation;
 import net.imglib2.ops.operation.unary.img.CopyImgOperation;
-import net.imglib2.subimg.SubImg;
 import net.imglib2.type.numeric.RealType;
 
 import org.kniplib.ops.img.IterableIntervalCopy;
