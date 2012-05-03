@@ -73,7 +73,6 @@ import org.kniplib.ops.fft.ImageConvolution;
 import org.kniplib.ops.fft.ImgLibImageConvolution;
 import org.kniplib.ops.img.ImgConvert;
 import org.kniplib.ops.img.ImgNormalize;
-import org.kniplib.ops.img.ImgUtils;
 import org.kniplib.ops.iterable.Sum;
 import org.kniplib.types.ImgConversionTypes;
 
@@ -464,8 +463,7 @@ public class GaborFilterFeatureSet<T extends RealType<T>> implements FeatureSet 
 
                 for (int i = 0; i < m_filters.length; i++) {
                         ics.setKernel(m_filters[i]);
-                        m_convolvedImgs[i] = ics.compute(srcImg,
-                                        ImgUtils.createEmptyImg(srcImg));
+                        m_convolvedImgs[i] = ics.compute(srcImg);
                         m_convolvedImgRandAccess[i] = m_convolvedImgs[i]
                                         .randomAccess();
                 }
