@@ -8,8 +8,6 @@ import net.imglib2.labeling.LabelingType;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.type.NativeType;
 
-import org.kniplib.types.ConnectedType;
-
 /**
  * nD Connected Component Analysis.
  *
@@ -27,12 +25,11 @@ public class CCA<T extends NativeType<T> & Comparable<T>, I extends RandomAccess
         private final T m_background;
 
         /**
-         * @param ctype
+         * @param structuringElement
          * @param background
-         * @param mode
          */
-        public CCA(ConnectedType ctype, T background) {
-                super(ctype, GrowingMode.ASYNCHRONOUS, false);
+        public CCA(long[][] structuringElement, T background) {
+                super(structuringElement, GrowingMode.ASYNCHRONOUS, false);
                 m_background = background;
                 m_labelNumber = 1;
         }
@@ -90,7 +87,8 @@ public class CCA<T extends NativeType<T> & Comparable<T>, I extends RandomAccess
 
         @Override
         public UnaryOperation<I, LL> copy() {
-                return new CCA<T, I, LL>(m_ctype, m_background.copy());
+                return new CCA<T, I, LL>(m_structuringElement.clone(),
+                                m_background.copy());
         }
 
 }

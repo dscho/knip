@@ -64,7 +64,6 @@ import org.apache.commons.math.exception.MathIllegalArgumentException;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.linear.SingularValueDecomposition;
-import org.kniplib.ops.img.ExtendDimensionality;
 import org.kniplib.ops.img.ImgUtils;
 import org.kniplib.ops.misc.Convert;
 import org.kniplib.tools.ApacheMathTools;
@@ -121,8 +120,9 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
          */
         @Override
         public Img<T> compute(final Img<T> op, final Img<T> r) {
-                final ExtendDimensionality<DoubleType> ext = new ExtendDimensionality<DoubleType>(
-                                op.numDimensions());
+                // final ExtendDimensionality<DoubleType> ext = new
+                // ExtendDimensionality<DoubleType>(
+                // op.numDimensions());
 
                 DirectConvolver<T, DoubleType, Img<DoubleType>, Img<T>>[] convolver = new DirectConvolver[m_kernels.length];
 

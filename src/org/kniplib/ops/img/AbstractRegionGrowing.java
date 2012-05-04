@@ -72,8 +72,6 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Pair;
 
-import org.kniplib.types.ConnectedType;
-
 /**
  * TODO: Efficiency!!!!
  *
@@ -82,17 +80,17 @@ import org.kniplib.types.ConnectedType;
 public abstract class AbstractRegionGrowing<T extends Type<T>, L extends Comparable<L>, I extends IterableInterval<T> & RandomAccessibleInterval<T>, LL extends RandomAccessibleInterval<LabelingType<L>> & IterableInterval<LabelingType<L>>>
                 implements UnaryOperation<I, LL> {
 
-        protected final ConnectedType m_ctype;
-
         private final GrowingMode m_mode;
 
         private final Map<L, List<L>> m_labelMap;
 
         private final boolean m_allowOverlap;
 
-        RandomAccess<BitType> m_visitedRA = null;
+        private RandomAccess<BitType> m_visitedRA = null;
 
-        RandomAccess<LabelingType<L>> m_visitedLabRA = null;
+        private RandomAccess<LabelingType<L>> m_visitedLabRA = null;
+
+        protected final long[][] m_structuringElement;
 
         /**
          *
@@ -113,14 +111,16 @@ public abstract class AbstractRegionGrowing<T extends Type<T>, L extends Compara
         }
 
         /**
-         * @param ctype
+         * @param structuringElement
+         *                set of offsets defining the neighbourhood
          * @param mode
          * @param allowOverlap
          *                allows overlapping, more memory intensive
          */
-        public AbstractRegionGrowing(ConnectedType ctype, GrowingMode mode,
-                        boolean allowOverlap) {
-                m_ctype = ctype;
+        public AbstractRegionGrowing(long[][] structuringElement,
+                        GrowingMode mode, boolean allowOverlap) {
+
+                m_structuringElement = structuringElement;
                 m_mode = mode;
                 m_allowOverlap = allowOverlap;
                 m_labelMap = new HashMap<L, List<L>>();
@@ -204,8 +204,8 @@ public abstract class AbstractRegionGrowing<T extends Type<T>, L extends Compara
         private void growProcess(LinkedList<Pair<int[], L>> q,
                         RandomAccess<LabelingType<L>> resLabRA, I src) {
                 int[] pos, nextPos;
-                int[] perm = new int[src.numDimensions()];
                 L label;
+                boolean outOfBounds;
                 while (!q.isEmpty()) {
                         Pair<int[], L> p = q.removeFirst();
                         pos = p.a;
@@ -215,62 +215,25 @@ public abstract class AbstractRegionGrowing<T extends Type<T>, L extends Compara
                         // continue;
                         // }
 
-                        switch (m_ctype) {
-                        case EIGHT_CONNECTED:
-                                Arrays.fill(perm, -1);
-                                int i = src.numDimensions() - 1;
-                                boolean add;
-                                while (i > -1) {
-                                        nextPos = pos.clone();
-                                        add = true;
-                                        // Modify position
-                                        for (int j = 0; j < src.numDimensions(); j++) {
-                                                nextPos[j] += perm[j];
-                                                // Check boundaries
-                                                if (nextPos[j] < 0
-                                                                || nextPos[j] >= src
-                                                                                .dimension(j)) {
-                                                        add = false;
-                                                        break;
-                                                }
-                                        }
-                                        if (add) {
-                                                updatePosition(resLabRA, q,
-                                                                pos, nextPos,
-                                                                label);
-                                        }
-                                        // Calculate next permutation
-                                        for (i = perm.length - 1; i > -1; i--) {
-                                                if (perm[i] < 1) {
-                                                        perm[i]++;
-                                                        for (int j = i + 1; j < perm.length; j++) {
-                                                                perm[j] = -1;
-                                                        }
-                                                        break;
-                                                }
+                        for (long[] offset : m_structuringElement) {
+                                outOfBounds = false;
+                                nextPos = pos.clone();
+                                for (int i = 0; i < pos.length; i++) {
+                                        nextPos[i] = pos[i] + (int) offset[i];
+                                        if (nextPos[i] < 0
+                                                        || nextPos[i] >= src
+                                                                        .dimension(i)) {
+                                                outOfBounds = true;
+                                                break;
                                         }
                                 }
-                                break;
-                        case FOUR_CONNECTED:
-                        default:
-                                for (int j = 0; j < src.numDimensions(); j++) {
-                                        if (pos[j] + 1 < src.dimension(j)) {
-                                                nextPos = pos.clone();
-                                                nextPos[j]++;
-                                                updatePosition(resLabRA, q,
-                                                                pos, nextPos,
-                                                                label);
-                                        }
-                                        if (pos[j] - 1 >= 0) {
-                                                nextPos = pos.clone();
-                                                nextPos[j]--;
-                                                updatePosition(resLabRA, q,
-                                                                pos, nextPos,
-                                                                label);
-                                        }
+                                if (!outOfBounds) {
+                                        updatePosition(resLabRA, q, pos,
+                                                        nextPos, label);
                                 }
-                                break;
+
                         }
+
                 }
                 queueProcessed();
 
@@ -402,5 +365,64 @@ public abstract class AbstractRegionGrowing<T extends Type<T>, L extends Compara
          */
         protected boolean hasMoreSeedingPoints() {
                 return false;
+        }
+
+        /**
+         * Return an array of offsets to the 8-connected (or N-d equivalent)
+         * structuring element for the dimension space. The structuring element
+         * is the list of offsets from the center to the pixels to be examined.
+         *
+         * @param dimensions
+         * @return the structuring element.
+         */
+        public static long[][] get8ConStructuringElement(int dimensions) {
+                int nElements = 1;
+                for (int i = 0; i < dimensions; i++)
+                        nElements *= 3;
+                nElements--;
+                long[][] result = new long[nElements][dimensions];
+                long[] position = new long[dimensions];
+                Arrays.fill(position, -1);
+                for (int i = 0; i < nElements; i++) {
+                        System.arraycopy(position, 0, result[i], 0, dimensions);
+                        /*
+                         * Special case - skip the center element.
+                         */
+                        if (i == nElements / 2 - 1) {
+                                position[0] += 2;
+                        } else {
+                                for (int j = 0; j < dimensions; j++) {
+                                        if (position[j] == 1) {
+                                                position[j] = -1;
+                                        } else {
+                                                position[j]++;
+                                                break;
+                                        }
+                                }
+                        }
+                }
+                return result;
+        }
+
+        /**
+         * Return an array of offsets to the -connected (or N-d equivalent)
+         * structuring element for the dimension space. The structuring element
+         * is the list of offsets from the center to the pixels to be examined.
+         *
+         * @param dimensions
+         * @return the structuring element.
+         */
+        public static long[][] get4ConStructuringElement(int dimensions) {
+                int nElements = dimensions * 2;
+
+                long[][] result = new long[nElements][dimensions];
+                for (int d = 0; d < dimensions; d++) {
+                        result[d * 2] = new long[dimensions];
+                        result[d * 2 + 1] = new long[dimensions];
+                        result[d * 2][d] = -1;
+                        result[d * 2 + 1][d] = 1;
+
+                }
+                return result;
         }
 }

@@ -85,7 +85,6 @@ import org.kniplib.algorithm.extendedem.Instance;
 import org.kniplib.algorithm.extendedem.Instances;
 import org.kniplib.algorithm.types.NeighborhoodType;
 import org.kniplib.ops.interval.Centroid;
-import org.kniplib.types.ConnectedType;
 
 /**
  * <code> code m_executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());<br>
@@ -183,8 +182,9 @@ public class CellClumpedSplitter<T extends RealType<T>, L extends Comparable<L>,
                                 new NtreeImgFactory<IntType>().create(
                                                 cellLabeling, new IntType()));
                 new CCA<BitType, Img<BitType>, Labeling<Integer>>(
-                                ConnectedType.EIGHT_CONNECTED, new BitType())
-                                .compute(maxima, lab);
+                                AbstractRegionGrowing.get8ConStructuringElement(maxima
+                                                .numDimensions()),
+                                new BitType()).compute(maxima, lab);
 
                 final Collection<Integer> labels = lab.firstElement()
                                 .getMapping().getLabels();

@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   9 Dec 2011 (hornm): created
  */
@@ -60,10 +60,8 @@ import net.imglib2.labeling.LabelingType;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.util.Pair;
 
-import org.kniplib.types.ConnectedType;
-
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class GrowLabeling<L extends Comparable<L>>
@@ -72,7 +70,7 @@ public class GrowLabeling<L extends Comparable<L>>
 
         private Cursor<LabelingType<L>> m_seedLabCur;
 
-        private List<Pair<int[], L>> m_seedingPoints = new ArrayList<Pair<int[], L>>();
+        private final List<Pair<int[], L>> m_seedingPoints = new ArrayList<Pair<int[], L>>();
 
         private Iterator<Pair<int[], L>> m_seedIterator;
 
@@ -83,12 +81,11 @@ public class GrowLabeling<L extends Comparable<L>>
         private int m_iterations = 0;
 
         /**
-         * @param ctype
+         * @param structuringElement
          * @param numIterations
-         * @param mode
          */
-        public GrowLabeling(ConnectedType ctype, int numIterations) {
-                super(ctype, GrowingMode.SYNCHRONOUS, true);
+        public GrowLabeling(long[][] structuringElement, int numIterations) {
+                super(structuringElement, GrowingMode.SYNCHRONOUS, true);
                 m_numIterations = numIterations;
         }
 
@@ -157,7 +154,8 @@ public class GrowLabeling<L extends Comparable<L>>
 
         @Override
         public UnaryOperation<Labeling<L>, Labeling<L>> copy() {
-                return new GrowLabeling<L>(m_ctype, m_iterations);
+                return new GrowLabeling<L>(m_structuringElement.clone(),
+                                m_iterations);
         }
 
 }

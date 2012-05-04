@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   7 Dec 2011 (hornm): created
  */
@@ -67,10 +67,8 @@ import net.imglib2.ops.UnaryOperation;
 import net.imglib2.type.Type;
 import net.imglib2.type.logic.BitType;
 
-import org.kniplib.types.ConnectedType;
-
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class VoronoiLikeRegionGrowing<L extends Comparable<L>, T extends Type<T> & Comparable<T>>
@@ -79,7 +77,7 @@ public class VoronoiLikeRegionGrowing<L extends Comparable<L>, T extends Type<T>
 
         private Cursor<LabelingType<L>> m_seedLabCur;
 
-        private RandomAccess<T> m_srcImgRA;
+        private final RandomAccess<T> m_srcImgRA;
 
         private final T m_threshold;
 
@@ -98,7 +96,8 @@ public class VoronoiLikeRegionGrowing<L extends Comparable<L>, T extends Type<T>
          */
         public VoronoiLikeRegionGrowing(Img<T> srcImg, T threshold,
                         boolean fillHoles) {
-                super(ConnectedType.EIGHT_CONNECTED, GrowingMode.SYNCHRONOUS,
+                super(AbstractRegionGrowing.get8ConStructuringElement(srcImg
+                                .numDimensions()), GrowingMode.SYNCHRONOUS,
                                 false);
                 m_threshold = threshold;
                 m_fillHoles = fillHoles;
@@ -109,7 +108,7 @@ public class VoronoiLikeRegionGrowing<L extends Comparable<L>, T extends Type<T>
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @return
          */
         @Override
@@ -203,7 +202,7 @@ public class VoronoiLikeRegionGrowing<L extends Comparable<L>, T extends Type<T>
          * Helper function for reLabelBackgroundInsideCells. Does a BF search
          * starting from the given background point. If the contiguos background
          * region only has 1 neighbour
-         * 
+         *
          * @param yStart
          *                y coordinate of starting point
          * @param xStart
