@@ -668,19 +668,30 @@ public class BioFormatsImgSource<V> implements ImgSource {
                 final String dimOrder = r.getDimensionOrder();
 
                 final IMetadata meta = (IMetadata) r.getMetadataStore();
-                PositiveFloat xCal = meta.getPixelsPhysicalSizeX(0);
-                PositiveFloat yCal = meta.getPixelsPhysicalSizeY(0);
-                PositiveFloat zCal = meta.getPixelsPhysicalSizeZ(0);
-                PositiveFloat tCal = new PositiveFloat(
-                                meta.getPixelsTimeIncrement(0) == null ? Double.NaN
-                                                : Math.max(meta.getPixelsTimeIncrement(0),
-                                                                1));
+                // FIXME: workaround as getting the physical pixel size throws
+                // an IndexOutOfBoundsException (probably if image count == 0)
+                PositiveFloat xCal = null;
+                PositiveFloat yCal = null;
+                PositiveFloat zCal = null;
+                PositiveFloat tCal = null;
+
+                if (meta.getImageCount() != 0) {
+                        xCal = meta.getPixelsPhysicalSizeX(0);
+                        yCal = meta.getPixelsPhysicalSizeY(0);
+                        zCal = meta.getPixelsPhysicalSizeZ(0);
+                        tCal = new PositiveFloat(
+                                        meta.getPixelsTimeIncrement(0) == null ? Double.NaN
+                                                        : Math.max(meta.getPixelsTimeIncrement(0),
+                                                                        1));
+                }
                 if (xCal == null)
                         xCal = new PositiveFloat(Double.NaN);
                 if (yCal == null)
                         yCal = new PositiveFloat(Double.NaN);
                 if (zCal == null)
                         zCal = new PositiveFloat(Double.NaN);
+                if (tCal == null)
+                        tCal = new PositiveFloat(Double.NaN);
 
                 final List<PositiveFloat> calibrationList = new ArrayList<PositiveFloat>();
 
