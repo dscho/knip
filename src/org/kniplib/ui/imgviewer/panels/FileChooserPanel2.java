@@ -271,10 +271,10 @@ public class FileChooserPanel2 extends JPanel {
          *
          */
         public String[] getSelectedFiles() {
-                String[] values = new String[m_FileChooser.getSelectedFiles().length];
+                String[] values = new String[m_selectedFileListModel.getSize()];
                 for (int i = 0; i < values.length; i++) {
-                        values[i] = m_FileChooser.getSelectedFiles()[i]
-                                        .toString();
+                        values[i] = m_selectedFileListModel
+                                        .getAbsolutePathAt(i);
                 }
                 return values;
         }
@@ -299,6 +299,10 @@ public class FileChooserPanel2 extends JPanel {
                 @Override
                 public Object getElementAt(final int arg0) {
                         return m_files.get(arg0).getName();
+                }
+
+                public String getAbsolutePathAt(int idx) {
+                        return m_files.get(idx).getAbsolutePath();
                 }
 
                 /**
