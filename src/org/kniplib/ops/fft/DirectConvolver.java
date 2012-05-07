@@ -48,6 +48,9 @@ public class DirectConvolver<T extends RealType<T>, KT extends RealType<KT>, K e
                 for (int i = 0; i < kernelRadius.length; i++) {
                         kernelRadius[i] = m_kernel.dimension(i) / 2;
                 }
+
+                T type = srcRA.get();
+
                 while (resC.hasNext()) {
                         resC.fwd();
                         resC.localize(pos);
@@ -78,17 +81,23 @@ public class DirectConvolver<T extends RealType<T>, KT extends RealType<KT>, K e
         public final static <KT extends RealType<KT>, T extends RealType<T>> float convolve(
                         final RandomAccess<T> srcRA, final Cursor<KT> kerC,
                         final long[] pos, final long[] kernelRadii) {
-                srcRA.setPosition(pos);
+
+                // manual inline does not lead to a significant speed up => vm
+                // optimization on work
+                long[] kernelPos = new long[kernelRadii.length];
                 float val = 0;
+
+                srcRA.setPosition(pos);
                 kerC.reset();
                 while (kerC.hasNext()) {
                         kerC.fwd();
+                        kerC.localize(kernelPos);
+
                         for (int i = 0; i < kernelRadii.length; i++) {
-                                srcRA.setPosition(
-                                                pos[i]
-                                                                + kerC.getLongPosition(i)
-                                                                - kernelRadii[i],
-                                                i);
+                                if (kernelRadii[i] > 0) {//vertical 1d kernels have a dimension of size 1 with radius 0
+                                        srcRA.setPosition(pos[i] + kernelPos[i]
+                                                        - kernelRadii[i], i);
+                                }
                         }
                         val += srcRA.get().getRealFloat()
                                         * kerC.get().getRealFloat();
