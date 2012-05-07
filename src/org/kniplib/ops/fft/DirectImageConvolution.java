@@ -86,12 +86,17 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
 
         public DirectImageConvolution() {
                 super();
+                m_normalize = true;
         }
 
         public DirectImageConvolution(final Img<K> kernel,
                         final boolean normalizeKernel) {
                 m_normalize = normalizeKernel;
                 setKernel(kernel);
+        }
+
+        public DirectImageConvolution(final boolean normalize) {
+                m_normalize = normalize;
         }
 
         public DirectImageConvolution(final Img<K> kernel) {
