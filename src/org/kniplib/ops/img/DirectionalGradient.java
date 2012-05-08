@@ -5,6 +5,7 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 
 public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>>
                 implements UnaryOperation<K, K> {
@@ -13,7 +14,7 @@ public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessib
                 HORIZONTAL, VERTICAL;
         }
 
-        private int[] m_dims;
+        private final int[] m_dims;
 
         private final boolean m_invert;
 
@@ -53,8 +54,10 @@ public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessib
                 double max = op.firstElement().getMaxValue();
                 double min = op.firstElement().getMinValue();
 
-                RandomAccess<T> opLeftRndAccess = op.randomAccess();
-                RandomAccess<T> opRightRndAccess = op.randomAccess();
+                RandomAccess<T> opLeftRndAccess = Views.extendMirrorDouble(op)
+                                .randomAccess();
+                RandomAccess<T> opRightRndAccess = Views.extendMirrorDouble(op)
+                                .randomAccess();
                 RandomAccess<T> resAccess = r.randomAccess();
 
                 double diff;
@@ -67,11 +70,7 @@ public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessib
                         opRightRndAccess.setPosition(1, m_dims[1]);
                         resAccess.setPosition(0, m_dims[1]);
 
-                        for (int x = 1; x < op.dimension(m_dims[1]) - 1; x++) {
-
-                                opLeftRndAccess.fwd(m_dims[1]);
-                                opRightRndAccess.fwd(m_dims[1]);
-                                resAccess.fwd(m_dims[1]);
+                        for (int x = 0; x < op.dimension(m_dims[1]); x++) {
 
                                 if (m_invert) {
                                         diff = opRightRndAccess.get()
@@ -88,12 +87,17 @@ public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessib
                                                                         .getRealDouble()
                                                         + min;
                                 }
+
                                 // sum -= min;
                                 // sum += max;
                                 // sum /= 2;
                                 resAccess.get().setReal(
                                                 Math.max(min, Math.min(max,
                                                                 diff)));
+
+                                opLeftRndAccess.fwd(m_dims[1]);
+                                opRightRndAccess.fwd(m_dims[1]);
+                                resAccess.fwd(m_dims[1]);
                         }
                 }
                 return r;
