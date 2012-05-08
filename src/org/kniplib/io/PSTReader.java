@@ -18,9 +18,9 @@ import loci.formats.FormatTools;
  * This Reader reads the Till Photonics *.pst files. Usally this images are
  * 12bit images. This Reader doesn't support to read subimages or just specified
  * images it only can read one image after another.
- * 
+ *
  * @author Christian Lutz
- * 
+ *
  */
 public final class PSTReader extends FormatReader {
 
@@ -39,11 +39,16 @@ public final class PSTReader extends FormatReader {
                                 h);
 
                 // reads the next buf.length bytes
-                for (int i = 0; i < buf.length; i += 2) {
-                        buf[i + 1] = in.readByte();
-                        buf[i] = in.readByte();
-                }
+                in.read(buf);
 
+                // swap bytes here, or, better, set core[0].littleEndian to true
+                // byte tmp;
+                // for (int i = 0; i < buf.length; i += 2) {
+                // tmp = buf[i];
+                // buf[i] = buf[i + 1];
+                // buf[i + 1] = tmp;
+                // }
+                //
                 return buf;
         }
 
@@ -72,7 +77,7 @@ public final class PSTReader extends FormatReader {
         /**
          * reads the inf-file containing information about array size(width,
          * height and number of time-frames)
-         * 
+         *
          * @param inf_file
          */
         private void readInf(File inf_file) throws FormatException {
@@ -145,7 +150,7 @@ public final class PSTReader extends FormatReader {
 
                 core[0].rgb = false;
                 core[0].pixelType = FormatTools.INT16;
-                core[0].littleEndian = false;
+                core[0].littleEndian = true;
                 core[0].dimensionOrder = "XYZCT";
 
         }
