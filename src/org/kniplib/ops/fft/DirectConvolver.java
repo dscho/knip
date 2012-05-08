@@ -49,15 +49,38 @@ public class DirectConvolver<T extends RealType<T>, KT extends RealType<KT>, K e
                         kernelRadius[i] = m_kernel.dimension(i) / 2;
                 }
 
-                T type = srcRA.get();
+                T accessSrc = srcRA.get();
+                KT accessKer = kernelC.get();
+
+                float val;
 
                 while (resC.hasNext()) {
+                        //image
                         resC.fwd();
                         resC.localize(pos);
-                        resC.get().setReal(
-                                        DirectConvolver.convolve(srcRA,
-                                                        kernelC, pos,
-                                                        kernelRadius));
+
+                        //kernel  inlined version of the method convolve
+                        val = 0;
+                        srcRA.setPosition(pos);
+                        kernelC.reset();
+                        while (kernelC.hasNext()) {
+                                kernelC.fwd();
+
+                                for (int i = 0; i < kernelRadius.length; i++) {
+                                        if (kernelRadius[i] > 0) { //dimension can have zero extension e.g. vertical 1d kernel
+                                                srcRA.setPosition(
+                                                                pos[i]
+                                                                                + kernelC.getLongPosition(i)
+                                                                                - kernelRadius[i],
+                                                                i);
+                                        }
+                                }
+
+                                val += accessSrc.getRealFloat()
+                                                * accessKer.getRealFloat();
+                        }
+
+                        srcRA.get().setReal(val);
                 }
 
                 return output;
@@ -82,23 +105,23 @@ public class DirectConvolver<T extends RealType<T>, KT extends RealType<KT>, K e
                         final RandomAccess<T> srcRA, final Cursor<KT> kerC,
                         final long[] pos, final long[] kernelRadii) {
 
-                // manual inline does not lead to a significant speed up => vm
-                // optimization on work
-                long[] kernelPos = new long[kernelRadii.length];
                 float val = 0;
 
                 srcRA.setPosition(pos);
                 kerC.reset();
                 while (kerC.hasNext()) {
                         kerC.fwd();
-                        kerC.localize(kernelPos);
 
                         for (int i = 0; i < kernelRadii.length; i++) {
-                                if (kernelRadii[i] > 0) {//vertical 1d kernels have a dimension of size 1 with radius 0
-                                        srcRA.setPosition(pos[i] + kernelPos[i]
-                                                        - kernelRadii[i], i);
+                                if (kernelRadii[i] > 0) { //dimension can have zero extension e.g. vertical 1d kernel
+                                        srcRA.setPosition(
+                                                        pos[i]
+                                                                        + kerC.getLongPosition(i)
+                                                                        - kernelRadii[i],
+                                                        i);
                                 }
                         }
+
                         val += srcRA.get().getRealFloat()
                                         * kerC.get().getRealFloat();
                 }
