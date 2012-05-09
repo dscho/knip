@@ -84,5 +84,34 @@ TODO:
 	* Background Color einstellen bei binary operations + open/close überprüfen
 	* Image Reader: Read in as? (type+factory)
 	* Efficient implementation of Table2Labeling#
+	
+	
+	
+newly added 09.05.12:
+	
+1. View u. Hiliting 
+1.1 Cleanup
+1.2 Rendering, Colortable, Labelfilter
+1.3 Hiliting
+
+2. ImgCell
+2.1. Colortable
+2.2. Metadata
+
+3. ImageCalculator
+3.1. Effizienter (pixelwise)
+
+
+4. ggf FeatureFactorty-Port
+
+5. StructuringElement and Filter-Extension Points
+
+6. FileCell
+
+7. ExceptionHandling and useful error messages
+
+8. GaussFilter
+
+9. Docu
 
 
