@@ -13,7 +13,8 @@ public class ImgUtils {
 
         public synchronized static <T extends RealType<T>> Img<T> createEmptyImg(
                         Img<T> in) {
-                return in.factory().create(in, in.firstElement());
+                return in.factory().create(in,
+                                in.firstElement().createVariable());
         }
 
         public synchronized static <T extends RealType<T>> Img<T> createEmptyCopy(
