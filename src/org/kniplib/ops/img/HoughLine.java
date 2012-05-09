@@ -1,7 +1,6 @@
 package org.kniplib.ops.img;
 
 import net.imglib2.Cursor;
-import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
@@ -14,11 +13,11 @@ import net.imglib2.util.Util;
 public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType<S> & NativeType<S>, K extends IterableInterval<T>>
                 implements UnaryOutputOperation<K, Img<S>> {
 
-        private int m_numBinsRho;
+        private final int m_numBinsRho;
 
-        private int m_numBinsTheta;
+        private final int m_numBinsTheta;
 
-        private S m_outType;
+        private final S m_outType;
 
         private double[] m_rho;
 
@@ -107,7 +106,7 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
 
         /**
          * Place a vote of value 1.
-         * 
+         *
          * @param loc
          *                the integer array indicating the location where the
          *                vote is to be placed in voteSpace.
@@ -120,15 +119,12 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
                 ra.get().add(m_outType);
         }
 
-        public long[] resultDims(Interval src) {
-                return new long[] { m_numBinsRho, m_numBinsTheta };
-        }
-
         public double[] getTranslatedPos(int[] pos) {
                 return new double[] { m_rho[pos[0]], m_theta[pos[1]] };
 
         }
 
+        @Override
         public UnaryOutputOperation<K, Img<S>> copy() {
                 return new HoughLine<T, S, K>(m_outType.copy(), m_threshold,
                                 m_numBinsRho, m_numBinsTheta);
@@ -136,7 +132,8 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
 
         @Override
         public Img<S> createEmptyOutput(K in) {
-                return new ArrayImgFactory<S>().create(resultDims(in),
+                return new ArrayImgFactory<S>().create(new long[] {
+                                m_numBinsRho, m_numBinsTheta },
                                 m_outType.createVariable());
         }
 

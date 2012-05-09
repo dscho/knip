@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   20 Jun 2011 (dietzc, hornm): created
  */
@@ -67,17 +67,17 @@ import org.kniplib.ops.misc.IntervalsFromDimSelection;
 
 /**
  * Applies a given Operation to each interval separately.
- * 
+ *
  * @author dietzc University of Konstanz
  */
 public final class IterateUnaryOperation<T extends Type<T>, V extends Type<V>, S extends RandomAccessibleInterval<T> & IterableInterval<T>, U extends RandomAccessibleInterval<V> & IterableInterval<V>>
                 implements UnaryOperation<S, U> {
 
-        private UnaryOperation<S, U> m_op;
+        private final UnaryOperation<S, U> m_op;
 
-        private int[] m_selectedDims;
+        private final int[] m_selectedDims;
 
-        private IntervalsFromDimSelection m_intervalOp;
+        private final IntervalsFromDimSelection m_intervalOp;
 
         public IterateUnaryOperation(UnaryOperation<S, U> op, int[] selectedDims) {
                 m_op = op;
@@ -89,14 +89,23 @@ public final class IterateUnaryOperation<T extends Type<T>, V extends Type<V>, S
         /**
          * {@inheritDoc}
          */
+        @Override
         public final U compute(final S in, final U out) {
 
-                Interval[] res = m_intervalOp.compute(m_selectedDims,
+                Interval[] inIntervals = m_intervalOp.compute(m_selectedDims,
                                 new Interval[] { in });
 
-                for (Interval interval : res) {
-                        m_op.compute(createSubTypeIn(interval, in),
-                                        createSubTypeOut(interval, out));
+                Interval[] outIntervals = m_intervalOp.compute(m_selectedDims,
+                                new Interval[] { out });
+
+                if (inIntervals.length != outIntervals.length) {
+                        throw new IllegalArgumentException(
+                                        "In and out intervals do not match! Most likely an implementation error!");
+                }
+
+                for (int i = 0; i < inIntervals.length; i++) {
+                        m_op.compute(createSubTypeIn(inIntervals[i], in),
+                                        createSubTypeOut(outIntervals[i], out));
                 }
 
                 return out;
