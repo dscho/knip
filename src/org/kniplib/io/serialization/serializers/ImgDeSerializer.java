@@ -60,7 +60,6 @@ import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
 import net.imglib2.img.NativeImg;
-import net.imglib2.img.basictypeaccess.DataAccess;
 import net.imglib2.img.list.ListImg;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.Type;
@@ -92,7 +91,7 @@ public class ImgDeSerializer {
                         out.writeInt(SupportedImgs.NATIVEIMG.ordinal());
                         NATIVEIMGDESERIALIZER
                                         .serialize(out,
-                                                        (NativeImg<? extends NativeType<?>, ? extends DataAccess>) img);
+                                                        (NativeImg<? extends NativeType<?>, ?>) img);
                 } else if (img instanceof ListImg) {
                         out.writeInt(SupportedImgs.LISTIMG.ordinal());
                         serializeListImg(out, (ListImg<? extends Type<?>>) img);

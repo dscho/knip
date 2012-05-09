@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import net.imglib2.img.NativeImg;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.basictypeaccess.DataAccess;
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.cell.AbstractCell;
 import net.imglib2.img.cell.CellCursor;
@@ -33,9 +32,8 @@ import org.kniplib.types.ImgFactoryTypes;
 public class NativeImgDeSerializer {
 
         @SuppressWarnings("unchecked")
-        public void serialize(
-                        BufferedDataOutputStream out,
-                        NativeImg<? extends NativeType<?>, ? extends DataAccess> img)
+        public void serialize(BufferedDataOutputStream out,
+                        NativeImg<? extends NativeType<?>, ?> img)
                         throws IOException {
                 ImgFactoryTypes factoryType = ImgFactoryTypes
                                 .getImgFactoryType(img.factory());
@@ -82,7 +80,7 @@ public class NativeImgDeSerializer {
                 }
         }
 
-        public NativeImg<? extends NativeType<?>, ? extends DataAccess> deserialize(
+        public NativeImg<? extends NativeType<?>, ?> deserialize(
                         BufferedDataInputStream in) throws IOException {
 
                 ImgFactoryTypes factoryType = ImgFactoryTypes.values()[in
