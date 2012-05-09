@@ -48,14 +48,14 @@ public class FileChooserPanel2 extends JPanel {
 
         private final ImagePreviewPanel m_imagePreviewPanel;
 
-        private final JFileChooser m_FileChooser;
+        private final MacHackedFileChooserPanel m_FileChooser;
 
         private List<ChangeListener> m_listeners;
         private EventService m_eventService;
 
         public FileChooserPanel2() {
                 // create instances
-                m_FileChooser = new JFileChooser();
+                m_FileChooser = new MacHackedFileChooserPanel();
                 m_addButton = new JButton("add");
                 m_addAllButton = new JButton("add all");
                 m_remButton = new JButton("remove");
@@ -371,6 +371,20 @@ public class FileChooserPanel2 extends JPanel {
                 f.pack();
                 f.setVisible(true);
 
+        }
+
+        class MacHackedFileChooserPanel extends JFileChooser {
+                @Override
+                protected void firePropertyChange(String propertyName,
+                                Object oldValue, Object newValue) {
+                        try {
+                                super.firePropertyChange(propertyName,
+                                                oldValue, newValue);
+                        } catch (Exception e) {
+                                // This is a hack to avoid stupid mac behaviour
+                        }
+
+                }
         }
 
 }
