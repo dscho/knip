@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   6 Jul 2010 (hornm): created
  */
@@ -62,7 +62,7 @@ import org.kniplib.io.serialization.BufferedDataInputStream;
 import org.kniplib.io.serialization.BufferedDataOutputStream;
 
 /**
- * 
+ *
  * @author dietzc, hornm, University of Konstanz
  */
 public class MetadataDeSerializer {
@@ -101,7 +101,7 @@ public class MetadataDeSerializer {
                 for (int d = 0; d < numDims; d++) {
                         char[] label = new char[in.readInt()];
                         in.read(label);
-                        metadata.setAxis(Axes.get(String.copyValueOf(label)), d);
+                        metadata.setAxis(Axes.get(String.valueOf(label)), d);
                         metadata.setCalibration(in.readDouble(), d);
                 }
         }
