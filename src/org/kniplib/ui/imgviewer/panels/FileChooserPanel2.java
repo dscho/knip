@@ -48,14 +48,14 @@ public class FileChooserPanel2 extends JPanel {
 
         private final ImagePreviewPanel m_imagePreviewPanel;
 
-        private final MacHackedFileChooserPanel m_FileChooser;
+        private final MacHackedFileChooserPanel m_fileChooser;
 
         private List<ChangeListener> m_listeners;
         private EventService m_eventService;
 
         public FileChooserPanel2() {
                 // create instances
-                m_FileChooser = new MacHackedFileChooserPanel();
+                m_fileChooser = new MacHackedFileChooserPanel();
                 m_addButton = new JButton("add");
                 m_addAllButton = new JButton("add all");
                 m_remButton = new JButton("remove");
@@ -108,12 +108,12 @@ public class FileChooserPanel2 extends JPanel {
 
                 // buttonPan.add(m_imagePreviewPanel);
                 // buttonPan.add(Box.createGlue());
-                m_FileChooser.setPreferredSize(new Dimension(300, 100));
+                m_fileChooser.setPreferredSize(new Dimension(300, 100));
                 JPanel browsePane = new JPanel();
                 browsePane.setLayout(new BoxLayout(browsePane, BoxLayout.Y_AXIS));
-                browsePane.add(m_FileChooser);
+                browsePane.add(m_fileChooser);
 
-                m_FileChooser.setFileFilter(new FileNameExtensionFilter(
+                m_fileChooser.setFileFilter(new FileNameExtensionFilter(
                                 "Bio_Images", "jpg", "png", "tif", "jpeg",
                                 "bmp",
                                 "mov", "pic", "raw", "xml", "eps", "epsi",
@@ -138,9 +138,9 @@ public class FileChooserPanel2 extends JPanel {
                                 "lsc", "fff", "pr3", "dti", "pds", "aim",
                                 "mvd2"));
                 JTabbedPane rightTab = new JTabbedPane();
-                m_FileChooser.setMultiSelectionEnabled(true);
-                m_FileChooser.setControlButtonsAreShown(false);
-                m_FileChooser.setPreferredSize(new Dimension(450, 340));
+                m_fileChooser.setMultiSelectionEnabled(true);
+                m_fileChooser.setControlButtonsAreShown(false);
+                m_fileChooser.setPreferredSize(new Dimension(450, 340));
                 // center.add(buttonPan);
                 // rightTab.setPreferredSize(new Dimension(400, 300));
                 // browsePane.setPreferredSize(new Dimension(600, 500));
@@ -163,11 +163,11 @@ public class FileChooserPanel2 extends JPanel {
                 // add(center);
                 add(right);
 
-                m_FileChooser.addActionListener(new ActionListener() {
+                m_fileChooser.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                                 System.out.println("Action");
-                                File selectedFile = m_FileChooser
+                                File selectedFile = m_fileChooser
                                                 .getSelectedFile();
                                 System.out.println(selectedFile.getParent());
                                 System.out.println(selectedFile.getName());
@@ -212,7 +212,7 @@ public class FileChooserPanel2 extends JPanel {
 
         private void onAdd() {
 
-                File[] files = m_FileChooser.getSelectedFiles();
+                File[] files = m_fileChooser.getSelectedFiles();
                 m_selectedFileListModel.addFiles(files);
 
                 fireSelectionChangedEvent();
@@ -225,7 +225,7 @@ public class FileChooserPanel2 extends JPanel {
          */
 
         private void onAddAll() {
-                m_selectedFileListModel.addFiles(m_FileChooser
+                m_selectedFileListModel.addFiles(m_fileChooser
                                 .getCurrentDirectory().listFiles());
                 fireSelectionChangedEvent();
         }

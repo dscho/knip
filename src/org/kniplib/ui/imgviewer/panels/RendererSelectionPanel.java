@@ -135,4 +135,5 @@ public class RendererSelectionPanel<T extends Type<T>, I extends IterableInterva
                 // Nothing to do here
         }
 
+
 }
