@@ -114,7 +114,29 @@ public class FileChooserPanel2 extends JPanel {
                 browsePane.add(m_FileChooser);
 
                 m_FileChooser.setFileFilter(new FileNameExtensionFilter(
-                                "images", "jpg", "png", "tif", "jpeg", "bmp"));
+                                "Bio_Images", "jpg", "png", "tif", "jpeg",
+                                "bmp",
+                                "mov", "pic", "raw", "xml", "eps", "epsi",
+                                "ps", "ics", "ids", "lei", "stk", "nd", "nd2",
+                                "sld", "pict", "svs", "hdr", "img", "jpx",
+                                "psd", "mdb", "lsm", "avi", "gif", "lif",
+                                "jp2", "liff", "fits", "dicom", "dcm", "r3d",
+                                "dv", "l2n", "scn", "mnc", "mrc", "oib", "oif",
+                                "pgm", "ziv", "tga", "tiff", "spi", "stk",
+                                "hed", "cr2", "crw", "txt", "gel", "ims",
+                                "dm3", "naf", "seq", "htd", "pnl", "xdce",
+                                "ipl", "mrw", "mng", "nrrd", "nhdr", "ome",
+                                "cfg", "am", "amiramesh", "grey", "hx",
+                                "labels", "fli", "his", "afm", "stp", "tfr",
+                                "ffr", "zfr", "zfp", "2fl", "dat", "par",
+                                "xqd", "xqf", "top", "sxm", "exp", "sm2",
+                                "sm3", "jpk", "dm2", "wat", "v", "fdf", "frm",
+                                "sld", "vms", "ndpi", "vsi", "inr", "acff",
+                                "bip", "arf", "al3d", "sdt", "c01", "flex",
+                                "ipw", "ipm", "xv", "lim", "nef", "apl", "mtb",
+                                "tnb", "obsep", "pcx", "vws", "xys", "html",
+                                "lsc", "fff", "pr3", "dti", "pds", "aim",
+                                "mvd2"));
                 JTabbedPane rightTab = new JTabbedPane();
                 m_FileChooser.setMultiSelectionEnabled(true);
                 m_FileChooser.setControlButtonsAreShown(false);
