@@ -30,10 +30,31 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+
+import org.kniplib.io.BioFormatsImgSource;
 import org.kniplib.ui.event.EventService;
 import org.kniplib.ui.imgviewer.events.FileChooserSelectedFilesChgEvent;
 
 public class FileChooserPanel2 extends JPanel {
+
+        private static final String[] FILE_SUFFICES;
+
+        static {
+                IFormatReader[] readers = new ImageReader(
+                                BioFormatsImgSource.getReaderClasses())
+                                .getReaders();
+                List<String> suffices = new ArrayList<String>();
+                for (IFormatReader r : readers) {
+                        for (String s : r.getSuffixes()) {
+                                if (s != null && s.length() > 0)
+                                        suffices.add(s);
+                        }
+                }
+                FILE_SUFFICES = suffices.toArray(new String[suffices.size()]);
+
+        }
 
         // list and its model keeping the selected files
         private final JList m_selectedFileList;
@@ -54,6 +75,7 @@ public class FileChooserPanel2 extends JPanel {
         private EventService m_eventService;
 
         public FileChooserPanel2() {
+
                 // create instances
                 m_fileChooser = new MacHackedFileChooserPanel();
                 m_addButton = new JButton("add");
@@ -114,29 +136,7 @@ public class FileChooserPanel2 extends JPanel {
                 browsePane.add(m_fileChooser);
 
                 m_fileChooser.setFileFilter(new FileNameExtensionFilter(
-                                "Bio_Images", "jpg", "png", "tif", "jpeg",
-                                "bmp",
-                                "mov", "pic", "raw", "xml", "eps", "epsi",
-                                "ps", "ics", "ids", "lei", "stk", "nd", "nd2",
-                                "sld", "pict", "svs", "hdr", "img", "jpx",
-                                "psd", "mdb", "lsm", "avi", "gif", "lif",
-                                "jp2", "liff", "fits", "dicom", "dcm", "r3d",
-                                "dv", "l2n", "scn", "mnc", "mrc", "oib", "oif",
-                                "pgm", "ziv", "tga", "tiff", "spi", "stk",
-                                "hed", "cr2", "crw", "txt", "gel", "ims",
-                                "dm3", "naf", "seq", "htd", "pnl", "xdce",
-                                "ipl", "mrw", "mng", "nrrd", "nhdr", "ome",
-                                "cfg", "am", "amiramesh", "grey", "hx",
-                                "labels", "fli", "his", "afm", "stp", "tfr",
-                                "ffr", "zfr", "zfp", "2fl", "dat", "par",
-                                "xqd", "xqf", "top", "sxm", "exp", "sm2",
-                                "sm3", "jpk", "dm2", "wat", "v", "fdf", "frm",
-                                "sld", "vms", "ndpi", "vsi", "inr", "acff",
-                                "bip", "arf", "al3d", "sdt", "c01", "flex",
-                                "ipw", "ipm", "xv", "lim", "nef", "apl", "mtb",
-                                "tnb", "obsep", "pcx", "vws", "xys", "html",
-                                "lsc", "fff", "pr3", "dti", "pds", "aim",
-                                "mvd2"));
+                                "BioFormats Images", FILE_SUFFICES));
                 JTabbedPane rightTab = new JTabbedPane();
                 m_fileChooser.setMultiSelectionEnabled(true);
                 m_fileChooser.setControlButtonsAreShown(false);
