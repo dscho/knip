@@ -136,17 +136,30 @@ public class BioFormatsImgSource<V> implements ImgSource {
          * Constructor for the BioFormats ImageSource
          */
         public BioFormatsImgSource() {
+                getReaderClasses();
+        }
+
+        /**
+         * Retrieves (of not done yet) and returns the available reader classes
+         *
+         * @return the reader classes
+         */
+        public static ClassList<IFormatReader> getReaderClasses() {
                 if (m_classList == null) {
-                        try {
-                                m_classList = new ClassList<IFormatReader>(
-                                                "readers.txt",
-                                                IFormatReader.class,
-                                                BioFormatsImgSource.class);
-                        } catch (IOException e) {
-                                m_classList = ImageReader
-                                                .getDefaultReaderClasses();
+                        ClassList<IFormatReader> classList = ImageReader
+                                        .getDefaultReaderClasses();
+                        m_classList = new ClassList<IFormatReader>(
+                                        IFormatReader.class);
+                        // add custom knip-image readers ot the head of the list
+                        m_classList.addClass(PSTReader.class);
+                        m_classList.addClass(RAWReader.class);
+                        for (Class<? extends IFormatReader> c : classList
+                                        .getClasses()) {
+                                m_classList.addClass(c);
                         }
+
                 }
+                return m_classList;
         }
 
         @Override

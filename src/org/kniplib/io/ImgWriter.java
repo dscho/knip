@@ -61,6 +61,7 @@ import loci.formats.ClassList;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
+import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.IMetadata;
@@ -82,13 +83,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides the functionality to write {@link Img}s using the <a href =
  * "http://loci.wisc.edu/bio-formats/">bioformats</a>-library.
- * 
- * 
+ *
+ *
  * @author hornm, University of Konstanz
  */
 public class ImgWriter {
 
-        private Logger LOGGER = LoggerFactory.getLogger(ImgWriter.class);
+        private final Logger LOGGER = LoggerFactory.getLogger(ImgWriter.class);
 
         /*
          * List of the names of the available writers associated with specific
@@ -113,18 +114,9 @@ public class ImgWriter {
 
                 if (m_mapWriters == null) {
                         loci.formats.ImageWriter writer;
-                        try {
-                                // including classes defined in readers.txt
-                                ClassList<IFormatWriter> defaultClasses = new ClassList<IFormatWriter>(
-                                                "writers.txt",
-                                                IFormatWriter.class,
-                                                ImgWriter.class);
-                                writer = new loci.formats.ImageWriter(
-                                                defaultClasses);
-                        } catch (IOException exc) {
-                                exc.printStackTrace();
-                                writer = new loci.formats.ImageWriter();
-                        }
+                        ClassList<IFormatWriter> defaultClasses = ImageWriter
+                                        .getDefaultWriterClasses();
+                        writer = new loci.formats.ImageWriter(defaultClasses);
                         IFormatWriter[] writers = writer.getWriters();
                         WRITERS = new String[writers.length];
                         m_mapWriters = new HashMap<String, IFormatWriter>();
@@ -150,7 +142,7 @@ public class ImgWriter {
         /**
          * Returns the list of the possible compression types of the specific
          * writer.
-         * 
+         *
          * @param writer
          *                the name of the writer
          * @return the list of possible compressions, <code>null</code> if there
@@ -177,7 +169,7 @@ public class ImgWriter {
         /**
          * Gets one suffix normally used to identify the format associated with
          * the specific writer.
-         * 
+         *
          * @param writer
          *                the writer
          * @return the suffix, e.g. '.tif'
@@ -194,12 +186,12 @@ public class ImgWriter {
         /**
          * Writes the image plane stack to the given file. The resulting image
          * format is determined by the given writer.
-         * 
+         *
          * @param img
          *                the image to be written
          * @param <T>
          *                the image type
-         * 
+         *
          * @param outfile
          *                the absolute path of the file to write in
          * @param writer
@@ -234,12 +226,12 @@ public class ImgWriter {
         /**
          * Writes the image plane stack to the given file. The resulting image
          * format is determined by the given writer.
-         * 
+         *
          * @param img
          *                the image to be written
          * @param <T>
          *                the image type
-         * 
+         *
          * @param outfile
          *                the absolute path of the file to write in
          * @param writer
@@ -528,7 +520,7 @@ public class ImgWriter {
 
         /**
          * All operations to be done to close the image writer.
-         * 
+         *
          * @throws IOException
          */
         public void close() throws IOException {
