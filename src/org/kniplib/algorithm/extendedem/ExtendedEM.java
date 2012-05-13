@@ -24,47 +24,47 @@ import java.util.Random;
  * set equal to the number of instances.
  * <p/>
  * <!-- globalinfo-end -->
- * 
+ *
  * <!-- options-start --> Valid options are:
  * <p/>
- * 
+ *
  * <pre>
  * -N &lt;num&gt;
  *  number of clusters. If omitted or -1 specified, then
  *  cross validation is used to select the number of clusters.
  * </pre>
- * 
+ *
  * <pre>
  * -I &lt;num&gt;
  *  max iterations.
  * (default 100)
  * </pre>
- * 
+ *
  * <pre>
  * -V
  *  verbose.
  * </pre>
- * 
+ *
  * <pre>
  * -M &lt;num&gt;
  *  minimum allowable standard deviation for normal density
  *  computation
  *  (default 1e-6)
  * </pre>
- * 
+ *
  * <pre>
  * -O
  *  Display model in old format (good when there are many clusters)
  * </pre>
- * 
+ *
  * <pre>
  * -S &lt;num&gt;
  *  Random number seed.
  *  (default 100)
  * </pre>
- * 
+ *
  * <!-- options-end -->
- * 
+ *
  * @author Mark Hall (mhall@cs.waikato.ac.nz)
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 6298 $
@@ -97,12 +97,6 @@ public class ExtendedEM {
         /** number of clusters selected by the user or cross validation */
         private int m_num_clusters;
 
-        /**
-         * the initial number of clusters requested by the user--- -1 if xval is
-         * to be used to find the number of clusters
-         */
-        private int m_initialNumClusters;
-
         /** number of attributes */
         private int m_num_attribs;
 
@@ -126,9 +120,6 @@ public class ExtendedEM {
 
         /** globally replace missing values */
         // private ReplaceMissingValues m_replaceMissing;
-
-        /** display model output in old-style format */
-        private boolean m_displayModelInOldFormat;
 
         /** the default seed value */
         protected int m_SeedDefault = 1;
@@ -163,7 +154,7 @@ public class ExtendedEM {
 
         /**
          * Set the number of clusters (-1 to select by CV).
-         * 
+         *
          * @param n
          *                the number of clusters
          * @throws Exception
@@ -180,16 +171,14 @@ public class ExtendedEM {
 
                 if (n < 0) {
                         m_num_clusters = -1;
-                        m_initialNumClusters = -1;
                 } else {
                         m_num_clusters = n;
-                        m_initialNumClusters = n;
                 }
         }
 
         /**
          * Set start centers of the EM Algo
-         * 
+         *
          * @param inst
          */
 
@@ -199,10 +188,7 @@ public class ExtendedEM {
                 m_centers = inst;
         }
 
-        private int[][][] m_nominalCounts;
-
         public void setClusterNominalCounts(final int[][][] nominalCounts) {
-                m_nominalCounts = nominalCounts;
         }
 
         private int[] m_clusterSizes;
@@ -210,7 +196,7 @@ public class ExtendedEM {
         public void setClusterSizes(final int[] clusterSizes) {
                 m_clusterSizes = clusterSizes;
         }
-        
+
 
         public void setMaxInterations(final int max) {
                 m_max_iterations = max;
@@ -218,20 +204,20 @@ public class ExtendedEM {
 
         /**
          * Initialise estimators and storage.
-         * 
+         *
          * @param inst
          *                the instances
          * @throws Exception
          *                 if initialization fails
          **/
         private void EM_Init(final Instances inst) throws Exception {
-                int i, j, k;
+                int i, j;
 
                 m_weights = new double[inst.numInstances()][m_num_clusters];
                 m_modelNormal = new double[m_num_clusters][m_num_attribs][3];
                 m_priors = new double[m_num_clusters];
 
-                final int[][][] nominalCounts = m_nominalCounts;
+                // final int[][][] nominalCounts = m_nominalCounts;
                 final int[] clusterSizes = m_clusterSizes;
                 final Instances centers = m_centers;
 
@@ -271,7 +257,7 @@ public class ExtendedEM {
 
         /**
          * calculate prior probabilites for the clusters
-         * 
+         *
          * @param inst
          *                the instances
          * @throws Exception
@@ -306,7 +292,7 @@ public class ExtendedEM {
 
         /**
          * The M step of the EM algorithm.
-         * 
+         *
          * @param inst
          *                the training instances
          * @throws Exception
@@ -390,7 +376,7 @@ public class ExtendedEM {
         /**
          * The E step of the EM algorithm. Estimate cluster membership
          * probabilities.
-         * 
+         *
          * @param inst
          *                the training instances
          * @param change_weights
@@ -425,7 +411,7 @@ public class ExtendedEM {
 
         /**
          * Constructor.
-         * 
+         *
          **/
         public ExtendedEM() {
                 // super();
@@ -435,7 +421,7 @@ public class ExtendedEM {
 
         /**
          * Return the normal distributions for the cluster models
-         * 
+         *
          * @return a <code>double[][][]</code> value
          */
         public double[][][] getClusterModelsNumericAtts() {
@@ -445,7 +431,7 @@ public class ExtendedEM {
         /**
          * Updates the minimum and maximum values for all the attributes based
          * on a new instance.
-         * 
+         *
          * @param instance
          *                the new instance
          */
@@ -474,7 +460,7 @@ public class ExtendedEM {
         /*
          * Returns default capabilities of the clusterer (i.e., the ones of
          * SimpleKMeans).
-         * 
+         *
          * @return the capabilities of this clusterer
          */
         /*
@@ -486,7 +472,7 @@ public class ExtendedEM {
         /**
          * Generates a clusterer. Has to initialize all fields of the clusterer
          * that are not being set via options.
-         * 
+         *
          * @param data
          *                set of instances serving as training data
          * @throws Exception
@@ -513,7 +499,7 @@ public class ExtendedEM {
 
         /**
          * Perform the EM algorithm
-         * 
+         *
          * @throws Exception
          *                 if something goes wrong
          */
@@ -542,7 +528,7 @@ public class ExtendedEM {
         /**
          * iterates the E and M steps until the log likelihood of the data
          * converges.
-         * 
+         *
          * @param inst
          *                the training instances.
          * @param report
@@ -604,7 +590,7 @@ public class ExtendedEM {
 
         /**
          * Gets the seed for the random number generations
-         * 
+         *
          * @return the seed for the random number generation
          */
         public int getSeed() {
@@ -613,7 +599,7 @@ public class ExtendedEM {
 
         /**
          * Computes the density for a given instance.
-         * 
+         *
          * @param instance
          *                the instance to compute the density for
          * @return the density.
@@ -668,7 +654,7 @@ public class ExtendedEM {
         /**
          * Computes the log of the conditional density (per cluster) for a given
          * instance.
-         * 
+         *
          * @param inst
          *                the instance to compute the density for
          * @return an array containing the estimated densities
@@ -706,7 +692,7 @@ public class ExtendedEM {
 
         /**
          * Returns the cluster priors.
-         * 
+         *
          * @return the cluster priors
          */
         public double[] clusterPriors() {
@@ -722,7 +708,7 @@ public class ExtendedEM {
 
         /**
          * Density function of normal distribution.
-         * 
+         *
          * @param x
          *                input value
          * @param mean
@@ -784,7 +770,7 @@ public class ExtendedEM {
 
         /**
          * Returns the logs of the joint densities for a given instance.
-         * 
+         *
          * @param inst
          *                the instance
          * @return the array of values
