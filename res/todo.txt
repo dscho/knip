@@ -1,8 +1,3 @@
-TODO:
-- Slawek coloc zu verfügung stellen
-
-- Splitting base from algorithms 
-
 - Extension Points
 	* ImageJ2
 	* JEP + Generalisierung
@@ -15,13 +10,9 @@ TODO:
 	* including correct implementation of equals vs compareTo
 	* Ask Bernd how they are treated in KNIME
 	
-- CellClumpSplitter (JENS)
-
-- Contour Detector Seed In Optional (CHR)
-
 - Binary & Morphological Ops clean up + finish (FELIX)
 
-- Filter/Convolution Framework (FELIX)
+- Filter/Convolution Framework
 	* Convolve method is very very slow
 	* FilterProducer (MexianHat, Sobel, Gabor, CurvedGabor, Prewitt, Laplace, etc pp.)
 	* Konfigurierbare Filter werden erzeugt (direkt sichtbar was man eigtl. erzeugt, sprich leicht zu erzeugen für user
@@ -32,6 +23,8 @@ TODO:
 	* verschiedene kernels noch anbieten (BOx/Sphere in BinaryKernels umbennen)
 	* Arbitrary Shape Kernel (ggf. wenn JHotDraw Annotator fertig ist)
 	* BugFixing (leere Tabelle sollte erzeugt werden dürfen)
+	* Ggf. ImgConverter nutzen um  nicht immer IN und OUT img im falle der Imgli2 convolution zu float konvertieren zu müssen 
+	* Alternative konvolution testen!!! (Apache Math?)
 	
 	
 - Labeling Factories/Types to Nodes (MICHA S.)
@@ -48,7 +41,13 @@ TODO:
 - FileReference
 	* Bernd?
 	
-- Annotator (MICHAEL)
+ImgViewer
+	* Test implementations of imglib2 with KNIME
+	
+ImgLib2
+	* Move algorithms to imglib2 and test them etc
+	
+- Annotator (MICHAEL Z.)
 	* JHotDraw integration
 
 - ImgReader layout (MAX)
@@ -76,14 +75,16 @@ TODO:
 	* Folder reader
 	* etc pp.?
 
-- Update workflows for wegpage
-	
+- Segment Overlay/Cropper/Features etc virtually extending Labeling (checkbox)
+
+- Default behaviour column selection
+
 - Bugs:
 	* Resampling WITH MetaData
 	* Merger (Definition, Merger: RowWise/ColumnWise)
 	* Background Color einstellen bei binary operations + open/close überprüfen
 	* Image Reader: Read in as? (type+factory)
-	* Efficient implementation of Table2Labeling#
+	* Efficient implementation of Table2Labeling
 	
 	
 	
@@ -100,7 +101,6 @@ newly added 09.05.12:
 
 3. ImageCalculator
 3.1. Effizienter (pixelwise)
-
 
 4. ggf FeatureFactorty-Port
 
