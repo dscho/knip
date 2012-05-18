@@ -85,8 +85,7 @@ ImgLib2
 	* Background Color einstellen bei binary operations + open/close überprüfen
 	* Image Reader: Read in as? (type+factory)
 	* Efficient implementation of Table2Labeling
-	
-	
+	* Dimselection fehlermeldung wird nicht gelöscht bei richtiger auswahl/anzahl der dimensionen
 	
 newly added 09.05.12:
 	
