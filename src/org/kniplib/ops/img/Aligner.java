@@ -109,10 +109,21 @@ public class Aligner<T extends RealType<T>> implements
         SIZEMODES m_sizemode;
 
         public enum ALIGNMODES {
-                FIRST, LAST, PAIRWISE
+                FIRST, LAST, PAIRWISE, STEPWISE
         };
 
         ALIGNMODES m_alignmode;
+        private int m_stepsize;
+
+        public Aligner(int[] selectedDims, int alignDim, Interval iv,
+                        SIZEMODES sizemode, ALIGNMODES alignmode, int stepsize) {
+                m_selectedDims = selectedDims.clone();
+                m_alignDim = alignDim;
+                m_sizemode = sizemode;
+                m_alignmode = alignmode;
+                m_iv = iv;
+                m_stepsize = stepsize;
+        }
 
         public Aligner(int[] selectedDims, int alignDim, Interval iv,
                         SIZEMODES sizemode, ALIGNMODES alignmode) {
@@ -275,18 +286,29 @@ public class Aligner<T extends RealType<T>> implements
                 }
 
                 PhaseCorrelation<T, T> p;
+                long ref;
+                long[][] cache = new long[(int) tend + 1][(int) (spmax[selectedDim2]
+                                - spmin[selectedDim2] + 1)];
+
                 for (long t = tstart; t <= tend; t++) {
 
                         if (m_alignmode == ALIGNMODES.FIRST) {
-                                p = new PhaseCorrelation<T, T>(sis[0],
-                                                sis[(int) t]);
+                                ref = 0;
                         } else if (m_alignmode == ALIGNMODES.LAST) {
-                                p = new PhaseCorrelation<T, T>(sis[(int) tmax],
-                                                sis[(int) t]);
-                        } else {
-                                p = new PhaseCorrelation<T, T>(
-                                                sis[(int) t - 1], sis[(int) t]);
+                                ref = tmax;
+                        } else if (m_alignmode == ALIGNMODES.PAIRWISE) {
+                                ref = t - 1;
+                        } else { // if (m_alignmode == ALIGNMODES.STEPWISE)
+                                ref = (long) Math.ceil(t / (double) m_stepsize)
+                                                * m_stepsize - m_stepsize;
+                                if (ref < tstart)
+                                        ref = tstart;
                         }
+
+                        p = new PhaseCorrelation<T, T>(sis[(int) ref],
+                                        sis[(int) t]);
+                        // p.setMinimalPixelOverlap(400000);
+
                         if (p.process()) { // success
                                 // List<PhaseCorrelationPeak> peaks =
                                 // p.getAllShifts();
@@ -312,11 +334,18 @@ public class Aligner<T extends RealType<T>> implements
                                 // }
                                 PhaseCorrelationPeak pe = p.getShift();
                                 long[] pos = pe.getPosition();
-                                if (m_alignmode == ALIGNMODES.PAIRWISE) {
+
+                                if (m_alignmode == ALIGNMODES.STEPWISE) {
+                                        cache[(int) t] = pos;
+
+                                        pos[0] += cache[(int) ref][0];
+                                        pos[1] += cache[(int) ref][1];
+                                } else if (m_alignmode == ALIGNMODES.PAIRWISE) {
                                         // accumulate the shifts
                                         pos[0] -= m_xind[(int) (t - tmin - 1)];
                                         pos[1] -= m_yind[(int) (t - tmin - 1)];
                                 }
+
                                 m_xind[(int) (t - tmin)] = (int) -pos[0];
                                 m_yind[(int) (t - tmin)] = (int) -pos[1];
 
