@@ -83,7 +83,11 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
 
         private final ExecutorService m_executor;
 
-        private final double m_lambda;
+        private final double m_lambda_min;
+
+        private final double m_lambda_max;
+
+        private final double m_ignorePercent;
 
         /* Inital ROI */
         private RectangleRegionOfInterest m_SelectedRowRoi;
@@ -141,8 +145,11 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                 }
                 final boolean[] dimSrcCur = new boolean[numDim];
                 final long[] dims = new long[numDim];
+                final long[] useDims = new long[dims.length];
+
                 for (int i = 0; i < numDim; ++i) {
                         final long d = src.dimension(i);
+                        useDims[i] = (long) (d * (1 - m_ignorePercent));
                         if (dimSrcCur[i] = (src.dimension(i) > 1)) {
                                 int n = 2;
                                 while (d > n)
@@ -308,15 +315,25 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                         /**
                          * Wavelet Filter
                          */
+
                         m_tempCursor = temp.cursor();
 
                         while (m_tempCursor.hasNext()) {
-                                if (m_tempCursor.next().getRealDouble() < m_lambda
-                                                && m_tempCursor.next()
-                                                                .getRealDouble() > -m_lambda) {
+
+                                if (m_tempCursor.next().getRealDouble() < m_lambda_max
+                                                && m_tempCursor.get()
+                                                                .getRealDouble() > m_lambda_min) {
                                         m_tempCursor.get().setZero();
                                 }
+                                for (int i = 0; i < useDims.length; ++i) {
+                                        if (useDims[i] < m_tempCursor
+                                                        .getDoublePosition(i)) {
+                                                m_tempCursor.get().setZero();
+                                                continue;
+                                        }
+                                }
                         }
+
                         m_tempCursor.reset();
 
                 }
@@ -443,7 +460,6 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                         }
                 }
 
-
                 m_resCursor = res.cursor();
 
                 while (m_resCursor.hasNext()) {
@@ -551,13 +567,18 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
         }
 
         public WaveletFilter(final ExecutorService executor,
-                        final double lambda) {
+                        final double lambda_min, final double lambda_max,
+                        final double ignorePercent) {
                 m_executor = executor;
-                m_lambda = lambda;
+                m_lambda_min = lambda_min;
+                m_lambda_max = lambda_max;
+                m_ignorePercent = ignorePercent;
         }
 
         @Override
         public UnaryOperation<K, K> copy() {
-                return new WaveletFilter<T, K>(m_executor, m_lambda);
+                return new WaveletFilter<T, K>(m_executor, m_lambda_min,
+                                m_lambda_max,
+                                m_ignorePercent);
         }
 }
