@@ -38,7 +38,7 @@ public class MatrixTools {
                 }
 
                 SingularValueDecomposition svd = new SingularValueDecomposition(
-                                new ImgBasedRealMatrix<T>(filter));
+                                new ImgBasedRealMatrix<T, Img<T>>(filter, 0, 1));
 
                 if (svd.getRank() != 1) {
                         return new Img[] { filter };

@@ -173,8 +173,8 @@ public class DirectImageConvolution<T extends RealType<T>, K extends RealType<K>
                 Img<DoubleType> vkernel;
                 Img<DoubleType> ukernel;
                 try {
-                        final RealMatrix mKernel = new ImgBasedRealMatrix<K>(
-                                        kernel);
+                        final RealMatrix mKernel = new ImgBasedRealMatrix<K, Img<K>>(
+                                        kernel, 0, 1);
                         final SingularValueDecomposition svd = new SingularValueDecomposition(
                                         mKernel);
                         if (svd.getRank() > 1) {
