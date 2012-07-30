@@ -1,116 +1,144 @@
-- Extension Points
-	* ImageJ2
-	* JEP + Generalisierung
-
-- Image Reader
-	* Read In as (Type, Factory) but efficient using MinMax from BioFormats (if provided)
-	* If BioFormats/Scifio provides MinMax: What about new fields in ImgPlusCell min/max (faster rendering possible) / or even: do it anyway?
-
-- ImgGroupBy Aggregation methods
-	* including correct implementation of equals vs compareTo
-	* Ask Bernd how they are treated in KNIME
+- 1.0 release (Friday 27.07.2012):
+   	
+    * Orga
+    	** Marketing auf Homepage, Tutorials (Videos (active presenter), Demoworkflows mit Annotationen)
+      	** Example Workflows
+      	** Doku (Knoten + Manual)
+      	** mark things, we are definitly going to change/not to keep as @deprecated?? (all)
+      	** groups to inform about the release: aachen (provide respective example workflows?), bioquant (Jürgen, Lorenz Maier, ...), ETHZ, Christian Wenzl (Constanza, provide example workflow?), Keith Neil (sanofi, Tubeness2.0 plugin with example workflow), ImageJ-gang, Martin Strauch, Students   
 	
-- Binary & Morphological Ops clean up + finish (FELIX)
-
-- Filter/Convolution Framework
-	* Convolve method is very very slow
-	* FilterProducer (MexianHat, Sobel, Gabor, CurvedGabor, Prewitt, Laplace, etc pp.)
-	* Konfigurierbare Filter werden erzeugt (direkt sichtbar was man eigtl. erzeugt, sprich leicht zu erzeugen für user
-	* Convolver:
-		**	 Spalte der Filter wird gewählt, Gefilterte Bilder als Dimension angehangen (Orginalformat).
-		**   Overflow/Clipping muss von user gewählt werden was gemacht wird
-	* Gaussfilter muss von ImgLib2 noch integriert werden
-	* verschiedene kernels noch anbieten (BOx/Sphere in BinaryKernels umbennen)
-	* Arbitrary Shape Kernel (ggf. wenn JHotDraw Annotator fertig ist)
-	* BugFixing (leere Tabelle sollte erzeugt werden dürfen)
-	* Ggf. ImgConverter nutzen um  nicht immer IN und OUT img im falle der Imgli2 convolution zu float konvertieren zu müssen 
-	* Alternative konvolution testen!!! (Apache Math?)
-	
-	
-- Labeling Factories/Types to Nodes (MICHA S.)
-
-- Icons
-
-- Haralick features generalisieren (Held)
-
-- Labeling Depedencies
-
-- Segment Cropper
-	* Setting if source img or binary img
-	
-- FileReference
-	* Bernd?
-	
-ImgViewer
-	* Test implementations of imglib2 with KNIME
-	
-ImgLib2
-	* Move algorithms to imglib2 and test them etc
-	
-- Annotator (MICHAEL Z.)
-	* JHotDraw integration
-
-- ImgReader layout (MAX)
-
-- Hilite + Viewer (MAX)
-	* Fix bug
-	* Measurement Tool in ImgViewer (Metadata)
-	* Plane direkt eingeben in PlaneSelection
-	* Testing
-	* Dual View (SynchronizedView)
-	* PlayButton in PlaneSelection
-	* Farbchooser für BoundingBox
+    * Renderer/Viewer hash value of images should not change if the image does not change (select row 1,2,1  hash for image of row 1 changes) 
+    
+	* ImageJ1 Plugin (Christian)
+		** e.g. can't transform type to ImageJ primitives should be a warning for the user not a complete exception with stacktrace etc
+		** Integration of imglib2-ij
+		** ImageJ1: If two nodes run in parallel all outputs are printed in red! Bugfix
+    	** Use ImgLib2 Wrappers for ImageJ1 computations 
+    	** Propagate more clear error messages to the user
+    	
+    * Library cleanup (Christian)
+    	    	
+    * Features (Christian)
+    	** NumPix with calibration
+    	
+	* Exception Handling (C,M,M -> Kurz vor Release den Code durchgehen und �berlegen wie die User diese vermittelt)
+  		** Define new exceptions and use them instead of illegal argument exceptions etc
+  		
+    * Icons (C,M,M)
+    	** Watershed (has one but wrong one)
+    	** Extract Outline Image (has one but wrong one)
 		
-- Anisotropic Diffusion integration
-	* Imglib2
+    * Node discussions
+    	** Process folder in Labeling
+    	** Discuss node categories (e.g. Grayscale Reconstruction and h-dome Extraction should be in process?)
+    	
+    * Testing (christian, martin, michael)  
+    	** Memory Leaks (Christian)
+    	** Test all nodes with ImageGenerator (Michael, Martin, Christian)
+		** Test all Views (Saturation/Normalization) with each type (Michael)
+		** Set-up old workflows (hcs and chromosome counting done)		
 
-- Watershed integration
-	* ImgLib2?
+       
+    * ImgReader layout (Maximilian Ortwein, Christian)
+      ** History      
+      ** add-all: only regard the filtered once     
+      ** bricht ab, wenn datei nicht eingelesen werden kann!! Missing-Cell anstelle!
+      ** clear selection in context menu
+      ** keep image order in the image reader dialog if the dialog is re-opened (Maximilian, Martin)
+         
+    * Polygone cell (deprecated) (Martin)
+    	
+	* Clean-Up ImageCalculator and hand it to Johannes Schindelin (christian/martin)
+	      
+- nice to have
 
-- Metanodes
-	* Filter labeling
-	* Extend Img (using resampler etc)
-	* Count objects
-	* Merge segmentations
-	* Folder reader
-	* etc pp.?
+ 	 * CellClumpSplitter
+ 	 	** Use HDomeTransform instead of HMaxima
+	 * Features
+    	** Optimize and test existing features 
+    	** Image Feature Factory
+    	** Add new features (see paperlist christian)
+    	** Test Zernike
+	* ImageJ1
+		** Wrapping of ImagePlus 
+		** Use legacy layer to run ImageJ1 plugins?!
+		** Fiji-update site?!
+    * ImageJ2
+    	* DimSelection a plugin should specifiy its dimensionality		
+	* Binary Operations
+		** Speed up
+    	** Memory efficiency
+    	** Optimierung der StructuringElements (falls mehrere im Eingang und Deckungsgleich etc pp -> nachdenken)
+    * Convolution framework:
+    	** 3-D GaussKernel
+    * RegionOfInterest Cell as LabelingValue?! 
+       ** RegionOfInterestCell separat? 
+       ** De/serialize RegionOfInterest
+     * ImgAdjuster
+       ** Measurement tools?!
+     * Metanodes 
+       ** Filter labeling
+       ** Extend Img (using resampler etc)
+       ** Count objects
+       ** Merge segmentations
+       ** Folder reader
+       ** etc pp.?       
+    * imgviewer: play button in plane selection
+    * imgviewer: plane direkt eingeben
+    * measurement-tool
+    * subset-selection vernünftig
+    * StructuringElement and Filter-Extension Points
+    * Labeling to Mapping table, Mapping table to Labeling etc pp.
+    * Omero integration
+    * Integration of seminar algorithms
+    * algorithms in imglib2 auslagern (C,M,M) (Hackathon!)
+    * ImgWriter auf ImgSaver umstellen (Image Writer works, so this may be postponed)
+    * image metadata (color table, minmax (LeeK), ...) (Michael)
+    * FileImg (Hackathon)    
+    * ExtensionPoint FeatureSetProvider
+    * TableCellViewer: if the column are swapped manually the column indices doesn't fit anymore
+    * VoronoiTesselation (richtige, Slawek, f�r Aachen)  
+    * Thresholders (Local/Global)
+      ** Allow multiple methods to be chosen (CollectionCell)
+    
+    
+    ** MVN Script überarbeiten
+        	** MVN Script �berarbeiten
+        	
+	* Extend SegmentOverlayViewer should also be able to take only a Labeling
+		** Renaming
+		** EmptyImg
 
-- Segment Overlay/Cropper/Features etc virtually extending Labeling (checkbox)
+  	* Adopt LazyNodeDialogPanel to more beautiful arrangement of dialog components (together with KNIME)
+    
+    * ImageJ2
+    	** IJ2 muss da mal richtig loslegen -> anzahl der dimensions
+    	** Needs discussion with ImageJ2 (Hackathon) (E-Mail an imagej-devel)
+    	    	    
+    * New Annotator (Michael Delz, Christian)
+      ** JHotDraw integration
+      ** splines
+      ** save and load
+      ** draw on empty image       
+                      
+    * SubsetSelection 
+    	** Mal dr�ber nachdenken (ggf. kommasepariert)
+    	
+    * advanced splitting options in UCSplitter as well
 
-- Default behaviour column selection
+//////////////////////////////////////
 
-- Bugs:
-	* Resampling WITH MetaData
-	* Merger (Definition, Merger: RowWise/ColumnWise)
-	* Background Color einstellen bei binary operations + open/close überprüfen
-	* Image Reader: Read in as? (type+factory)
-	* Efficient implementation of Table2Labeling
-	* Dimselection fehlermeldung wird nicht gelöscht bei richtiger auswahl/anzahl der dimensionen
-	
-newly added 09.05.12:
-	
-1. View u. Hiliting 
-1.1 Cleanup
-1.2 Rendering, Colortable, Labelfilter
-1.3 Hiliting
+Topics:
+- Eclipse-update site
+- KNIME algorithms to imglib2 / algorithms interface in imglib2 überdenken
+- FileStoreCell, LabelingExtension, ...
 
-2. ImgCell
-2.1. Colortable
-2.2. Metadata
+Hackathon:
 
-3. ImageCalculator
-3.1. Effizienter (pixelwise)
-
-4. ggf FeatureFactorty-Port
-
-5. StructuringElement and Filter-Extension Points
-
-6. FileCell
-
-7. ExceptionHandling and useful error messages
-
-8. GaussFilter
-
-9. Docu
+- Michael-Fragen: Reise-Finanzierung, Anmeldung für KOS, Finanizierung, Catering (Geld), Location? ...
+- Emüll (Christian)
+- Dresden, Melissa, Wisconsin, Omero
 
 
+    
+    

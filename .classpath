@@ -4,33 +4,35 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/TableLayout.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.6.1.jar" sourcepath="lib/src/slf4j-api-1.6.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/slf4j-log4j12-1.6.1.jar" sourcepath="lib/src/slf4j-log4j12-1.6.1-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-math-3.0-SNAPSHOT.jar" sourcepath="lib/src/commons-math-3.0-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/colt.jar" sourcepath="lib/src/colt-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/mines-jtk-20100113.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swingx.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imglib2-2.0.0-SNAPSHOT.jar" sourcepath="lib/src/imglib2-2.0.0-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imglib2-algorithms-2.0.0-SNAPSHOT.jar" sourcepath="lib/src/imglib2-algorithms-2.0.0-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar" sourcepath="lib/src/imglib2-algorithms-gpl-2.0.0-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imglib2-ij-2.0.0-SNAPSHOT.jar" sourcepath="lib/src/imglib2-ij-2.0.0-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imglib2-io-2.0.0-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imglib2-ops-2.0.0-SNAPSHOT.jar" sourcepath="lib/src/imglib2-ops-2.0.0-SNAPSHOT-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imglib2-scripting-2.0.0-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/bio-formats-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/scifio-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ome-xml-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ext-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jai_imageio-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/loci-common-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/poi-loci-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xalan-2.7.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/lwf-stubs-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mdbtools-java-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/metakit-4.4-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/serializer-2.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-realtransform-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-log4j12-1.6.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-codec-20041127.091804.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-math3-3.0.jar" sourcepath="/home/eethyo/.m2/repository/org/apache/commons/commons-math3/3.0/commons-math3-3.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mahout-collections-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-api-1.6.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-io-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-scripting-2.0.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mines-jtk-20100113.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/backport-util-concurrent-3.1.jar" sourcepath="/home/hornm/.m2/repository/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/serializer-2.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/xalan-2.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-legacy-2.0.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.4-20120726.192349-136.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.4-20120726.192218-146.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-common-4.4-20120726.192235-146.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.4-20120726.192310-146.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.4-20120726.192227-146.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.4-20120726.192338-146.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.4-20120726.192303-146.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.4-20120726.192251-146.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120726.192321-103.jar"/>
 	<classpathentry kind="output" path="bin"/>
+	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
+	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
 </classpath>

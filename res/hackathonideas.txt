@@ -1,0 +1,8 @@
+- Integration ImageJ2 to KNIME
+	- Laden von jar files welche nicht richtig annotiert sind
+	- ImageJ1 plugins in KNIME?
+- Eclipse update site nutzen/automatisch 
+- How to test algorithms
+- Algorithm interface? How to develop algorithms?
+- Efficient implementations of serialization
+- Multiple ImageViews
