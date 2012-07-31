@@ -24,14 +24,7 @@
 	* Exception Handling (C,M,M -> Kurz vor Release den Code durchgehen und �berlegen wie die User diese vermittelt)
   		** Define new exceptions and use them instead of illegal argument exceptions etc
   		
-    * Icons (C,M,M)
-    	** Watershed (has one but wrong one)
-    	** Extract Outline Image (has one but wrong one)
 		
-    * Node discussions
-    	** Process folder in Labeling
-    	** Discuss node categories (e.g. Grayscale Reconstruction and h-dome Extraction should be in process?)
-    	
     * Testing (christian, martin, michael)  
     	** Memory Leaks (Christian)
     	** Test all nodes with ImageGenerator (Michael, Martin, Christian)
@@ -46,8 +39,7 @@
       ** clear selection in context menu
       ** keep image order in the image reader dialog if the dialog is re-opened (Maximilian, Martin)
          
-    * Polygone cell (deprecated) (Martin)
-    	
+   	
 	* Clean-Up ImageCalculator and hand it to Johannes Schindelin (christian/martin)
 	      
 - nice to have
@@ -60,7 +52,6 @@
     	** Add new features (see paperlist christian)
     	** Test Zernike
 	* ImageJ1
-		** Wrapping of ImagePlus 
 		** Use legacy layer to run ImageJ1 plugins?!
 		** Fiji-update site?!
     * ImageJ2
@@ -69,11 +60,6 @@
 		** Speed up
     	** Memory efficiency
     	** Optimierung der StructuringElements (falls mehrere im Eingang und Deckungsgleich etc pp -> nachdenken)
-    * Convolution framework:
-    	** 3-D GaussKernel
-    * RegionOfInterest Cell as LabelingValue?! 
-       ** RegionOfInterestCell separat? 
-       ** De/serialize RegionOfInterest
      * ImgAdjuster
        ** Measurement tools?!
      * Metanodes 
@@ -84,30 +70,16 @@
        ** Folder reader
        ** etc pp.?       
     * imgviewer: play button in plane selection
-    * imgviewer: plane direkt eingeben
     * measurement-tool
-    * subset-selection vernünftig
-    * StructuringElement and Filter-Extension Points
     * Labeling to Mapping table, Mapping table to Labeling etc pp.
     * Omero integration
     * Integration of seminar algorithms
     * algorithms in imglib2 auslagern (C,M,M) (Hackathon!)
-    * ImgWriter auf ImgSaver umstellen (Image Writer works, so this may be postponed)
     * image metadata (color table, minmax (LeeK), ...) (Michael)
-    * FileImg (Hackathon)    
-    * ExtensionPoint FeatureSetProvider
-    * TableCellViewer: if the column are swapped manually the column indices doesn't fit anymore
-    * VoronoiTesselation (richtige, Slawek, f�r Aachen)  
-    * Thresholders (Local/Global)
-      ** Allow multiple methods to be chosen (CollectionCell)
     
     
     ** MVN Script überarbeiten
         	** MVN Script �berarbeiten
-        	
-	* Extend SegmentOverlayViewer should also be able to take only a Labeling
-		** Renaming
-		** EmptyImg
 
   	* Adopt LazyNodeDialogPanel to more beautiful arrangement of dialog components (together with KNIME)
     
@@ -121,10 +93,7 @@
       ** save and load
       ** draw on empty image       
                       
-    * SubsetSelection 
-    	** Mal dr�ber nachdenken (ggf. kommasepariert)
     	
-    * advanced splitting options in UCSplitter as well
 
 //////////////////////////////////////
 
