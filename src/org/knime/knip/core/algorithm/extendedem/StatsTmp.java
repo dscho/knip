@@ -1,6 +1,6 @@
 package org.knime.knip.core.algorithm.extendedem;
 
-class Stats {
+class StatsTmp {
         public double count = 0;
         public double sum = 0;
         public double sumSq = 0;

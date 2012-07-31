@@ -1,6 +1,6 @@
 package org.knime.knip.core.algorithm.extendedem;
 
-class AttributeStats {
+class AttributeStatsTmp {
         public int[] nominalCounts;
         public double[] nominalWeights;
         public int totalCount = 0;
@@ -9,7 +9,7 @@ class AttributeStats {
         public int intCount = 0;
         public int realCount = 0;
         public int distinctCount = 0;
-        public Stats numericStats;
+        public StatsTmp numericStats;
         public double SMALL = 1e-6;
 
         public boolean eq(final double a, final double b) {

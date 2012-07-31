@@ -82,10 +82,10 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.FloatType;
 
-import org.knime.knip.core.algorithm.extendedem.Attribute;
+import org.knime.knip.core.algorithm.extendedem.AttributeTmp;
 import org.knime.knip.core.algorithm.extendedem.ExtendedEM;
-import org.knime.knip.core.algorithm.extendedem.Instance;
-import org.knime.knip.core.algorithm.extendedem.Instances;
+import org.knime.knip.core.algorithm.extendedem.InstanceTmp;
+import org.knime.knip.core.algorithm.extendedem.InstancesTmp;
 import org.knime.knip.core.algorithm.types.NeighborhoodType;
 import org.knime.knip.core.ops.bittype.PositionsToBitTypeImage;
 import org.knime.knip.core.ops.img.algorithms.LocalMaximaForDistanceMap;
@@ -324,7 +324,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                 /*
                  * data set of the clumped cell.
                  */
-                private Instances t_dataSet;
+                private InstancesTmp t_dataSet;
 
                 /*
                  * distanceMap image roi Cursor
@@ -381,9 +381,9 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                  */
                 private final double[] pos;
 
-                private final Instance inst;
+                private final InstanceTmp inst;
 
-                private ArrayList<Attribute> attr;
+                private ArrayList<AttributeTmp> attr;
 
                 /**
                  * Constructor
@@ -414,7 +414,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                         t_centerPoint = new int[t_numDim];
                         boundaries = dimension;
                         pos = new double[t_numDim];
-                        inst = new Instance(1, pos);
+                        inst = new InstanceTmp(1, pos);
                         inst.setDataset(t_dataSet);
                 }
 
@@ -440,7 +440,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                         /*
                                          * create new seeding points for EM
                                          */
-                                        final Instances seedPoints = prepareSeedingPointsForEM();
+                                        final InstancesTmp seedPoints = prepareSeedingPointsForEM();
                                         /*
                                          * perform em
                                          */
@@ -536,7 +536,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                  * @return result of EM Algorithm
                  * @throws Exception
                  */
-                private ExtendedEM performEMAlgo(final Instances seedPoints)
+                private ExtendedEM performEMAlgo(final InstancesTmp seedPoints)
                                 throws Exception {
                         final ExtendedEM res = new ExtendedEM();
                         /*
@@ -688,19 +688,19 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                 /*
                                  * create cluster center points
                                  */
-                                attr = new ArrayList<Attribute>(t_numDim);
+                                attr = new ArrayList<AttributeTmp>(t_numDim);
                                 for (int d = 0; d < t_numDim; ++d)
-                                        attr.add(new Attribute("d" + d,
-                                                        Attribute.NUMERIC));
+                                        attr.add(new AttributeTmp("d" + d,
+                                                        AttributeTmp.NUMERIC));
 
-                                t_dataSet = new Instances(
+                                t_dataSet = new InstancesTmp(
                                                 "CellClumpedSplitter", attr, n);
                                 distanceMapRoiCursor.reset();
 
                                 while (distanceMapRoiCursor.hasNext()) {
                                         final float v = distanceMapRoiCursor
                                                         .next().getRealFloat();
-                                        final Instance row = new Instance(
+                                        final InstanceTmp row = new InstanceTmp(
                                                         t_numDim);
                                         for (int d = 0; d < t_numDim; ++d) {
                                                 final double p = distanceMapRoiCursor
@@ -832,11 +832,11 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                  *
                  * @return Instance of seeding points
                  */
-                private Instances prepareSeedingPointsForEM() {
-                        final Instances res = new Instances("centers", attr,
+                private InstancesTmp prepareSeedingPointsForEM() {
+                        final InstancesTmp res = new InstancesTmp("centers", attr,
                                         t_seedPoints.size());
                         for (final long[] t : t_seedPoints) {
-                                final Instance row = new Instance(t_numDim);
+                                final InstanceTmp row = new InstanceTmp(t_numDim);
                                 for (int d = 0; d < t_numDim; ++d)
                                         row.setValue(attr.get(d), (int) t[d]);
                                 res.add(row);

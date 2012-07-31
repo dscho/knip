@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
-public class Attribute {
+public class AttributeTmp {
         private final int m_Type;
 
         public static final int NUMERIC = 0;
@@ -79,18 +79,18 @@ public class Attribute {
                 return (m_Type == STRING);
         }
 
-        public Attribute(final String attributeName, final int index) {
+        public AttributeTmp(final String attributeName, final int index) {
 
                 this(attributeName);
                 m_Index = index;
         }
 
-        public Attribute(final String attributeName) {
+        public AttributeTmp(final String attributeName) {
 
                 this(attributeName, new ProtectedProperties(new Properties()));
         }
 
-        public Attribute(final String attributeName,
+        public AttributeTmp(final String attributeName,
                         final ProtectedProperties metadata) {
 
                 m_Index = -1;

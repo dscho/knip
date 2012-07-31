@@ -92,7 +92,7 @@ public class ExtendedEM {
         // private double m_loglikely;
 
         /** training instances */
-        private Instances m_theInstances = null;
+        private InstancesTmp m_theInstances = null;
 
         /** number of clusters selected by the user or cross validation */
         private int m_num_clusters;
@@ -182,9 +182,9 @@ public class ExtendedEM {
          * @param inst
          */
 
-        private Instances m_centers;
+        private InstancesTmp m_centers;
 
-        public void setCenters(final Instances inst) {
+        public void setCenters(final InstancesTmp inst) {
                 m_centers = inst;
         }
 
@@ -209,7 +209,7 @@ public class ExtendedEM {
          * @throws Exception
          *                 if initialization fails
          **/
-        private void EM_Init(final Instances inst) throws Exception {
+        private void EM_Init(final InstancesTmp inst) throws Exception {
                 int i, j;
 
                 m_weights = new double[inst.numInstances()][m_num_clusters];
@@ -218,10 +218,10 @@ public class ExtendedEM {
 
                 // final int[][][] nominalCounts = m_nominalCounts;
                 final int[] clusterSizes = m_clusterSizes;
-                final Instances centers = m_centers;
+                final InstancesTmp centers = m_centers;
 
                 for (i = 0; i < m_num_clusters; i++) {
-                        final Instance center = centers.instance(i);
+                        final InstanceTmp center = centers.instance(i);
                         for (j = 0; j < m_num_attribs; j++) {
                                 final double minStdD = (m_minStdDevPerAtt != null) ? m_minStdDevPerAtt[j]
                                                 : m_minStdDev;
@@ -262,7 +262,7 @@ public class ExtendedEM {
          * @throws Exception
          *                 if priors can't be calculated
          **/
-        private void estimate_priors(final Instances inst) throws Exception {
+        private void estimate_priors(final InstancesTmp inst) throws Exception {
 
                 for (int i = 0; i < m_num_clusters; i++) {
                         m_priors[i] = 0.0;
@@ -297,7 +297,7 @@ public class ExtendedEM {
          * @throws Exception
          *                 if something goes wrong
          */
-        private void M(final Instances inst) throws Exception {
+        private void M(final InstancesTmp inst) throws Exception {
 
                 int i, j, l;
 
@@ -307,7 +307,7 @@ public class ExtendedEM {
                 for (i = 0; i < m_num_clusters; i++) {
                         for (j = 0; j < m_num_attribs; j++) {
                                 for (l = 0; l < inst.numInstances(); l++) {
-                                        final Instance in = inst.instance(l);
+                                        final InstanceTmp in = inst.instance(l);
                                         if (!in.isMissing(j)) {
                                                 m_modelNormal[i][j][0] += (in
                                                                 .value(j)
@@ -384,14 +384,14 @@ public class ExtendedEM {
          * @throws Exception
          *                 if computation fails
          */
-        private double E(final Instances inst, final boolean change_weights)
+        private double E(final InstancesTmp inst, final boolean change_weights)
                         throws Exception {
 
                 double loglk = 0.0, sOW = 0.0;
 
                 for (int l = 0; l < inst.numInstances(); l++) {
 
-                        final Instance in = inst.instance(l);
+                        final InstanceTmp in = inst.instance(l);
 
                         loglk += in.weight() * logDensityForInstance(in);
                         sOW += in.weight();
@@ -434,7 +434,7 @@ public class ExtendedEM {
          * @param instance
          *                the new instance
          */
-        private void updateMinMax(final Instance instance) {
+        private void updateMinMax(final InstanceTmp instance) {
 
                 for (int j = 0; j < m_theInstances.numAttributes(); j++) {
                         if (!instance.isMissing(j)) {
@@ -477,7 +477,7 @@ public class ExtendedEM {
          * @throws Exception
          *                 if the clusterer has not been generated successfully
          */
-        public void buildClusterer(final Instances data) throws Exception {
+        public void buildClusterer(final InstancesTmp data) throws Exception {
                 m_theInstances = data;
 
                 // calculate min and max values for attributes
@@ -493,7 +493,7 @@ public class ExtendedEM {
                 doEM();
 
                 // save memory
-                m_theInstances = new Instances(m_theInstances, 0);
+                m_theInstances = new InstancesTmp(m_theInstances, 0);
         }
 
         /**
@@ -537,7 +537,7 @@ public class ExtendedEM {
          * @throws Exception
          *                 if something goes wrong
          */
-        private double iterate(final Instances inst, final boolean report)
+        private double iterate(final InstancesTmp inst, final boolean report)
                         throws Exception {
 
                 int i;
@@ -621,7 +621,7 @@ public class ExtendedEM {
                 return maxIndex;
         }
 
-        public double logDensityForInstance(final Instance instance)
+        public double logDensityForInstance(final InstanceTmp instance)
                         throws Exception {
 
                 final double[] a = logJointDensitiesForInstance(instance);
@@ -661,7 +661,7 @@ public class ExtendedEM {
          * @throws Exception
          *                 if the density could not be computed successfully
          */
-        public double[] logDensityPerClusterForInstance(final Instance inst) {
+        public double[] logDensityPerClusterForInstance(final InstanceTmp inst) {
 
                 int i, j;
                 double logprob;
@@ -763,7 +763,7 @@ public class ExtendedEM {
                 }
         }
 
-        public double[] distributionForInstance(final Instance instance) {
+        public double[] distributionForInstance(final InstanceTmp instance) {
 
                 return logs2probs(logJointDensitiesForInstance(instance));
         }
@@ -777,7 +777,7 @@ public class ExtendedEM {
          * @exception Exception
          *                    if values could not be computed
          */
-        public double[] logJointDensitiesForInstance(final Instance inst) {
+        public double[] logJointDensitiesForInstance(final InstanceTmp inst) {
 
                 final double[] weights = logDensityPerClusterForInstance(inst);
                 final double[] priors = clusterPriors();

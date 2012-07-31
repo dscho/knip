@@ -1,11 +1,11 @@
 package org.knime.knip.core.algorithm.extendedem;
 
-public class Instance {
-        protected Instances m_Dataset;
+public class InstanceTmp {
+        protected InstancesTmp m_Dataset;
         protected double[] m_AttValues;
         protected double m_Weight;
 
-        public Instance(final double weight, final double[] attValues) {
+        public InstanceTmp(final double weight, final double[] attValues) {
 
                 m_AttValues = attValues;
                 m_Weight = weight;
@@ -33,11 +33,11 @@ public class Instance {
                 return m_AttValues[attIndex];
         }
 
-        public Attribute attribute(final int index) {
+        public AttributeTmp attribute(final int index) {
                 return m_Dataset.attribute(index);
         }
 
-        public void setDataset(final Instances instances) {
+        public void setDataset(final InstancesTmp instances) {
                 m_Dataset = instances;
 
         }
@@ -47,7 +47,7 @@ public class Instance {
                 return Double.NaN;
         }
 
-        public Instance(final int numAttributes) {
+        public InstanceTmp(final int numAttributes) {
 
                 m_AttValues = new double[numAttributes];
                 for (int i = 0; i < m_AttValues.length; i++) {
@@ -57,7 +57,7 @@ public class Instance {
                 m_Dataset = null;
         }
 
-        public void setValue(final Attribute att, final double value) {
+        public void setValue(final AttributeTmp att, final double value) {
                 setValue(att.index(), value);
 
         }

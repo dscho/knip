@@ -3,17 +3,17 @@ package org.knime.knip.core.algorithm.extendedem;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Instances extends ArrayList<Instance> implements Serializable {
+public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable {
         protected int m_ClassIndex;
         protected String m_RelationName;
-        protected ArrayList<Instance> m_Instances;
-        protected ArrayList<Attribute> m_Attributes;
+        protected ArrayList<InstanceTmp> m_Instances;
+        protected ArrayList<AttributeTmp> m_Attributes;
 
-        public Instances(final Instances dataset, final int capacity) {
+        public InstancesTmp(final InstancesTmp dataset, final int capacity) {
                 initialize(dataset, capacity);
         }
 
-        public Instances(final String name, final ArrayList<Attribute> attInfo,
+        public InstancesTmp(final String name, final ArrayList<AttributeTmp> attInfo,
                         final int capacity) {
 
                 m_RelationName = name;
@@ -22,10 +22,10 @@ public class Instances extends ArrayList<Instance> implements Serializable {
                 for (int i = 0; i < numAttributes(); i++) {
                         attribute(i).setIndex(i);
                 }
-                m_Instances = new ArrayList<Instance>(capacity);
+                m_Instances = new ArrayList<InstanceTmp>(capacity);
         }
 
-        protected void initialize(final Instances dataset, int capacity) {
+        protected void initialize(final InstancesTmp dataset, int capacity) {
                 if (capacity < 0)
                         capacity = 0;
 
@@ -34,19 +34,19 @@ public class Instances extends ArrayList<Instance> implements Serializable {
                 m_ClassIndex = dataset.m_ClassIndex;
                 m_RelationName = dataset.m_RelationName;
                 m_Attributes = dataset.m_Attributes;
-                m_Instances = new ArrayList<Instance>(capacity);
+                m_Instances = new ArrayList<InstanceTmp>(capacity);
         }
 
         @Override
-        public Instance get(final int index) {
+        public InstanceTmp get(final int index) {
                 return m_Instances.get(index);
         }
 
-        public Instance instance(final int index) {
+        public InstanceTmp instance(final int index) {
                 return m_Instances.get(index);
         }
 
-        public Attribute attribute(final int index) {
+        public AttributeTmp attribute(final int index) {
 
                 return m_Attributes.get(index);
         }
@@ -57,7 +57,7 @@ public class Instances extends ArrayList<Instance> implements Serializable {
         }
 
         @Override
-        public boolean add(final Instance inst){
+        public boolean add(final InstanceTmp inst){
                 return m_Instances.add(inst);
         }
 
@@ -261,9 +261,9 @@ public class Instances extends ArrayList<Instance> implements Serializable {
                 return result;
         }
 
-        public AttributeStats attributeStats(final int index) {
+        public AttributeStatsTmp attributeStats(final int index) {
 
-                final AttributeStats result = new AttributeStats();
+                final AttributeStatsTmp result = new AttributeStatsTmp();
                 if (attribute(index).isNominal()) {
                         result.nominalCounts = new int[attribute(index)
                                                        .numValues()];
@@ -271,7 +271,7 @@ public class Instances extends ArrayList<Instance> implements Serializable {
                                                            .numValues()];
                 }
                 if (attribute(index).isNumeric()) {
-                        result.numericStats = new Stats();
+                        result.numericStats = new StatsTmp();
                 }
                 result.totalCount = numInstances();
 
@@ -281,7 +281,7 @@ public class Instances extends ArrayList<Instance> implements Serializable {
                 double currentWeight = 0;
                 double prev = Double.NaN;
                 for (int j = 0; j < numInstances(); j++) {
-                        final Instance current = instance(sorted[j]);
+                        final InstanceTmp current = instance(sorted[j]);
                         if (current.isMissing(index)) {
                                 result.missingCount = numInstances() - j;
                                 break;
