@@ -8,10 +8,9 @@ lwf-stubs
 mdbtools-java
 poi-loci
 ome-xml
-scifio-4.4
+scifio
 
-
------
+-----------------------------------------------------------------------------
 
 All OME formats and software are freely available, and all OME source code is available under GNU public "copyleft" licenses.
 See http://www.gnu.org/copyleft/

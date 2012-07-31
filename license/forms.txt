@@ -1,5 +1,4 @@
- From:
- http://grepcode.com/snapshot/repo1.maven.org/maven2/com.jgoodies/forms/1.2.1
+From  http://grepcode.com/snapshot/repo1.maven.org/maven2/com.jgoodies/forms/1.2.1
   
 --------------------------------
   The BSD License for the JGoodies Forms

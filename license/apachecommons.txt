@@ -1,15 +1,13 @@
 http://commons.apache.org/license.html
 
 Valid for projects:
-commons-codec-*
-commons-logging-*
-commons-math3-*
-mahout-collections-*
-log4j-*
-serializer-*
-xalan-*
-
-
+commons-codec
+commons-logging
+commons-math3
+mahout-collections
+log4j
+serializer
+xalan
     
 ---------------------------------------------------------------------------    
           						Apache License
