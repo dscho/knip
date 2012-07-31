@@ -49,6 +49,22 @@ public final class ImgMetadataImpl extends GeneralMetadataImpl implements
                 this(metadata, metadata, metadata, new ImageMetadataImpl());
         }
 
+        /**
+         * Convenience constructor
+         *
+         * @param name
+         *                the name
+         * @param source
+         *                the source
+         * @param axes
+         *                the axes
+         */
+        public ImgMetadataImpl(String name, String source, String... axes) {
+                super(new CalibratedSpaceImpl(axes), new NamedImpl(name),
+                                new SourcedImpl(source));
+                m_imgMetadata = new ImageMetadataImpl();
+        }
+
         @Override
         public int getValidBits() {
                 return m_imgMetadata.getValidBits();
