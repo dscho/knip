@@ -26,7 +26,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -45,7 +44,7 @@ import javax.swing.filechooser.FileView;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.events.FileChooserSelectedFilesChgEvent;
 
-public class FileChooserPanel2 extends JPanel {
+public class FileChooserPanel extends JPanel {
 
         static final long serialVersionUID = 1;
         // list and its model keeping the selected files
@@ -72,12 +71,12 @@ public class FileChooserPanel2 extends JPanel {
                         .userNodeForPackage(getClass());
         private final FileFilter fileFilter;
 
-        /**
-         * Creates an new file chooser panel with no files filtered.
-         */
-        public FileChooserPanel2() {
-                this(null);
-        }
+        // /**
+        // * Creates an new file chooser panel with no files filtered.
+        // */
+        // public FileChooserPanel2() {
+        // this(null);
+        // }
 
         /**
          * Creates a new file chooser panel
@@ -85,7 +84,7 @@ public class FileChooserPanel2 extends JPanel {
          * @param fileFilter
          *                available file name extension filters
          */
-        public FileChooserPanel2(FileFilter fileFilter) {
+        public FileChooserPanel(FileFilter fileFilter) {
                 String prefDir = filePref.get("Path", "null");
                 this.fileFilter = fileFilter;
 
@@ -447,7 +446,6 @@ public class FileChooserPanel2 extends JPanel {
 
                                         m_files.add(f);
 
-
                         }
                         notifyListDataListener();
 
@@ -493,17 +491,6 @@ public class FileChooserPanel2 extends JPanel {
                 }
         }
 
-        public static void main(String[] args) {
-
-                JFrame f = new JFrame();
-                f.add(new FileChooserPanel2());
-
-                f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                f.pack();
-                f.setVisible(true);
-
-        }
-
         /**
          * Shows a modal dialog to select some files
          *
@@ -513,7 +500,7 @@ public class FileChooserPanel2 extends JPanel {
          *         closed with cancel, or ESC or X
          */
 
-        public static String[] showFileChooserDialog(
+        public static String[] showFileChooserDialog(FileFilter filter,
                         final String[] file_list) {
 
                 final JDialog dlg = new JDialog();
@@ -521,7 +508,7 @@ public class FileChooserPanel2 extends JPanel {
                 dlg.setModalityType(ModalityType.APPLICATION_MODAL);
                 final int[] cancelFlag = new int[] { 0 };
 
-                FileChooserPanel2 panel = new FileChooserPanel2();
+                FileChooserPanel panel = new FileChooserPanel(filter);
                 if (file_list != null) {
                         panel.update(file_list);
                 }
