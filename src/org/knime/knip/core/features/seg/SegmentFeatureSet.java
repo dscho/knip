@@ -55,7 +55,9 @@ import java.util.BitSet;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.img.Img;
+import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.util.Pair;
 
 import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
@@ -82,7 +84,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         "Centroid Dim 0", "Centroid Dim 1", "Centroid Dim 2",
                         "Centroid Dim 3", "Centroid Dim 4", "Num Pix",
                         "Circularity", "Perimeter", "Convexity", "Extend",
-                        "Diameter" };
+                        "Diameter", "Dimension 0", "Dimension 1",
+                        "Dimension 2", "Dimension 3", "Dimension 4" };
 
         private final ExtractOutlineImg m_outlineOp;
 
@@ -108,6 +111,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
         private ObjectCalcAndCache m_ocac;
 
+        // private CalibratedSpace m_cs;
+
         /**
          * @param target
          */
@@ -120,13 +125,15 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         }
 
         @FeatureTargetListener
-        public void iiUpdated(final IterableInterval<BitType> interval) {
-                m_interval = interval;
+        public void iiUpdated(
+                        Pair<IterableInterval<BitType>, CalibratedSpace> pair) {
+                m_interval = pair.a;
                 m_centroid = null;
+                // m_cs = pair.b;
 
                 int activeDims = 0;
-                for (int d = 0; d < interval.numDimensions(); d++) {
-                        if (interval.dimension(d) > 1) {
+                for (int d = 0; d < pair.a.numDimensions(); d++) {
+                        if (pair.a.dimension(d) > 1) {
                                 activeDims++;
                         }
                 }
@@ -142,7 +149,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         } else {
 
                                 final Img<BitType> bitMask = m_ocac
-                                                .binaryMask2D(interval);
+                                                .binaryMask2D(pair.a);
                                 m_outline = m_outlineOp
                                                 .compute(bitMask,
                                                                 ImgUtils.createEmptyImg(bitMask));
@@ -166,7 +173,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                                                         .size())
                                                         / Math.pow(m_perimeter,
                                                                         2);
-                                        m_solidity = interval.size() / ctr;
+                                        m_solidity = pair.a.size() / ctr;
                                 }
 
                                 if (m_enabled.get(10)) {
@@ -220,6 +227,18 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
                 case 10:
                         return m_diameter;
+
+                case 11:
+                        return m_interval.dimension(0);
+
+                case 12:
+                        return m_interval.dimension(1);
+                case 13:
+                        return m_interval.dimension(2);
+                case 14:
+                        return m_interval.dimension(3);
+                case 15:
+                        return m_interval.dimension(4);
 
                 default:
                         return 0;
