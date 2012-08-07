@@ -9,7 +9,6 @@ import java.util.Set;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ARGBScreenImage;
 import net.imglib2.display.projectors.Abstract2DProjector;
-import net.imglib2.display.projectors.Projector2D;
 import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
@@ -17,6 +16,7 @@ import net.imglib2.type.numeric.ARGBType;
 import org.knime.knip.core.awt.converter.LabelingTypeARGBConverter;
 import org.knime.knip.core.awt.parametersupport.RendererWithHilite;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
+import org.knime.knip.core.awt.specializedrendering.Projector2D;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 public class RandomColorLabelingRenderer<L extends Comparable<L>> extends

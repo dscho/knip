@@ -139,8 +139,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                 features.add("Circularity");
                 features.add("Perimeter");
                 features.add("Convexity");
+                features.add("Extend");
                 features.add("Diameter");
-                features.add("Size in Units");
 
                 for (AxisType type : defaultAxes) {
                         features.add("Dimension " + type.getLabel());
@@ -220,6 +220,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                 if (id < m_defaultAxis.length) {
                         int idx = m_cs.getAxisIndex(m_defaultAxis[id]);
                         if (idx != -1) {
+                                m_centroid = m_ocac.centroid(m_interval);
                                 return m_centroid[idx];
                         } else {
                                 return 0;
@@ -228,7 +229,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
                 if (id > m_defaultAxis.length + 5) {
                         int idx = m_cs.getAxisIndex(m_defaultAxis[id
-                                        - m_defaultAxis.length + 6]);
+                                        - m_defaultAxis.length - 6]);
                         if (idx != -1) {
                                 return m_interval.dimension(idx);
                         } else {
@@ -244,10 +245,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         return m_circularity;
                 case 2:
                         return m_perimeter;
-
                 case 3:
                         return m_solidity;
-
                 case 4:
                         double numPixBB = 1;
                         for (int d = 0; d < m_interval.numDimensions(); d++) {
