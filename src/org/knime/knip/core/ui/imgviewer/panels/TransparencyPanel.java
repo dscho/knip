@@ -4,13 +4,12 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,20 +25,33 @@ public class TransparencyPanel extends ViewerComponent {
 
         private EventService m_eventService;
 
-        private final JSlider m_slider;
-        private final JLabel m_sliderValue;
+        private JSlider m_slider;
+        private JLabel m_sliderValue;
+        private final boolean m_showLabel;
 
         public TransparencyPanel() {
                 super("Transparency", false);
-                setMinimumSize(new Dimension(180, 50));
+                m_showLabel = false;
+                construct();
+        }
+
+        public TransparencyPanel(boolean isBorderHidden) {
+                super("Transparency", isBorderHidden);
+                m_showLabel = isBorderHidden;
+                construct();
+        }
+
+        private void construct() {
+                setMinimumSize(new Dimension(180, 40));
                 setPreferredSize(new Dimension(180,
                                 this.getPreferredSize().height));
-                setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
 
                 m_sliderValue = new JLabel("128");
                 m_slider = new JSlider(JSlider.HORIZONTAL, 0, 255, 128);
-                m_slider.setPreferredSize(new Dimension(120, 17));
-                m_slider.setMaximumSize(new Dimension(120, 17));
+                m_slider.setPreferredSize(new Dimension(130, 17));
+                m_slider.setMaximumSize(new Dimension(180, m_slider
+                                .getMaximumSize().height));
                 m_slider.addChangeListener(new ChangeListener() {
                         @Override
                         public void stateChanged(ChangeEvent e) {
@@ -51,33 +63,48 @@ public class TransparencyPanel extends ViewerComponent {
                 });
 
 
-                add(createComponentPanel());
+                addComponents();
         }
 
-        private JPanel createComponentPanel() {
-                JPanel ret = new JPanel();
-                ret.setLayout(new GridBagLayout());
+        private void addComponents() {
+                setLayout(new GridBagLayout());
 
                 GridBagConstraints gc = new GridBagConstraints();
                 int x = 0;
                 int y = 0;
 
                 // all
+                gc.anchor = GridBagConstraints.WEST;
                 gc.fill = GridBagConstraints.HORIZONTAL;
 
-                // first col
-                gc.anchor = GridBagConstraints.LINE_START;
-                gc.weightx = 1.0;
+                // label row
+                if (m_showLabel) {
+                        gc.weightx = 1.0;
+                        gc.gridx = x;
+                        gc.gridwidth = 2;
+                        gc.gridy = y;
+                        gc.insets = new Insets(0, 5, 5, 0);
+                        add(new JLabel("Transparency"), gc);
 
-                gc.gridy = y;
-                ret.add(m_slider, gc);
+                        y++;
+                        gc.gridwidth = 1;
 
-                x++;
+                }
+
+
+                // content row
+                gc.weightx = 0.0;
                 gc.gridx = x;
                 gc.gridy = y;
-                ret.add(m_sliderValue, gc);
+                gc.insets = new Insets(0, 5, 0, 0);
+                add(m_slider, gc);
 
-                return ret;
+                x++;
+                gc.insets = new Insets(0, 10, 0, 0);
+                gc.weightx = 1.0;
+                gc.gridx = x;
+                gc.gridy = y;
+                add(m_sliderValue, gc);
         }
 
         /**
