@@ -128,7 +128,10 @@ public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<
                         }
                 } else {
                         for (int i = 0; i < e.getInterval().numDimensions(); i++) {
-                                properties[2 + i][0] = "Size " + i;
+                                properties[2 + i][0] = "Size "
+                                                + e.getCalibratedSpace()
+                                                                .axis(i)
+                                                                .getLabel();
                                 properties[2 + i][1] = ""
                                                 + e.getInterval().dimension(i);
                         }

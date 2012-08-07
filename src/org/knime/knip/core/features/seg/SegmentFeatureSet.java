@@ -50,11 +50,13 @@
  */
 package org.knime.knip.core.features.seg;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.img.Img;
+import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.util.Pair;
@@ -80,12 +82,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         /**
          * feature names
          */
-        public static final String[] FEATURES = new String[] {
-                        "Centroid Dim 0", "Centroid Dim 1", "Centroid Dim 2",
-                        "Centroid Dim 3", "Centroid Dim 4", "Num Pix",
-                        "Circularity", "Perimeter", "Convexity", "Extend",
-                        "Diameter", "Dimension 0", "Dimension 1",
-                        "Dimension 2", "Dimension 3", "Dimension 4" };
+        public final String[] FEATURES;
 
         private final ExtractOutlineImg m_outlineOp;
 
@@ -111,17 +108,45 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
         private ObjectCalcAndCache m_ocac;
 
+        private CalibratedSpace m_cs;
+
+        private final AxisType[] m_defaultAxis;
+
         // private CalibratedSpace m_cs;
 
         /**
          * @param target
          */
-        public SegmentFeatureSet() {
+        public SegmentFeatureSet(AxisType[] defaultAxes) {
                 super();
                 m_calculatePerimeter = new CalculatePerimeter();
                 m_outlineOp = new ExtractOutlineImg(false);
                 m_convexityOp = new ConvexHull2D<Img<BitType>>(0, 1, false);
                 m_calculateDiameter = new CalculateDiameter();
+                m_defaultAxis = defaultAxes;
+                FEATURES = getFeatures(defaultAxes);
+        }
+
+        public static String[] getFeatures(AxisType[] defaultAxes) {
+
+                ArrayList<String> features = new ArrayList<String>();
+
+                for (AxisType type : defaultAxes) {
+                        features.add("Centroid " + type.getLabel());
+                }
+
+                features.add("Size");
+                features.add("Circularity");
+                features.add("Perimeter");
+                features.add("Convexity");
+                features.add("Diameter");
+                features.add("Size in Units");
+
+                for (AxisType type : defaultAxes) {
+                        features.add("Dimension " + type.getLabel());
+                }
+
+                return features.toArray(new String[features.size()]);
         }
 
         @FeatureTargetListener
@@ -129,7 +154,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         Pair<IterableInterval<BitType>, CalibratedSpace> pair) {
                 m_interval = pair.a;
                 m_centroid = null;
-                // m_cs = pair.b;
+                m_cs = pair.b;
 
                 int activeDims = 0;
                 for (int d = 0; d < pair.a.numDimensions(); d++) {
@@ -192,54 +217,46 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         @Override
         public double value(int id) {
 
+                if (id < m_defaultAxis.length) {
+                        int idx = m_cs.getAxisIndex(m_defaultAxis[id]);
+                        if (idx != -1) {
+                                return m_centroid[idx];
+                        } else {
+                                return 0;
+                        }
+                }
+
+                if (id > m_defaultAxis.length + 5) {
+                        int idx = m_cs.getAxisIndex(m_defaultAxis[id
+                                        - m_defaultAxis.length + 6]);
+                        if (idx != -1) {
+                                return m_interval.dimension(idx);
+                        } else {
+                                return 0;
+                        }
+                }
+
+                id -= m_defaultAxis.length;
                 switch (id) {
                 case 0:
-                        m_centroid = m_ocac.centroid(m_interval);
-                        return m_centroid.length > 0 ? m_centroid[0] : 0;
-                case 1:
-                        m_centroid = m_ocac.centroid(m_interval);
-                        return m_centroid.length > 1 ? m_centroid[1] : 0;
-                case 2:
-                        m_centroid = m_ocac.centroid(m_interval);
-                        return m_centroid.length > 2 ? m_centroid[2] : 0;
-                case 3:
-                        m_centroid = m_ocac.centroid(m_interval);
-                        return m_centroid.length > 3 ? m_centroid[3] : 0;
-                case 4:
-                        m_centroid = m_ocac.centroid(m_interval);
-                        return m_centroid.length > 4 ? m_centroid[4] : 0;
-                case 5:
                         return m_interval.size();
-                case 6:
+                case 1:
                         return m_circularity;
-                case 7:
+                case 2:
                         return m_perimeter;
 
-                case 8:
+                case 3:
                         return m_solidity;
 
-                case 9:
+                case 4:
                         double numPixBB = 1;
                         for (int d = 0; d < m_interval.numDimensions(); d++) {
                                 numPixBB *= m_interval.dimension(d);
                         }
                         return m_interval.size() / numPixBB;
 
-                case 10:
+                case 5:
                         return m_diameter;
-
-                case 11:
-                        return m_interval.dimension(0);
-
-                case 12:
-                        return m_interval.dimension(1);
-                case 13:
-                        return m_interval.dimension(2);
-                case 14:
-                        return m_interval.dimension(3);
-                case 15:
-                        return m_interval.dimension(4);
-
                 default:
                         return 0;
                 }
