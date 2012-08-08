@@ -23,6 +23,7 @@ import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorLabelsDelEvent
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorLabelsSelChgEvent;
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorLabelsSetEvent;
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorToolChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseDraggedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMousePressedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseReleasedEvent;
@@ -180,7 +181,8 @@ public class AnnotatorManager<T extends RealType<T>, I extends Img<T>> extends
         @EventListener
         public void onUpdate(IntervalWithMetadataChgEvent<I> e) {
 
-                m_currentOverlay = getOverlayMap().get(e.getName().getName());
+                m_currentOverlay = getOverlayMap().get(
+                                e.getSource().getSource());
 
                 if (m_currentOverlay == null) {
                         m_currentOverlay = new Overlay<String>(e.getInterval());
@@ -200,6 +202,7 @@ public class AnnotatorManager<T extends RealType<T>, I extends Img<T>> extends
                 m_eventService.publish(new AnnotatorImgAndOverlayChgEvent(e
                                 .getInterval(), m_currentOverlay));
 
+                m_eventService.publish(new ImgRedrawEvent());
         }
 
         private boolean isInsideDims(long[] planePos, long[] dims) {
