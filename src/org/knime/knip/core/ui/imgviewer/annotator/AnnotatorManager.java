@@ -5,6 +5,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -110,47 +111,23 @@ public class AnnotatorManager<T extends RealType<T>, I extends Img<T>> extends
 
         @EventListener
         public void onFileListChange(AnnotatorFilelistChgEvent e) {
-                // final boolean win = System.getProperty("os.name").startsWith(
-                // "Windows");
-                // for (String key : new HashSet<String>(m_overlayMap.keySet()))
-                // {
-                // // Switching systems
-                // String ckey = key;
-                // if (win && key.charAt(0) == '/') {
-                // ckey = key.replace('/', '\\');
-                // } else if (!win && key.charAt(0) != '/') {
-                // ckey = key.replace('\\', '/');
-                // }
-                // boolean contains = false;
-                // String relocated = null;
-                // int bestLevel = 0;
-                // for (String file : e.getFileList()) {
-                // // Exactly same path
-                // if (key.equals(file)) {
-                // contains = true;
-                // break;
-                // }
-                // // Files moved
-                // int level = 0;
-                // File keyf = new File(ckey);
-                // File filef = new File(file);
-                // while (keyf.getName().equals(filef.getName())) {
-                // keyf = keyf.getParentFile();
-                // filef = filef.getParentFile();
-                // level++;
-                // }
-                // if (level > bestLevel) {
-                // relocated = file;
-                // }
-                // }
-                // if (!contains) {
-                // if (relocated != null) {
-                // m_overlayMap.put(relocated,
-                // m_overlayMap.get(key));
-                // }
-                // m_overlayMap.remove(key);
-                // }
-                // }
+
+                for (String key : new HashSet<String>(m_overlayMap.keySet())) {
+                        // Switching systems
+                        boolean contains = false;
+                        for (String file : e.getFileList()) {
+                                // Exactly same path
+                                if (key.equals(file)) {
+                                        contains = true;
+                                        break;
+                                }
+                        }
+                        if (!contains) {
+                                m_overlayMap.remove(key);
+                        }
+
+                }
+
         }
 
         @EventListener

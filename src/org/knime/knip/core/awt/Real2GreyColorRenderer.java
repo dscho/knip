@@ -93,7 +93,7 @@ public class Real2GreyColorRenderer<R extends RealType<R>> extends
                         int dimY, RandomAccessibleInterval<R> source,
                         ARGBScreenImage target) { // only 2 and 3 dim are valid
                                                   // for color rendering
-                if (source.numDimensions() <= m_colorDim
+                if (m_colorDim == -1 || source.numDimensions() <= m_colorDim
                                 || source.dimension(m_colorDim) <= 1
                                 || source.dimension(m_colorDim) > 3) {
                         return m_greyRenderer.getProjector(dimX, dimY, source,

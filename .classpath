@@ -30,7 +30,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.4-20120806.234317-149.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.4-20120806.234242-149.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.4-20120806.234231-149.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120806.234301-106.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120806.234301-106.jar" sourcepath="/scifio"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>

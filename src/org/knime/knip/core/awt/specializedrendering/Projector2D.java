@@ -53,7 +53,6 @@ public class Projector2D<A extends Type<A>, B extends Type<B>> extends
 		final Cursor<B> targetCursor = target.cursor();
 		final Cursor<A> sourceCursor = iterableSubsetView.cursor();
 
-
 		while (targetCursor.hasNext()) {
 			targetCursor.fwd();
 			sourceCursor.fwd();
