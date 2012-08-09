@@ -53,14 +53,19 @@ package org.knime.knip.core.ui.imgviewer.panels;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -68,6 +73,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.InputMap;
 import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -105,6 +111,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
         // private JComboBox[] m_planeFields;
         private JCheckBox[] m_planeCheckBoxes;
+
+        private JFormattedTextField[] m_coordinateTextFields;
 
         /* the plane dimension indices */
         private int m_dimX;
@@ -150,7 +158,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 setMaximumSize(new Dimension(200, getMaximumSize().height));
 
-
         }
 
         /**
@@ -195,16 +202,18 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 int lasti = 0;
                 for (int i = 0; i < m_dimSizes.length; i++) {
                         if (i == dimX || i == dimY) {
-                                continue;
-                        }
-                        if (first) {
-                                m_steps[i] = 1;
-                                lasti = i;
-                                first = false;
+                                m_coordinateTextFields[i].setEnabled(false);
                         } else {
-                                m_steps[i] = m_steps[lasti]
-                                                * (int) m_dimSizes[lasti];
-                                lasti = i;
+                                if (first) {
+                                        m_steps[i] = 1;
+                                        lasti = i;
+                                        first = false;
+                                } else {
+                                        m_steps[i] = m_steps[lasti]
+                                                        * (int) m_dimSizes[lasti];
+                                        lasti = i;
+                                }
+                                m_coordinateTextFields[i].setEnabled(true);
                         }
                 }
 
@@ -272,6 +281,12 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 m_oldCoordinates = imgCoords;
 
                 if (change) {
+                        for (int i = 0; i < m_dimSizes.length; i++) {
+                                m_coordinateTextFields[i]
+                                                .setValue(m_scrollBars[i]
+                                                                .getValue());
+                        }
+
                         m_eventService.publish(new PlaneSelectionEvent(Math
                                         .min(m_dimX, m_dimY), Math.max(m_dimY,
                                         m_dimX), imgCoords));
@@ -407,6 +422,10 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 m_axesLabels = e.getCalibratedSpace();
                 m_img = e.getInterval();
                 draw();
+                for (int i = 0; i < m_dimSizes.length; i++) {
+                        m_coordinateTextFields[i].setValue(m_scrollBars[i]
+                                        .getValue());
+                }
         }
 
         @EventListener
@@ -484,6 +503,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                         m_scrollBars = new JScrollBar[m_dimSizes.length];
                         m_planeCheckBoxes = new JCheckBox[m_dimSizes.length];
+                        m_coordinateTextFields = new JFormattedTextField[m_dimSizes.length];
+
                         // m_planeFields = new JComboBox[m_dimSizes.length];
                         JPanel sliderPanel;
                         for (int i = 0; i < m_dimSizes.length; i++) {
@@ -517,14 +538,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                 m_scrollBars[i].setMinimum(0);
                                 m_scrollBars[i].setMaximum((int) m_dimSizes[i]);
 
-                                m_isAdjusting = true;
-                                // for (int k = 1; k < (int) m_dimSizes[i] + 1;
-                                // k++)
-                                // m_planeFields[i].addItem(new Integer(k));
-
-                                // m_planeFields[i].setSelectedIndex(0);
-                                m_isAdjusting = false;
-
                                 m_scrollBars[i].setEnabled(m_dimSizes[i] > 1);
                                 m_scrollBars[i].setVisibleAmount(1);
                                 m_scrollBars[i].addAdjustmentListener(new ChangeListenerWithId(
@@ -536,6 +549,44 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                                 sliderPanel.add(Box.createHorizontalStrut(3));
                                 sliderPanel.add(m_scrollBars[i]);
+
+                                // add coordinate text fields
+                                NumberFormat nf = DecimalFormat.getInstance();
+                                nf.setGroupingUsed(false);
+                                JFormattedTextField tmp = new JFormattedTextField(
+                                                nf);
+                                tmp.setMinimumSize(new Dimension(40, tmp
+                                                .getMinimumSize().height));
+                                tmp.setPreferredSize(new Dimension(40, tmp
+                                                .getPreferredSize().height));
+                                tmp.setMaximumSize(new Dimension(40, tmp
+                                                .getPreferredSize().height));
+
+                                final int index = i;
+                                tmp.addActionListener(new ActionListener() {
+
+                                        @Override
+                                        public void actionPerformed(
+                                                        ActionEvent e) {
+                                                textCoordinatesChanged(index);
+                                        }
+                                });
+
+                                tmp.addFocusListener(new FocusListener() {
+
+                                        @Override
+                                        public void focusLost(FocusEvent arg0) {
+                                                textCoordinatesChanged(index);
+                                        }
+
+                                        @Override
+                                        public void focusGained(FocusEvent e) {
+                                        }
+
+                                });
+
+                                m_coordinateTextFields[i] = tmp;
+                                sliderPanel.add(m_coordinateTextFields[i]);
                                 sliderPanel.add(m_planeCheckBoxes[i]);
                                 // sliderPanel.add(m_planeFields[i]);
                                 sliderPanel.add(Box.createHorizontalStrut(7));
@@ -547,6 +598,25 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 }
 
                 updateUI();
+        }
+
+        private void textCoordinatesChanged(int fieldIndex) {
+                int value = Integer.valueOf(m_coordinateTextFields[fieldIndex]
+                                .getText());
+                if (value != m_scrollBars[fieldIndex].getValue()) {
+                        if (value < m_scrollBars[fieldIndex].getMinimum()) {
+                                m_coordinateTextFields[fieldIndex]
+                                                .setText(String.valueOf(m_scrollBars[fieldIndex]
+                                                                .getMinimum()));
+                        } else if (value > m_scrollBars[fieldIndex]
+                                        .getMaximum()) {
+                                m_coordinateTextFields[fieldIndex]
+                                                .setText(String.valueOf(m_scrollBars[fieldIndex]
+                                                                .getMaximum()));
+                        }
+                        // triggers also the necessary events
+                        m_scrollBars[fieldIndex].setValue(value);
+                }
         }
 
         /**
