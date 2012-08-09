@@ -359,7 +359,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private void updateTotalSlider() {
                 // calc index
                 int index = 0;
-                for (int i = 1; i < m_steps.length; i++) {
+                for (int i = 0; i < m_steps.length; i++) {
                         if (i == m_dimX || i == m_dimY)
                                 continue;
                         index += m_steps[i] * (m_scrollBars[i].getValue());
@@ -368,7 +368,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 if (index >= 0) {
                         m_isAdjusting = true;
                         // m_totalField.setText("" + index + 1);
-                        m_totalSlider.setValue(index + 1);
+                        m_totalSlider.setValue(index);
                         m_isAdjusting = false;
                 }
         }
