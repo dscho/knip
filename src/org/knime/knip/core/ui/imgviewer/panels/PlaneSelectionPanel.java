@@ -123,7 +123,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private int[] m_steps;
 
         /* the dimension sizes */
-        private long[] m_dimSizes;
+        private long[] m_dims;
 
         /* recognizes which dimension to alter next */
         private int m_alterDim;
@@ -200,7 +200,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 // calculate the steps to step forward in the linear array
                 boolean first = true;
                 int lasti = 0;
-                for (int i = 0; i < m_dimSizes.length; i++) {
+                for (int i = 0; i < m_dims.length; i++) {
                         if (i == dimX || i == dimY) {
                                 m_coordinateTextFields[i].setEnabled(false);
                         } else {
@@ -210,7 +210,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                         first = false;
                                 } else {
                                         m_steps[i] = m_steps[lasti]
-                                                        * (int) m_dimSizes[lasti];
+                                                        * (int) m_dims[lasti];
                                         lasti = i;
                                 }
                                 m_coordinateTextFields[i].setEnabled(true);
@@ -219,25 +219,20 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 // maximum index
                 int max = 1;
-                for (int i = 0; i < m_dimSizes.length; i++) {
+                for (int i = 0; i < m_dims.length; i++) {
                         if (i == dimX || i == dimY)
                                 continue;
-                        max *= m_dimSizes[i];
+                        max *= m_dims[i];
                 }
 
                 m_isAdjusting = true;
 
+                m_totalSlider.setMinimum(0);
                 m_totalSlider.setVisibleAmount(1);
                 m_totalSlider.setValue(m_totalSlider.getValue() <= max ? m_totalSlider
                                 .getValue() : 1);
                 m_totalSlider.setMaximum(max);
-                // for (int i = 1; i < max + 1; i++)
-                // m_totalField.addItem(new Integer(i));
-
-                // m_totalField.setSelectedIndex(0);
-
                 m_totalSlider.setEnabled(max > 1);
-                // m_totalField.setEnabled(max > 1);
 
                 setEnabled(max > 1);
                 m_isAdjusting = false;
@@ -252,14 +247,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         return;
 
                 if (id == -1) {
-                        // m_totalField.setText(String.valueOf(m_totalSlider.getValue()
-                        // +
-                        // 1));
                         updateDimSliders();
                 } else {
-                        // m_planeFields[id].setSelectedIndex(m_scrollBars[id].getValue()
-                        // +
-                        // 1);
                         updateTotalSlider();
                 }
 
@@ -281,10 +270,10 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 m_oldCoordinates = imgCoords;
 
                 if (change) {
-                        for (int i = 0; i < m_dimSizes.length; i++) {
+                        for (int i = 0; i < m_dims.length; i++) {
                                 m_coordinateTextFields[i]
                                                 .setValue(m_scrollBars[i]
-                                                                .getValue());
+                                                                .getValue() + 1);
                         }
 
                         m_eventService.publish(new PlaneSelectionEvent(Math
@@ -293,41 +282,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         m_eventService.publish(new ImgRedrawEvent());
                 }
         }
-
-        // private void onTextFieldChange(ActionEvent e, int id) {
-        //
-        // if (m_isAdjusting
-        // || e.getActionCommand().equalsIgnoreCase("comboBoxEdited"))
-        // return;
-        // try {
-        //
-        // int newVal = Integer.valueOf(String.valueOf(((JTextField) e
-        // .getSource()).getText())) - 1;
-        //
-        // if (id == -1) {
-        // if (newVal >= m_totalSlider.getMaximum()) {
-        // newVal = m_totalSlider.getMaximum() - 1;
-        // }
-        // m_totalSlider.setValue(newVal);
-        // updateDimSliders();
-        // } else {
-        // if (newVal >= m_scrollBars[id].getMaximum()) {
-        // newVal = m_scrollBars[id].getMaximum() - 1;
-        // }
-        // m_scrollBars[id].setValue(newVal);
-        // updateTotalSlider();
-        // }
-        // m_eventService.publish(
-        // EventType.PLANESELECTION_VALUES_CHG,
-        // new PlaneSelection(Math.min(m_dimX, m_dimY), Math.max(
-        // m_dimY, m_dimX), getImageCoordinate()));
-        //
-        // } catch (NumberFormatException exp) {
-        // JOptionPane.showMessageDialog(null, "Only numbers are allowed",
-        // "Please enter a number", JOptionPane.ERROR_MESSAGE);
-        // }
-        //
-        // }
 
         /**
          *
@@ -367,7 +321,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 // update index
                 if (index >= 0) {
                         m_isAdjusting = true;
-                        // m_totalField.setText("" + index + 1);
                         m_totalSlider.setValue(index);
                         m_isAdjusting = false;
                 }
@@ -389,7 +342,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         if (i == m_dimX || i == m_dimY)
                                 continue;
                         m_isAdjusting = true;
-                        // m_planeFields[i].setSelectedIndex(coords[i]);
                         m_scrollBars[i].setValue(coords[i]);
                         m_isAdjusting = false;
                 }
@@ -422,9 +374,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 m_axesLabels = e.getCalibratedSpace();
                 m_img = e.getInterval();
                 draw();
-                for (int i = 0; i < m_dimSizes.length; i++) {
+                for (int i = 0; i < m_dims.length; i++) {
                         m_coordinateTextFields[i].setValue(m_scrollBars[i]
-                                        .getValue());
+                                        .getValue() + 1);
                 }
         }
 
@@ -446,9 +398,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 if (m_img != null && m_axesLabels != null) {
 
-                        m_dimSizes = new long[m_img.numDimensions()];
-                        m_img.dimensions(m_dimSizes);
-                        m_steps = new int[m_dimSizes.length];
+                        m_dims = new long[m_img.numDimensions()];
+                        m_img.dimensions(m_dims);
+                        m_steps = new int[m_dims.length];
 
                         removeAll();
                         JPanel nPanel = new JPanel();
@@ -459,28 +411,11 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         Dimension dim = m_totalSlider.getPreferredSize();
                         dim.width = 150;
                         m_totalSlider.setPreferredSize(dim);
-                        // m_totalField = new JTextField();
-                        //
-                        // m_totalField.setEditable(true);
-                        // m_totalField.setMinimumSize(new Dimension(10,
-                        // m_totalField
-                        // .getPreferredSize().height));
-                        // m_totalField.setMaximumSize(new Dimension(45,
-                        // m_totalField
-                        // .getPreferredSize().height));
-                        // m_totalField.setPreferredSize(new Dimension(45,
-                        // m_totalField
-                        // .getPreferredSize().height));
-
-                        // m_totalField.addActionListener(new
-                        // ActionListenerWithId(-1));
-                        // m_totalField.setEnabled(false);
                         m_totalSlider.addAdjustmentListener(new ChangeListenerWithId(
                                         -1));
                         nPanel.add(new JLabel("N"));
                         nPanel.add(Box.createHorizontalStrut(3));
                         nPanel.add(m_totalSlider);
-                        // nPanel.add(m_totalField);
 
                         // add key bindings to the JTextArea
                         int condition = JScrollBar.WHEN_IN_FOCUSED_WINDOW;
@@ -501,13 +436,13 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                         BoxLayout.Y_AXIS));
                         add(dimPanel);
 
-                        m_scrollBars = new JScrollBar[m_dimSizes.length];
-                        m_planeCheckBoxes = new JCheckBox[m_dimSizes.length];
-                        m_coordinateTextFields = new JFormattedTextField[m_dimSizes.length];
+                        m_scrollBars = new JScrollBar[m_dims.length];
+                        m_planeCheckBoxes = new JCheckBox[m_dims.length];
+                        m_coordinateTextFields = new JFormattedTextField[m_dims.length];
 
                         // m_planeFields = new JComboBox[m_dimSizes.length];
                         JPanel sliderPanel;
-                        for (int i = 0; i < m_dimSizes.length; i++) {
+                        for (int i = 0; i < m_dims.length; i++) {
                                 sliderPanel = new JPanel();
                                 sliderPanel.setLayout(new BoxLayout(
                                                 sliderPanel, BoxLayout.X_AXIS));
@@ -519,26 +454,16 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                                                 i));
                                 m_planeCheckBoxes[i].setActionCommand(i + "");
 
-                                // m_planeFields[i] = new JComboBox();
-                                // m_planeFields[i].setEditable(true);
-                                //
-                                // m_planeFields[i].addActionListener(new
-                                // ActionListenerWithId(i));
-                                // m_planeFields[i].setPreferredSize(new
-                                // Dimension(55,
-                                // m_planeFields[i].getPreferredSize().height));
-                                // m_planeFields[i].setEditable(true);
-
                                 dim = m_scrollBars[i].getPreferredSize();
                                 dim.width = 150;
                                 m_scrollBars[i].setPreferredSize(dim);
                                 m_scrollBars[i].setValue(m_scrollBars[i]
-                                                .getValue() < m_dimSizes[i] ? m_scrollBars[i]
+                                                .getValue() < m_dims[i] ? m_scrollBars[i]
                                                 .getValue() : 0);
                                 m_scrollBars[i].setMinimum(0);
-                                m_scrollBars[i].setMaximum((int) m_dimSizes[i]);
+                                m_scrollBars[i].setMaximum((int) m_dims[i]);
 
-                                m_scrollBars[i].setEnabled(m_dimSizes[i] > 1);
+                                m_scrollBars[i].setEnabled(m_dims[i] > 1);
                                 m_scrollBars[i].setVisibleAmount(1);
                                 m_scrollBars[i].addAdjustmentListener(new ChangeListenerWithId(
                                                 i));
@@ -588,7 +513,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                 m_coordinateTextFields[i] = tmp;
                                 sliderPanel.add(m_coordinateTextFields[i]);
                                 sliderPanel.add(m_planeCheckBoxes[i]);
-                                // sliderPanel.add(m_planeFields[i]);
                                 sliderPanel.add(Box.createHorizontalStrut(7));
                                 dimPanel.add(sliderPanel);
 
@@ -603,11 +527,11 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private void textCoordinatesChanged(int fieldIndex) {
                 int value = Integer.valueOf(m_coordinateTextFields[fieldIndex]
                                 .getText());
-                if (value != m_scrollBars[fieldIndex].getValue()) {
+                if (value != m_scrollBars[fieldIndex].getValue() + 1) {
                         if (value < m_scrollBars[fieldIndex].getMinimum()) {
                                 m_coordinateTextFields[fieldIndex]
                                                 .setText(String.valueOf(m_scrollBars[fieldIndex]
-                                                                .getMinimum()));
+                                                                .getMinimum() + 1));
                         } else if (value > m_scrollBars[fieldIndex]
                                         .getMaximum()) {
                                 m_coordinateTextFields[fieldIndex]
@@ -707,6 +631,12 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 @Override
                 public void actionPerformed(ActionEvent ae) {
+
+                        for (JFormattedTextField field : m_coordinateTextFields) {
+                                if (field.hasFocus())
+                                        return;
+                        }
+
                         String name = getValue(AbstractAction.NAME).toString();
                         int value = slider.getValue();
                         if (name.equals("FORWARD")) {
