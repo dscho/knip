@@ -33,21 +33,22 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.TransparencyPanelValueChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  *
  *
- * @author dietzc, hornm, schoenenbergerf University of Konstanz
+ * @author dietzc, hornm, schoenenbergerf, zinsmaierm University of Konstanz
  */
 public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L extends Comparable<L>>
                 extends LabelingBufferedImageProvider<L> {
 
         /**
-	 *
-	 */
+          *
+          */
         private static final long serialVersionUID = 1L;
 
-        private final Real2GreyRenderer<T> m_greyRenderer;
+        private Real2GreyRenderer<T> m_greyRenderer;
 
         private Img<T> m_img;
 
@@ -55,7 +56,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         private NormalizationParametersChgEvent<T> m_normalizationParameters;
 
-        private final GraphicsConfiguration m_config;
+        private GraphicsConfiguration m_config;
 
         private BufferedImage m_bufLab;
 
@@ -63,13 +64,13 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         private BufferedImage m_rgb;
 
+        private Set<String> m_hilitedLabels;
+
         private Graphics m_rgbGraphics;
 
         private boolean m_labChanged;
 
         private boolean m_imgChanged;
-
-        private Set<String> m_hilitedLabels;
 
         private String m_rowKey = null;
 
@@ -225,6 +226,22 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
         @Override
         public void onUpdated(IntervalWithMetadataChgEvent<Labeling<L>> e) {
                 //
+        }
+
+        @EventListener
+        public void onClose(ViewClosedEvent event) {
+                m_img = null;
+                m_greyRenderer = null;
+                m_normalizationParameters = null;
+                m_config = null;
+                m_bufLab = null;
+                m_bufImg = null;
+
+                m_rgb = null;
+
+                m_hilitedLabels = null;
+
+                m_rgbGraphics = null;
         }
 
         /**

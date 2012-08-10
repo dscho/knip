@@ -27,6 +27,7 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.OverlayChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 import org.knime.knip.core.ui.imgviewer.events.TransparencyPanelValueChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 
 /**
@@ -91,8 +92,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
                 }
 
                 ScreenImage res = ((ImageRenderer<T, Img<T>>) m_renderer)
-                                .render(
-                                m_src, m_sel.getPlaneDimIndex1(),
+                                .render(m_src, m_sel.getPlaneDimIndex1(),
                                                 m_sel.getPlaneDimIndex2(),
                                                 m_sel.getPlanePos());
 
@@ -235,6 +235,13 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         @Override
         public void reset() {
                 super.reset();
+                m_overlay = null;
+                m_src = null;
+        }
+
+        @EventListener
+        public void onClose(ViewClosedEvent event) {
+                m_src = null;
                 m_overlay = null;
         }
 }

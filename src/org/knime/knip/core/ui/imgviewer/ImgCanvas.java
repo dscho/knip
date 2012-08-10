@@ -332,21 +332,23 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         public void onTextMessageChanged(ImgViewerTextMessageChgEvent e) {
 
                 Graphics2D g = (Graphics2D) m_imageCanvas.getGraphics();
-                g.setBackground(Color.GRAY.darker());
-                g.clearRect(0, 0, m_imageCanvas.getWidth(),
-                                m_imageCanvas.getHeight());
-                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-                int h = g.getFont().getSize();
-                int y = h;
-                g.setColor(Color.YELLOW);
-                for (String s : e.getMessage().split("\n")) {
-                        g.drawString(s, h, y);
-                        y += h;
-                }
+                if (g != null) {
+                        g.setBackground(Color.GRAY.darker());
+                        g.clearRect(0, 0, m_imageCanvas.getWidth(),
+                                        m_imageCanvas.getHeight());
+                        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+                        int h = g.getFont().getSize();
+                        int y = h;
+                        g.setColor(Color.YELLOW);
+                        for (String s : e.getMessage().split("\n")) {
+                                g.drawString(s, h, y);
+                                y += h;
+                        }
 
-                m_blockMouseEvents = true;
-                m_image = TEXTMSGIMG;
-                updateImageCanvas();
+                        m_blockMouseEvents = true;
+                        m_image = TEXTMSGIMG;
+                        updateImageCanvas();
+                }
         }
 
         /**

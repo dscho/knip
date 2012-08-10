@@ -90,6 +90,7 @@ import org.knime.knip.core.ui.imgviewer.events.ForcePlanePosEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  * Allows the user to select a plane in a multdimensional space.
@@ -128,8 +129,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         /* recognizes which dimension to alter next */
         private int m_alterDim;
 
-        private I m_img;
-
+        // private I m_img;
         private CalibratedSpace m_axesLabels;
 
         private EventService m_eventService;
@@ -158,6 +158,14 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 setMaximumSize(new Dimension(200, getMaximumSize().height));
 
+        }
+
+        @EventListener
+        public void onClose(ViewClosedEvent e) {
+                m_axesLabels = null;
+                m_dims = null;
+                m_oldCoordinates = null;
+                m_steps = null;
         }
 
         /**
@@ -354,8 +362,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          */
         protected long[] getImageCoordinate() {
                 if (m_scrollBars == null)
-                        return new long[m_img.numDimensions()];
-                long[] res = new long[m_img.numDimensions()];
+                        return new long[m_dims.length];
+                long[] res = new long[m_dims.length];
                 for (int i = 0; i < res.length; i++) {
                         res[i] = m_scrollBars[i].getValue();
                 }
@@ -372,7 +380,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         @EventListener
         public void onImgUpdated(IntervalWithMetadataChgEvent<I> e) {
                 m_axesLabels = e.getCalibratedSpace();
-                m_img = e.getInterval();
+                m_dims = new long[e.getInterval().numDimensions()];
+                e.getInterval().dimensions(m_dims);
                 draw();
                 for (int i = 0; i < m_dims.length; i++) {
                         m_coordinateTextFields[i].setValue(m_scrollBars[i]
@@ -396,10 +405,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
         private void draw() {
 
-                if (m_img != null && m_axesLabels != null) {
+                if (m_dims != null && m_axesLabels != null) {
 
-                        m_dims = new long[m_img.numDimensions()];
-                        m_img.dimensions(m_dims);
                         m_steps = new int[m_dims.length];
 
                         removeAll();
