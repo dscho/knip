@@ -43,9 +43,7 @@ public class TransparencyPanel extends ViewerComponent {
 
         private void construct() {
                 setMinimumSize(new Dimension(180, 40));
-                setPreferredSize(new Dimension(180,
-                                this.getPreferredSize().height));
-
+                setPreferredSize(new Dimension(180, 40));
 
                 m_sliderValue = new JLabel("128");
                 m_slider = new JSlider(JSlider.HORIZONTAL, 0, 255, 128);
@@ -61,7 +59,6 @@ public class TransparencyPanel extends ViewerComponent {
                                 m_sliderValue.setText("" + m_slider.getValue());
                         }
                 });
-
 
                 addComponents();
         }
@@ -90,7 +87,6 @@ public class TransparencyPanel extends ViewerComponent {
                         gc.gridwidth = 1;
 
                 }
-
 
                 // content row
                 gc.weightx = 0.0;
