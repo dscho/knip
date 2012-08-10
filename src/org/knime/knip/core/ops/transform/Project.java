@@ -50,7 +50,6 @@
  */
 package org.knime.knip.core.ops.transform;
 
-import java.lang.reflect.Array;
 import java.util.Iterator;
 
 import net.imglib2.Cursor;
@@ -128,14 +127,11 @@ public class Project<T extends RealType<T>> implements
          * {@inheritDoc}
          */
         @Override
-        public Img<T> compute(Img<T> op, Img<T> r) {
+        public Img<T> compute(final Img<T> op, final Img<T> r) {
 
                 Cursor<T> projCur = r.localizingCursor();
-                RandomAccess<T> srcRA = op.randomAccess();
+                final RandomAccess<T> srcRA = op.randomAccess();
 
-                final T[] projVec = (T[]) Array.newInstance(op.firstElement()
-                                .getClass(), (int) op
-                                .dimension(m_projectionDim));
                 while (projCur.hasNext()) {
                         projCur.fwd();
                         for (int d = 0; d < op.numDimensions(); d++) {
@@ -149,11 +145,6 @@ public class Project<T extends RealType<T>> implements
                                                         d);
                                 }
                         }
-                        for (int projPos = 0; projPos < op
-                                        .dimension(m_projectionDim); projPos++) {
-                                srcRA.setPosition(projPos, m_projectionDim);
-                                projVec[projPos] = srcRA.get().copy();
-                        }
 
                         projCur.get().setReal(
                                         handleProjection(new Iterator<T>() {
@@ -161,13 +152,15 @@ public class Project<T extends RealType<T>> implements
 
                                                 @Override
                                                 public boolean hasNext() {
-                                                        return k < projVec.length - 1;
+                                                        return k < op.dimension(m_projectionDim) - 1;
                                                 }
 
                                                 @Override
                                                 public T next() {
                                                         k++;
-                                                        return projVec[k];
+                                                        srcRA.setPosition(k,
+                                                                        m_projectionDim);
+                                                        return srcRA.get();
                                                 }
 
                                                 @Override

@@ -89,7 +89,6 @@ public class ImgViewInfoPanel<T extends Type<T>> extends
 
         }
 
-
         @Override
         public void saveComponentConfiguration(ObjectOutput out)
                         throws IOException {
@@ -101,6 +100,5 @@ public class ImgViewInfoPanel<T extends Type<T>> extends
                         throws IOException {
                 // Nothing to do here
         }
-
 
 }

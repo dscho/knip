@@ -21,6 +21,7 @@ import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  *
@@ -31,19 +32,19 @@ import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibleInterval<T> & IterableInterval<T>>
                 extends ViewerComponent {
 
+        private static final long serialVersionUID = 1L;
+
         protected I m_img;
 
         protected RandomAccess<T> m_rndAccess;
 
         protected PlaneSelectionEvent m_sel;
 
-        private final StringBuffer m_infoBuffer;
+        private StringBuffer m_infoBuffer;
 
-        private static final long serialVersionUID = 1L;
+        private JLabel m_mouseInfoLabel;
 
-        private final JLabel m_mouseInfoLabel;
-
-        private final JLabel m_imageInfoLabel;
+        private JLabel m_imageInfoLabel;
 
         private CalibratedSpace m_imgAxes;
 
@@ -80,6 +81,18 @@ public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibl
 
         protected abstract String updateImageLabel(StringBuffer buffer, I img,
                         RandomAccess<T> rndAccess, String imgName);
+
+        @EventListener
+        public void onClose(ViewClosedEvent ev) {
+                m_img = null;
+                m_dims = null;
+                m_mouseInfoLabel = null;
+                m_imageInfoLabel = null;
+                m_imgAxes = null;
+                m_infoBuffer = null;
+                m_pos = null;
+                m_rndAccess = null;
+        }
 
         /**
          * @param name

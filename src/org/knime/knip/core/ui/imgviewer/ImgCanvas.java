@@ -1,20 +1,16 @@
 package org.knime.knip.core.ui.imgviewer;
 
-import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.AWTEventListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -127,23 +123,23 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
                 m_imageCanvas.setBackground(Color.DARK_GRAY);
                 // TODO discuss global key listener
-                getToolkit().addAWTEventListener(new AWTEventListener() {
-                        @Override
-                        public void eventDispatched(AWTEvent awte) {
-                                KeyEvent e = (KeyEvent) awte;
-                                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                                        if (e.getID() == KeyEvent.KEY_PRESSED) {
-                                                m_imageCanvas.setCursor(new Cursor(
-                                                                Cursor.HAND_CURSOR));
-                                                m_keyDraggingEnabled = true;
-                                        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-                                                m_imageCanvas.setCursor(new Cursor(
-                                                                Cursor.DEFAULT_CURSOR));
-                                                m_keyDraggingEnabled = false;
-                                        }
-                                }
-                        }
-                }, AWTEvent.KEY_EVENT_MASK);
+                // getToolkit().addAWTEventListener(new AWTEventListener() {
+                // @Override
+                // public void eventDispatched(AWTEvent awte) {
+                // KeyEvent e = (KeyEvent) awte;
+                // if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                // if (e.getID() == KeyEvent.KEY_PRESSED) {
+                // m_imageCanvas.setCursor(new Cursor(
+                // Cursor.HAND_CURSOR));
+                // m_keyDraggingEnabled = true;
+                // } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+                // m_imageCanvas.setCursor(new Cursor(
+                // Cursor.DEFAULT_CURSOR));
+                // m_keyDraggingEnabled = false;
+                // }
+                // }
+                // }
+                // }, AWTEvent.KEY_EVENT_MASK);
 
                 m_imageCanvas.addMouseListener(new MouseAdapter() {
                         @Override
