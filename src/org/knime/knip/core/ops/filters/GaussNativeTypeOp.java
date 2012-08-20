@@ -1,13 +1,10 @@
 package org.knime.knip.core.ops.filters;
 
-import net.imglib2.Point;
-import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.algorithm.gauss.GaussFloat;
-import net.imglib2.converter.readwrite.RealFloatSamplerConverter;
-import net.imglib2.converter.readwrite.WriteConvertedRandomAccessible;
-import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.algorithm.gauss3.Gauss3;
+import net.imglib2.algorithm.gauss3.SeparableSymmetricConvolution;
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.ops.UnaryOperation;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.NativeType;
@@ -38,35 +35,17 @@ public class GaussNativeTypeOp<T extends RealType<T> & NativeType<T>, TYPE exten
                                         "Size of sigma array doesn't fit to input image");
                 }
 
-                final RandomAccess<T> tmp = input.randomAccess();
+                final RandomAccessible<FloatType> rIn = (RandomAccessible<FloatType>) Views
+                                .extend(input, m_fac);
 
-                final GaussFloat gaussFloat;
-                if (FloatType.class.isInstance(tmp.get())) {
+                try {
+                        SeparableSymmetricConvolution.convolve(
+                                        Gauss3.halfkernels(m_sigmas), rIn,
+                                        output, 1);
 
-                        final RandomAccessible<FloatType> rIn = (RandomAccessible<FloatType>) Views
-                                        .extend(input, m_fac);
-
-                        gaussFloat = new GaussFloat(m_sigmas, rIn, input,
-                                        (RandomAccessible<FloatType>) output,
-                                        new Point(new long[input
-                                                        .numDimensions()]),
-                                        new ArrayImgFactory<FloatType>());
-
-                } else {
-                        final RandomAccessible<FloatType> rIn = new WriteConvertedRandomAccessible<T, FloatType>(
-                                        Views.extend(input, m_fac),
-                                        new RealFloatSamplerConverter<T>());
-                        final RandomAccessible<FloatType> rOut = new WriteConvertedRandomAccessible<T, FloatType>(
-                                        output,
-                                        new RealFloatSamplerConverter<T>());
-
-                        gaussFloat = new GaussFloat(m_sigmas, rIn, input, rOut,
-                                        new Point(new long[input
-                                                        .numDimensions()]),
-                                        new ArrayImgFactory<FloatType>());
+                } catch (IncompatibleTypeException e) {
+                        throw new RuntimeException(e);
                 }
-                gaussFloat.setNumThreads(1);
-                gaussFloat.call();
 
                 return output;
         }
