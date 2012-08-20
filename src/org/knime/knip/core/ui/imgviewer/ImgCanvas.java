@@ -159,7 +159,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         @Override
                         public void mouseDragged(MouseEvent e) {
                                 if (m_keyDraggingEnabled
-                                                || ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)) {
+                                                || ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 1024)) {
                                         m_currentRectangle
                                                         .setBounds(m_dragRect);
                                         m_currentRectangle.translate(
