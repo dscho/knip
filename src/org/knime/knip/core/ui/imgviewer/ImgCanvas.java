@@ -92,6 +92,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         private boolean m_blockMouseEvents;
 
+
         /**
 	 *
 	 */
@@ -316,8 +317,6 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         @EventListener
         public void onZoomFactorChanged(ViewZoomfactorChgEvent zoomEvent) {
                 m_factor = zoomEvent.getZoomFactor();
-                // m_eventService.publish(new ImgViewerRectChgEvent(
-                // m_currentRectangle));
                 updateImageCanvas();
         }
 
@@ -346,13 +345,44 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 if (m_image == null)
                         return;
 
+                // get old center of the image
+                double oldFactor;
+                if (m_imageCanvas.getWidth() == 0) {
+                        // first display
+                        oldFactor = 1.0;
+                } else {
+                        oldFactor = (double) m_imageCanvas.getWidth()
+                                        / (double) m_image.getWidth(null);
+                }
+
+
+                Rectangle rect = m_imageCanvas.getVisibleRect();
+                double imgCenterX = rect.getCenterX() / oldFactor;
+                double imgCenterY = rect.getCenterY() / oldFactor;
+
+                // enlarge canvas
                 Dimension d = new Dimension(
                                 (int) (m_image.getWidth(null) * m_factor),
                                 (int) (m_image.getHeight(null) * m_factor));
                 m_imageCanvas.setSize(d);
                 m_imageCanvas.setPreferredSize(d);
+
+                double xCorrect = getVisibleImageRect().width / 2.0;
+                double yCorrect = getVisibleImageRect().height / 2.0;
+
+                // apply old center
+                m_imageScrollPane
+                                .getViewport()
+                                .setViewPosition(
+                                                new Point(
+                                                                (int) (((imgCenterX - xCorrect) * m_factor)),
+                                                                (int) (((imgCenterY - yCorrect) * m_factor))));
+
                 m_imageScrollPane.validate();
                 m_imageScrollPane.repaint();
+
+                // m_eventService.publish(new ImgViewerRectChgEvent(
+                // getVisibleImageRect()));
         }
 
         /**

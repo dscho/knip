@@ -321,13 +321,12 @@ public class MinimapPanel extends ViewerComponent {
 
         @EventListener
         public void onRectangleUpdated(ImgViewerRectChgEvent e) {
-                m_visibleRect.setBounds(e.getRectangle());
                 m_offset[0] = e.getRectangle().x;
                 m_offset[1] = e.getRectangle().y;
 
                 m_visibleRect.setBounds(0, 0,
-                                (int) (m_visibleRect.width * m_scaleFactor),
-                                (int) (m_visibleRect.height * m_scaleFactor));
+                                (int) (e.getRectangle().width * m_scaleFactor),
+                                (int) (e.getRectangle().height * m_scaleFactor));
 
                 m_canvas.repaint();
         }
