@@ -13,6 +13,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -31,7 +33,7 @@ import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerRectChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.MinimapOffsetChgEvent;
-import org.knime.knip.core.ui.imgviewer.events.MinimapZoomfactorChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 
 /**
  * A panel showing the minimap of a buffered image and enables the user to zoom
@@ -55,6 +57,8 @@ public class MinimapPanel extends ViewerComponent {
         private static final Color BOUNDING_BOX_BORDER_COLOR = new Color(0,
                         127, 255, 255);
 
+        public static final int ZOOM_MIN = 10;
+        public static final int ZOOM_MAX = 1000;
         private static final Integer[] ZOOM_LEVELS = new Integer[] { 25, 50,
                         75, 100, 200, 400, 800 };
 
@@ -149,6 +153,38 @@ public class MinimapPanel extends ViewerComponent {
                         }
                 };
                 m_canvas.setBackground(Color.DARK_GRAY);
+                m_canvas.addMouseWheelListener(new MouseWheelListener() {
+
+                        @Override
+                        public void mouseWheelMoved(MouseWheelEvent e) {
+                                if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+                                        if (m_isZoomAdjusting)
+                                                return;
+
+                                        int direction = -1;
+                                        if (e.getWheelRotation() < 0) {
+                                                direction = 1;
+                                        }
+
+                                        int change = (int) Math.sqrt(m_zoomSlider
+                                                        .getValue())
+                                                        * direction;
+                                        int newValue = m_zoomSlider.getValue()
+                                                        + change;
+
+                                        if (newValue < ZOOM_MIN) {
+                                                newValue = ZOOM_MIN;
+                                        } else if (newValue > ZOOM_MAX) {
+                                                newValue = ZOOM_MAX;
+                                        }
+
+                                        m_eventService.publish(new ViewZoomfactorChgEvent(
+                                                        newValue / 100d));
+
+                                }
+                        }
+
+                });
                 m_canvas.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
@@ -206,17 +242,14 @@ public class MinimapPanel extends ViewerComponent {
                 JPanel jp = new JPanel(new BorderLayout());
                 add(jp, BorderLayout.SOUTH);
 
-                m_zoomSlider = new JSlider(10, 1000, 100);
+                m_zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, 100);
                 m_zoomSlider.addChangeListener(new ChangeListener() {
                         @Override
                         public void stateChanged(ChangeEvent e) {
                                 if (m_isZoomAdjusting)
                                         return;
-                                m_isZoomAdjusting = true;
-                                m_zoomComboBox.setSelectedItem(new Integer(
-                                                m_zoomSlider.getValue()));
-                                m_isZoomAdjusting = false;
-                                m_eventService.publish(new MinimapZoomfactorChgEvent(
+
+                                m_eventService.publish(new ViewZoomfactorChgEvent(
                                                 m_zoomSlider.getValue() / 100d));
                         }
                 });
@@ -235,17 +268,27 @@ public class MinimapPanel extends ViewerComponent {
                         public void actionPerformed(ActionEvent e) {
                                 if (m_isZoomAdjusting)
                                         return;
-                                m_isZoomAdjusting = true;
-                                m_zoomSlider.setValue((Integer) m_zoomComboBox
-                                                .getSelectedItem());
-                                m_isZoomAdjusting = false;
 
-                                m_eventService.publish(new MinimapZoomfactorChgEvent(
+                                m_eventService.publish(new ViewZoomfactorChgEvent(
                                                 ((Integer) m_zoomComboBox
                                                                 .getSelectedItem())
                                                                 .doubleValue() / 100));
                         }
                 });
+        }
+
+        @EventListener
+        public void onViewZoomChanged(ViewZoomfactorChgEvent zoomEvent) {
+                if (m_isZoomAdjusting)
+                        return;
+
+                m_isZoomAdjusting = true;
+                Integer newValue = Integer.valueOf((int) (zoomEvent
+                                .getZoomFactor() * 100.0));
+                m_zoomComboBox.setSelectedItem(newValue);
+                m_zoomSlider.setValue(newValue);
+                m_isZoomAdjusting = false;
+
         }
 
         @EventListener

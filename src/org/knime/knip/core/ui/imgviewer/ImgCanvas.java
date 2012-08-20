@@ -14,6 +14,8 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -37,7 +39,8 @@ import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseReleasedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerRectChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerTextMessageChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.MinimapOffsetChgEvent;
-import org.knime.knip.core.ui.imgviewer.events.MinimapZoomfactorChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
+import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
 
 /**
  *
@@ -163,10 +166,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                         m_currentRectangle
                                                         .setBounds(m_dragRect);
                                         m_currentRectangle.translate(
-                                                        m_dragPoint.x
-                                                                        - e.getXOnScreen(),
-                                                        m_dragPoint.y
-                                                                        - e.getYOnScreen());
+                                                        (m_dragPoint.x - e
+                                                                        .getXOnScreen()),
+                                                        (m_dragPoint.y - e
+                                                                        .getYOnScreen()));
                                         m_imageCanvas.scrollRectToVisible(m_currentRectangle);
                                 }
                                 fireImageCoordMouseDragged(e);
@@ -176,6 +179,35 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         public void mouseMoved(MouseEvent e) {
                                 fireImageCoordMouseMoved(e);
                         }
+                });
+                m_imageCanvas.addMouseWheelListener(new MouseWheelListener() {
+
+                        @Override
+                        public void mouseWheelMoved(MouseWheelEvent e) {
+                                if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+                                        int direction = -1;
+                                        if (e.getWheelRotation() < 0) {
+                                                direction = 1;
+                                        }
+
+                                        int oldValue = (int) (m_factor * 100.0);
+
+                                        int change = (int) Math.sqrt(oldValue)
+                                                        * direction;
+                                        int newValue = oldValue + change;
+
+                                        if (newValue < MinimapPanel.ZOOM_MIN) {
+                                                newValue = MinimapPanel.ZOOM_MIN;
+                                        } else if (newValue > MinimapPanel.ZOOM_MAX) {
+                                                newValue = MinimapPanel.ZOOM_MAX;
+                                        }
+
+                                        m_eventService.publish(new ViewZoomfactorChgEvent(
+                                                        newValue / 100d));
+
+                                }
+                        }
+
                 });
                 m_imageScrollPane = new JScrollPane(m_imageCanvas);
 
@@ -282,10 +314,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         }
 
         @EventListener
-        public void onMinimapZoomFactorChanged(MinimapZoomfactorChgEvent e) {
-                m_factor = e.getZoomFactor();
-                m_eventService.publish(new ImgViewerRectChgEvent(
-                                m_currentRectangle));
+        public void onZoomFactorChanged(ViewZoomfactorChgEvent zoomEvent) {
+                m_factor = zoomEvent.getZoomFactor();
+                // m_eventService.publish(new ImgViewerRectChgEvent(
+                // m_currentRectangle));
                 updateImageCanvas();
         }
 

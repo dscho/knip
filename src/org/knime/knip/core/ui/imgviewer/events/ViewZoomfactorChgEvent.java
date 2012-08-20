@@ -56,11 +56,11 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  *
  * @author hornm, University of Konstanz
  */
-public class MinimapZoomfactorChgEvent implements KNIPEvent {
+public class ViewZoomfactorChgEvent implements KNIPEvent {
 
         private final double m_zoomFactor;
 
-        public MinimapZoomfactorChgEvent(double zoomFactor) {
+        public ViewZoomfactorChgEvent(double zoomFactor) {
                 m_zoomFactor = zoomFactor;
 
         }
