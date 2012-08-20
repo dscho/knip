@@ -159,6 +159,7 @@ public class FileChooserPanel extends JPanel {
 
                 JTabbedPane rightTab = new JTabbedPane();
                 m_fileChooser.setMultiSelectionEnabled(true);
+                m_fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 m_fileChooser.setControlButtonsAreShown(false);
                 m_fileChooser.setPreferredSize(new Dimension(450, 340));
                 // center.add(buttonPan);
@@ -296,11 +297,17 @@ public class FileChooserPanel extends JPanel {
 
         private void onAdd() {
 
+                if (m_fileChooser.getSelectedFile().isDirectory()) {
+                        File[] f = m_fileChooser.getSelectedFile().listFiles();
+                        m_selectedFileListModel.addFiles(f, getFileFilter());
+                } else {
                 File[] files = m_fileChooser.getSelectedFiles();
                 m_selectedFileListModel.addFiles(files, getFileFilter());
+                }
                 filePref.put("Path", m_fileChooser.getCurrentDirectory()
                                 .toString());
                 fireSelectionChangedEvent();
+
 
         }
 
@@ -576,10 +583,10 @@ public class FileChooserPanel extends JPanel {
                 @Override
                 public void propertyChange(PropertyChangeEvent e) {
                         String propertyName = e.getPropertyName();
-
+                        File selection = (File) e.getNewValue();
                         if (propertyName.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
 
-                                File selection = (File) e.getNewValue();
+
                                 m_imagePreviewPanel.setImage(selection
                                                 .toString());
                         }
