@@ -28,6 +28,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -296,6 +297,13 @@ public class FileChooserPanel extends JPanel {
          */
 
         private void onAdd() {
+                if (m_fileChooser.getSelectedFiles().length == 0) {
+                        JOptionPane.showMessageDialog(
+                                        this,
+                                        "No files selected. Please select at least one file or directory.",
+                                        "Warning", JOptionPane.ERROR_MESSAGE);
+                        return;
+                }
 
                 if (m_fileChooser.getSelectedFile().isDirectory()) {
                         File[] f = m_fileChooser.getSelectedFile().listFiles();
