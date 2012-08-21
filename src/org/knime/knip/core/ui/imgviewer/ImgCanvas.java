@@ -1,12 +1,13 @@
 package org.knime.knip.core.ui.imgviewer;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -61,10 +61,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 	 */
         private static final long serialVersionUID = 1L;
 
-        /**
-         * The label containing information about the current cursor position.
-         */
-        private final JLabel m_probeLabel;
+
 
         private final JPanel m_imageCanvas;
 
@@ -73,6 +70,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         private BufferedImage m_image;
 
         private double m_factor;
+
+        private double m_oldFactor;
 
         private boolean m_keyDraggingEnabled;
 
@@ -98,12 +97,9 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 	 */
         public ImgCanvas() {
                 super("Image", false);
-                setLayout(new BorderLayout());
 
                 m_currentRectangle = new Rectangle();
-
-                m_probeLabel = new JLabel();
-                add(m_probeLabel, BorderLayout.NORTH);
+                m_oldFactor = 1;
 
                 m_imageCanvas = new JPanel() {
                         /**
@@ -241,7 +237,13 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                         }
                                 });
 
-                add(m_imageScrollPane, BorderLayout.CENTER);
+                setLayout(new GridBagLayout());
+                GridBagConstraints gc = new GridBagConstraints();
+                gc.fill = GridBagConstraints.BOTH;
+                gc.weightx = 1.0;
+                gc.weighty = 1.0;
+
+                add(m_imageScrollPane, gc);
 
                 m_factor = 1;
                 updateImageCanvas();
@@ -346,19 +348,12 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         return;
 
                 // get old center of the image
-                double oldFactor;
-                if (m_imageCanvas.getWidth() == 0) {
-                        // first display
-                        oldFactor = 1.0;
-                } else {
-                        oldFactor = (double) m_imageCanvas.getWidth()
-                                        / (double) m_image.getWidth(null);
-                }
+
 
 
                 Rectangle rect = m_imageCanvas.getVisibleRect();
-                double imgCenterX = rect.getCenterX() / oldFactor;
-                double imgCenterY = rect.getCenterY() / oldFactor;
+                double imgCenterX = rect.getCenterX() / m_oldFactor;
+                double imgCenterY = rect.getCenterY() / m_oldFactor;
 
                 // enlarge canvas
                 Dimension d = new Dimension(
@@ -378,11 +373,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                                                 (int) (((imgCenterX - xCorrect) * m_factor)),
                                                                 (int) (((imgCenterY - yCorrect) * m_factor))));
 
+                m_oldFactor = m_factor;
+
                 m_imageScrollPane.validate();
                 m_imageScrollPane.repaint();
-
-                // m_eventService.publish(new ImgViewerRectChgEvent(
-                // getVisibleImageRect()));
         }
 
         /**
@@ -449,6 +443,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         public void reset() {
                 m_currentRectangle = new Rectangle();
                 m_factor = 1;
+                m_oldFactor = 1;
                 m_image = null;
         }
 
