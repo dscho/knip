@@ -66,6 +66,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -80,7 +81,7 @@ import javax.swing.JScrollBar;
 import javax.swing.KeyStroke;
 
 import net.imglib2.Interval;
-import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.AxisType;
 import net.imglib2.type.Type;
 
 import org.knime.knip.core.ui.event.EventListener;
@@ -130,7 +131,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private int m_alterDim;
 
         // private I m_img;
-        private CalibratedSpace m_axesLabels;
+        private AxisType[] m_axesLabels;
 
         private EventService m_eventService;
 
@@ -379,14 +380,34 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          */
         @EventListener
         public void onImgUpdated(IntervalWithMetadataChgEvent<I> e) {
-                m_axesLabels = e.getCalibratedSpace();
+
+                if (m_dims == null)
+                        m_dims = new long[e.getCalibratedSpace()
+                                        .numDimensions()];
+
+                if (m_axesLabels == null)
+                        m_axesLabels = new AxisType[e.getCalibratedSpace()
+                                        .numDimensions()];
+
+                long[] oldDims = m_dims.clone();
+                AxisType[] oldAxes = m_axesLabels.clone();
+
+                // lokale dims //axes labels
+                e.getCalibratedSpace().axes(m_axesLabels);
                 m_dims = new long[e.getInterval().numDimensions()];
                 e.getInterval().dimensions(m_dims);
-                draw();
-                for (int i = 0; i < m_dims.length; i++) {
-                        m_coordinateTextFields[i].setValue(m_scrollBars[i]
-                                        .getValue() + 1);
+
+                if (!Arrays.equals(oldDims, m_dims)
+                                || !Arrays.equals(m_axesLabels, oldAxes)) {
+                        draw();
+
+                        for (int i = 0; i < m_dims.length; i++) {
+                                m_coordinateTextFields[i]
+                                                .setValue(m_scrollBars[i]
+                                                                .getValue() + 1);
+                        }
                 }
+
         }
 
         @EventListener
@@ -476,7 +497,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                                 i));
 
                                 sliderPanel.add(m_axesLabels != null ? (new JLabel(
-                                                m_axesLabels.axis(i).getLabel()))
+                                                m_axesLabels[i].getLabel()))
                                                 : (new JLabel("" + i)));
 
                                 sliderPanel.add(Box.createHorizontalStrut(3));
