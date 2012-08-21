@@ -181,7 +181,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                                 m_perimeter = m_calculatePerimeter.compute(
                                                 m_outline).get();
 
-                                if (m_enabled.get(6) || m_enabled.get(8)) {
+                                if (m_enabled.get(1 + m_defaultAxis.length)
+                                                || m_enabled.get(3 + m_defaultAxis.length)) {
                                         m_convexityOp.compute(bitMask, bitMask);
                                         final Cursor<BitType> convexBitMaskCursor = bitMask
                                                         .cursor();
@@ -201,7 +202,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                                         m_solidity = pair.a.size() / ctr;
                                 }
 
-                                if (m_enabled.get(10)) {
+                                if (m_enabled.get(5 + m_defaultAxis.length)) {
                                         m_diameter = m_calculateDiameter
                                                         .compute(m_outline)
                                                         .get();
