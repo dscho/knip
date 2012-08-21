@@ -53,6 +53,7 @@ package org.knime.knip.core.features.seg;
 import java.util.BitSet;
 
 import net.imglib2.IterableInterval;
+import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
 
@@ -170,13 +171,14 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
         }
 
         @FeatureTargetListener
-        public void iiUpdated(IterableInterval<T> interval) {
+        public final void iiUpdated(
+                        Pair<IterableInterval<T>, CalibratedSpace> pair) {
 
-                m_validDims = getValidDims(interval);
+                m_validDims = getValidDims(pair.a);
 
                 if (m_validDims != null) {
                         m_isValid = true;
-                        m_interval = interval;
+                        m_interval = pair.a;
                         m_dimX = m_validDims.a;
                         m_dimY = m_validDims.b;
                 } else {

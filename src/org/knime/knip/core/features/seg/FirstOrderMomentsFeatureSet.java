@@ -51,7 +51,9 @@
 package org.knime.knip.core.features.seg;
 
 import net.imglib2.IterableInterval;
+import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.util.Pair;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.knime.knip.core.features.FeatureSet;
@@ -91,8 +93,9 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
         private ObjectCalcAndCache m_ocac;
 
         @FeatureTargetListener
-        public final void iiUpdated(IterableInterval<T> interval) {
-                m_interval = interval;
+        public final void iiUpdated(
+                        Pair<IterableInterval<T>, CalibratedSpace> pair) {
+                m_interval = pair.a;
         }
 
         /**
