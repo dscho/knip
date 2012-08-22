@@ -22,15 +22,15 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/xalan-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-legacy-2.0.0-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.4-20120816.075351-142.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.4-20120816.075154-152.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-common-4.4-20120816.075213-152.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.4-20120816.075253-152.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.4-20120816.075204-152.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.4-20120816.075335-152.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.4-20120816.075243-152.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.4-20120816.075230-152.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120816.075311-109.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.4-20120821.233318-143.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.4-20120821.233154-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-common-4.4-20120821.233212-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.4-20120821.233241-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.4-20120821.233204-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.4-20120821.233308-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.4-20120821.233234-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.4-20120821.233223-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120821.233251-110.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
