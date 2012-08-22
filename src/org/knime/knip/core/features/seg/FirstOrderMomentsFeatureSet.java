@@ -52,6 +52,7 @@ package org.knime.knip.core.features.seg;
 
 import net.imglib2.IterableInterval;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.ops.operation.iterableinterval.unary.Centroid;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
 
@@ -106,7 +107,7 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
 
                 m_statistics = m_ocac.descriptiveStatistics(m_interval);
 
-                if (id > 12 && id < 19) {
+                if (id > 12 && id <= 19) {
                         // update weighted centroid
                         m_weightedCentroid = m_ocac.weightedCentroid(
                                         m_interval, m_statistics,
@@ -164,6 +165,19 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
                         return m_weightedCentroid.length > 4 ? m_weightedCentroid[4]
                                         : 0;
                 case 19:
+                        m_massDisplacement = 0;
+                        double[] centroid = new Centroid().compute(m_interval,
+                                        new double[m_interval.numDimensions()]);
+                        for (int d = 0; d < m_interval.numDimensions(); d++) {
+                                m_weightedCentroid[d] /= m_statistics.getSum();
+                                // m_weightedCentroid[d] /= m_interval.size();
+                                centroid[d] /= m_interval.size();
+                                m_massDisplacement += Math.pow(
+                                                m_weightedCentroid[d]
+                                                                - centroid[d],
+                                                2);
+                        }
+
                         return Math.sqrt(m_massDisplacement);
 
                 default:
