@@ -54,7 +54,7 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 
 import org.knime.knip.core.data.LabelGenerator;
 

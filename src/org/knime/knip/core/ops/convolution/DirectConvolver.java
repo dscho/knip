@@ -3,7 +3,7 @@ package org.knime.knip.core.ops.convolution;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;

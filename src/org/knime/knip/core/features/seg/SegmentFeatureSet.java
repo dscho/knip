@@ -58,6 +58,8 @@ import net.imglib2.IterableInterval;
 import net.imglib2.img.Img;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
+import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.util.Pair;
 
@@ -65,10 +67,7 @@ import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
 import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
-import org.knime.knip.core.ops.bittype.CalculateDiameter;
-import org.knime.knip.core.ops.bittype.CalculatePerimeter;
-import org.knime.knip.core.ops.bittype.ConvexHull2D;
-import org.knime.knip.core.ops.bittype.ExtractOutlineImg;
+import org.knime.knip.core.ops.img.CalculatePerimeter;
 import org.knime.knip.core.util.ImgUtils;
 
 /**

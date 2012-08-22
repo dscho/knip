@@ -35,18 +35,18 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.basictypeaccess.DoubleAccess;
 import net.imglib2.img.basictypeaccess.array.DoubleArray;
 import net.imglib2.img.list.ListImg;
-import net.imglib2.ops.image.BinaryOperationAssignment;
-import net.imglib2.ops.image.UnaryConstantRightAssignment;
-import net.imglib2.ops.image.UnaryOperationAssignment;
-import net.imglib2.ops.operation.binary.real.CombineToComplex;
-import net.imglib2.ops.operation.binary.real.RealAdd;
-import net.imglib2.ops.operation.binary.real.RealMultiply;
-import net.imglib2.ops.operation.binary.real.RealPower;
-import net.imglib2.ops.operation.unary.complex.ComplexExp;
+import net.imglib2.ops.img.BinaryOperationAssignment;
+import net.imglib2.ops.img.UnaryConstantRightAssignment;
+import net.imglib2.ops.img.UnaryOperationAssignment;
+import net.imglib2.ops.operation.complex.unary.ComplexExp;
+import net.imglib2.ops.operation.iterableinterval.unary.IterableIntervalCopy;
+import net.imglib2.ops.operation.real.binary.CombineToComplex;
+import net.imglib2.ops.operation.real.binary.RealAdd;
+import net.imglib2.ops.operation.real.binary.RealMultiply;
+import net.imglib2.ops.operation.real.binary.RealPower;
 import net.imglib2.type.numeric.complex.ComplexDoubleType;
 import net.imglib2.type.numeric.real.DoubleType;
 
-import org.knime.knip.core.ops.iterable.IterableIntervalCopy;
 import org.knime.knip.core.util.FilterTools;
 
 /**

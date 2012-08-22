@@ -58,16 +58,16 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.subset.ImgView;
-import net.imglib2.img.subset.SubsetViews;
+import net.imglib2.ops.data.CooccurrenceMatrix;
+import net.imglib2.ops.data.CooccurrenceMatrix.MatrixOrientation;
+import net.imglib2.ops.operation.iterableinterval.unary.MakeCooccurrenceMatrix;
+import net.imglib2.ops.operation.subset.views.ImgView;
+import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.knime.knip.core.data.labeling.Signature;
-import org.knime.knip.core.data.statistics.CooccurrenceMatrix;
-import org.knime.knip.core.data.statistics.CooccurrenceMatrix.MatrixOrientation;
-import org.knime.knip.core.ops.misc.MakeCooccurrenceMatrix;
 
 /**
  *

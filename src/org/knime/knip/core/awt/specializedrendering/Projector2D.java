@@ -6,7 +6,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.display.projectors.Abstract2DProjector;
-import net.imglib2.img.subset.SubsetViews;
+import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.Type;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 

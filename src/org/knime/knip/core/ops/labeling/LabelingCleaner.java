@@ -3,7 +3,7 @@ package org.knime.knip.core.ops.labeling;
 import net.imglib2.Cursor;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 
 /**
  * 

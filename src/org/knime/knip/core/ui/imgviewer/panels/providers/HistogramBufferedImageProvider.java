@@ -6,8 +6,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import net.imglib2.img.Img;
-import net.imglib2.img.subset.SubsetViews;
-import net.imglib2.ops.operation.unary.iterableinterval.MakeHistogram;
+import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
+import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 

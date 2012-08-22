@@ -2,7 +2,7 @@ package org.knime.knip.core.ops.iterator;
 
 import java.util.Iterator;
 
-import net.imglib2.ops.BinaryOperation;
+import net.imglib2.ops.operation.BinaryOperation;
 import net.imglib2.type.numeric.RealType;
 
 /**

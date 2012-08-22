@@ -3,7 +3,7 @@ package org.knime.knip.core.ops.metadata;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.ops.UnaryOutputOperation;
+import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.Type;
 
 public class DimSwapper<T extends Type<T>> implements

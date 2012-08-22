@@ -58,7 +58,7 @@ import java.util.List;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
@@ -71,7 +71,7 @@ import org.knime.knip.core.util.ImgUtils;
 import org.knime.knip.core.util.PermutationSort;
 
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class ContourDetector<T extends RealType<T>> {
@@ -80,18 +80,18 @@ public class ContourDetector<T extends RealType<T>> {
          * the polar image sources to retrieve the signature and, hence, the
          * contour
          */
-        private PolarImageFactory<T>[] m_polFacs;
+        private final PolarImageFactory<T>[] m_polFacs;
 
         /* the parameters of the detector */
-        private int m_numAng; // number of angles
+        private final int m_numAng; // number of angles
 
-        private double m_maxOverlap; //
+        private final double m_maxOverlap; //
 
-        private double m_minScore;
+        private final double m_minScore;
 
-        private int m_minArea;
+        private final int m_minArea;
 
-        private Vector[] m_seedingPoints;
+        private final Vector[] m_seedingPoints;
 
         private final int m_maxLineVariance;
 
@@ -354,7 +354,7 @@ public class ContourDetector<T extends RealType<T>> {
         /**
          * Distributes a set of points over an area of the specified width and
          * height as a regular lattice (with gaps-pixel space in between).
-         * 
+         *
          * @param gaps
          * @param width
          * @param height
@@ -376,6 +376,7 @@ public class ContourDetector<T extends RealType<T>> {
                 /**
                  * {@inheritDoc}
                  */
+                @Override
                 public int compare(final Signature arg0, final Signature arg1) {
                         return (int) Math.round(arg1.getScore() * 1000
                                         - arg0.getScore() * 1000);

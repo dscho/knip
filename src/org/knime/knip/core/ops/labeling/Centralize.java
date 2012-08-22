@@ -9,13 +9,13 @@ import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.BinaryOperation;
-import net.imglib2.ops.BinaryOutputOperation;
+import net.imglib2.ops.operation.BinaryOperation;
+import net.imglib2.ops.operation.BinaryOutputOperation;
+import net.imglib2.ops.operation.iterableinterval.unary.Centroid;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
 import org.knime.knip.core.algorithm.PolarImageFactory;
-import org.knime.knip.core.ops.interval.Centroid;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 
 public class Centralize<T extends RealType<T>, L extends Comparable<L>>

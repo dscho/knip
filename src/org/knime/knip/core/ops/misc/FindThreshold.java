@@ -50,8 +50,8 @@
  */
 package org.knime.knip.core.ops.misc;
 
-import net.imglib2.ops.UnaryOperation;
-import net.imglib2.ops.operation.unary.iterableinterval.OpsHistogram;
+import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
 

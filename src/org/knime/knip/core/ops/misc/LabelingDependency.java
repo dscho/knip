@@ -8,7 +8,7 @@ import java.util.Map;
 import net.imglib2.Cursor;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.UnaryOutputOperation;
+import net.imglib2.ops.operation.UnaryOutputOperation;
 
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 

@@ -11,13 +11,12 @@ import net.imglib2.algorithm.legacy.fft.PhaseCorrelationPeak;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.ImgPlus;
-import net.imglib2.img.subset.ImgView;
-import net.imglib2.img.subset.SubsetViews;
-import net.imglib2.ops.BinaryOutputOperation;
-import net.imglib2.ops.operation.unary.img.CopyImgOperation;
+import net.imglib2.ops.operation.BinaryOutputOperation;
+import net.imglib2.ops.operation.img.unary.ImgCopyOperation;
+import net.imglib2.ops.operation.imgplus.unary.ImgPlusCrop;
+import net.imglib2.ops.operation.subset.views.ImgView;
+import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.numeric.RealType;
-
-import org.knime.knip.core.ops.imgplus.ImgPlusCrop;
 
 /**
  * Image projection.
@@ -477,9 +476,9 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                         new ImgPlusCrop<T>(m_offset, m_size).compute(iplus,
                                         iplusres);
                 } else if (m_sizemode == SIZEMODES.NOTHING) {
-                        new CopyImgOperation<T>().compute(res2, res);
+                        new ImgCopyOperation<T>().compute(res2, res);
                 } else { // extend
-                        new CopyImgOperation<T>().compute(res2, res);
+                        new ImgCopyOperation<T>().compute(res2, res);
                 }
                 return res;
         }

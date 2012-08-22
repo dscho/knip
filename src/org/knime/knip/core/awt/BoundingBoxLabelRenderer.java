@@ -8,11 +8,11 @@ import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
 import net.imglib2.display.ARGBScreenImage;
 import net.imglib2.display.ScreenImage;
-import net.imglib2.img.subset.LabelingView;
-import net.imglib2.img.subset.SubsetViews;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
+import net.imglib2.ops.operation.subset.views.LabelingView;
+import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.type.Type;
 

@@ -1,7 +1,7 @@
 package org.knime.knip.core.ops.misc;
 
 import net.imglib2.img.Img;
-import net.imglib2.ops.BinaryOutputOperation;
+import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.data.labeling.Signature;

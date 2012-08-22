@@ -54,11 +54,12 @@ import java.util.BitSet;
 
 import net.imglib2.IterableInterval;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.ops.data.CooccurrenceMatrix;
+import net.imglib2.ops.data.CooccurrenceMatrix.MatrixOrientation;
+import net.imglib2.ops.operation.iterableinterval.unary.MakeCooccurrenceMatrix.HaralickFeature;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
 
-import org.knime.knip.core.data.statistics.CooccurrenceMatrix;
-import org.knime.knip.core.data.statistics.CooccurrenceMatrix.MatrixOrientation;
 import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
 import org.knime.knip.core.features.ObjectCalcAndCache;
@@ -70,22 +71,6 @@ import org.knime.knip.core.features.SharesObjects;
  */
 public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
                 SharesObjects {
-
-        public static enum HaralickFeature {
-                ASM, Contrast, Correlation, Variance, IFDM, SumAverage, SumVariance, SumEntropy, Entropy, DifferenceVariance, DifferenceEntropy, ICM1, ICM2,
-                /* non haralick extensions */
-                ClusterShade, ClusterProminence;
-
-                public static int getIndex(HaralickFeature feature) {
-                        for (int i = 0; i < values().length; i++) {
-                                if (values()[i] == feature) {
-                                        return i;
-                                }
-                        }
-                        // could not happen
-                        return -1;
-                }
-        }
 
         private final int m_distance;
 

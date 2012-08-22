@@ -75,7 +75,13 @@ import net.imglib2.img.sparse.NtreeImgFactory;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.labeling.NativeImgLabeling;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.ops.operation.iterableinterval.unary.Centroid;
+import net.imglib2.ops.operation.randomaccessibleinterval.regiongrowing.AbstractRegionGrowing;
+import net.imglib2.ops.operation.randomaccessibleinterval.regiongrowing.CCA;
+import net.imglib2.ops.operation.randomaccessibleinterval.unary.DistanceMap;
+import net.imglib2.ops.operation.randomaccessibleinterval.unary.LocalMaximaForDistanceMap;
+import net.imglib2.ops.operation.randomaccessibleinterval.unary.LocalMaximaForDistanceMap.NeighborhoodType;
 import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.sampler.special.ConstantRandomAccessible;
 import net.imglib2.type.logic.BitType;
@@ -86,13 +92,7 @@ import org.knime.knip.core.algorithm.extendedem.AttributeTmp;
 import org.knime.knip.core.algorithm.extendedem.ExtendedEM;
 import org.knime.knip.core.algorithm.extendedem.InstanceTmp;
 import org.knime.knip.core.algorithm.extendedem.InstancesTmp;
-import org.knime.knip.core.algorithm.types.NeighborhoodType;
 import org.knime.knip.core.ops.bittype.PositionsToBitTypeImage;
-import org.knime.knip.core.ops.img.algorithms.LocalMaximaForDistanceMap;
-import org.knime.knip.core.ops.interval.Centroid;
-import org.knime.knip.core.ops.regiongrowing.AbstractRegionGrowing;
-import org.knime.knip.core.ops.regiongrowing.CCA;
-import org.knime.knip.core.ops.transform.DistanceMap;
 
 /**
  * <code> code m_executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());<br>
@@ -833,10 +833,11 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                  * @return Instance of seeding points
                  */
                 private InstancesTmp prepareSeedingPointsForEM() {
-                        final InstancesTmp res = new InstancesTmp("centers", attr,
-                                        t_seedPoints.size());
+                        final InstancesTmp res = new InstancesTmp("centers",
+                                        attr, t_seedPoints.size());
                         for (final long[] t : t_seedPoints) {
-                                final InstanceTmp row = new InstanceTmp(t_numDim);
+                                final InstanceTmp row = new InstanceTmp(
+                                                t_numDim);
                                 for (int d = 0; d < t_numDim; ++d)
                                         row.setValue(attr.get(d), (int) t[d]);
                                 res.add(row);

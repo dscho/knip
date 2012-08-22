@@ -6,7 +6,7 @@ import net.imglib2.algorithm.region.localneighborhood.Neighborhood;
 import net.imglib2.algorithm.region.localneighborhood.RectangleShape;
 import net.imglib2.img.Img;
 import net.imglib2.img.planar.PlanarImgFactory;
-import net.imglib2.ops.iterable.MedianOp;
+import net.imglib2.ops.operation.iterable.unary.MedianOp;
 import net.imglib2.outofbounds.OutOfBoundsConstantValueFactory;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;

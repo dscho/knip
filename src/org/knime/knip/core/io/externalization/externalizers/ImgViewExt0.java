@@ -51,7 +51,7 @@
 package org.knime.knip.core.io.externalization.externalizers;
 
 import net.imglib2.img.Img;
-import net.imglib2.img.subset.ImgView;
+import net.imglib2.ops.operation.subset.views.ImgView;
 
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;

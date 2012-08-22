@@ -7,8 +7,8 @@ import java.io.ObjectOutput;
 
 import net.imglib2.IterableInterval;
 import net.imglib2.img.Img;
-import net.imglib2.img.subset.SubsetViews;
-import net.imglib2.ops.operation.unary.iterableinterval.NormalizeIterableInterval;
+import net.imglib2.ops.operation.iterableinterval.unary.NormalizeIterableInterval;
+import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 

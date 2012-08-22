@@ -1,14 +1,13 @@
-package org.knime.knip.core.ops.bittype;
+package org.knime.knip.core.features.seg;
 
 import net.imglib2.img.Img;
-import net.imglib2.ops.UnaryOperation;
-import net.imglib2.ops.image.BinaryOperationAssignment;
-import net.imglib2.ops.operation.binary.real.RealXor;
+import net.imglib2.ops.img.BinaryOperationAssignment;
+import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.ops.operation.randomaccessibleinterval.unary.morph.Dilate;
+import net.imglib2.ops.operation.randomaccessibleinterval.unary.morph.Erode;
+import net.imglib2.ops.operation.real.binary.RealXor;
+import net.imglib2.ops.types.ConnectedType;
 import net.imglib2.type.logic.BitType;
-
-import org.knime.knip.core.ops.morph.Dilate;
-import org.knime.knip.core.ops.morph.Erode;
-import org.knime.knip.core.types.ConnectedType;
 
 /**
  * Extracts the outline of a given connected component in an {@link Img} of
@@ -33,9 +32,10 @@ public class ExtractOutlineImg implements
                 m_outlineInsideSegment = outlineInsideSegment;
                 m_imgManWith = new BinaryOperationAssignment<BitType, BitType, BitType>(
                                 new RealXor<BitType, BitType, BitType>());
-                m_op = m_outlineInsideSegment ? new Erode(
-                                ConnectedType.EIGHT_CONNECTED, 1) : new Dilate(
-                                ConnectedType.FOUR_CONNECTED, 1);
+                m_op = m_outlineInsideSegment ? new Erode<Img<BitType>>(
+                                ConnectedType.EIGHT_CONNECTED, 1)
+                                : new Dilate<Img<BitType>>(
+                                                ConnectedType.FOUR_CONNECTED, 1);
         }
 
         @Override

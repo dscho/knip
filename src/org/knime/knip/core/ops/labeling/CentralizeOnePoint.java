@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.algorithm.PolarImageFactory;

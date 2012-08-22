@@ -55,7 +55,7 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RealInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
-import net.imglib2.img.subset.ImgPlusView;
+import net.imglib2.ops.operation.subset.views.ImgPlusView;
 import net.imglib2.type.Type;
 
 /**

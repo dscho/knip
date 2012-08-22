@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.type.logic.BitType;
 
 public class PositionsToBitTypeImage implements

@@ -1,7 +1,7 @@
 package org.knime.knip.core.ops.convolution;
 
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
 
 /**

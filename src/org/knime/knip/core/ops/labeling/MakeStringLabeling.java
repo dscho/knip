@@ -9,7 +9,7 @@ import net.imglib2.Cursor;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.UnaryOperation;
+import net.imglib2.ops.operation.UnaryOperation;
 
 public class MakeStringLabeling<L extends Comparable<L>> implements
                 UnaryOperation<Labeling<L>, Labeling<String>> {

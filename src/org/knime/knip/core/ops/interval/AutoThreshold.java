@@ -1,11 +1,11 @@
 package org.knime.knip.core.ops.interval;
 
 import net.imglib2.IterableInterval;
-import net.imglib2.ops.UnaryOperation;
-import net.imglib2.ops.image.UnaryRelationAssigment;
-import net.imglib2.ops.operation.unary.iterableinterval.MakeHistogram;
-import net.imglib2.ops.operation.unary.iterableinterval.OpsHistogram;
-import net.imglib2.ops.relation.unary.RealGreaterThanConstant;
+import net.imglib2.ops.img.UnaryRelationAssigment;
+import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
+import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
+import net.imglib2.ops.relation.real.unary.RealGreaterThanConstant;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;

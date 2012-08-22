@@ -1,13 +1,13 @@
-package org.knime.knip.core.ops.bittype;
+package org.knime.knip.core.ops.img;
 
 import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
-import net.imglib2.ops.UnaryOutputOperation;
-import net.imglib2.ops.operation.unary.img.ImgConversionTypes;
-import net.imglib2.ops.operation.unary.img.ImgConvert;
+import net.imglib2.ops.operation.UnaryOutputOperation;
+import net.imglib2.ops.operation.img.unary.ImgConvert;
+import net.imglib2.ops.operation.img.unary.ImgConvert.ImgConversionTypes;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;

@@ -7,7 +7,7 @@ import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Metadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-import net.imglib2.ops.operation.unary.metadata.CopyImageMetadata;
+import net.imglib2.ops.operation.metadata.unary.CopyImageMetadata;
 
 /**
  *
