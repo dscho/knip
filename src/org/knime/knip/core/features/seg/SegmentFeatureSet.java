@@ -162,10 +162,12 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         }
                 }
 
-                if (m_enabled.get(6) || m_enabled.get(7) || m_enabled.get(8)
-                                || m_enabled.get(10)) {
+                if (m_enabled.get(m_defaultAxis.length + 1)
+                                || m_enabled.get(m_defaultAxis.length + 2)
+                                || m_enabled.get(m_defaultAxis.length + 3)
+                                || m_enabled.get(m_defaultAxis.length + 5)) {
                         if (activeDims > 2) {
-                                System.out.println("Perimeter, Convexity and Circularity and Dist_max can only be calculated on 2 dimensional segments. Settings them to Double.Nan");
+                                System.out.println("Perimeter, Convexity and Circularity and Diameter can only be calculated on 2 dimensional segments. Settings them to Double.Nan");
                                 m_solidity = Double.NaN;
                                 m_perimeter = Double.NaN;
                                 m_circularity = Double.NaN;
