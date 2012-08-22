@@ -134,7 +134,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         features.add("Centroid " + type.getLabel());
                 }
 
-                features.add("Size");
+                features.add("Num Pix");
                 features.add("Circularity");
                 features.add("Perimeter");
                 features.add("Convexity");
