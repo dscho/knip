@@ -12,6 +12,7 @@ import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;
 
+import org.knime.knip.core.features.seg.ExtractOutlineImg;
 import org.knime.knip.core.ops.convolution.DirectImageConvolution;
 import org.knime.knip.core.types.OutOfBoundsStrategyEnum;
 import org.knime.knip.core.util.ImgUtils;
