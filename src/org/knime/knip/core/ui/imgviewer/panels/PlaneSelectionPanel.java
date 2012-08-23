@@ -371,9 +371,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 return res;
         }
 
-        public void onViewClosed() {
-                //
-        }
 
         /**
          * @param name
