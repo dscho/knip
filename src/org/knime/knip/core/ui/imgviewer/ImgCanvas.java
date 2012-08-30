@@ -61,8 +61,6 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 	 */
         private static final long serialVersionUID = 1L;
 
-
-
         private final JPanel m_imageCanvas;
 
         private final JScrollPane m_imageScrollPane;
@@ -90,7 +88,6 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         protected EventService m_eventService;
 
         private boolean m_blockMouseEvents;
-
 
         /**
 	 *
@@ -347,36 +344,37 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 if (m_image == null)
                         return;
 
-                // get old center of the image
+                if (m_oldFactor != m_factor) {
 
+                        // get old center of the image
 
+                        Rectangle rect = m_imageCanvas.getVisibleRect();
+                        double imgCenterX = rect.getCenterX() / m_oldFactor;
+                        double imgCenterY = rect.getCenterY() / m_oldFactor;
 
-                Rectangle rect = m_imageCanvas.getVisibleRect();
-                double imgCenterX = rect.getCenterX() / m_oldFactor;
-                double imgCenterY = rect.getCenterY() / m_oldFactor;
+                        // enlarge canvas
+                        Dimension d = new Dimension(
+                                        (int) (m_image.getWidth(null) * m_factor),
+                                        (int) (m_image.getHeight(null) * m_factor));
+                        m_imageCanvas.setSize(d);
+                        m_imageCanvas.setPreferredSize(d);
 
-                // enlarge canvas
-                Dimension d = new Dimension(
-                                (int) (m_image.getWidth(null) * m_factor),
-                                (int) (m_image.getHeight(null) * m_factor));
-                m_imageCanvas.setSize(d);
-                m_imageCanvas.setPreferredSize(d);
+                        double xCorrect = getVisibleImageRect().width / 2.0;
+                        double yCorrect = getVisibleImageRect().height / 2.0;
 
-                double xCorrect = getVisibleImageRect().width / 2.0;
-                double yCorrect = getVisibleImageRect().height / 2.0;
+                        // apply old center
+                        m_imageScrollPane
+                                        .getViewport()
+                                        .setViewPosition(
+                                                        new Point(
+                                                                        (int) (((imgCenterX - xCorrect) * m_factor)),
+                                                                        (int) (((imgCenterY - yCorrect) * m_factor))));
 
-                // apply old center
-                m_imageScrollPane
-                                .getViewport()
-                                .setViewPosition(
-                                                new Point(
-                                                                (int) (((imgCenterX - xCorrect) * m_factor)),
-                                                                (int) (((imgCenterY - yCorrect) * m_factor))));
+                        m_oldFactor = m_factor;
 
-                m_oldFactor = m_factor;
-
-                m_imageScrollPane.validate();
-                m_imageScrollPane.repaint();
+                }
+                        m_imageScrollPane.validate();
+                        m_imageScrollPane.repaint();
         }
 
         /**
