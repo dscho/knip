@@ -564,7 +564,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                                                 .getMaximum()));
                         }
                         // triggers also the necessary events
-                        m_scrollBars[fieldIndex].setValue(value);
+                        // set value -1 because internal model starts with 0
+                        m_scrollBars[fieldIndex].setValue(value - 1);
                 }
         }
 
