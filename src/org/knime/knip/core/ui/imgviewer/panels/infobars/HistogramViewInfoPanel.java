@@ -8,17 +8,15 @@ import java.io.ObjectOutput;
 import javax.swing.JLabel;
 
 import net.imglib2.img.Img;
-import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.Type;
 
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
+import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.HistogramChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.HistogramFactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
-import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
-import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 
 /**
  *
@@ -32,19 +30,13 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
 
         private final JLabel m_infoLabel;
 
-        private I m_img;
-
-        private PlaneSelectionEvent m_sel;
-
         private final StringBuffer m_infoBuffer;
-
-        private CalibratedSpace m_imgAxes;
 
         private int[] m_hist;
 
         private double m_factor = 1;
 
-        private long[] m_pos;
+        private int m_binPosition;
 
         private long[] m_dims;
 
@@ -56,43 +48,19 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
                 add(m_infoLabel);
         }
 
-        /**
-         * @param name
-         */
-        @EventListener
-        public void onImgChanged(IntervalWithMetadataChgEvent<I> e) {
-
-                m_img = e.getInterval();
-                m_dims = new long[m_img.numDimensions()];
-                m_img.dimensions(m_dims);
-                m_imgAxes = e.getCalibratedSpace();
-
-                if (m_sel == null
-                                || m_sel.numDimensions() != e.getInterval()
-                                                .numDimensions()) {
-                        onPlaneSelectionChanged(new PlaneSelectionEvent(0, 1,
-                                        new long[e.getInterval()
-                                                        .numDimensions()]));
-                }
-        }
-
-        @EventListener
-        public void onPlaneSelectionChanged(PlaneSelectionEvent e) {
-                m_sel = e;
-                m_pos = m_sel.getPlanePos().clone();
-                m_pos[m_sel.getPlaneDimIndex1()] = -1;
-                m_pos[m_sel.getPlaneDimIndex2()] = -1;
-
-                updateLabel();
-        }
-
         @EventListener
         public void onMouseMoved(ImgViewerMouseMovedEvent e) {
-                if (e.isInsideImgView(m_dims[m_sel.getPlaneDimIndex1()],
-                                m_dims[m_sel.getPlaneDimIndex2()])) {
-                        m_pos = m_sel.getPlanePos(e.getPosX(), e.getPosY());
+                if (e.isInsideImgView(m_dims[0], m_dims[1])) {
+                        m_binPosition = e.getPosX();
                         updateLabel();
                 }
+        }
+
+        @EventListener
+        public void onHistAWTImageChanged(AWTImageChgEvent e) {
+                m_dims = new long[2];
+                m_dims[0] = e.getImage().getWidth(null);
+                m_dims[1] = e.getImage().getHeight(null);
         }
 
         @EventListener
@@ -110,29 +78,13 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
 
                 m_infoBuffer.setLength(0);
 
-                for (int i = 0; i < m_pos.length; i++) {
-                        m_infoBuffer.append(" ");
-                        if (i < m_img.numDimensions()) {
-                                m_infoBuffer.append(m_imgAxes != null ? m_imgAxes
-                                                .axis(i).getLabel() : i);
-                        }
-                        if (m_pos[i] == -1) {
-                                m_infoBuffer.append("[ Not set ];");
-                        } else {
-                                m_infoBuffer.append("[" + (m_pos[i] + 1) + "/"
-                                                + m_img.dimension(i) + "];");
-                        }
-                }
-
                 if (m_infoBuffer.length() > 0) {
                         m_infoBuffer.deleteCharAt(m_infoBuffer.length() - 1);
                 }
 
-                int x = (int) m_pos[m_sel.getPlaneDimIndex1()];
+                int x = m_binPosition;
 
                 if (x >= 0 && x < m_hist.length) {
-
-                        m_infoBuffer.append("; ");
                         m_infoBuffer.append("value=");
                         m_infoBuffer.append(String.format(
                                         "[from %.2f; to %.2f]", m_factor * x,
