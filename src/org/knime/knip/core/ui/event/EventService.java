@@ -56,7 +56,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,13 +74,14 @@ public class EventService {
 
         private final Map<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>> m_typeToSubscriber;
 
-        private final PriorityQueue<KNIPEvent> m_eventQueue;
+        private final PriorityBlockingQueue<KNIPEvent> m_eventQueue;
 
         private boolean m_openQueue = true;
 
         public EventService() {
                 Comparator<KNIPEvent> comparator = new KNIPEventComparator();
-                m_eventQueue = new PriorityQueue<KNIPEvent>(20, comparator);
+                m_eventQueue = new PriorityBlockingQueue<KNIPEvent>(20,
+                                comparator);
                 m_typeToSubscriber = new HashMap<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>>();
         }
 
