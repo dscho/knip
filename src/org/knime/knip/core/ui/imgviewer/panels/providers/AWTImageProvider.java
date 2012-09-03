@@ -307,7 +307,7 @@ public abstract class AWTImageProvider<T extends Type<T>, I extends RandomAccess
                 hash *= 31;
                 hash += m_sel.hashCode();
                 hash *= 31;
-                hash += m_renderer.hashCode();
+                hash += m_renderer.getClass().hashCode();
                 return hash;
         }
 
