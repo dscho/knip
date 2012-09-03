@@ -36,7 +36,7 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
 
         private double m_factor = 1;
 
-        private int m_binPosition;
+        private int m_binXPosition;
 
         private long[] m_dims;
 
@@ -51,7 +51,7 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
         @EventListener
         public void onMouseMoved(ImgViewerMouseMovedEvent e) {
                 if (e.isInsideImgView(m_dims[0], m_dims[1])) {
-                        m_binPosition = e.getPosX();
+                        m_binXPosition = e.getPosX();
                         updateLabel();
                 }
         }
@@ -75,22 +75,18 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
 
         /** Updates cursor probe label. */
         protected void updateLabel() {
-
+                // reset
                 m_infoBuffer.setLength(0);
 
-                if (m_infoBuffer.length() > 0) {
-                        m_infoBuffer.deleteCharAt(m_infoBuffer.length() - 1);
-                }
-
-                int x = m_binPosition;
-
-                if (x >= 0 && x < m_hist.length) {
+                // create
+                if (m_binXPosition >= 0 && m_binXPosition < m_hist.length) {
                         m_infoBuffer.append("value=");
                         m_infoBuffer.append(String.format(
-                                        "[from %.2f; to %.2f]", m_factor * x,
-                                        m_factor * (x + 1)));
+                                        "[from %.2f; to %.2f]", m_factor
+                                                        * m_binXPosition,
+                                        m_factor * (m_binXPosition + 1)));
                         m_infoBuffer.append("; count=");
-                        m_infoBuffer.append(m_hist[x]);
+                        m_infoBuffer.append(m_hist[m_binXPosition]);
 
                         m_infoLabel.setText(m_infoBuffer.toString());
                         m_infoBuffer.setLength(0);
