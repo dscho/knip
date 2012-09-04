@@ -52,8 +52,8 @@ package org.knime.knip.core.io.externalization.externalizers;
 
 import net.imglib2.meta.Axes;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
 
-import org.knime.knip.core.data.img.CalibratedSpaceImpl;
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;

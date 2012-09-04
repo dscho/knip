@@ -8,6 +8,9 @@ import net.imglib2.meta.Sourced;
 import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
 import net.imglib2.ops.operation.metadata.unary.CopyNamed;
 import net.imglib2.ops.operation.metadata.unary.CopySourced;
+import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
+import net.imglib2.ops.util.metadata.NamedImpl;
+import net.imglib2.ops.util.metadata.SourcedImpl;
 
 /**
  * Implementation of GeneralMetadata

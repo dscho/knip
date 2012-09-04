@@ -51,8 +51,8 @@
 package org.knime.knip.core.io.externalization.externalizers;
 
 import net.imglib2.meta.Named;
+import net.imglib2.ops.util.metadata.NamedImpl;
 
-import org.knime.knip.core.data.img.NamedImpl;
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;

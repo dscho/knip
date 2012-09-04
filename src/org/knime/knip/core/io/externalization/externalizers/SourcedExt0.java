@@ -51,8 +51,8 @@
 package org.knime.knip.core.io.externalization.externalizers;
 
 import net.imglib2.meta.Sourced;
+import net.imglib2.ops.util.metadata.SourcedImpl;
 
-import org.knime.knip.core.data.img.SourcedImpl;
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;

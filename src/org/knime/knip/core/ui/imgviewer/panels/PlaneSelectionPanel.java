@@ -371,7 +371,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 return res;
         }
 
-
         /**
          * @param name
          */
@@ -382,7 +381,10 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         m_dims = new long[e.getCalibratedSpace()
                                         .numDimensions()];
 
-                if (m_axesLabels == null)
+                if (m_axesLabels == null
+                                || m_axesLabels.length != e
+                                                .getCalibratedSpace()
+                                                .numDimensions())
                         m_axesLabels = new AxisType[e.getCalibratedSpace()
                                         .numDimensions()];
 
