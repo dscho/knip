@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -254,9 +255,11 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                                                                 i).getText()));
                         }
                         m_activeLabels.clear();
-                        List<L> filtered = m_filter.filterLabeling(m_labeling
-                                        .firstElement().getMapping()
-                                        .getLabels());
+                        Collection<L> filtered = m_filter
+                                        .filterLabeling(m_labeling
+                                                        .firstElement()
+                                                        .getMapping()
+                                                        .getLabels());
                         m_activeLabels.addAll(filtered);
 
                         for (L label : filtered) {

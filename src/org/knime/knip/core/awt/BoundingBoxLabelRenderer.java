@@ -143,6 +143,7 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                 // TODO: Nothing going on here
         }
 
+
         @Override
         public void setLabelMapping(LabelingMapping<L> labelMapping) {
                 // do nothing

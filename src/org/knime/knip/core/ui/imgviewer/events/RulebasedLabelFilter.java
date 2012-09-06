@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -128,7 +129,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                 return m_op;
         }
 
-        public List<L> filterLabeling(List<L> labels, Operator op,
+        public Collection<L> filterLabeling(Collection<L> labels, Operator op,
                         List<String> rules) {
 
                 if (rules.size() == 0) {
@@ -224,7 +225,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
         }
 
         @Override
-        public List<L> filterLabeling(List<L> labels) {
+        public Collection<L> filterLabeling(Collection<L> labels) {
                 return filterLabeling(labels, m_op, m_rules);
         }
 
