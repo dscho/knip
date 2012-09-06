@@ -44,17 +44,17 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   2 Aug 2011 (hornm): created
  */
 package org.knime.knip.core.data.labeling;
 
 import java.io.Externalizable;
-import java.util.List;
+import java.util.Collection;
 
 /**
- * 
+ *
  * @author dietzc, hornm, University of Konstanz
  */
 public interface LabelFilter<L extends Comparable<L>> extends Externalizable {
@@ -63,7 +63,7 @@ public interface LabelFilter<L extends Comparable<L>> extends Externalizable {
          *                is a empty list, if all labels have been filtered out
          * @return
          */
-        List<L> filterLabeling(List<L> labels);
+        Collection<L> filterLabeling(Collection<L> labels);
 
         void clear();
 
