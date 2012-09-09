@@ -155,7 +155,9 @@ public class FileChooserPanel extends JPanel {
                 browsePane.add(m_fileChooser);
 
                 if (fileFilter != null) {
+                        // m_fileChooser.setFileFilter(fileFilter);
                         m_fileChooser.setFileFilter(fileFilter);
+
                 }
 
                 JTabbedPane rightTab = new JTabbedPane();
@@ -297,6 +299,7 @@ public class FileChooserPanel extends JPanel {
          */
 
         private void onAdd() {
+                FileFilter ff = m_fileChooser.getFileFilter();
                 if (m_fileChooser.getSelectedFiles().length == 0) {
                         JOptionPane.showMessageDialog(
                                         this,
@@ -307,10 +310,10 @@ public class FileChooserPanel extends JPanel {
 
                 if (m_fileChooser.getSelectedFile().isDirectory()) {
                         File[] f = m_fileChooser.getSelectedFile().listFiles();
-                        m_selectedFileListModel.addFiles(f, getFileFilter());
+                        m_selectedFileListModel.addFiles(f, ff);
                 } else {
                 File[] files = m_fileChooser.getSelectedFiles();
-                m_selectedFileListModel.addFiles(files, getFileFilter());
+                        m_selectedFileListModel.addFiles(files, ff);
                 }
                 filePref.put("Path", m_fileChooser.getCurrentDirectory()
                                 .toString());
@@ -342,7 +345,7 @@ public class FileChooserPanel extends JPanel {
         private void onRemove() {
                 m_selectedFileListModel.remove(m_selectedFileList
                                 .getSelectedIndices());
-
+                m_selectedFileList.clearSelection();
                 fireSelectionChangedEvent();
         }
 
@@ -574,6 +577,7 @@ public class FileChooserPanel extends JPanel {
                                                 oldValue, newValue);
                         } catch (Exception e) {
                                 // This is a hack to avoid stupid mac behaviour
+                                System.out.println(e.getMessage());
                         }
 
                 }
