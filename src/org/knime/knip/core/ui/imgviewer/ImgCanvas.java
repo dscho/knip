@@ -89,11 +89,15 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         private boolean m_blockMouseEvents;
 
+        public ImgCanvas() {
+                this("Image", false);
+        }
+
         /**
 	 *
 	 */
-        public ImgCanvas() {
-                super("Image", false);
+        public ImgCanvas(final String name, final boolean isImageHidden) {
+                super(name, isImageHidden);
 
                 m_currentRectangle = new Rectangle();
                 m_oldFactor = 1;
