@@ -69,10 +69,15 @@ import loci.formats.services.OMEXMLService;
 import net.imglib2.img.Img;
 import net.imglib2.iterator.IntervalIterator;
 import net.imglib2.sampler.special.OrthoSliceCursor;
+import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.ByteType;
+import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.ShortType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
+import net.imglib2.type.numeric.integer.UnsignedIntType;
+import net.imglib2.type.numeric.integer.UnsignedShortType;
+import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
@@ -268,18 +273,33 @@ public class ImgWriter {
                 PixelType ptype = null;
                 int ftptype;
                 T val = img.firstElement().createVariable();
-                if (val instanceof ByteType) {
+                if (val instanceof BitType) {
                         ptype = PixelType.INT8;
                         ftptype = FormatTools.INT8;
-                } else if (val instanceof ShortType) {
-                        ptype = PixelType.INT16;
-                        ftptype = FormatTools.INT16;
-                } else if (val instanceof FloatType) {
-                        ptype = PixelType.FLOAT;
-                        ftptype = FormatTools.FLOAT;
+                } else if (val instanceof ByteType) {
+                        ptype = PixelType.INT8;
+                        ftptype = FormatTools.INT8;
                 } else if (val instanceof UnsignedByteType) {
                         ptype = PixelType.UINT8;
                         ftptype = FormatTools.UINT8;
+                } else if (val instanceof ShortType) {
+                        ptype = PixelType.INT16;
+                        ftptype = FormatTools.INT16;
+                } else if (val instanceof UnsignedShortType) {
+                        ptype = PixelType.UINT16;
+                        ftptype = FormatTools.UINT16;
+                } else if (val instanceof IntType) {
+                        ptype = PixelType.INT32;
+                        ftptype = FormatTools.INT32;
+                } else if (val instanceof UnsignedIntType) {
+                        ptype = PixelType.UINT32;
+                        ftptype = FormatTools.UINT32;
+                } else if (val instanceof FloatType) {
+                        ptype = PixelType.FLOAT;
+                        ftptype = FormatTools.FLOAT;
+                } else if (val instanceof DoubleType) {
+                        ptype = PixelType.DOUBLE;
+                        ftptype = FormatTools.DOUBLE;
                 } else {
                         throw new FormatException("The given image format ("
                                         + val.getClass().toString()
