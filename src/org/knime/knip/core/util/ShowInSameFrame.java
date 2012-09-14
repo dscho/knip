@@ -122,8 +122,8 @@ public class ShowInSameFrame {
                 frame.setVisible(true);
         }
 
-        private class ImagePlaneProducer<T extends RealType<T>> implements
-                        ImageProducer {
+        public static class ImagePlaneProducer<T extends RealType<T>>
+                        implements ImageProducer {
 
                 private final Set<ImageConsumer> m_consumers = new HashSet<ImageConsumer>();
 
@@ -271,7 +271,7 @@ public class ShowInSameFrame {
 
         }
 
-        private class SimpleColorModel extends ColorModel {
+        private static class SimpleColorModel extends ColorModel {
 
                 public SimpleColorModel() {
                         super(8);
