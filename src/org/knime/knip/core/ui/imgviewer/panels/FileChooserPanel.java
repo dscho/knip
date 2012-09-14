@@ -312,13 +312,12 @@ public class FileChooserPanel extends JPanel {
                         File[] f = m_fileChooser.getSelectedFile().listFiles();
                         m_selectedFileListModel.addFiles(f, ff);
                 } else {
-                File[] files = m_fileChooser.getSelectedFiles();
+                        File[] files = m_fileChooser.getSelectedFiles();
                         m_selectedFileListModel.addFiles(files, ff);
                 }
                 filePref.put("Path", m_fileChooser.getCurrentDirectory()
                                 .toString());
                 fireSelectionChangedEvent();
-
 
         }
 
@@ -595,15 +594,16 @@ public class FileChooserPanel extends JPanel {
 
                 @Override
                 public void propertyChange(PropertyChangeEvent e) {
-                        String propertyName = e.getPropertyName();
-                        File selection = (File) e.getNewValue();
-                        if (propertyName.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
 
+                        if (e.getNewValue() instanceof File) {
+                                String propertyName = e.getPropertyName();
+                                File selection = (File) e.getNewValue();
+                                if (propertyName.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
 
-                                m_imagePreviewPanel.setImage(selection
-                                                .toString());
+                                        m_imagePreviewPanel.setImage(selection
+                                                        .toString());
+                                }
                         }
-
                 }
 
         }

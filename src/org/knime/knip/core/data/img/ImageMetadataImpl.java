@@ -2,8 +2,7 @@ package org.knime.knip.core.data.img;
 
 import java.util.ArrayList;
 
-import net.imglib2.display.ColorTable16;
-import net.imglib2.display.ColorTable8;
+import net.imglib2.display.ColorTable;
 import net.imglib2.meta.ImageMetadata;
 
 public class ImageMetadataImpl implements ImageMetadata {
@@ -16,16 +15,13 @@ public class ImageMetadataImpl implements ImageMetadata {
 
         private int compositeChannelCount = 1;
 
-        private final ArrayList<ColorTable8> lut8;
-
-        private final ArrayList<ColorTable16> lut16;
+        private final ArrayList<ColorTable> lut;
 
         public ImageMetadataImpl() {
                 this.channelMin = new ArrayList<Double>();
                 this.channelMax = new ArrayList<Double>();
 
-                this.lut8 = new ArrayList<ColorTable8>();
-                this.lut16 = new ArrayList<ColorTable16>();
+                this.lut = new ArrayList<ColorTable>();
         }
 
         @Override
@@ -91,44 +87,27 @@ public class ImageMetadataImpl implements ImageMetadata {
         }
 
         @Override
-        public ColorTable8 getColorTable8(final int no) {
-                if (no >= lut8.size())
-                        return null;
-                return lut8.get(no);
-        }
-
-        @Override
-        public void setColorTable(final ColorTable8 lut, final int no) {
-                lut8.set(no, lut);
-        }
-
-        @Override
-        public ColorTable16 getColorTable16(final int no) {
-                if (no >= lut16.size())
-                        return null;
-                return lut16.get(no);
-        }
-
-        @Override
-        public void setColorTable(final ColorTable16 lut, final int no) {
-                lut16.set(no, lut);
-        }
-
-        @Override
         public void initializeColorTables(final int count) {
-                lut8.ensureCapacity(count);
-                lut16.ensureCapacity(count);
-                lut8.clear();
-                lut16.clear();
+                lut.ensureCapacity(count);
+                lut.clear();
                 for (int i = 0; i < count; i++) {
-                        lut8.add(null);
-                        lut16.add(null);
+                        lut.add(null);
                 }
         }
 
         @Override
         public int getColorTableCount() {
-                return lut8.size();
+                return lut.size();
+        }
+
+        @Override
+        public ColorTable getColorTable(int no) {
+                return lut.get(no);
+        }
+
+        @Override
+        public void setColorTable(ColorTable colorTable, int no) {
+                lut.set(no, colorTable);
         }
 
 }

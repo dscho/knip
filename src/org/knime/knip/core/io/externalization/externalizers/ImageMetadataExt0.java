@@ -75,57 +75,59 @@ public class ImageMetadataExt0 implements Externalizer<ImageMetadata> {
                 return obj;
         }
 
+        // Invalid: As ImageMetadataExt1
+        @Deprecated
         @Override
         public void write(BufferedDataOutputStream out, ImageMetadata obj)
                         throws Exception {
 
-                // Valid bits
-                out.writeInt(obj.getValidBits());
-
-                // Channels are serialized
-                int numChannels = obj.getCompositeChannelCount();
-                out.writeInt(numChannels);
-
-                for (int c = 0; c < numChannels; c++) {
-                        out.writeDouble(obj.getChannelMinimum(c));
-                        out.writeDouble(obj.getChannelMaximum(c));
-                }
-
-                // Color Tables are serialized
-                int numTables = obj.getColorTableCount();
-                out.writeInt(numTables);
-
-                for (int t = 0; t < numTables; t++) {
-
-                        out.writeBoolean(obj.getColorTable8(t) != null);
-                        if (obj.getColorTable8(t) != null) {
-                                ColorTable8 ct8 = obj.getColorTable8(t);
-                                int componentCount8 = ct8.getComponentCount();
-                                out.writeInt(componentCount8);
-                                out.writeInt(ct8.getLength());
-
-                                for (int c = 0; c < componentCount8; c++)
-                                        for (int k = 0; k < ct8.getLength(); k++)
-                                                out.writeByte((byte) ct8.get(c,
-                                                                k));
-
-                        }
-
-                        out.writeBoolean(obj.getColorTable16(t) != null);
-                        if (obj.getColorTable16(t) != null) {
-                                ColorTable16 ct16 = obj.getColorTable16(t);
-                                int componentCount16 = ct16.getComponentCount();
-                                out.writeInt(componentCount16);
-                                out.writeInt(ct16.getLength());
-
-                                for (int c = 0; c < componentCount16; c++)
-                                        for (int k = 0; k < ct16.getLength(); k++)
-                                                out.writeShort((short) ct16
-                                                                .get(c, k));
-
-                        }
-
-                }
+                // // Valid bits
+                // out.writeInt(obj.getValidBits());
+                //
+                // // Channels are serialized
+                // int numChannels = obj.getCompositeChannelCount();
+                // out.writeInt(numChannels);
+                //
+                // for (int c = 0; c < numChannels; c++) {
+                // out.writeDouble(obj.getChannelMinimum(c));
+                // out.writeDouble(obj.getChannelMaximum(c));
+                // }
+                //
+                // // Color Tables are serialized
+                // int numTables = obj.getColorTableCount();
+                // out.writeInt(numTables);
+                //
+                // for (int t = 0; t < numTables; t++) {
+                //
+                // out.writeBoolean(obj.getColorTable8(t) != null);
+                // if (obj.getColorTable8(t) != null) {
+                // ColorTable8 ct8 = obj.getColorTable8(t);
+                // int componentCount8 = ct8.getComponentCount();
+                // out.writeInt(componentCount8);
+                // out.writeInt(ct8.getLength());
+                //
+                // for (int c = 0; c < componentCount8; c++)
+                // for (int k = 0; k < ct8.getLength(); k++)
+                // out.writeByte((byte) ct8.get(c,
+                // k));
+                //
+                // }
+                //
+                // out.writeBoolean(obj.getColorTable16(t) != null);
+                // if (obj.getColorTable16(t) != null) {
+                // ColorTable16 ct16 = obj.getColorTable16(t);
+                // int componentCount16 = ct16.getComponentCount();
+                // out.writeInt(componentCount16);
+                // out.writeInt(ct16.getLength());
+                //
+                // for (int c = 0; c < componentCount16; c++)
+                // for (int k = 0; k < ct16.getLength(); k++)
+                // out.writeShort((short) ct16
+                // .get(c, k));
+                //
+                // }
+                //
+                // }
 
         }
 }

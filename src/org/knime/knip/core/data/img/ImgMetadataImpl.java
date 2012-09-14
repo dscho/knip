@@ -1,7 +1,6 @@
 package org.knime.knip.core.data.img;
 
-import net.imglib2.display.ColorTable16;
-import net.imglib2.display.ColorTable8;
+import net.imglib2.display.ColorTable;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Metadata;
@@ -109,26 +108,6 @@ public final class ImgMetadataImpl extends GeneralMetadataImpl implements
         }
 
         @Override
-        public ColorTable8 getColorTable8(final int no) {
-                return m_imgMetadata.getColorTable8(no);
-        }
-
-        @Override
-        public void setColorTable(final ColorTable8 lut, final int no) {
-                m_imgMetadata.setColorTable(lut, no);
-        }
-
-        @Override
-        public ColorTable16 getColorTable16(final int no) {
-                return m_imgMetadata.getColorTable16(no);
-        }
-
-        @Override
-        public void setColorTable(final ColorTable16 lut, final int no) {
-                m_imgMetadata.setColorTable(lut, no);
-        }
-
-        @Override
         public void initializeColorTables(final int count) {
                 m_imgMetadata.initializeColorTables(count);
         }
@@ -136,5 +115,15 @@ public final class ImgMetadataImpl extends GeneralMetadataImpl implements
         @Override
         public int getColorTableCount() {
                 return m_imgMetadata.getColorTableCount();
+        }
+
+        @Override
+        public ColorTable getColorTable(int no) {
+                return m_imgMetadata.getColorTable(no);
+        }
+
+        @Override
+        public void setColorTable(ColorTable colorTable, int no) {
+                m_imgMetadata.setColorTable(colorTable, no);
         }
 }

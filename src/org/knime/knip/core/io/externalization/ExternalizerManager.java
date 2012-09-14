@@ -65,6 +65,7 @@ import org.knime.knip.core.io.externalization.externalizers.CellImgExt0;
 import org.knime.knip.core.io.externalization.externalizers.ClassExt0;
 import org.knime.knip.core.io.externalization.externalizers.GeneralMetadataExt0;
 import org.knime.knip.core.io.externalization.externalizers.ImageMetadataExt0;
+import org.knime.knip.core.io.externalization.externalizers.ImageMetadataExt1;
 import org.knime.knip.core.io.externalization.externalizers.ImgExt0;
 import org.knime.knip.core.io.externalization.externalizers.ImgMetadataExt0;
 import org.knime.knip.core.io.externalization.externalizers.ImgViewExt0;
@@ -127,6 +128,9 @@ public final class ExternalizerManager {
                 registerExternalizer(new ObjectExt0());
                 registerExternalizer(new GeneralMetadataExt0());
                 registerExternalizer(new ImgMetadataExt0());
+
+                // New externalizer for ImageMetadata
+                registerExternalizer(new ImageMetadataExt1());
 
                 registerExtensionPoints();
 
