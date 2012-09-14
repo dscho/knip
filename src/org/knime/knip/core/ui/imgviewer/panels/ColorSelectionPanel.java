@@ -37,19 +37,19 @@ public class ColorSelectionPanel extends ViewerComponent {
         private JButton m_colorOK;
         private JButton m_colorCancel;
         private JColorChooser m_cchoose;
-        private final JFrame m_ColorChooser = new JFrame();
+        private final JFrame m_colorChooser;
 
         private final JPanel m_buttonPane = new JPanel();
         private final JPanel m_colorPane = new JPanel();
 
         public ColorSelectionPanel(boolean isBorderHidden) {
                 super("Color Options", isBorderHidden);
+                m_colorChooser = new JFrame();
                 construct();
         }
 
         public ColorSelectionPanel() {
-                super("Color Options", false);
-                construct();
+                this(false);
         }
 
         private void construct() {
@@ -82,16 +82,16 @@ public class ColorSelectionPanel extends ViewerComponent {
                 m_buttonPane.add(m_colorCancel);
                 m_colorPane.add(m_buttonPane);
 
-                m_ColorChooser.getContentPane().add(m_colorPane);
-                m_ColorChooser.setSize(450, 300);
-                m_ColorChooser.setTitle("Choose BoundingBox Color");
+                m_colorChooser.getContentPane().add(m_colorPane);
+                m_colorChooser.setSize(450, 300);
+                m_colorChooser.setTitle("Choose BoundingBox Color");
 
                 m_boundingBoxColor
                                 .addActionListener(new java.awt.event.ActionListener() {
                                         @Override
                                         public void actionPerformed(
                                                         java.awt.event.ActionEvent evt) {
-                                                m_ColorChooser.setVisible(true);
+                                                m_colorChooser.setVisible(true);
                                         }
                                 });
 
@@ -99,7 +99,7 @@ public class ColorSelectionPanel extends ViewerComponent {
                         @Override
                         public void actionPerformed(
                                         java.awt.event.ActionEvent evt) {
-                                m_ColorChooser.setVisible(false);
+                                m_colorChooser.setVisible(false);
                         }
                 });
 
@@ -110,7 +110,7 @@ public class ColorSelectionPanel extends ViewerComponent {
                                 Color newColor = m_cchoose.getColor();
                                 SegmentColorTable.setBoundingBoxColor(newColor);
 
-                                m_ColorChooser.setVisible(false);
+                                m_colorChooser.setVisible(false);
                                 m_eventService.publish(new LabelColoringChangeEvent(
                                                 newColor,
                                                 SegmentColorTable
@@ -150,7 +150,6 @@ public class ColorSelectionPanel extends ViewerComponent {
                 // first col
                 gc.anchor = GridBagConstraints.LINE_START;
                 gc.weightx = 1.0;
-
 
                 gc.gridy = y;
                 gc.insets = new Insets(5, 5, 0, 5);
