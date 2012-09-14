@@ -569,15 +569,16 @@ public class FileChooserPanel extends JPanel {
         }
 
         class MacHackedFileChooserPanel extends JFileChooser {
+
                 @Override
                 protected void firePropertyChange(String propertyName,
                                 Object oldValue, Object newValue) {
                         try {
                                 super.firePropertyChange(propertyName,
                                                 oldValue, newValue);
-                        } catch (Exception e) {
-                                // This is a hack to avoid stupid mac behaviour
-                                System.out.println(e.getMessage());
+                        } catch (Exception e) { // This is a hack to avoid
+                                                // stupid mac behaviour
+
                         }
 
                 }
