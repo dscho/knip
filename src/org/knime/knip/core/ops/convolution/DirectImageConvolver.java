@@ -14,35 +14,39 @@ import org.knime.knip.core.util.ImgUtils;
 
 /**
  * Convolved an RandomAccessibleInterval with a kernel
- *
+ * 
  * @author dietzc
- *
+ * 
  * @param <T>
  * @param <KK>
  * @param <KERNEL>
  * @param <IN>
  * @param <Img<O>>
  */
-public class DirectImageConvolution<T extends RealType<T>, O extends RealType<O>, KK extends RealType<KK>, IN extends RandomAccessibleInterval<T>, KERNEL extends RandomAccessibleInterval<KK>>
-                extends Convolution<T, O, KK, IN, Img<O>, KERNEL> {
+public class DirectImageConvolver<T extends RealType<T>, O extends RealType<O>, KK extends RealType<KK>, IN extends RandomAccessibleInterval<T>, KERNEL extends RandomAccessibleInterval<KK>>
+                implements Convolver<T, O, KK, IN, Img<O>, KERNEL> {
 
         private RandomAccessibleInterval<DoubleType>[] m_kernels;
-        private boolean m_normalize;
-        private OutOfBoundsStrategyEnum m_fac;
+        protected boolean m_normalize;
+        protected OutOfBoundsStrategyEnum m_fac;
 
-        public DirectImageConvolution(boolean normalizeKernel,
+        public DirectImageConvolver() {
+                // Empty constructor for extension point
+        }
+
+        public DirectImageConvolver(boolean normalizeKernel,
                         OutOfBoundsStrategyEnum fac) {
                 m_normalize = normalizeKernel;
                 m_fac = fac;
         }
 
-        public DirectImageConvolution(KERNEL kernel, boolean normalizeKernel,
+        public DirectImageConvolver(KERNEL kernel, boolean normalizeKernel,
                         OutOfBoundsStrategyEnum fac) {
                 this(normalizeKernel, fac);
                 setKernel(kernel);
         }
 
-        private DirectImageConvolution(
+        private DirectImageConvolver(
                         RandomAccessibleInterval<DoubleType>[] kernels,
                         boolean normalizeKernel, OutOfBoundsStrategyEnum fac) {
                 this(normalizeKernel, fac);
@@ -107,7 +111,7 @@ public class DirectImageConvolution<T extends RealType<T>, O extends RealType<O>
 
         @Override
         public UnaryOperation<IN, Img<O>> copy() {
-                return new DirectImageConvolution<T, O, KK, IN, KERNEL>(
+                return new DirectImageConvolver<T, O, KK, IN, KERNEL>(
                                 m_kernels, m_normalize, m_fac);
         }
 
@@ -128,16 +132,16 @@ public class DirectImageConvolution<T extends RealType<T>, O extends RealType<O>
         /**
          * Straightforward convolution. For small kernels faster than the
          * convolution in the frequency domain for small images.
-         *
+         * 
          * @param img
          *                the image in the spatial domain
-         *
+         * 
          * @param kerC
          *                the kernel in the spatial domain
-         *
+         * 
          * @param pos
          *                the position to apply the kernel
-         *
+         * 
          * @return
          */
         public final static <KT extends RealType<KT>, T extends RealType<T>> float convolve(
@@ -168,4 +172,5 @@ public class DirectImageConvolution<T extends RealType<T>, O extends RealType<O>
                 }
                 return val;
         }
+
 }

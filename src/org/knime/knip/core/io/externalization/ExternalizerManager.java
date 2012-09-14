@@ -99,11 +99,11 @@ public final class ExternalizerManager {
         /* maps the externalizer class name to the externalizer object */
         private static final Map<String, Externalizer> ID_EXT_MAP = new HashMap<String, Externalizer>();
 
-        /* The id of the TableCellView extension point. */
+        /* The id of the Externalizer extension point. */
         private static final String EXT_POINT_ID = "org.knime.knip.core.Externalizer";
 
         /*
-         * The attribute of the table cell view extension point pointing to the
+         * The attribute of the externalizer extension point pointing to the
          * factory class
          */
         private static final String EXT_POINT_ATTR_DF = "Externalizer";

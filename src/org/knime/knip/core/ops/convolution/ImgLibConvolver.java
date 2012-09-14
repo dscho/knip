@@ -8,8 +8,8 @@ import net.imglib2.type.numeric.RealType;
  *
  * @author hornm, dietzc University of Konstanz
  */
-public class ImgLibImageConvolution<T extends RealType<T>, O extends RealType<O>, K extends RealType<K>, OUT extends RandomAccessibleInterval<O>, KERNEL extends RandomAccessibleInterval<K>>
-                extends Convolution<T, O, K, Img<T>, OUT, KERNEL> {
+public class ImgLibConvolver<T extends RealType<T>, O extends RealType<O>, K extends RealType<K>, OUT extends RandomAccessibleInterval<O>, KERNEL extends RandomAccessibleInterval<K>>
+                implements Convolver<T, O, K, Img<T>, OUT, KERNEL> {
 
         protected KERNEL m_kernel;
 
@@ -17,10 +17,11 @@ public class ImgLibImageConvolution<T extends RealType<T>, O extends RealType<O>
 
         private FFTConvolution<T, O, K> m_fc = null;
 
-        public ImgLibImageConvolution() {
+        // Empty constructor for extension point
+        public ImgLibConvolver() {
         }
 
-        public ImgLibImageConvolution(final KERNEL kernel) {
+        public ImgLibConvolver(final KERNEL kernel) {
                 setKernel(kernel);
         }
 
@@ -30,9 +31,8 @@ public class ImgLibImageConvolution<T extends RealType<T>, O extends RealType<O>
         }
 
         @Override
-        public ImgLibImageConvolution<T, O, K, OUT, KERNEL> copy() {
-                return new ImgLibImageConvolution<T, O, K, OUT, KERNEL>(
-                                m_kernel);
+        public ImgLibConvolver<T, O, K, OUT, KERNEL> copy() {
+                return new ImgLibConvolver<T, O, K, OUT, KERNEL>(m_kernel);
         }
 
         @Override
@@ -56,4 +56,5 @@ public class ImgLibImageConvolution<T extends RealType<T>, O extends RealType<O>
 
                 return out;
         }
+
 }

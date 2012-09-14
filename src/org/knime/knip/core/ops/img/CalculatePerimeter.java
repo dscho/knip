@@ -13,7 +13,7 @@ import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;
 
 import org.knime.knip.core.features.seg.ExtractOutlineImg;
-import org.knime.knip.core.ops.convolution.DirectImageConvolution;
+import org.knime.knip.core.ops.convolution.DirectImageConvolver;
 import org.knime.knip.core.types.OutOfBoundsStrategyEnum;
 import org.knime.knip.core.util.ImgUtils;
 
@@ -28,11 +28,11 @@ public class CalculatePerimeter implements
 
         private final ImgConvert<BitType, UnsignedShortType> m_convert;
 
-        private final DirectImageConvolution<UnsignedShortType, UnsignedShortType, UnsignedShortType, Img<UnsignedShortType>, Img<UnsignedShortType>> m_conv;
+        private final DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType, Img<UnsignedShortType>, Img<UnsignedShortType>> m_conv;
 
         public CalculatePerimeter() {
                 // TODO make out of bounds
-                m_conv = new DirectImageConvolution<UnsignedShortType, UnsignedShortType, UnsignedShortType, Img<UnsignedShortType>, Img<UnsignedShortType>>(
+                m_conv = new DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType, Img<UnsignedShortType>, Img<UnsignedShortType>>(
                                 getKernel(), false,
                                 OutOfBoundsStrategyEnum.MIRROR_SINGLE);
 
