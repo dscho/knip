@@ -1,176 +1,86 @@
 package org.knime.knip.core.ops.convolution;
 
-import net.imglib2.Cursor;
-import net.imglib2.RandomAccess;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
-import net.imglib2.ops.operation.UnaryOperation;
+import net.imglib2.ops.operation.BinaryOperation;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.real.DoubleType;
 
 import org.knime.knip.core.types.OutOfBoundsStrategyEnum;
-import org.knime.knip.core.types.OutOfBoundsStrategyFactory;
-import org.knime.knip.core.util.ImgUtils;
 
 /**
- * Convolved an RandomAccessibleInterval with a kernel
- * 
- * @author dietzc
- * 
- * @param <T>
- * @param <KK>
- * @param <KERNEL>
- * @param <IN>
- * @param <Img<O>>
+ * Class wrapping a DirectConvolver. Kernels are decomposed if possible. Kernels
+ * are reused if possible. Number of kernel dimensions and number of input
+ * dimension must match!
+ *
+ * Christian Dietz (Universität Konstanz)
  */
-public class DirectImageConvolver<T extends RealType<T>, O extends RealType<O>, KK extends RealType<KK>, IN extends RandomAccessibleInterval<T>, KERNEL extends RandomAccessibleInterval<KK>>
-                implements Convolver<T, O, KK, IN, Img<O>, KERNEL> {
+public class DirectImageConvolver<T extends RealType<T>, O extends RealType<O>, K extends RealType<K> & NativeType<K>>
+                implements Convolver<T, O, K, Img<T>, Img<O>, Img<K>> {
 
-        private RandomAccessibleInterval<DoubleType>[] m_kernels;
-        protected boolean m_normalize;
         protected OutOfBoundsStrategyEnum m_fac;
+        private boolean m_decompose;
+
+        private Img<K>[] m_decomposedKernels = null;
+        private Img<K> m_kernel;
 
         public DirectImageConvolver() {
-                // Empty constructor for extension point
+                // Empty constructor
         }
 
-        public DirectImageConvolver(boolean normalizeKernel,
-                        OutOfBoundsStrategyEnum fac) {
-                m_normalize = normalizeKernel;
+        private DirectImageConvolver(OutOfBoundsStrategyEnum fac,
+                        boolean decompose) {
                 m_fac = fac;
+                m_decompose = decompose;
         }
 
-        public DirectImageConvolver(KERNEL kernel, boolean normalizeKernel,
-                        OutOfBoundsStrategyEnum fac) {
-                this(normalizeKernel, fac);
-                setKernel(kernel);
+        public DirectImageConvolver(OutOfBoundsStrategyEnum fac) {
+                this(fac, true);
         }
 
-        private DirectImageConvolver(
-                        RandomAccessibleInterval<DoubleType>[] kernels,
-                        boolean normalizeKernel, OutOfBoundsStrategyEnum fac) {
-                this(normalizeKernel, fac);
-                m_kernels = kernels;
-        }
-
+        @SuppressWarnings("unchecked")
         @Override
-        public Img<O> compute(IN input, Img<O> output) {
+        public Img<O> compute(Img<T> input, Img<K> kernel, Img<O> output) {
 
-                if (m_kernels == null || m_kernels.length == 0)
-                        throw new IllegalArgumentException(
-                                        "Kernel is not set in DirectImageConvolution");
-
-                DirectConvolver<T, O, DoubleType, IN, Img<O>, RandomAccessibleInterval<DoubleType>> directConvolver = new DirectConvolver<T, O, DoubleType, IN, Img<O>, RandomAccessibleInterval<DoubleType>>(
-                                m_kernels[0],
-                                OutOfBoundsStrategyFactory
-                                                .<T, IN> getStrategy(
-                                                                m_fac,
-                                                                input.randomAccess()
-                                                                                .get()
-                                                                                .createVariable()));
-                if (m_kernels.length == 1) {
-                        return directConvolver.compute(input, output);
-                } else {
-
-                        Img<O> buffer = ImgUtils.createEmptyCopy(
-                                        output.factory(), output, output
-                                                        .randomAccess().get()
-                                                        .createVariable());
-                        Img<O> tmpOutput = output;
-                        Img<O> tmpInput = buffer;
-                        Img<O> tmp;
-
-                        // Check needs to be done as the number of operations
-                        // may be uneven and
-                        // the result may not be written to output
-                        if (m_kernels.length % 2 == 0) {
-                                tmpOutput = buffer;
-                                tmpInput = output;
-                        }
-
-                        directConvolver.compute(input, tmpOutput);
-
-                        for (int i = 1; i < m_kernels.length; i++) {
-                                tmp = tmpInput;
-                                tmpInput = tmpOutput;
-                                tmpOutput = tmp;
-                                new DirectConvolver<O, O, DoubleType, Img<O>, Img<O>, RandomAccessibleInterval<DoubleType>>(
-                                                m_kernels[i],
-                                                OutOfBoundsStrategyFactory
-                                                                .<O, Img<O>> getStrategy(
-                                                                                m_fac,
-                                                                                buffer.firstElement()
-                                                                                                .createVariable()))
-                                                .compute(tmpInput, tmpOutput);
-                        }
-
+                if (kernel.numDimensions() != input.numDimensions()) {
+                        throw new IllegalStateException(
+                                        "Kernel dimensions do not match to Img dimensions in ImgLibImageConvolver!");
                 }
 
-                return output;
-        }
-
-        @Override
-        public UnaryOperation<IN, Img<O>> copy() {
-                return new DirectImageConvolver<T, O, KK, IN, KERNEL>(
-                                m_kernels, m_normalize, m_fac);
-        }
-
-        @Override
-        public void setKernel(KERNEL kernel) {
-                RandomAccessibleInterval<DoubleType>[] decomposeKernel = KernelTools
-                                .decomposeKernel(kernel);
-                if (m_normalize) {
-                        for (RandomAccessibleInterval<DoubleType> decomposed : KernelTools
-                                        .decomposeKernel(kernel)) {
-                                KernelTools.normalizeKernelInPlace(decomposed);
+                if (m_kernel != kernel) {
+                        m_kernel = kernel;
+                        if (m_decompose) {
+                                m_decomposedKernels = KernelTools
+                                                .decomposeKernel(kernel);
+                        } else {
+                                m_decomposedKernels = new Img[] { kernel };
                         }
                 }
 
-                m_kernels = decomposeKernel;
+                if (m_decomposedKernels.length == 1)
+                        return new DirectConvolver<T, O, K, Img<T>, Img<O>, Img<K>>(
+                                        m_fac).compute(input,
+                                        m_decomposedKernels[0], output);
+                else {
+                        return new IterativeImageConvolver<T, O, K, Img<K>>(
+                                        new DirectImageConvolver<T, O, K>(
+                                                        m_fac, false),
+                                        new DirectImageConvolver<O, O, K>(
+                                                        m_fac, false), output
+                                                        .firstElement()
+                                                        .createVariable())
+                                        .compute(input, m_decomposedKernels,
+                                                        output);
+                }
         }
 
-        /**
-         * Straightforward convolution. For small kernels faster than the
-         * convolution in the frequency domain for small images.
-         * 
-         * @param img
-         *                the image in the spatial domain
-         * 
-         * @param kerC
-         *                the kernel in the spatial domain
-         * 
-         * @param pos
-         *                the position to apply the kernel
-         * 
-         * @return
-         */
-        public final static <KT extends RealType<KT>, T extends RealType<T>> float convolve(
-                        final RandomAccess<T> srcRA, final Cursor<KT> kerC,
-                        final long[] pos, final long[] kernelRadii) {
+        @Override
+        public BinaryOperation<Img<T>, Img<K>, Img<O>> copy() {
+                return new DirectImageConvolver<T, O, K>(m_fac);
+        }
 
-                float val = 0;
-
-                srcRA.setPosition(pos);
-                kerC.reset();
-                while (kerC.hasNext()) {
-                        kerC.fwd();
-
-                        for (int i = 0; i < kernelRadii.length; i++) {
-                                if (kernelRadii[i] > 0) { // dimension can have
-                                                          // zero extension e.g.
-                                                          // vertical 1d kernel
-                                        srcRA.setPosition(
-                                                        pos[i]
-                                                                        + kerC.getLongPosition(i)
-                                                                        - kernelRadii[i],
-                                                        i);
-                                }
-                        }
-
-                        val += srcRA.get().getRealFloat()
-                                        * kerC.get().getRealFloat();
-                }
-                return val;
+        public void setOutOfBoundsStrategyEnum(
+                        OutOfBoundsStrategyEnum oobStrategy) {
+                m_fac = oobStrategy;
         }
 
 }

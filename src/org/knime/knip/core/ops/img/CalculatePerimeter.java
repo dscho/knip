@@ -28,12 +28,12 @@ public class CalculatePerimeter implements
 
         private final ImgConvert<BitType, UnsignedShortType> m_convert;
 
-        private final DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType, Img<UnsignedShortType>, Img<UnsignedShortType>> m_conv;
+        private final DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType> m_conv;
 
         public CalculatePerimeter() {
+
                 // TODO make out of bounds
-                m_conv = new DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType, Img<UnsignedShortType>, Img<UnsignedShortType>>(
-                                getKernel(), false,
+                m_conv = new DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType>(
                                 OutOfBoundsStrategyEnum.MIRROR_SINGLE);
 
                 // TODO don't do this directly!
@@ -72,8 +72,8 @@ public class CalculatePerimeter implements
         @Override
         public DoubleType compute(final Img<BitType> op, final DoubleType r) {
                 final Img<UnsignedShortType> img = m_conv.compute(m_convert
-                                .compute(op), ImgUtils.createEmptyCopy(op,
-                                new UnsignedShortType()));
+                                .compute(op), getKernel(), ImgUtils
+                                .createEmptyCopy(op, new UnsignedShortType()));
                 final Cursor<UnsignedShortType> c = img.cursor();
 
                 int catA = 0;

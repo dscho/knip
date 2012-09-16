@@ -19,7 +19,7 @@ import net.imglib2.util.Util;
 import net.imglib2.view.Views;
 
 /* Test for different input types*/
-public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K extends RealType<K>>
+public class KNIPFFTConvolution<R extends RealType<R>, O extends RealType<O>, K extends RealType<K>>
                 implements Runnable {
         Img<ComplexFloatType> fftImg, fftKernel;
         ImgFactory<ComplexFloatType> fftFactory;
@@ -30,6 +30,7 @@ public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K exte
         RandomAccessibleInterval<O> output;
 
         boolean keepImgFFT = false;
+        private boolean writeResultFFT = true;
 
         /**
          * Compute a Fourier space based convolution The image will be extended
@@ -46,7 +47,7 @@ public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K exte
          * @param output
          *                - the result of the convolution
          */
-        public FFTConvolution(final Img<R> img,
+        public KNIPFFTConvolution(final Img<R> img,
                         final RandomAccessibleInterval<K> kernel,
                         final RandomAccessibleInterval<O> output) {
                 this(img, kernel, output, getFFTFactory(img));
@@ -66,7 +67,7 @@ public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K exte
          *                - the {@link ImgFactory} to create the fourier
          *                transforms
          */
-        public FFTConvolution(final RandomAccessibleInterval<R> img,
+        public KNIPFFTConvolution(final RandomAccessibleInterval<R> img,
                         final RandomAccessibleInterval<K> kernel,
                         final RandomAccessibleInterval<O> output,
                         final ImgFactory<ComplexFloatType> factory) {
@@ -99,7 +100,7 @@ public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K exte
          *                - the {@link ImgFactory} to create the fourier
          *                transforms
          */
-        public FFTConvolution(final RandomAccessible<R> img,
+        public KNIPFFTConvolution(final RandomAccessible<R> img,
                         final Interval imgInterval,
                         final RandomAccessible<K> kernel,
                         final Interval kernelInterval,
@@ -127,7 +128,8 @@ public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K exte
         }
 
         public void setKernel(final RandomAccessibleInterval<K> kernel) {
-                this.kernel = kernel;
+                this.kernel = Views.extendValue(kernel, Util
+                                .getTypeFromInterval(kernel).createVariable());
                 this.kernelInterval = kernel;
                 this.fftKernel = null;
         }
@@ -144,7 +146,11 @@ public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K exte
         }
 
         public void setKeepImgFFT(final boolean keep) {
-                this.keepImgFFT = true;
+                this.keepImgFFT = keep;
+        }
+
+        public void setWriteResultFFT(final boolean write) {
+                this.writeResultFFT = write;
         }
 
         public boolean keepImgFFT() {
@@ -244,7 +250,8 @@ public class FFTConvolution<R extends RealType<R>, O extends RealType<O>, K exte
                 multiplyComplex(fftconvolved, fftKernel);
 
                 // inverse FFT in place
-                FFT.complexToRealUnpad(fftconvolved, output);
+                if (writeResultFFT)
+                        FFT.complexToRealUnpad(fftconvolved, output);
         }
 
         final public static <R extends RealType<R>> void convolve(
