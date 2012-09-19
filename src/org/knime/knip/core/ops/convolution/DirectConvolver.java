@@ -45,7 +45,6 @@ public class DirectConvolver<T extends RealType<T>, O extends RealType<O>, K ext
                         kernelRadius[i] = kernel.dimension(i) / 2;
                 }
 
-                RealType<T> accessSrc = srcRA.get();
                 O accessRes = resC.get();
 
                 float val;
@@ -78,7 +77,7 @@ public class DirectConvolver<T extends RealType<T>, O extends RealType<O>, K ext
                                         }
                                 }
 
-                                val += accessSrc.getRealDouble()
+                                val += srcRA.get().getRealDouble()
                                                 * kernelC.get().getRealDouble();
                         }
 

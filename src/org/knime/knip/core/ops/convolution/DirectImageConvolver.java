@@ -40,7 +40,6 @@ public class DirectImageConvolver<T extends RealType<T>, O extends RealType<O>, 
         @SuppressWarnings("unchecked")
         @Override
         public Img<O> compute(Img<T> input, Img<K> kernel, Img<O> output) {
-
                 if (kernel.numDimensions() != input.numDimensions()) {
                         throw new IllegalStateException(
                                         "Kernel dimensions do not match to Img dimensions in ImgLibImageConvolver!");
