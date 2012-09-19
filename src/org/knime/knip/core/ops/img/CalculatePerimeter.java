@@ -8,13 +8,15 @@ import net.imglib2.img.basictypeaccess.array.ShortArray;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.img.unary.ImgConvert;
 import net.imglib2.ops.operation.img.unary.ImgConvert.ImgConversionTypes;
+import net.imglib2.outofbounds.OutOfBoundsMirrorFactory;
+import net.imglib2.outofbounds.OutOfBoundsMirrorFactory.Boundary;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;
+import net.imglib2.view.Views;
 
 import org.knime.knip.core.features.seg.ExtractOutlineImg;
-import org.knime.knip.core.ops.convolution.DirectImageConvolver;
-import org.knime.knip.core.types.OutOfBoundsStrategyEnum;
+import org.knime.knip.core.ops.convolution.DirectConvolver;
 import org.knime.knip.core.util.ImgUtils;
 
 /**
@@ -28,13 +30,12 @@ public class CalculatePerimeter implements
 
         private final ImgConvert<BitType, UnsignedShortType> m_convert;
 
-        private final DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType> m_conv;
+        private final DirectConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType> m_convolve;
 
         public CalculatePerimeter() {
 
                 // TODO make out of bounds
-                m_conv = new DirectImageConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType>(
-                                OutOfBoundsStrategyEnum.MIRROR_SINGLE);
+                m_convolve = new DirectConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType>();
 
                 // TODO don't do this directly!
                 m_convert = new ImgConvert<BitType, UnsignedShortType>(
@@ -71,9 +72,15 @@ public class CalculatePerimeter implements
 
         @Override
         public DoubleType compute(final Img<BitType> op, final DoubleType r) {
-                final Img<UnsignedShortType> img = m_conv.compute(m_convert
-                                .compute(op), getKernel(), ImgUtils
-                                .createEmptyCopy(op, new UnsignedShortType()));
+                final Img<UnsignedShortType> img = (Img<UnsignedShortType>) m_convolve
+                                .compute(Views.extend(
+                                                m_convert.compute(op),
+                                                new OutOfBoundsMirrorFactory<UnsignedShortType, Img<UnsignedShortType>>(
+                                                                Boundary.SINGLE)),
+                                                getKernel(),
+                                                ImgUtils.createEmptyCopy(
+                                                                op,
+                                                                new UnsignedShortType()));
                 final Cursor<UnsignedShortType> c = img.cursor();
 
                 int catA = 0;

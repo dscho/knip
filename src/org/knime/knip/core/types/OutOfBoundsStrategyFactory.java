@@ -10,21 +10,37 @@ import net.imglib2.outofbounds.OutOfBoundsPeriodicFactory;
 import net.imglib2.type.numeric.RealType;
 
 public class OutOfBoundsStrategyFactory {
-        public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
-                        OutOfBoundsStrategyEnum strategyEnum, T type) {
+        /**
+         *
+         * @param <T>
+         *                Type of the factory. Will be copied and value (min,
+         *                max, zero) will be set if needed
+         * @param <O>
+         *                Type of the factory. Type to determine min or max
+         * @param <IN>
+         *                Type of the RandomAccessibleInterval to be wrapped
+         * @param strategyEnum
+         * @param inValue
+         * @param refType
+         * @return
+         */
+        public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
+                        OutOfBoundsStrategyEnum strategyEnum, T val, O refType) {
+                T inValue = val.createVariable();
+
                 switch (strategyEnum) {
                 case MIN_VALUE:
-                        T value = type.createVariable();
-                        value.setReal(value.getMinValue());
-                        return new OutOfBoundsConstantValueFactory<T, IN>(value);
+                        inValue.setReal(refType.getMinValue());
+                        return new OutOfBoundsConstantValueFactory<T, IN>(
+                                        inValue);
                 case MAX_VALUE:
-                        value = type.createVariable();
-                        value.setReal(value.getMaxValue());
-                        return new OutOfBoundsConstantValueFactory<T, IN>(value);
+                        inValue.setReal(refType.getMaxValue());
+                        return new OutOfBoundsConstantValueFactory<T, IN>(
+                                        inValue);
                 case ZERO_VALUE:
-                        value = type.createVariable();
-                        value.setReal(0.0);
-                        return new OutOfBoundsConstantValueFactory<T, IN>(value);
+                        inValue.setReal(0.0);
+                        return new OutOfBoundsConstantValueFactory<T, IN>(
+                                        inValue);
                 case MIRROR_SINGLE:
                         return new OutOfBoundsMirrorFactory<T, IN>(
                                         OutOfBoundsMirrorFactory.Boundary.SINGLE);

@@ -2,35 +2,31 @@ package org.knime.knip.core.ops.convolution;
 
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.ops.operation.BinaryOperation;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
-
-import org.knime.knip.core.types.OutOfBoundsStrategyEnum;
-import org.knime.knip.core.types.OutOfBoundsStrategyFactory;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
- * Christian Dietz (Universität Konstanz)
+ * Christian Dietz (Universitï¿½t Konstanz)
  */
-public class DirectConvolver<T extends RealType<T>, O extends RealType<O>, K extends RealType<K>, IN extends RandomAccessibleInterval<T>, OUT extends RandomAccessibleInterval<O>, KERNEL extends RandomAccessibleInterval<K>>
-                implements BinaryOperation<IN, KERNEL, OUT> {
+public class DirectConvolver<T extends RealType<T>, O extends RealType<O>, K extends RealType<K>>
+                implements Convolver<T, O, K> {
 
-        private final OutOfBoundsStrategyEnum m_fac;
-
-        public DirectConvolver(OutOfBoundsStrategyEnum fac) {
-                m_fac = fac;
+        public DirectConvolver() {
         }
 
         @Override
-        public OUT compute(IN input, KERNEL kernel, OUT output) {
+        public RandomAccessibleInterval<O> compute(RandomAccessible<T> input,
+                        RandomAccessibleInterval<K> kernel,
+                        RandomAccessibleInterval<O> output) {
 
-                final RandomAccess<T> srcRA = OutOfBoundsStrategyFactory
-                                .getStrategy(m_fac,
-                                                input.randomAccess()
-                                                                .get()
-                                                                .createVariable())
-                                .create(input);
+                // TODO: Workaround until fix in imglib2 (outofbounds gets lost
+                // during optimization of transformation)
+                long[] max = new long[input.numDimensions()];
+                Arrays.fill(max, 2);
+                final RandomAccess<T> srcRA = input.randomAccess(null);
 
                 final Cursor<K> kernelC = Views.iterable(kernel)
                                 .localizingCursor();
@@ -57,6 +53,7 @@ public class DirectConvolver<T extends RealType<T>, O extends RealType<O>, K ext
                         // kernel inlined version of the method convolve
                         val = 0;
                         srcRA.setPosition(pos);
+
                         kernelC.reset();
                         while (kernelC.hasNext()) {
                                 kernelC.fwd();
@@ -88,8 +85,8 @@ public class DirectConvolver<T extends RealType<T>, O extends RealType<O>, K ext
         }
 
         @Override
-        public BinaryOperation<IN, KERNEL, OUT> copy() {
-                return new DirectConvolver<T, O, K, IN, OUT, KERNEL>(m_fac);
+        public DirectConvolver<T, O, K> copy() {
+                return new DirectConvolver<T, O, K>();
         }
 
 }
