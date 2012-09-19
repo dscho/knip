@@ -27,6 +27,7 @@ public class ImgUtils {
                 return fac.create(in, type);
         }
 
+
         public synchronized static <T extends RealType<T>, O extends RealType<O>> Img<O> createEmptyCopy(
                         Img<T> in, O type) {
                 try {

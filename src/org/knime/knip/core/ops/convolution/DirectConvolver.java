@@ -1,12 +1,12 @@
 package org.knime.knip.core.ops.convolution;
 
 import net.imglib2.Cursor;
+import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * Christian Dietz (Universit�t Konstanz)
@@ -24,9 +24,16 @@ public class DirectConvolver<T extends RealType<T>, O extends RealType<O>, K ext
 
                 // TODO: Workaround until fix in imglib2 (outofbounds gets lost
                 // during optimization of transformation)
+                long[] min = new long[input.numDimensions()];
                 long[] max = new long[input.numDimensions()];
-                Arrays.fill(max, 2);
-                final RandomAccess<T> srcRA = input.randomAccess(null);
+
+                for (int d = 0; d < kernel.numDimensions(); d++) {
+                        min[d] = -kernel.dimension(d);
+                        max[d] = kernel.dimension(d) + output.dimension(d);
+                }
+
+                final RandomAccess<T> srcRA = input
+                                .randomAccess(new FinalInterval(min, max));
 
                 final Cursor<K> kernelC = Views.iterable(kernel)
                                 .localizingCursor();
