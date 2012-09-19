@@ -47,9 +47,7 @@ public class AdditionDimImageConvolver<T extends RealType<T>, O extends RealType
         @Override
         public AdditionDimImageConvolver<T, O, K> copy() {
                 return new AdditionDimImageConvolver<T, O, K>(
-                                (Convolver<T, O, K>) m_convolver.copy()) {
-
-                };
+                                (Convolver<T, O, K>) m_convolver.copy());
         }
 
         public static <T extends RealType<T>, O extends RealType<O> & NativeType<O>> Img<O> createEmptyOutput(
