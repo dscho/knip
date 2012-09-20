@@ -122,7 +122,6 @@ public final class ExternalizerManager {
                 registerExternalizer(new SourcedExt0());
                 registerExternalizer(new ImageMetadataExt0());
                 registerExternalizer(new ClassExt0());
-                registerExternalizer(new ImgExt0());
                 registerExternalizer(new LabelingMappingExt0());
                 registerExternalizer(new NativeImgLabelingExt0());
                 registerExternalizer(new ObjectExt0());
