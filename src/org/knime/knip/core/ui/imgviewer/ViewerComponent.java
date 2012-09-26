@@ -38,9 +38,18 @@ public abstract class ViewerComponent extends JPanel implements
         public ViewerComponent(String title, boolean isBorderHidden) {
 
                 if (!isBorderHidden)
-                        setBorder(BorderFactory.createTitledBorder(title));
+                        setTitle(title);
                 else
                         setBorder(BorderFactory.createEmptyBorder());
+        }
+
+        /**
+         * Set the title for the border of this component.
+         *
+         * @param title the title
+         */
+        public void setTitle(final String title) {
+            setBorder(BorderFactory.createTitledBorder(title));
         }
 
         /**
