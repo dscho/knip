@@ -57,9 +57,8 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
                 final Centroid centroidOp = new Centroid();
                 CentralizeOnePoint<T> centralizeOnePointOp = new CentralizeOnePoint<T>(
                                 new PolarImageFactory<T>(
-                                                Views.extendMirrorDouble(img),
-                                                m_radius), m_maxIterations,
-                                m_numAngles);
+                                                Views.extendMirrorDouble(img)),
+                                m_maxIterations, m_radius, m_numAngles);
 
                 RandomAccess<LabelingType<L>> resAccess = r.randomAccess();
                 RandomAccess<LabelingType<L>> srcAccess = labeling

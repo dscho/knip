@@ -25,8 +25,11 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
 
         private Img<T> m_buffer;
 
+        private final int m_radius;
+
         public CentralizeOnePoint(PolarImageFactory<T> factory,
-                        int numMaxIterations, int samplingRate) {
+                        int numMaxIterations, int radius, int samplingRate) {
+                m_radius = radius;
                 m_directionGradientOp = new DirectionalGradient<T, Img<T>>(
                                 GradientDirection.HORIZONTAL, false);
                 m_maxIterations = numMaxIterations;
@@ -60,13 +63,13 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
                 }
 
                 if (m_buffer == null) {
-                        m_buffer = m_factory.createPolarImage(src,
+                        m_buffer = m_factory.createPolarImage(src, m_radius,
                                         m_samplingRate);
                 }
 
                 long[] res = new long[src.length];
 
-                Img<T> polarImg = m_factory.createPolarImage(src,
+                Img<T> polarImg = m_factory.createPolarImage(src, m_radius,
                                 m_samplingRate);
 
                 // AWTImageTools.showInSameFrame(polarImg, 5);
@@ -158,7 +161,7 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
         @Override
         public UnaryOperation<long[], long[]> copy() {
                 return new CentralizeOnePoint<T>(m_factory, m_maxIterations,
-                                m_samplingRate);
+                                m_radius, m_samplingRate);
 
         }
 }

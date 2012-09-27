@@ -110,6 +110,8 @@ public class ContourDetector<T extends RealType<T>> {
          */
         private final UnaryOperation<Img<T>, Img<T>> m_preProc;
 
+        private final int m_radius;
+
         /**
          * @param pif
          *                produces the polar images
@@ -131,11 +133,13 @@ public class ContourDetector<T extends RealType<T>> {
          */
         public ContourDetector(final PolarImageFactory<T>[] pif,
                         UnaryOperation<Img<T>, Img<T>> preProc,
+                        final int radius,
                         final int numAng, final Vector[] seedingPoints,
                         final int maxLineVariance, final double maxOverlap,
                         final double minScore, final int minArea, boolean smooth) {
 
                 m_preProc = preProc;
+                m_radius = radius;
                 // the parameters
                 m_maxLineVariance = maxLineVariance;
                 m_polFacs = pif;
@@ -173,7 +177,9 @@ public class ContourDetector<T extends RealType<T>> {
                                 pos[1] = p.getLongPosition(1);
                                 if (polImg == null) {
                                         polImg = m_polFacs[j].createPolarImage(
-                                                        pos, m_numAng);
+                                                                        pos,
+                                                                        m_radius,
+                                                                        m_numAng);
                                 } else {
                                         m_polFacs[j].createPolarImage(pos,
                                                         m_numAng, polImg);
