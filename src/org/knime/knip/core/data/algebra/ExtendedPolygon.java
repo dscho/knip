@@ -36,7 +36,7 @@ import org.knime.knip.core.util.PolygonTools;
  * @author hornm
  *
  */
-
+@Deprecated
 public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
@@ -102,34 +102,6 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         public void setCenter(final long[] p) {
                 m_center = p;
-        }
-
-        /**
-         * Creates the bitmask.
-         *
-         * @return
-         */
-        public Img<BitType> createOutline() {
-                if (m_mask != null) {
-                        return m_mask;
-                }
-                Rectangle r = getBounds();
-                int w = r.width;
-                int h = r.height;
-                m_mask = new ArrayImgFactory<BitType>().create(
-                                new int[] { w, h }, new BitType());
-                Cursor<BitType> c = m_mask.localizingCursor();
-
-                while (c.hasNext()) {
-                        c.fwd();
-                        if (contains(new Point(r.x + c.getIntPosition(0), r.y
-                                        + c.getIntPosition(1)))) {
-                                c.get().set(true);
-                        }
-                }
-
-                return m_mask;
-
         }
 
         /**
