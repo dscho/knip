@@ -50,18 +50,13 @@
  */
 package org.knime.knip.core.ops.labeling;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import net.imglib2.Cursor;
-import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.Views;
 
 import org.knime.knip.core.algorithm.PolarImageFactory;
 import org.knime.knip.core.data.algebra.ExtendedPolygon;
@@ -133,8 +128,8 @@ public class ContourDetector<T extends RealType<T>> {
          */
         public ContourDetector(final PolarImageFactory<T>[] pif,
                         UnaryOperation<Img<T>, Img<T>> preProc,
-                        final int radius,
-                        final int numAng, final Vector[] seedingPoints,
+                        final int radius, final int numAng,
+                        final Vector[] seedingPoints,
                         final int maxLineVariance, final double maxOverlap,
                         final double minScore, final int minArea, boolean smooth) {
 
@@ -176,7 +171,8 @@ public class ContourDetector<T extends RealType<T>> {
                                 pos[0] = p.getLongPosition(0);
                                 pos[1] = p.getLongPosition(1);
                                 if (polImg == null) {
-                                        polImg = m_polFacs[j].createPolarImage(
+                                        polImg = m_polFacs[j]
+                                                        .createPolarImage(
                                                                         pos,
                                                                         m_radius,
                                                                         m_numAng);
@@ -240,7 +236,7 @@ public class ContourDetector<T extends RealType<T>> {
                         // test overlap
                         overlap = false;
                         for (ExtendedPolygon ctest : m_contours) {
-                                if (overlap(poly, ctest) > m_maxOverlap) {
+                                if (poly.overlap(ctest) > m_maxOverlap) {
                                         overlap = true;
                                         break;
                                 }
@@ -287,74 +283,6 @@ public class ContourDetector<T extends RealType<T>> {
          */
         public int getContourModel(int contourIdx) {
                 return m_models.get(contourIdx);
-        }
-
-        /*
-         * Helper to calculate the overlap of two signatures. 0 - no overlap, 1-
-         * identical
-         */
-        private double overlap(final ExtendedPolygon p1,
-                        final ExtendedPolygon p2) {
-                Rectangle r1 = p1.getBounds();
-                Rectangle r2 = p2.getBounds();
-
-                if (r1.intersects(r2)) {
-
-                        int overlapPix = 0;
-                        int mask1Pix = 0;
-                        int mask2Pix = 0;
-                        Img<BitType> mask1 = p1.createBitmask();
-                        Img<BitType> mask2 = p2.createBitmask();
-
-                        Cursor<BitType> mask1Cur = mask1.localizingCursor();
-                        RandomAccess<BitType> mask2RA = Views.extendValue(
-                                        mask2, new BitType(false))
-                                        .randomAccess();
-
-                        int[] pos = new int[2];
-                        while (mask1Cur.hasNext()) {
-                                mask1Cur.fwd();
-                                if (mask1Cur.get().get()) {
-                                        pos[0] = r1.x
-                                                        + mask1Cur.getIntPosition(0)
-                                                        - r2.x;
-                                        pos[1] = r1.y
-                                                        + mask1Cur.getIntPosition(1)
-                                                        - r2.y;
-                                        mask2RA.setPosition(pos);
-                                        if (mask2RA.get().get()) {
-                                                overlapPix++;
-                                        }
-                                        mask1Pix++;
-                                }
-                        }
-
-                        Cursor<BitType> c = mask2.cursor();
-                        while (c.hasNext()) {
-                                c.fwd();
-                                if (c.get().get()) {
-                                        mask2Pix++;
-                                }
-                        }
-
-                        // Segmentation test = new Segmentation(new int[] { 700,
-                        // 700 });
-                        // test.addSegment(new int[] { r1.x, r1.y },
-                        // c1.createBitmask());
-                        // test.addSegment(new int[] { r2.x, r2.y },
-                        // c2.createBitmask());
-                        //
-                        // AWTImageTools.showInFrame(AWTImageTools.makeImage(test,
-                        // SegmentRenderer.MASK_RENDERER));
-                        // System.out.println((double) overlapPix
-                        // / Math.min(mask1Pix, mask2Pix));
-
-                        return (double) overlapPix
-                                        / Math.min(mask1Pix, mask2Pix);
-
-                }
-
-                return 0;
         }
 
         /**

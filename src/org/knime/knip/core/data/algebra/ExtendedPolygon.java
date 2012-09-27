@@ -24,22 +24,23 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.ByteType;
+import net.imglib2.view.Views;
 
 import org.knime.knip.core.algorithm.BresenhamAlgorithm;
 import org.knime.knip.core.util.PolygonTools;
 
 /**
  * Adds more functionality to the java.awt.Polygon class.
- * 
- * 
+ *
+ *
  * @author hornm
- * 
+ *
  */
 
 public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
-	 * 
+	 *
 	 */
         private static final long serialVersionUID = 4797555800668312421L;
 
@@ -51,7 +52,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         private long[] m_center;
 
         /**
-	 * 
+	 *
 	 */
         public ExtendedPolygon() {
                 super();
@@ -59,7 +60,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
          * Wraps the given polygon.
-         * 
+         *
          * @param poly
          *                polygon to wrap
          */
@@ -68,7 +69,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         }
 
         /**
-         * 
+         *
          * @return the center of the polygons bounding box
          */
         public long[] getBoundingBoxCenter() {
@@ -81,7 +82,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         /**
          * The center of the polygon. If no center was set, the bounding box
          * center will be returned (not a copy!)
-         * 
+         *
          * @return
          */
 
@@ -95,7 +96,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         /**
          * Sets the new center of the polygon. No checks are made, whether it
          * lies outside of the contour and, furthermore, NO copy is made!
-         * 
+         *
          * @param p
          */
 
@@ -105,7 +106,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
          * Creates the bitmask.
-         * 
+         *
          * @return
          */
         public Img<BitType> createOutline() {
@@ -133,7 +134,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
          * Creates the bitmask.
-         * 
+         *
          * @return
          */
         public Img<BitType> createBitmask() {
@@ -161,7 +162,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
          * Return the number of included points in the contour
-         * 
+         *
          * @return number of points
          */
 
@@ -171,7 +172,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
          * Return the point at the specified index.
-         * 
+         *
          * @param index
          * @return
          */
@@ -186,7 +187,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
          * Determines the normal vector of the point at the given index.
-         * 
+         *
          * @param index
          * @return
          */
@@ -212,7 +213,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         /**
          * Calculates the angle of the normal vector of the point at the given
          * index.
-         * 
+         *
          * @param index
          * @return
          */
@@ -227,9 +228,9 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
         /**
          * Resamples the polygon with the given maximum number of points.
-         * 
+         *
          * @param maxNumPoints
-         * 
+         *
          * @param numPoints
          * @return the new resampled contour
          */
@@ -267,9 +268,75 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         }
 
         /**
-         * 
+         * Calculate the overlap of two signatures. 0 - no overlap, 1- identical
+         */
+        public double overlap(final ExtendedPolygon p2) {
+                Rectangle r1 = getBounds();
+                Rectangle r2 = p2.getBounds();
+
+                if (r1.intersects(r2)) {
+
+                        int overlapPix = 0;
+                        int mask1Pix = 0;
+                        int mask2Pix = 0;
+                        Img<BitType> mask1 = createBitmask();
+                        Img<BitType> mask2 = p2.createBitmask();
+
+                        Cursor<BitType> mask1Cur = mask1.localizingCursor();
+                        RandomAccess<BitType> mask2RA = Views.extendValue(
+                                        mask2, new BitType(false))
+                                        .randomAccess();
+
+                        int[] pos = new int[2];
+                        while (mask1Cur.hasNext()) {
+                                mask1Cur.fwd();
+                                if (mask1Cur.get().get()) {
+                                        pos[0] = r1.x
+                                                        + mask1Cur.getIntPosition(0)
+                                                        - r2.x;
+                                        pos[1] = r1.y
+                                                        + mask1Cur.getIntPosition(1)
+                                                        - r2.y;
+                                        mask2RA.setPosition(pos);
+                                        if (mask2RA.get().get()) {
+                                                overlapPix++;
+                                        }
+                                        mask1Pix++;
+                                }
+                        }
+
+                        Cursor<BitType> c = mask2.cursor();
+                        while (c.hasNext()) {
+                                c.fwd();
+                                if (c.get().get()) {
+                                        mask2Pix++;
+                                }
+                        }
+
+                        // Segmentation test = new Segmentation(new int[] { 700,
+                        // 700 });
+                        // test.addSegment(new int[] { r1.x, r1.y },
+                        // c1.createBitmask());
+                        // test.addSegment(new int[] { r2.x, r2.y },
+                        // c2.createBitmask());
+                        //
+                        // AWTImageTools.showInFrame(AWTImageTools.makeImage(test,
+                        // SegmentRenderer.MASK_RENDERER));
+                        // System.out.println((double) overlapPix
+                        // / Math.min(mask1Pix, mask2Pix));
+
+                        return (double) overlapPix
+                                        / Math.min(mask1Pix, mask2Pix);
+
+                }
+
+                return 0;
+        }
+
+        /**
+         *
          * An iterator over the points.
-         * 
+         *
          * @return the iterator
          */
 
@@ -281,14 +348,17 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         protected class ContourIterator implements Iterator<int[]> {
                 protected int i = -1;
 
+                @Override
                 public boolean hasNext() {
                         return i < length() - 1;
                 }
 
+                @Override
                 public void remove() {
                         throw new UnsupportedOperationException();
                 }
 
+                @Override
                 public int[] next() {
                         if (!hasNext())
                                 throw new NoSuchElementException();
@@ -301,7 +371,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         /**
          * Shows images for debugging purposes: the lines along the normal
          * vectors at each point of the contour, ...
-         * 
+         *
          * @param srcImg
          */
         public <T extends RealType<T>> void showDebugImage(Img<T> srcImg) {
