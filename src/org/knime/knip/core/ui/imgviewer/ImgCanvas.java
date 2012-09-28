@@ -155,6 +155,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         private final Map<ColorWrapper, Crosshair> m_selectionMap = new HashMap<ColorWrapper, Crosshair>();
 
+        private boolean m_dragCompleteCrosshair = false;
+
         private Crosshair m_selectedCross = null;
 
         public ImgCanvas() {
@@ -230,11 +232,25 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                         repaint();
                                 }
 
+
+                                // check if the cursor is directly over the crossing point
+                                if (m_selectedCross != null) {
+                                        int xe = Math.abs(m_selectedCross.m_x - (int) (e.getX() / m_factor));
+                                        int ye = Math.abs(m_selectedCross.m_y - (int) (e.getY() / m_factor));
+
+                                        int epsilon = m_crossHairThicknessSelection;
+
+                                        if (xe < epsilon && ye < epsilon) {
+                                            m_dragCompleteCrosshair = true;
+                                        }
+                                }
+
                                 fireImageCoordMousePressed(e);
                         }
 
                         @Override
                         public void mouseReleased(MouseEvent e) {
+                                m_dragCompleteCrosshair = false;
                                 fireImageCoordMouseReleased(e);
                         }
 
@@ -259,14 +275,20 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                                 m_imageCanvas.scrollRectToVisible(m_currentRectangle);
                                         } else {
 
-                                                // x-axis movement
-                                                if (m_selectedCross.m_selectedColor
-                                                                .equals(new ColorWrapper(
-                                                                                m_selectedCross.m_xSelectionColor))) {
+                                                if (m_dragCompleteCrosshair) {
                                                     m_selectedCross.setX((int) (e.getX() / m_factor));
-                                                } else {
                                                     m_selectedCross.setY((int) (e.getY() / m_factor));
-                                                }
+                                                } else {
+
+                                                    // x-axis movement
+                                                    if (m_selectedCross.m_selectedColor
+                                                            .equals(new ColorWrapper(
+                                                                    m_selectedCross.m_xSelectionColor))) {
+                                                        m_selectedCross.setX((int) (e.getX() / m_factor));
+                                                    } else {
+                                                        m_selectedCross.setY((int) (e.getY() / m_factor));
+                                                    }
+                                                } 
 
                                                 repaint();
                                         }
