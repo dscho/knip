@@ -44,12 +44,13 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   29 Jun 2011 (hornm): created
  */
 package org.knime.knip.core.ui.imgviewer;
 
+import org.knime.knip.core.ui.imgviewer.panels.CrosshairPanel;
 import org.knime.knip.core.ui.imgviewer.panels.ImagePropertiesPanel;
 import org.knime.knip.core.ui.imgviewer.panels.ImgNormalizationPanel;
 import org.knime.knip.core.ui.imgviewer.panels.LabelFilterPanel;
@@ -60,13 +61,13 @@ import org.knime.knip.core.ui.imgviewer.panels.RendererSelectionPanel;
 /**
  * Enumeration of "primitive" manipulators the can be created with out further
  * knowledge.
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public enum ViewerComponents {
 
         /**
-	 * 
+	 *
 	 */
         IMAGE_ENHANCE() {
                 @Override
@@ -77,7 +78,7 @@ public enum ViewerComponents {
         },
 
         /**
-	 * 
+	 *
 	 */
         PLANE_SELECTION() {
                 @Override
@@ -86,7 +87,7 @@ public enum ViewerComponents {
                 }
         },
         /**
-	 * 
+	 *
 	 */
         IMAGE_PROPERTIES() {
 
@@ -97,7 +98,7 @@ public enum ViewerComponents {
 
         },
         /**
-	 * 
+	 *
 	 */
         RENDERER_SELECTION() {
                 @Override
@@ -107,7 +108,7 @@ public enum ViewerComponents {
 
         },
         /**
-	 * 
+	 *
 	 */
         MINIMAP() {
                 @Override
@@ -120,6 +121,12 @@ public enum ViewerComponents {
                 @Override
                 public ViewerComponent createInstance() {
                         return new LabelFilterPanel();
+                }
+        },
+        CROSSHAIR() {
+                @Override
+                public ViewerComponent createInstance() {
+                        return new CrosshairPanel();
                 }
         };
 

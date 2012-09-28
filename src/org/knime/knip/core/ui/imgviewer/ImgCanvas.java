@@ -1,7 +1,10 @@
 package org.knime.knip.core.ui.imgviewer;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -21,6 +24,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,6 +39,8 @@ import net.imglib2.type.Type;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.AddCrosshairEvent;
+import org.knime.knip.core.ui.imgviewer.events.CrosshairSettingsChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseDraggedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMousePressedEvent;
@@ -48,18 +57,61 @@ import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
  *
  * Propagates {@link ImgViewerRectChgEvent}.
  *
- * @author dietzc, hornm, fschoenenberer
+ * @author dietzc, hornm, fschoenenberer, muethingc
  */
 public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & RandomAccessible<T>>
                 extends ViewerComponent {
+
+        private class Crosshair {
+                private int m_x;
+                private int m_y;
+                private final Color m_xColor;
+                private final Color m_yColor;
+                private final Color m_xSelectionColor;
+                private final Color m_ySelectionColor;
+
+                private ColorWrapper m_selectedColor = null;
+
+                public Crosshair(final int x, final int y, final Color xColor,
+                                final Color yColor) {
+                        m_x = x;
+                        m_y = y;
+                        m_xColor = xColor;
+                        m_yColor = yColor;
+                        m_xSelectionColor = m_colorDispenser.next();
+                        m_ySelectionColor = m_colorDispenser.next();
+                }
+
+                public int getXDrawingPos(final double factor) {
+                        return (int) ((m_x - 0.5) * factor);
+                }
+
+                public int getYDrawingPos(final double factor) {
+                        return (int) ((m_y - 0.5) * factor);
+                }
+
+                public void setX(int x) {
+                    x = x < 0 ? 0 : x;
+                    x = x > m_imageCanvas.getWidth() ? m_imageCanvas.getWidth() : x;
+                    m_x = x;
+                }
+
+                public void setY(int y) {
+                    y = y < 0 ? 0 : y;
+                    y = y > m_imageCanvas.getHeight() ? m_imageCanvas.getHeight() : y;
+                    m_y = y;
+                }
+        }
 
         private static BufferedImage TEXTMSGIMG = new BufferedImage(100, 50,
                         BufferedImage.TYPE_INT_RGB);
 
         /**
-	 *
-	 */
+         *
+         */
         private static final long serialVersionUID = 1L;
+
+        private static final int SELECTION_EXTRA = 4;
 
         private final JPanel m_imageCanvas;
 
@@ -89,13 +141,29 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         private boolean m_blockMouseEvents;
 
+        private final List<Crosshair> m_crosshairs = new ArrayList<Crosshair>();
+
+        private int m_crossHairThickness = 2;
+        private int m_crossHairThicknessSelection = m_crossHairThickness
+                        + SELECTION_EXTRA;
+        private float m_crossHairAlpha = 1.0f;
+
+        private final Cursor m_moveCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+        private final Cursor m_defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+
+        private final ColorDispenser m_colorDispenser = new ColorDispenser();
+
+        private final Map<ColorWrapper, Crosshair> m_selectionMap = new HashMap<ColorWrapper, Crosshair>();
+
+        private Crosshair m_selectedCross = null;
+
         public ImgCanvas() {
                 this("Image", false);
         }
 
         /**
-	 *
-	 */
+         *
+         */
         public ImgCanvas(final String name, final boolean isImageHidden) {
                 super(name, isImageHidden);
 
@@ -104,8 +172,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
                 m_imageCanvas = new JPanel() {
                         /**
-			 *
-			 */
+                         *
+                         */
                         private static final long serialVersionUID = 1L;
 
                         @Override
@@ -119,6 +187,9 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                                 (int) (m_image.getWidth(null) * m_factor),
                                                 (int) (m_image.getHeight(null) * m_factor),
                                                 null);
+
+                                // paint the crosshairs
+                                paintCrosshairs(g, m_crossHairThickness, false);
                         }
                 };
 
@@ -147,6 +218,18 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         public void mousePressed(MouseEvent e) {
                                 m_dragPoint = e.getLocationOnScreen();
                                 m_dragRect = m_imageCanvas.getVisibleRect();
+
+                                // remove the crosshair on right click
+                                if (m_selectedCross != null
+                                                && e.getButton() == MouseEvent.BUTTON3) {
+                                        m_crosshairs.remove(m_selectedCross);
+                                        m_selectionMap.remove(new ColorWrapper(
+                                                        m_selectedCross.m_xSelectionColor));
+                                        m_selectionMap.remove(new ColorWrapper(
+                                                        m_selectedCross.m_ySelectionColor));
+                                        repaint();
+                                }
+
                                 fireImageCoordMousePressed(e);
                         }
 
@@ -159,22 +242,49 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 m_imageCanvas.addMouseMotionListener(new MouseMotionAdapter() {
                         @Override
                         public void mouseDragged(MouseEvent e) {
+
                                 if (m_keyDraggingEnabled
                                                 || ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 1024)) {
-                                        m_currentRectangle
-                                                        .setBounds(m_dragRect);
-                                        m_currentRectangle.translate(
-                                                        (m_dragPoint.x - e
-                                                                        .getXOnScreen()),
-                                                        (m_dragPoint.y - e
-                                                                        .getYOnScreen()));
-                                        m_imageCanvas.scrollRectToVisible(m_currentRectangle);
+
+                                        // if no crosshair selected, move the
+                                        // image
+                                        if (m_selectedCross == null) {
+                                                m_currentRectangle
+                                                                .setBounds(m_dragRect);
+                                                m_currentRectangle
+                                                                .translate((m_dragPoint.x - e
+                                                                                .getXOnScreen()),
+                                                                                (m_dragPoint.y - e
+                                                                                                .getYOnScreen()));
+                                                m_imageCanvas.scrollRectToVisible(m_currentRectangle);
+                                        } else {
+
+                                                // x-axis movement
+                                                if (m_selectedCross.m_selectedColor
+                                                                .equals(new ColorWrapper(
+                                                                                m_selectedCross.m_xSelectionColor))) {
+                                                    m_selectedCross.setX((int) (e.getX() / m_factor));
+                                                } else {
+                                                    m_selectedCross.setY((int) (e.getY() / m_factor));
+                                                }
+
+                                                repaint();
+                                        }
                                 }
                                 fireImageCoordMouseDragged(e);
                         }
 
                         @Override
                         public void mouseMoved(MouseEvent e) {
+                                m_selectedCross = checkSelection(e.getX(),
+                                                e.getY());
+
+                                if (m_selectedCross != null) {
+                                        setCursor(m_moveCursor);
+                                } else {
+                                        setCursor(m_defaultCursor);
+                                }
+
                                 fireImageCoordMouseMoved(e);
                         }
                 });
@@ -251,6 +361,65 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         }
 
+        private Crosshair checkSelection(final int x, final int y) {
+                BufferedImage backscreen = new BufferedImage(
+                                m_imageCanvas.getWidth(),
+                                m_imageCanvas.getHeight(),
+                                BufferedImage.TYPE_INT_ARGB);
+                paintCrosshairs(backscreen.createGraphics(),
+                                m_crossHairThicknessSelection, true);
+
+                ColorWrapper cw = new ColorWrapper(new Color(backscreen.getRGB(
+                                x, y)));
+
+                // check if this color belongs to one of the crosshairs
+                if (m_selectionMap.containsKey(cw)) {
+                        Crosshair selected = m_selectionMap.get(cw);
+                        selected.m_selectedColor = cw;
+                        return selected;
+                } else {
+                        return null;
+                }
+        }
+
+        private void paintCrosshairs(final Graphics g, final int thickness,
+                        final boolean selection) {
+                Graphics2D g2 = (Graphics2D) g;
+
+                if (!selection) {
+                        g2.setComposite(AlphaComposite.getInstance(
+                                        AlphaComposite.SRC_OVER,
+                                        m_crossHairAlpha));
+                }
+
+                for (Crosshair c : m_crosshairs) {
+
+                        g2.setStroke(new BasicStroke(thickness));
+
+                        // draw x line
+                        if (selection) {
+                                g2.setColor(c.m_xSelectionColor);
+                        } else {
+                                g2.setColor(c.m_xColor);
+                        }
+
+                        g2.drawLine(c.getXDrawingPos(m_factor), 0,
+                                        c.getXDrawingPos(m_factor),
+                                        m_imageCanvas.getHeight());
+
+                        // draw y line
+                        if (selection) {
+                                g2.setColor(c.m_ySelectionColor);
+                        } else {
+                                g2.setColor(c.m_yColor);
+                        }
+
+                        g2.drawLine(0, c.getYDrawingPos(m_factor),
+                                        m_imageCanvas.getWidth(),
+                                        c.getYDrawingPos(m_factor));
+                }
+        }
+
         private void handleScrollbarEvent() {
                 if (m_currentRectangle == null
                                 || !m_currentRectangle.equals(m_imageCanvas
@@ -323,6 +492,25 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 updateImageCanvas();
         }
 
+        @EventListener
+        public void onAddCrosshair(final AddCrosshairEvent e) {
+                int x = (int) (m_imageCanvas.getWidth() / 2 / m_factor);
+                int y = (int) (m_imageCanvas.getHeight() / 2 / m_factor);
+                Crosshair ch = new Crosshair(x, y, e.getXColor(), e.getYColor());
+                m_selectionMap.put(new ColorWrapper(ch.m_xSelectionColor), ch);
+                m_selectionMap.put(new ColorWrapper(ch.m_ySelectionColor), ch);
+                m_crosshairs.add(ch);
+                repaint();
+        }
+
+        @EventListener
+        public void onCrosshairSettingsChg(final CrosshairSettingsChgEvent e) {
+                m_crossHairThickness = e.getThickness();
+                m_crossHairThicknessSelection = e.getThickness() + SELECTION_EXTRA;
+                m_crossHairAlpha = e.getAlpha();
+                repaint();
+        }
+
         /**
          * Scrolls the image so the rectangle gets visible.
          *
@@ -377,8 +565,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         m_oldFactor = m_factor;
 
                 }
-                        m_imageScrollPane.validate();
-                        m_imageScrollPane.repaint();
+                m_imageScrollPane.validate();
+                m_imageScrollPane.repaint();
         }
 
         /**
