@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   31 Aug 2010 (hornm): created
  */
@@ -59,9 +59,10 @@ import org.knime.knip.core.data.algebra.ExtendedPolygon;
 
 /**
  * DeSerializes a {@link Polygon}-object.
- * 
+ *
  * @author hornm, University of Konstanz
  */
+@Deprecated
 public class ExtendedPolygonDeSerializer {
 
         private static final int CONTOUR_RESAMPLING_REATE = 1000;
