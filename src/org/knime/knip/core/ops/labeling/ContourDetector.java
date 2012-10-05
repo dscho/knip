@@ -69,6 +69,7 @@ import org.knime.knip.core.util.PermutationSort;
  *
  * @author hornm, University of Konstanz
  */
+@Deprecated
 public class ContourDetector<T extends RealType<T>> {
 
         /*
