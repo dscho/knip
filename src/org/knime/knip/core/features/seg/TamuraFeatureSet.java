@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.imglib2.IterableInterval;
-import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
 
@@ -91,10 +90,9 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
         private boolean m_valid;
 
         @FeatureTargetListener
-        public final void iiUpdated(
-                        Pair<IterableInterval<T>, CalibratedSpace> pair) {
+        public final void iiUpdated(IterableInterval<T> interval) {
 
-                Pair<Integer, Integer> validDims = getValidDims(pair.a);
+                Pair<Integer, Integer> validDims = getValidDims(interval);
 
                 if (validDims == null) {
                         m_valid = false;
@@ -106,8 +104,8 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
                                         m_enabledFeatures
                                                         .toArray(new String[m_enabledFeatures
                                                                         .size()]));
-                        m_stats = m_ocac.descriptiveStatistics(pair.a);
-                        m_hist = m_tamura.updateROI(pair.a);
+                        m_stats = m_ocac.descriptiveStatistics(interval);
+                        m_hist = m_tamura.updateROI(interval);
                 }
         }
 

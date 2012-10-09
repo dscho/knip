@@ -61,7 +61,6 @@ import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
 import net.imglib2.type.logic.BitType;
-import net.imglib2.util.Pair;
 
 import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
@@ -149,15 +148,18 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         }
 
         @FeatureTargetListener
-        public void iiUpdated(
-                        Pair<IterableInterval<BitType>, CalibratedSpace> pair) {
-                m_interval = pair.a;
+        public void calibratedSpaceUpdated(CalibratedSpace cs) {
+                m_cs = cs;
+        }
+
+        @FeatureTargetListener
+        public void iiUpdated(IterableInterval<BitType> interval) {
+                m_interval = interval;
                 m_centroid = null;
-                m_cs = pair.b;
 
                 int activeDims = 0;
-                for (int d = 0; d < pair.a.numDimensions(); d++) {
-                        if (pair.a.dimension(d) > 1) {
+                for (int d = 0; d < interval.numDimensions(); d++) {
+                        if (interval.dimension(d) > 1) {
                                 activeDims++;
                         }
                 }
@@ -175,7 +177,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         } else {
 
                                 final Img<BitType> bitMask = m_ocac
-                                                .binaryMask2D(pair.a);
+                                                .binaryMask2D(interval);
                                 m_outline = m_outlineOp
                                                 .compute(bitMask,
                                                                 ImgUtils.createEmptyImg(bitMask));
@@ -200,7 +202,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                                                         .size())
                                                         / Math.pow(m_perimeter,
                                                                         2);
-                                        m_solidity = pair.a.size() / ctr;
+                                        m_solidity = interval.size() / ctr;
                                 }
 
                                 if (m_enabled.get(5 + m_defaultAxis.length)) {

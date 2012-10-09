@@ -51,9 +51,7 @@
 package org.knime.knip.core.features.seg;
 
 import net.imglib2.IterableInterval;
-import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
 
 import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
@@ -112,9 +110,8 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
         }
 
         @FeatureTargetListener
-        public final void iiUpdated(
-                        Pair<IterableInterval<T>, CalibratedSpace> pair) {
-                m_interval = pair.a;
+        public final void iiUpdated(IterableInterval<T> interval) {
+                m_interval = interval;
                 m_comp = null;
         }
 

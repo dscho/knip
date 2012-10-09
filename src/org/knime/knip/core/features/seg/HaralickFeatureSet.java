@@ -53,7 +53,6 @@ package org.knime.knip.core.features.seg;
 import java.util.BitSet;
 
 import net.imglib2.IterableInterval;
-import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.ops.data.CooccurrenceMatrix;
 import net.imglib2.ops.data.CooccurrenceMatrix.MatrixOrientation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeCooccurrenceMatrix.HaralickFeature;
@@ -156,14 +155,13 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
         }
 
         @FeatureTargetListener
-        public final void iiUpdated(
-                        Pair<IterableInterval<T>, CalibratedSpace> pair) {
+        public final void iiUpdated(IterableInterval<T> interval) {
 
-                m_validDims = getValidDims(pair.a);
+                m_validDims = getValidDims(interval);
 
                 if (m_validDims != null) {
                         m_isValid = true;
-                        m_interval = pair.a;
+                        m_interval = interval;
                         m_dimX = m_validDims.a;
                         m_dimY = m_validDims.b;
                 } else {
