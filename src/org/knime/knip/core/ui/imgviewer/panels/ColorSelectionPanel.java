@@ -1,10 +1,12 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -12,6 +14,8 @@ import java.io.ObjectOutput;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -23,6 +27,20 @@ import org.knime.knip.core.ui.imgviewer.events.LabelColoringChangeEvent;
 
 public class ColorSelectionPanel extends ViewerComponent {
 
+        private class OKAdapter implements ActionListener {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        Color newColor = ColorSelectionPanel.this.m_colorChooser
+                                        .getColor();
+                        SegmentColorTable.setBoundingBoxColor(newColor);
+
+                        m_eventService.publish(new LabelColoringChangeEvent(
+                                        newColor, SegmentColorTable
+                                                        .getColorMapNr()));
+                        m_eventService.publish(new ImgRedrawEvent());
+                }
+        }
+
         private static final long serialVersionUID = 1L;
 
         private EventService m_eventService;
@@ -31,12 +49,16 @@ public class ColorSelectionPanel extends ViewerComponent {
         private JButton m_resetColor;
 
         // ColorChooser Dialog
-        private final ColorSelectionFrame m_colorChooser = new ColorSelectionFrame(
-                        null);
-
+        private final JColorChooser m_colorChooser = new JColorChooser();
+        private final JDialog m_colorDialog;
 
         public ColorSelectionPanel(boolean isBorderHidden) {
                 super("Color Options", isBorderHidden);
+
+                m_colorDialog = JColorChooser.createDialog(this,
+                                "Choose Bounding Box Color", false,
+                                m_colorChooser, new OKAdapter(), null);
+
                 construct();
         }
 
@@ -62,7 +84,7 @@ public class ColorSelectionPanel extends ViewerComponent {
                                         @Override
                                         public void actionPerformed(
                                                         java.awt.event.ActionEvent evt) {
-                                                m_colorChooser.setVisible(true);
+                                                m_colorDialog.setVisible(true);
                                         }
                                 });
 
@@ -139,7 +161,6 @@ public class ColorSelectionPanel extends ViewerComponent {
         @Override
         public void setEventService(EventService eventService) {
                 m_eventService = eventService;
-                m_colorChooser.setEventService(m_eventService);
         }
 
         @Override
