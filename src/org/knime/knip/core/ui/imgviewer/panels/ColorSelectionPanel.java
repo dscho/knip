@@ -1,6 +1,5 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -13,8 +12,6 @@ import java.io.ObjectOutput;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -34,17 +31,12 @@ public class ColorSelectionPanel extends ViewerComponent {
         private JButton m_resetColor;
 
         // ColorChooser Dialog
-        private JButton m_colorOK;
-        private JButton m_colorCancel;
-        private JColorChooser m_cchoose;
-        private final JFrame m_colorChooser;
+        private final ColorSelectionFrame m_colorChooser = new ColorSelectionFrame(
+                        null);
 
-        private final JPanel m_buttonPane = new JPanel();
-        private final JPanel m_colorPane = new JPanel();
 
         public ColorSelectionPanel(boolean isBorderHidden) {
                 super("Color Options", isBorderHidden);
-                m_colorChooser = new JFrame();
                 construct();
         }
 
@@ -65,27 +57,6 @@ public class ColorSelectionPanel extends ViewerComponent {
                 m_resetColor = new JButton(new ImageIcon(getClass()
                                 .getResource("ColorIcon.png")));
 
-                // ColorChooser Buttons
-                m_colorOK = new JButton("OK");
-                m_colorCancel = new JButton("Cancel");
-                m_colorOK.setSize(5, 2);
-                m_colorCancel.setSize(6, 2);
-
-                // Settings for JColorChooser
-                m_cchoose = new JColorChooser();
-                m_cchoose.setPreviewPanel(new JPanel());
-                m_cchoose.removeChooserPanel(m_cchoose.getChooserPanels()[0]);
-                m_cchoose.removeChooserPanel(m_cchoose.getChooserPanels()[1]);
-
-                m_colorPane.add(m_cchoose);
-                m_buttonPane.add(m_colorOK);
-                m_buttonPane.add(m_colorCancel);
-                m_colorPane.add(m_buttonPane);
-
-                m_colorChooser.getContentPane().add(m_colorPane);
-                m_colorChooser.setSize(450, 300);
-                m_colorChooser.setTitle("Choose BoundingBox Color");
-
                 m_boundingBoxColor
                                 .addActionListener(new java.awt.event.ActionListener() {
                                         @Override
@@ -94,30 +65,6 @@ public class ColorSelectionPanel extends ViewerComponent {
                                                 m_colorChooser.setVisible(true);
                                         }
                                 });
-
-                m_colorCancel.addActionListener(new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(
-                                        java.awt.event.ActionEvent evt) {
-                                m_colorChooser.setVisible(false);
-                        }
-                });
-
-                m_colorOK.addActionListener(new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(
-                                        java.awt.event.ActionEvent evt) {
-                                Color newColor = m_cchoose.getColor();
-                                SegmentColorTable.setBoundingBoxColor(newColor);
-
-                                m_colorChooser.setVisible(false);
-                                m_eventService.publish(new LabelColoringChangeEvent(
-                                                newColor,
-                                                SegmentColorTable
-                                                                .getColorMapNr()));
-                                m_eventService.publish(new ImgRedrawEvent());
-                        }
-                });
 
                 m_resetColor.addActionListener(new java.awt.event.ActionListener() {
                         @Override
@@ -192,7 +139,7 @@ public class ColorSelectionPanel extends ViewerComponent {
         @Override
         public void setEventService(EventService eventService) {
                 m_eventService = eventService;
-
+                m_colorChooser.setEventService(m_eventService);
         }
 
         @Override
