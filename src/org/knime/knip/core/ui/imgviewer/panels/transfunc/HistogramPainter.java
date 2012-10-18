@@ -52,12 +52,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Stroke;
 
 /**
  *
  *
- * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
+ * @author muethingc
  */
 public class HistogramPainter {
 
@@ -222,10 +223,12 @@ public class HistogramPainter {
      *
      * @see javax.swing.JComponent#paintComponent(Graphics)
      * @param g2 the Graphics2D object to use for drawing
-     * @param width the width to draw to
-     * @param height the height to draw to
      */
-    public final void paintHistogram(final Graphics2D g2, final int width, final int height) {
+    public final void paintHistogram(final Graphics2D g2) {
+
+        Rectangle paintArea = g2.getClipBounds();
+        int width = (int) paintArea.getWidth();
+        int height = (int) paintArea.getHeight();
 
         // paint the background
         g2.setColor(Color.white);
