@@ -69,6 +69,8 @@ import javax.swing.LayoutStyle;
 
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
+import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
+import org.knime.knip.core.ui.transfunc.TransferFunction;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
 
@@ -78,7 +80,8 @@ import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
  *
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  */
-public class TransferFunctionControlPanel extends ViewerComponent {
+public class TransferFunctionControlPanel extends ViewerComponent implements
+                TransferFunctionChgListener {
 
         public final class Memento {
 
@@ -112,7 +115,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
 
                 @Override
                 public void actionPerformed(final ActionEvent event) {
-                        m_transferPicker.setScale((HistogramPainter.Scale) m_scaleBox
+                        m_transferPanel.setScale((HistogramPainter.Scale) m_scaleBox
                                         .getSelectedItem());
                 }
         }
@@ -128,7 +131,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                         TransferFunctionColor color = (TransferFunctionColor) m_focusBox
                                         .getSelectedItem();
 
-                        m_transferPicker.setTransferFocus(color);
+                        m_transferPanel.setTransferFocus(color);
                         m_memento.map.put(m_memento.currentBundle, color);
                 }
         }
@@ -144,14 +147,12 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                         TransferFunctionBundle bundle = (TransferFunctionBundle) m_bundleBox
                                         .getSelectedItem();
                         setActiveBundle(bundle);
-                        m_eventService.publish(new BundleChgEvent(bundle));
-
                 }
         }
 
         private Memento m_memento;
 
-        private final TransferFunctionViewer m_transferPicker;
+        private final TransferFunctionPanel m_transferPanel;
 
         private EventService m_eventService;
 
@@ -169,6 +170,9 @@ public class TransferFunctionControlPanel extends ViewerComponent {
         // Save this adapter to unset/set while changing content
         private final ActionListener m_focusAdapter;
         private final ActionListener m_bundleAdapter;
+
+        /* the last transfer function that was changed */
+        private TransferFunction m_lastChangedFunction;
 
         /**
          * Construct a new TransferPanel and use a fresh EventService.
@@ -193,7 +197,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 m_focusBox = new JComboBox();
 
                 // Set up the viewers
-                m_transferPicker = new TransferFunctionViewer(m_eventService);
+                m_transferPanel = new TransferFunctionPanel();
 
                 // set up the checkboxes and the button
                 m_boxForce = new JCheckBox("Force this settings");
@@ -209,15 +213,6 @@ public class TransferFunctionControlPanel extends ViewerComponent {
 
                 m_boxAutoApply = new JCheckBox("Autoapply changes");
                 m_boxAutoApply.setSelected(true);
-                m_boxAutoApply.addActionListener(new ActionListener() {
-
-                        @Override
-                        public final void actionPerformed(
-                                        final ActionEvent event) {
-                                m_eventService.publish(new ApplyChgEvent(
-                                                m_boxAutoApply.isSelected()));
-                        }
-                });
 
                 m_boxNormalize = new JCheckBox("Normalize");
                 m_boxNormalize.setSelected(false);
@@ -226,8 +221,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                         @Override
                         public final void actionPerformed(
                                         final ActionEvent event) {
-                                m_eventService.publish(new NormalizationChgEvent(
-                                                m_boxNormalize.isSelected()));
+                                m_transferPanel.normalize(m_boxNormalize.isSelected());
                         }
                 });
 
@@ -236,7 +230,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                         @Override
                         public final void actionPerformed(
                                         final ActionEvent event) {
-                                m_eventService.publish(new ApplyEvent());
+                                fireTransferFunctionChgEvent();
                         }
                 });
 
@@ -264,7 +258,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
 
                 GroupLayout.ParallelGroup horizontal0 = layout
                                 .createParallelGroup()
-                                .addComponent(m_transferPicker)
+                                .addComponent(m_transferPanel)
                                 .addGroup(boxgroup);
 
                 GroupLayout.ParallelGroup horizontal1 = layout
@@ -296,7 +290,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
 
                 GroupLayout.ParallelGroup vertical0 = layout
                                 .createParallelGroup()
-                                .addComponent(m_transferPicker)
+                                .addComponent(m_transferPanel)
                                 .addGroup(verticalButtons);
 
                 GroupLayout.ParallelGroup vertical1 = layout
@@ -344,6 +338,8 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                                                 .getSelectedItem(),
                                 null, null);
 
+                m_transferPanel.addTransferFunctionChgListener(this);
+
                 setEventService(service);
         }
 
@@ -388,7 +384,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 m_memento = memento;
 
                 // data
-                m_transferPicker.setData(m_memento.histogramData);
+                m_transferPanel.setData(m_memento.histogramData);
 
                 // selected scale
                 m_scaleBox.setSelectedItem(m_memento.scale);
@@ -521,7 +517,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
 
                 m_memento.currentBundle = bundle;
 
-                m_transferPicker.setFunctions(m_memento.currentBundle);
+                m_transferPanel.setBundle(m_memento.currentBundle);
 
                 Set<TransferFunctionColor> content = m_memento.currentBundle
                                 .getKeys();
@@ -540,6 +536,8 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 m_focusBox.addActionListener(m_focusAdapter);
 
                 m_focusBox.setSelectedItem(focus);
+
+                fireTransferFunctionChgEvent();
         }
 
         public final void setNormalize(final boolean value) {
@@ -566,6 +564,13 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 return m_boxAutoApply.isSelected();
         }
 
+        private void fireTransferFunctionChgEvent() {
+                m_eventService.publish(new TransferFunctionChgKNIPEvent(
+                                m_lastChangedFunction, m_memento.currentBundle,
+                                m_boxNormalize.isSelected()));
+                m_eventService.publish(new ImgRedrawEvent());
+        }
+
         /**
          * {@inheritDoc}
          *
@@ -574,6 +579,16 @@ public class TransferFunctionControlPanel extends ViewerComponent {
         @Override
         public final Dimension getPreferredSize() {
                 return m_preferredSize;
+        }
+
+        @Override
+        public final void transferFunctionChg(
+                        final TransferFunctionChgEvent event) {
+                m_lastChangedFunction = event.getFunction();
+
+                if (m_boxAutoApply.isSelected()) {
+                        fireTransferFunctionChgEvent();
+                }
         }
 
         /**
@@ -588,8 +603,6 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 } else {
                         m_eventService = eventService;
                 }
-
-                m_transferPicker.setEventService(m_eventService);
 
                 m_eventService.subscribe(this);
         }

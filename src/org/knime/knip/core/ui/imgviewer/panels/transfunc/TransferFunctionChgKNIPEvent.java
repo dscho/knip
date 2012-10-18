@@ -51,7 +51,7 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
-import org.knime.knip.core.ui.transfunc.PolylineTransferFunction;
+import org.knime.knip.core.ui.transfunc.TransferFunction;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 
 /**
@@ -61,46 +61,53 @@ import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
  * kind Viewer3DNodeTFBundle, in that order. These are the transfer function
  * that changed and the bundle the function belongs to.
  */
-public class TransferFuncChgEvent implements KNIPEvent {
+public class TransferFunctionChgKNIPEvent implements KNIPEvent {
 
-    private final PolylineTransferFunction m_func;
-    private final TransferFunctionBundle m_bundle;
+        private final TransferFunction m_func;
+        private final TransferFunctionBundle m_bundle;
 
-    public TransferFuncChgEvent(final PolylineTransferFunction func,
-            final TransferFunctionBundle bundle) {
-        m_func = func;
-        m_bundle = bundle;
+        private final boolean m_normalize;
 
-    }
+        public TransferFunctionChgKNIPEvent(final TransferFunction func,
+                        final TransferFunctionBundle bundle,
+                        final boolean normalize) {
+                m_func = func;
+                m_bundle = bundle;
+                m_normalize = normalize;
+        }
 
-    /**
-     * @return the func
-     */
-    public PolylineTransferFunction getFunc() {
-        return m_func;
-    }
+        /**
+         * @return the func
+         */
+        public TransferFunction getFunc() {
+                return m_func;
+        }
 
-    /**
-     * @return the bundle
-     */
-    public TransferFunctionBundle getBundle() {
-        return m_bundle;
-    }
+        /**
+         * @return the bundle
+         */
+        public TransferFunctionBundle getBundle() {
+                return m_bundle;
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ExecutionPriority getExecutionOrder() {
-        return ExecutionPriority.NORMAL;
-    }
+        public boolean normalize() {
+                return m_normalize;
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
-        return false;
-    }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public ExecutionPriority getExecutionOrder() {
+                return ExecutionPriority.NORMAL;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+                return false;
+        }
 
 }

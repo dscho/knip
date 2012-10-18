@@ -5,24 +5,26 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.knime.knip.core.ui.imgviewer.events.SetCachingEvent;
-
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.ImageRenderer;
 import org.knime.knip.core.awt.Real2ColorByLookupTableRenderer;
+import org.knime.knip.core.awt.Real2GreyRenderer;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 import org.knime.knip.core.ui.imgviewer.ViewerComponents;
+import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.SetCachingEvent;
 import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFunctionControlDataProvider;
 import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFunctionControlPanel;
 
@@ -40,7 +42,7 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
         private final ViewerComponent m_rendererSelection = ViewerComponents.RENDERER_SELECTION.createInstance();
         private final ViewerComponent m_imageEnhance = ViewerComponents.IMAGE_ENHANCE.createInstance();
 
-        private ImageRenderer<T, RandomAccessibleInterval<T>> m_lastRenderer = null;
+        private ImageRenderer<T, RandomAccessibleInterval<T>> m_lastRenderer = new Real2GreyRenderer();
 
 
         public MappingSelectionPanel() {
@@ -58,7 +60,7 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
         }
 
         public MappingSelectionPanel(final TransferFunctionControlDataProvider<T, I> provider) {
-                super("Mapping", false);
+                super("Mapping", true);
 
                 setProvider(provider);
 
@@ -67,6 +69,7 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
                 simpleMapping.setLayout(new BoxLayout(simpleMapping, BoxLayout.X_AXIS));
                 simpleMapping.add(m_imageEnhance);
                 simpleMapping.add(m_rendererSelection);
+                simpleMapping.add(Box.createHorizontalGlue());
 
                 m_tabPane.addTab("Simple Renderer", simpleMapping);
                 m_tabPane.addTab("Transfer Function", m_tfc);
@@ -88,6 +91,7 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
 
                                 m_eventService.publish(new SetCachingEvent(cache));
                                 m_eventService.publish(new RendererSelectionChgEvent(renderer));
+                                m_eventService.publish(new ImgRedrawEvent());
                         }
                 });
 

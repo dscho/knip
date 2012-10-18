@@ -16,6 +16,7 @@ import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
+import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 
@@ -36,6 +37,8 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         private int m_numBins = NUM_BINS;
 
         private final Map<KEY, TransferFunctionControlPanel.Memento> m_mementos = new HashMap<KEY, TransferFunctionControlPanel.Memento>();
+
+        private boolean m_autoApply = true;
 
         private TransferFunctionControlPanel.Memento m_currentMemento;
         private KEY m_currentKey;
@@ -83,7 +86,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         /**
          * This method is called everytime the src changes and must return the
          * key that corresponds to the current settings.<br>
-         * 
+         *
          * @return the key to store the first memento.
          */
         protected abstract KEY updateKey(final Interval src);
@@ -114,6 +117,10 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 }
 
                 m_tfc.setState(m_currentMemento);
+
+                if (m_autoApply) {
+                        m_eventService.publish(new ImgRedrawEvent());
+                }
         }
 
         @EventListener
@@ -130,6 +137,16 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 }
 
                 m_tfc.setState(m_currentMemento);
+        }
+
+        @EventListener
+        public final void onApplyChg(final ApplyChgEvent event) {
+                m_autoApply = event.getVal();
+        }
+
+        @EventListener
+        public final void onApply(final ApplyEvent event) {
+                m_eventService.publish(new ImgRedrawEvent());
         }
 
         @Override

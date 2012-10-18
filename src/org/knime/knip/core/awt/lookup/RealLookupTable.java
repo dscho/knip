@@ -49,34 +49,37 @@ public class RealLookupTable<T extends RealType<T>> implements
          * Create a new instance, using the default value of entries in the
          * lookup table.<br>
          *
-         * @param sample
-         *                an instance of the class T for determining min and max
-         *                values for the table
+         * @param min
+         *                the minimum value of this table
+         * @param max
+         *                the largest value for this table
          * @param bundle
          *                the transfer function bundle used for creating the
          *                table
          */
-        public RealLookupTable(final T sample,
+        public RealLookupTable(final double min, final double max,
                         final TransferFunctionBundle bundle) {
-                this(sample, ENTRIES, bundle);
+                this(min, max, ENTRIES, bundle);
         }
 
         /**
          * Set up a new lookup table.<br>
          *
-         * @param sample
-         *                an instance of the class T for determining min and max
-         *                values for the table
+         * @param min
+         *                the minimum value of this table
+         * @param max
+         *                the largest value for this table
          * @param entries
          *                the number of entries the lookup table should have
          * @param bundle
          *                the transfer function bundle used for creating the
          *                table
          */
-        public RealLookupTable(final T sample, final int entries,
+        public RealLookupTable(final double min, final double max,
+                        final int entries,
                         final TransferFunctionBundle bundle) {
-                m_minValue = sample.getMinValue();
-                m_scale = (entries - 1) / (sample.getMaxValue() - m_minValue);
+                m_minValue = min;
+                m_scale = (entries - 1) / (max - m_minValue);
                 m_values = tableFromBundle(bundle, new ARGBType[entries]);
         }
 

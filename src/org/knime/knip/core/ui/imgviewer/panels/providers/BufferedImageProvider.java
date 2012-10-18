@@ -8,9 +8,13 @@ import java.io.ObjectOutput;
 
 import net.imglib2.display.ScreenImage;
 import net.imglib2.img.Img;
+import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
+import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.util.Pair;
+import net.imglib2.view.Views;
 
 import org.knime.knip.core.awt.AWTImageTools;
 import org.knime.knip.core.awt.lookup.LookupTable;
@@ -21,7 +25,7 @@ import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 import org.knime.knip.core.ui.imgviewer.panels.transfunc.BundleChgEvent;
-import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFuncChgEvent;
+import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFunctionChgKNIPEvent;
 
 /**
  * Converts an {@link Img} to a {@link BufferedImage}.
@@ -123,9 +127,29 @@ public class BufferedImageProvider<T extends RealType<T>, I extends Img<T>>
          * @param event
          */
         @EventListener
-        public void onTransferFunctionChgEvent(final TransferFuncChgEvent event) {
-                m_lookupTable = new RealLookupTable<T>(m_src.firstElement()
-                                .createVariable(), event.getBundle());
+        public void onTransferFunctionChgEvent(final TransferFunctionChgKNIPEvent event) {
+
+                double min;
+                double max;
+
+                if (event.normalize()) {
+                        MinMax<T> minMax = new MinMax<T>();
+                        Pair<T, T> val = minMax
+                                        .compute(Views.iterable(SubsetViews
+                                                        .iterableSubsetView(
+                                                                        m_src,
+                                                                        m_sel.getInterval(m_src))));
+
+                        min = val.a.getRealDouble();
+                        max = val.b.getRealDouble();
+
+                } else {
+                        min = m_src.firstElement().getMinValue();
+                        max = m_src.firstElement().getMaxValue();
+                }
+
+                m_lookupTable = new RealLookupTable<T>(min, max,
+                                event.getBundle());
         }
 
         @Override
