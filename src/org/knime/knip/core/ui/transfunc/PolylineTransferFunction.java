@@ -249,10 +249,6 @@ public class PolylineTransferFunction implements TransferFunction,
         private Point m_lower;
         private Point m_upper;
 
-        // used to check if lower and upper have been modified
-        private boolean m_lowerMod = false;
-        private boolean m_upperMod = false;
-
         // used for calculating the stretch factor
         private double m_minsf = MIN;
         private double m_maxsf = MAX;
@@ -288,15 +284,22 @@ public class PolylineTransferFunction implements TransferFunction,
                 m_points = new LinkedList<Point>();
 
                 // copy all the points
-                for (Point p : tf.getPoints()) {
-                        m_points.add(new Point(p));
+                for (Point p : tf.m_points) {
+
+                        Point cp = new Point(p);
+                        m_points.add(cp);
+
+                        if (tf.m_lower == p) {
+                                m_lower = cp;
+                        }
+
+                        if (tf.m_upper == p) {
+                                m_upper = cp;
+                        }
                 }
 
-                m_lower = tf.m_lower;
-                m_upper = tf.m_upper;
-
-                m_lowerMod = tf.m_lowerMod;
-                m_upperMod = tf.m_upperMod;
+                m_minsf = tf.m_minsf;
+                m_maxsf = tf.m_maxsf;
         }
 
         @Override
@@ -320,6 +323,14 @@ public class PolylineTransferFunction implements TransferFunction,
                 if (min > max)
                         throw new IllegalArgumentException(
                                         "Min must be smaller than max value");
+
+                if (min == max) {
+                        return;
+                }
+
+                if (min == m_minsf && max == m_maxsf) {
+                        return;
+                }
 
                 removeZoomPoints();
 
@@ -373,22 +384,19 @@ public class PolylineTransferFunction implements TransferFunction,
                 }
 
                 // remove
-                removeZoomPoint(m_lower, m_lowerMod);
-                m_lowerMod = false;
+                removeZoomPoint(m_lower);
 
-                removeZoomPoint(m_upper, m_upperMod);
-                m_upperMod = false;
+                removeZoomPoint(m_upper);
         }
 
-        private void removeZoomPoint(final Point p, final boolean mod) {
+        private void removeZoomPoint(final Point p) {
 
                 assert (p != null);
 
-                if (p.m_temp && !mod) {
+                if (p.m_temp) {
                         m_points.remove(p);
                 } else {
                         p.m_fixed = false;
-                        p.m_temp = false;
                 }
         }
 
@@ -462,13 +470,7 @@ public class PolylineTransferFunction implements TransferFunction,
                 p.setX(x);
                 p.setY(y);
 
-                if (p == m_lower) {
-                        m_lowerMod = true;
-                }
-
-                if (p == m_upper) {
-                        m_upperMod = true;
-                }
+                p.m_temp = false;
 
                 sortPoints();
         }
@@ -509,8 +511,8 @@ public class PolylineTransferFunction implements TransferFunction,
                 }
 
                 // else calculate the value
-                Point left = null;
-                Point right = null;
+                Point left = m_points.get(0);
+                Point right = m_points.get(m_points.size() - 1);
 
                 for (Point p : m_points) {
                         if (p.getX() < pos) {
