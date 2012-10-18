@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
+import javax.swing.SwingUtilities;
+
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
@@ -18,11 +21,14 @@ import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.numeric.RealType;
 
+import org.knime.knip.core.awt.Real2ColorByLookupTableRenderer;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 
 /**
@@ -76,7 +82,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
          * @param panel
          *                the panel that should be wrapped
          */
-        public AbstractTFCDataProvider(final TransferFunctionControlPanel panel) {
+        AbstractTFCDataProvider(final TransferFunctionControlPanel panel) {
                 super("Transfer Function", false);
 
                 if (panel == null)
@@ -88,7 +94,9 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 m_tfc.setState(m_currentMemento);
                 m_tfc.setOnlyOneFunc(m_onlyOne);
                 m_tfc.addActionListener(new ActionAdapter());
+                m_tfc.setOnlyOneFunc(true);
 
+                setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
                 add(m_tfc);
         }
 
@@ -168,13 +176,35 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         @EventListener
         public final void onImgUpdated(
                         final IntervalWithMetadataChgEvent<I> event) {
+
+                /*
+                 * because of the way the AWTImageProvider reacts to new images
+                 * (simply choosing a new Renderer from a list and keeping the old one
+                 * if the current renderer is also on the list) and the fact that I
+                 * cannot add my renderer to this list (the lookup table renderer is
+                 * only suitable if you have a source for a lookup table, clearly not
+                 * the case if only the simple image enhance is used), I need to issue
+                 * a renderer changed request each time the image changes.
+                 *
+                 * Moreover this needs to be after the AWTImageProvider has processed this
+                 * request, so we need to do this after the current AWTEvent has been
+                 * finished processing.
+                 */
+                SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                                m_eventService.publish(new RendererSelectionChgEvent(new Real2ColorByLookupTableRenderer<T>()));
+                                m_eventService.publish(new ImgRedrawEvent());
+                        }
+                });
+
                 m_src = event.getInterval();
                 setMementoToTFC(updateKey(m_src));
         }
 
         @EventListener
-        public final void onApply(final ApplyEvent event) {
-                m_eventService.publish(new ImgRedrawEvent());
+        public void onClose(final ViewClosedEvent event) {
+                m_src = null;
         }
 
         @Override

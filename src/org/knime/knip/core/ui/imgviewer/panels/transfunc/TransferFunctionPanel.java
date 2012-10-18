@@ -239,7 +239,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
         }
 
         @Override
-        public Dimension getPreferredSize() {
+        public Dimension getMinimumSize() {
                 return m_preferredSize;
         }
 }

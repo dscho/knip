@@ -181,7 +181,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                 m_transferPanel = new TransferFunctionPanel();
 
                 // set up the checkboxes and the button
-                m_boxOnlyOneFunc = new JCheckBox("Use only set of functions");
+                m_boxOnlyOneFunc = new JCheckBox("One set of functions");
                 m_boxOnlyOneFunc.setToolTipText("Unchecking this option results"
                                 + " in a unique set of transfer function for each "
                                 + "slice/volume. Usefull for rendering two volumes"
