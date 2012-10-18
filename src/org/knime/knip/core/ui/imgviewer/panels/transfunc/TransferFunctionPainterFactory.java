@@ -1,7 +1,7 @@
 /*
  * ------------------------------------------------------------------------
  *
- *  Copyright (C) 2003 - 2010
+ *  Copyright (C) 2003, 2010
  *  University of Konstanz, Germany and
  *  KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
@@ -44,33 +44,34 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
- * History
- *   Apr 10, 2012 (hornm): created
  */
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
-import org.knime.knip.core.ui.event.KNIPEvent;
+import java.awt.Color;
+
+import org.knime.knip.core.ui.transfunc.PolylineTransferFunction;
+import org.knime.knip.core.ui.transfunc.TransferFunction;
 
 /**
- * Published whenever a highlighting has changed.
+ * @author muethingc
+ *
  */
-public class HilitingChgEvent implements KNIPEvent {
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ExecutionPriority getExecutionOrder() {
-        return ExecutionPriority.NORMAL;
-    }
+public class TransferFunctionPainterFactory {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
-        return false;
-    }
+        private TransferFunctionPainterFactory() {
+        };
 
+        public static final TransferFunctionPainter create(
+                        final TransferFunction function, final Color color) {
+                if (function instanceof PolylineTransferFunction) {
+
+                        return new PolylineTransferFunctionPainter(
+                                        (PolylineTransferFunction) function,
+                                        color);
+                }
+
+                throw new IllegalArgumentException(
+                                "not yet implemented for type "
+                                                + function.getClass());
+        }
 }

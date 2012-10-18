@@ -1,7 +1,7 @@
 /*
  * ------------------------------------------------------------------------
  *
- *  Copyright (C) 2003 - 2010
+ *  Copyright (C) 2003, 2010
  *  University of Konstanz, Germany and
  *  KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
@@ -44,44 +44,16 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
- * History
- *   Apr 10, 2012 (hornm): created
  */
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
-import org.knime.knip.core.ui.event.KNIPEvent;
-import org.knime.knip.core.ui.transfunc.PolylineTransferFunction;
+import java.util.EventListener;
 
 /**
- * Published whenever a point is added.
- * 
- * This event has one argument of type Viewer3DNodeTransferFunction, which is
- * the transfer function on which the point modification happened.
+ * @author muethingc
+ *
  */
-public class PointAddedEvent extends PointEvent {
+public interface TransferFunctionChgListener extends EventListener {
 
-    /**
-     * @param func
-     */
-    public PointAddedEvent(PolylineTransferFunction func) {
-        super(func);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ExecutionPriority getExecutionOrder() {
-        return ExecutionPriority.NORMAL;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
-        return false;
-    }
-
+        public void transferFunctionChg(final TransferFunctionChgEvent event);
 }

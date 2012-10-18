@@ -1,7 +1,7 @@
 /*
  * ------------------------------------------------------------------------
  *
- *  Copyright (C) 2003 - 2010
+ *  Copyright (C) 2003, 2010
  *  University of Konstanz, Germany and
  *  KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
@@ -44,33 +44,36 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
- * History
- *   Apr 10, 2012 (hornm): created
  */
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
-import org.knime.knip.core.ui.event.KNIPEvent;
+import java.util.EventObject;
+
+import org.knime.knip.core.ui.transfunc.TransferFunction;
 
 /**
- * Published whenever the selection is completely cleared away.
+ * @author muethingc
+ *
  */
-public class HilitingClearedEvent implements KNIPEvent {
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ExecutionPriority getExecutionOrder() {
-        return ExecutionPriority.NORMAL;
-    }
+public class TransferFunctionChgEvent extends EventObject {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
-        return false;
-    }
+        private final TransferFunction m_function;
 
+        private final boolean m_adjusting;
+
+        public TransferFunctionChgEvent(final Object source,
+                        final TransferFunction function, final boolean adjusting) {
+                super(source);
+
+                m_function = function;
+                m_adjusting = adjusting;
+        }
+
+        public TransferFunction getFunction() {
+                return m_function;
+        }
+
+        public boolean isAdjusting() {
+                return m_adjusting;
+        }
 }
