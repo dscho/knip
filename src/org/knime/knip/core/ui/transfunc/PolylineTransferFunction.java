@@ -61,470 +61,479 @@ import java.util.List;
  *
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  */
-public class PolylineTransferFunction implements TransferFunction, Iterable<PolylineTransferFunction.Point> {
+public class PolylineTransferFunction implements TransferFunction,
+                Iterable<PolylineTransferFunction.Point> {
 
-    private static double MIN = 0.0;
-    private static double MAX = 1.0;
-    private static double EPSILON = 0.0001;
-
-    /**
-     * Provides a single point for a Transferfunction.
-     */
-    public class Point implements Comparable<Point> {
-
-        private double m_x = MIN;
-        private double m_y = MIN;
-
-        private boolean m_fixed = false;
-        private boolean m_selected = false;
-        private boolean m_temp = false;
+        private static double MIN = 0.0;
+        private static double MAX = 1.0;
+        private static double EPSILON = 0.0001;
 
         /**
-         * Sets up a new point at the given location and stores wheter it should
-         * be fixed in x direction or not.
+         * Provides a single point for a Transferfunction.
+         */
+        public class Point implements Comparable<Point> {
+
+                private double m_x = MIN;
+                private double m_y = MIN;
+
+                private boolean m_fixed = false;
+                private boolean m_selected = false;
+                private boolean m_temp = false;
+
+                /**
+                 * Sets up a new point at the given location and stores wheter
+                 * it should be fixed in x direction or not.
+                 *
+                 * The location is always stored as a fractinal value, i.e. a
+                 * value between 0.0 and 1.0.
+                 *
+                 * @param x
+                 *                the x position
+                 * @param y
+                 *                the y position
+                 * @param fixed
+                 *                wheter the point can be moved along the x axis
+                 * @param temp
+                 *                wheter the point is only a temp point for
+                 *                zooming
+                 */
+                public Point(final double x, final double y,
+                                final boolean fixed, final boolean temp) {
+                        setX(x);
+                        setY(y);
+                        m_fixed = fixed;
+                        m_temp = temp;
+                }
+
+                public Point(final double x, final double y, final boolean fixed) {
+                        this(x, y, fixed, false);
+                }
+
+                /**
+                 * Sets up a new point at the given location and sets it to be
+                 * not fixed.
+                 *
+                 * @param x
+                 *                the x position
+                 * @param y
+                 *                the y position
+                 */
+                public Point(final double x, final double y) {
+                        this(x, y, false);
+                }
+
+                /**
+                 * A copy constructor.
+                 *
+                 * @param p
+                 *                the point to copy
+                 */
+                public Point(final Point p) {
+                        this.m_x = p.m_x;
+                        this.m_y = p.m_y;
+                        this.m_fixed = p.m_fixed;
+                        this.m_temp = p.m_temp;
+                }
+
+                /**
+                 * Get x.
+                 *
+                 * @return current value of x
+                 */
+                public final double getX() {
+                        return m_x;
+                }
+
+                /**
+                 * Get y.
+                 *
+                 * @return current value of y
+                 */
+                public final double getY() {
+                        return m_y;
+                }
+
+                /**
+                 * Wheter or not the point is fixed.
+                 *
+                 * @return true/false
+                 */
+                public final boolean getFixed() {
+                        return m_fixed;
+                }
+
+                /**
+                 * Check if this point is currently highlighted.
+                 *
+                 * @return true/false
+                 */
+                public final boolean getSelected() {
+                        return m_selected;
+                }
+
+                /**
+                 * Set selection value.
+                 *
+                 * @param value
+                 *                wheter or not this point is selected
+                 */
+                public final void setSelected(final boolean value) {
+                        m_selected = value;
+                }
+
+                /**
+                 * Set a new position along the x axis.
+                 *
+                 * Values larger 1.0 will be set to 1.0 and values smaller 0.0
+                 * to 0.0.
+                 *
+                 * @param value
+                 *                the new value
+                 */
+                private void setX(final double value) {
+                        if (!m_fixed) {
+                                m_x = value;
+
+                                // check for bounds
+                                if (m_x < MIN) {
+                                        m_x = MIN;
+                                }
+                                if (m_x > MAX) {
+                                        m_x = MAX;
+                                }
+
+                        }
+                }
+
+                /**
+                 * Set a new position along the y axis.
+                 *
+                 * Values larger 1.0 will be set to 1.0 and values smaller 0.0
+                 * to 0.0.
+                 *
+                 * @param value
+                 *                the new value
+                 */
+                private void setY(final double value) {
+                        m_y = value;
+
+                        // check for bounds
+                        if (m_y < MIN) {
+                                m_y = MIN;
+                        }
+                        if (m_y > MAX) {
+                                m_y = MAX;
+                        }
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @see Comparable#compareTo(Point)
+                 */
+                @Override
+                public final int compareTo(final Point other) {
+                        if (m_x < other.getX()) {
+                                return -1;
+                        } else if (m_x == other.getX()) {
+                                return 0;
+                        } else {
+                                return 1;
+                        }
+                }
+        }
+
+        private List<Point> m_points = null;
+
+        // lower and upper end of the zoomed in function
+        private Point m_lower;
+        private Point m_upper;
+
+        // used to check if lower and upper have been modified
+        private boolean m_lowerMod = false;
+        private boolean m_upperMod = false;
+
+        // used for calculating the stretch factor
+        private double m_minsf = MIN;
+        private double m_maxsf = MAX;
+
+        /**
+         * Set up a new Transferfunction with two fixed points left and right.
          *
-         * The location is always stored as a fractinal value, i.e. a value
-         * between 0.0 and 1.0.
+         *
+         * This points will be positioned at (0,0) and (1,1).
+         *
+         */
+        public PolylineTransferFunction() {
+
+                m_points = new LinkedList<Point>();
+
+                // Add the two fixed Points
+                m_lower = new Point(MIN, MIN, true);
+                m_upper = new Point(MAX, MAX, true);
+
+                m_points.add(m_lower);
+                m_points.add(m_upper);
+        }
+
+        /**
+         * A copy constuctor, resulting in a deep copy.
+         *
+         * @param tf
+         *                the function to copy
+         */
+        public PolylineTransferFunction(final PolylineTransferFunction tf) {
+
+                // set up the list
+                m_points = new LinkedList<Point>();
+
+                // copy all the points
+                for (Point p : tf.getPoints()) {
+                        m_points.add(new Point(p));
+                }
+
+                m_lower = tf.m_lower;
+                m_upper = tf.m_upper;
+
+                m_lowerMod = tf.m_lowerMod;
+                m_upperMod = tf.m_upperMod;
+        }
+
+        @Override
+        public PolylineTransferFunction copy() {
+                return new PolylineTransferFunction(this);
+        }
+
+        private Point checkForPointAtPos(final double pos) {
+                for (Point p : m_points) {
+                        if (Math.abs(p.m_x - pos) < EPSILON) {
+                                return p;
+                        }
+                }
+
+                return null;
+        }
+
+        @Override
+        public final void zoom(final double min, final double max) {
+
+                if (min > max)
+                        throw new IllegalArgumentException(
+                                        "Min must be smaller than max value");
+
+                removeZoomPoints();
+
+                addZoomPoints(min, max);
+
+                sortPoints();
+        }
+
+        private void addZoomPoints(final double min, final double max) {
+
+                assert (min < max);
+
+                m_lower = addZoomPoint(min);
+                m_upper = addZoomPoint(max);
+
+                // stretch all points so that the points all lay between 0.0 and
+                // 1.0
+                m_minsf = m_lower.m_x;
+                m_maxsf = m_upper.m_x;
+                double fac = m_maxsf - m_minsf;
+
+                for (Point p : m_points) {
+                        p.m_x = (p.m_x - m_minsf) / fac;
+                }
+        }
+
+        private Point addZoomPoint(final double pos) {
+                Point p = checkForPointAtPos(pos);
+
+                if (p == null) {
+                        p = new Point(pos, getValueAt(pos), true, true);
+                        m_points.add(p);
+                } else {
+                        p.m_fixed = true;
+                }
+
+                return p;
+        }
+
+        private void removeZoomPoints() {
+
+                assert (m_lower != null);
+                assert (m_upper != null);
+                assert (m_points.size() >= 2);
+
+                // undo the stretching of all points
+                double fac = m_maxsf - m_minsf;
+
+                for (Point p : m_points) {
+                        p.m_x = (p.m_x * fac) + m_minsf;
+                }
+
+                // remove
+                removeZoomPoint(m_lower, m_lowerMod);
+                m_lowerMod = false;
+
+                removeZoomPoint(m_upper, m_upperMod);
+                m_upperMod = false;
+        }
+
+        private void removeZoomPoint(final Point p, final boolean mod) {
+
+                assert (p != null);
+
+                if (p.m_temp && !mod) {
+                        m_points.remove(p);
+                } else {
+                        p.m_fixed = false;
+                        p.m_temp = false;
+                }
+        }
+
+        /**
+         * Add a point to this Transferfunction.
          *
          * @param x
-         *            the x position
+         *                the x value
          * @param y
-         *            the y position
-         * @param fixed
-         *            wheter the point can be moved along the x axis
-         * @param temp
-         *            wheter the point is only a temp point for zooming
+         *                the y value
+         * @return the added Point
          */
-        public Point(final double x, final double y, final boolean fixed, final boolean temp) {
-            setX(x);
-            setY(y);
-            m_fixed = fixed;
-            m_temp = temp;
-        }
+        public final Point addPoint(final double x, final double y) {
+                Point p = new Point(x, y);
+                m_points.add(p);
+                sortPoints();
 
-        public Point(final double x, final double y, final boolean fixed) {
-            this(x, y, fixed, false);
+                return p;
         }
 
         /**
-         * Sets up a new point at the given location and sets it to be not
-         * fixed.
-         *
-         * @param x
-         *            the x position
-         * @param y
-         *            the y position
-         */
-        public Point(final double x, final double y) {
-            this(x, y, false);
-        }
-
-        /**
-         * A copy constructor.
+         * Remove a point from this Transferfunction.
          *
          * @param p
-         *            the point to copy
+         *                the point
          */
-        public Point(final Point p) {
-            this.m_x = p.m_x;
-            this.m_y = p.m_y;
-            this.m_fixed = p.m_fixed;
-            this.m_temp = p.m_temp;
-        }
-
-        /**
-         * Get x.
-         *
-         * @return current value of x
-         */
-        public final double getX() {
-            return m_x;
-        }
-
-        /**
-         * Get y.
-         *
-         * @return current value of y
-         */
-        public final double getY() {
-            return m_y;
-        }
-
-        /**
-         * Wheter or not the point is fixed.
-         *
-         * @return true/false
-         */
-        public final boolean getFixed() {
-            return m_fixed;
-        }
-
-        /**
-         * Check if this point is currently highlighted.
-         *
-         * @return true/false
-         */
-        public final boolean getSelected() {
-            return m_selected;
-        }
-
-        /**
-         * Set selection value.
-         *
-         * @param value
-         *            wheter or not this point is selected
-         */
-        public final void setSelected(final boolean value) {
-            m_selected = value;
-        }
-
-        /**
-         * Set a new position along the x axis.
-         *
-         * Values larger 1.0 will be set to 1.0 and values smaller 0.0 to 0.0.
-         *
-         * @param value
-         *            the new value
-         */
-        private void setX(final double value) {
-            if (!m_fixed) {
-                m_x = value;
-
-                // check for bounds
-                if (m_x < MIN) {
-                    m_x = MIN;
+        public final boolean removePoint(final Point p) {
+                if (!p.getFixed()) {
+                        m_points.remove(p);
+                        return true;
+                } else {
+                        return false;
                 }
-                if (m_x > MAX) {
-                    m_x = MAX;
+        }
+
+        /**
+         * Get a list of all visible Points.<br>
+         *
+         * This only includes the Points that are between the zoom values.
+         *
+         * @return all points
+         */
+        public final List<Point> getPoints() {
+
+                List<Point> result = new ArrayList<Point>();
+
+                int i = m_points.indexOf(m_lower) == -1 ? 0 : m_points
+                                .indexOf(m_lower);
+                int limit = m_points.indexOf(m_upper) == -1 ? m_points.size() - 1
+                                : m_points.indexOf(m_upper);
+
+                for (; i <= limit; i++) {
+                        result.add(m_points.get(i));
                 }
 
-            }
+                return result;
         }
 
         /**
-         * Set a new position along the y axis.
+         * Move a point to a new position.
          *
-         * Values larger 1.0 will be set to 1.0 and values smaller 0.0 to 0.0.
-         *
-         * @param value
-         *            the new value
+         * @param p
+         *                the point to move
+         * @param x
+         *                the x value
+         * @param y
+         *                the y value
          */
-        private void setY(final double value) {
-            m_y = value;
+        public final void movePoint(final Point p, final double x,
+                        final double y) {
+                p.setX(x);
+                p.setY(y);
 
-            // check for bounds
-            if (m_y < MIN) {
-                m_y = MIN;
-            }
-            if (m_y > MAX) {
-                m_y = MAX;
-            }
+                if (p == m_lower) {
+                        m_lowerMod = true;
+                }
+
+                if (p == m_upper) {
+                        m_upperMod = true;
+                }
+
+                sortPoints();
+        }
+
+        /**
+         * Sort the points in ascending order.
+         */
+        private void sortPoints() {
+                Collections.sort(m_points);
+        }
+
+        /**
+         * Get the value of this transfer function at the given position.
+         *
+         * If pos is smaller than 0.0, it will be set to 0.0. If it is larger
+         * than 1.0, it will be set to 1.0.
+         *
+         * @param pos
+         *                the desired position
+         * @return the value at the position
+         */
+        @Override
+        public final double getValueAt(double pos) {
+
+                // make sure pos is valid
+                if (pos < MIN) {
+                        pos = MIN;
+                }
+                if (pos > MAX) {
+                        pos = MAX;
+                }
+
+                // check if this one of the points
+                for (Point p : m_points) {
+                        if (pos == p.getX()) {
+                                return p.getY();
+                        }
+                }
+
+                // else calculate the value
+                Point left = null;
+                Point right = null;
+
+                for (Point p : m_points) {
+                        if (p.getX() < pos) {
+                                left = p;
+                        } else { // fisrt value larger will be right
+                                right = p;
+                                break;
+                        }
+                }
+
+                double m = (right.getY() - left.getY())
+                                / (right.getX() - left.getX());
+
+                return ((pos - left.getX()) * m) + left.getY();
         }
 
         /**
          * {@inheritDoc}
          *
-         * @see Comparable#compareTo(Point)
+         * @see Iterable#iterator()
          */
         @Override
-        public final int compareTo(final Point other) {
-            if (m_x < other.getX()) {
-                return -1;
-            } else if (m_x == other.getX()) {
-                return 0;
-            } else {
-                return 1;
-            }
+        public Iterator<PolylineTransferFunction.Point> iterator() {
+                return m_points.iterator();
         }
-    }
-
-    private List<Point> m_points = null;
-
-    // lower and upper end of the zoomed in function
-    private Point m_lower;
-    private Point m_upper;
-
-    // used to check if lower and upper have been modified
-    private boolean m_lowerMod = false;
-    private boolean m_upperMod = false;
-
-    // used for calculating the stretch factor
-    private double m_minsf = MIN;
-    private double m_maxsf = MAX;
-
-    /**
-     * Set up a new Transferfunction with two fixed points left and right.
-     *
-     *
-     * This points will be positioned at (0,0) and (1,1).
-     *
-     */
-    public PolylineTransferFunction() {
-
-        m_points = new LinkedList<Point>();
-
-        // Add the two fixed Points
-        m_lower = new Point(MIN, MIN, true);
-        m_upper = new Point(MAX, MAX, true);
-
-        m_points.add(m_lower);
-        m_points.add(m_upper);
-    }
-
-    /**
-     * A copy constuctor, resulting in a deep copy.
-     *
-     * @param tf
-     *            the function to copy
-     */
-    public PolylineTransferFunction(final PolylineTransferFunction tf) {
-
-        // set up the list
-        m_points = new LinkedList<Point>();
-
-        // copy all the points
-        for (Point p : tf.getPoints()) {
-            m_points.add(new Point(p));
-        }
-
-        m_lower = tf.m_lower;
-        m_upper = tf.m_upper;
-
-        m_lowerMod = tf.m_lowerMod;
-        m_upperMod = tf.m_upperMod;
-    }
-
-
-    @Override
-    public PolylineTransferFunction copy() {
-        return new PolylineTransferFunction(this);
-    }
-
-    private Point checkForPointAtPos(final double pos) {
-        for (Point p : m_points) {
-            if ( Math.abs(p.m_x - pos) < EPSILON) {
-                return p;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public final void zoom(final double min, final double max) {
-
-        if (min > max) throw new IllegalArgumentException("Min must be smaller than max value");
-
-        removeZoomPoints();
-
-        addZoomPoints(min, max);
-
-        sortPoints();
-    }
-
-    private void addZoomPoints(final double min, final double max) {
-
-        assert (min < max);
-
-        m_lower = addZoomPoint(min);
-        m_upper = addZoomPoint(max);
-
-        // stretch all points so that the points all lay between 0.0 and 1.0
-        m_minsf = m_lower.m_x;
-        m_maxsf = m_upper.m_x;
-        double fac = m_maxsf - m_minsf;
-
-        for (Point p : m_points) {
-            p.m_x = (p.m_x - m_minsf) / fac;
-        }
-    }
-
-    private Point addZoomPoint(final double pos) {
-        Point p = checkForPointAtPos(pos);
-
-        if (p == null) {
-            p = new Point(pos, getValueAt(pos), true, true);
-            m_points.add(p);
-        } else {
-            p.m_fixed = true;
-        }
-
-        return p;
-    }
-
-    private void removeZoomPoints() {
-
-        assert (m_lower != null);
-        assert (m_upper != null);
-        assert (m_points.size() >= 2);
-
-        // undo the stretching of all points
-        double fac = m_maxsf - m_minsf;
-
-        for (Point p : m_points) {
-            p.m_x = (p.m_x * fac) + m_minsf;
-        }
-
-        // remove
-        removeZoomPoint(m_lower, m_lowerMod);
-        m_lowerMod = false;
-
-        removeZoomPoint(m_upper, m_upperMod);
-        m_upperMod = false;
-    }
-
-    private void removeZoomPoint(final Point p, final boolean mod) {
-
-        assert (p != null);
-
-        if (p.m_temp && !mod) {
-            m_points.remove(p);
-        } else {
-            p.m_fixed = false;
-            p.m_temp = false;
-        }
-    }
-
-    /**
-     * Add a point to this Transferfunction.
-     *
-     * @param x
-     *            the x value
-     * @param y
-     *            the y value
-     * @return the added Point
-     */
-    public final Point addPoint(final double x, final double y) {
-        Point p = new Point(x, y);
-        m_points.add(p);
-        sortPoints();
-
-        return p;
-    }
-
-    /**
-     * Remove a point from this Transferfunction.
-     *
-     * @param p
-     *            the point
-     */
-    public final boolean removePoint(final Point p) {
-        if (!p.getFixed()) {
-            m_points.remove(p);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Get a list of all visible Points.<br>
-     *
-     * This only includes the Points that are between the zoom values.
-     *
-     * @return all points
-     */
-    public final List<Point> getPoints() {
-
-        List<Point> result = new ArrayList<Point>();
-
-        int i = m_points.indexOf(m_lower) == -1 ? 0 : m_points
-                        .indexOf(m_lower);
-        int limit = m_points.indexOf(m_upper) == -1 ? m_points.size() - 1
-                        : m_points.indexOf(m_upper);
-
-
-        for (; i <= limit; i++) {
-            result.add(m_points.get(i));
-        }
-
-        return result;
-    }
-
-    /**
-     * Move a point to a new position.
-     *
-     * @param p
-     *            the point to move
-     * @param x
-     *            the x value
-     * @param y
-     *            the y value
-     */
-    public final void movePoint(final Point p, final double x, final double y) {
-        p.setX(x);
-        p.setY(y);
-
-        if (p == m_lower) {
-            m_lowerMod = true;
-        }
-
-        if (p == m_upper) {
-            m_upperMod = true;
-        }
-
-        sortPoints();
-    }
-
-    /**
-     * Sort the points in ascending order.
-     */
-    private void sortPoints() {
-        Collections.sort(m_points);
-    }
-
-    /**
-     * Get the value of this transfer function at the given position.
-     *
-     * If pos is smaller than 0.0, it will be set to 0.0. If it is larger than
-     * 1.0, it will be set to 1.0.
-     *
-     * @param pos
-     *            the desired position
-     * @return the value at the position
-     */
-    @Override
-    public final double getValueAt(double pos) {
-
-        // make sure pos is valid
-        if (pos < MIN) {
-            pos = MIN;
-        }
-        if (pos > MAX) {
-            pos = MAX;
-        }
-
-        // check if this one of the points
-        for (Point p : m_points) {
-            if (pos == p.getX()) {
-                return p.getY();
-            }
-        }
-
-        // else calculate the value
-        Point left = null;
-        Point right = null;
-
-        for (Point p : m_points) {
-            if (p.getX() < pos) {
-                left = p;
-            } else { // fisrt value larger will be right
-                right = p;
-                break;
-            }
-        }
-
-        double m = (right.getY() - left.getY()) / (right.getX() - left.getX());
-
-        return ((pos - left.getX()) * m) + left.getY();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see Iterable#iterator()
-     */
-    @Override
-    public Iterator<PolylineTransferFunction.Point> iterator() {
-        return m_points.iterator();
-    }
 }
