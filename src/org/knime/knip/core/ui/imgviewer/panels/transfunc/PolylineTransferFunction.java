@@ -45,7 +45,7 @@
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
  */
-package org.knime.knip.core.ui.transfunc;
+package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import java.util.ArrayList;
 import java.util.Collections;

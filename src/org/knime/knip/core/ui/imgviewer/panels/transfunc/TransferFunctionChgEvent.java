@@ -49,7 +49,6 @@ package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import java.util.EventObject;
 
-import org.knime.knip.core.ui.transfunc.TransferFunction;
 
 /**
  * @author muethingc

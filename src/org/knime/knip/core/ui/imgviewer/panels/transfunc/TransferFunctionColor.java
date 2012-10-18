@@ -1,4 +1,4 @@
-package org.knime.knip.core.ui.transfunc;
+package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import java.awt.Color;
 

@@ -1,4 +1,4 @@
-package org.knime.knip.core.ui.transfunc;
+package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 /**
  * A simple TransferFunction that maps values from the range [0, 1] to values in the range [0, 1].<br>

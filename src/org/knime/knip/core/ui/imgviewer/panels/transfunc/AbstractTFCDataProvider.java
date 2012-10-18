@@ -29,7 +29,6 @@ import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
-import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 
 /**
  * Class that wraps the panel and connects it to the knip event service.

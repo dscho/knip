@@ -66,9 +66,6 @@ import javax.swing.LayoutStyle;
 import javax.swing.event.EventListenerList;
 
 import org.knime.knip.core.ui.event.EventService;
-import org.knime.knip.core.ui.transfunc.TransferFunction;
-import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
-import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
 
 /**
  * A Panel used to control the Transferfunctions and the actually drawn values

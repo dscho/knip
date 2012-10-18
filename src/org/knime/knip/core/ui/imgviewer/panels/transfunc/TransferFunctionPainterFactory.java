@@ -49,8 +49,6 @@ package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import java.awt.Color;
 
-import org.knime.knip.core.ui.transfunc.PolylineTransferFunction;
-import org.knime.knip.core.ui.transfunc.TransferFunction;
 
 /**
  * @author muethingc

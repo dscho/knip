@@ -63,7 +63,6 @@ import java.util.Map;
 import javax.swing.event.EventListenerList;
 
 import org.knime.knip.core.ui.imgviewer.ColorDispenser;
-import org.knime.knip.core.ui.transfunc.PolylineTransferFunction;
 
 /**
  * @author muethingc

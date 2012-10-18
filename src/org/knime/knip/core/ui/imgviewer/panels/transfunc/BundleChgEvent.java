@@ -51,7 +51,6 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
-import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 
 
 /**

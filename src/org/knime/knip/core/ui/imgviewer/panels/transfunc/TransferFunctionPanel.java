@@ -58,9 +58,6 @@ import javax.swing.event.EventListenerList;
 
 import mpicbg.ij.integral.Scale;
 
-import org.knime.knip.core.ui.transfunc.TransferFunction;
-import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
-import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
 
 /**
  * This class displays and allows the manipulation of Transferfunctions.

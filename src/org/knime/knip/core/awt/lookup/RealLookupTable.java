@@ -3,9 +3,9 @@ package org.knime.knip.core.awt.lookup;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
-import org.knime.knip.core.ui.transfunc.TransferFunction;
-import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
-import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
+import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFunction;
+import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFunctionBundle;
+import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFunctionColor;
 
 /**
  * A lookup table to convert any realvalues to ARGB values.

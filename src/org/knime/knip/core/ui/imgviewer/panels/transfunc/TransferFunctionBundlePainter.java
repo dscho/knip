@@ -63,9 +63,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
-import org.knime.knip.core.ui.transfunc.TransferFunction;
-import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
-import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
 
 /**
  * This class is used to paint a bundle of transfer functions.
