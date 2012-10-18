@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   29 Jun 2011 (hornm): created
  */
@@ -56,17 +56,18 @@ import org.knime.knip.core.ui.imgviewer.panels.LabelFilterPanel;
 import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
 import org.knime.knip.core.ui.imgviewer.panels.PlaneSelectionPanel;
 import org.knime.knip.core.ui.imgviewer.panels.RendererSelectionPanel;
+import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFunctionControlPanel;
 
 /**
  * Enumeration of "primitive" manipulators the can be created with out further
  * knowledge.
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public enum ViewerComponents {
 
         /**
-	 * 
+	 *
 	 */
         IMAGE_ENHANCE() {
                 @Override
@@ -77,7 +78,7 @@ public enum ViewerComponents {
         },
 
         /**
-	 * 
+	 *
 	 */
         PLANE_SELECTION() {
                 @Override
@@ -86,7 +87,7 @@ public enum ViewerComponents {
                 }
         },
         /**
-	 * 
+	 *
 	 */
         IMAGE_PROPERTIES() {
 
@@ -97,7 +98,7 @@ public enum ViewerComponents {
 
         },
         /**
-	 * 
+	 *
 	 */
         RENDERER_SELECTION() {
                 @Override
@@ -107,7 +108,7 @@ public enum ViewerComponents {
 
         },
         /**
-	 * 
+	 *
 	 */
         MINIMAP() {
                 @Override
@@ -120,6 +121,12 @@ public enum ViewerComponents {
                 @Override
                 public ViewerComponent createInstance() {
                         return new LabelFilterPanel();
+                }
+        },
+        TRANSFER_FUNCTION() {
+                @Override
+                public ViewerComponent createInstance() {
+                        return new TransferFunctionControlPanel();
                 }
         };
 
