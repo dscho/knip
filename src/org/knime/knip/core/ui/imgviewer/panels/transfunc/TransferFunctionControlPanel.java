@@ -582,8 +582,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
          */
         @Override
         public final Position getPosition() {
-                // not used
-                return null;
+                return Position.SOUTH;
         }
 
         /**
