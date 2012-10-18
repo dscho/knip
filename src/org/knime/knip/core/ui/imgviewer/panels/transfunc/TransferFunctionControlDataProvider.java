@@ -1,10 +1,9 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
-import org.knime.knip.core.ui.event.EventService;
-
 import net.imglib2.RandomAccessibleInterval;
-
 import net.imglib2.type.numeric.RealType;
+
+import org.knime.knip.core.ui.event.EventService;
 
 public interface TransferFunctionControlDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>> {
 
@@ -24,11 +23,9 @@ public interface TransferFunctionControlDataProvider<T extends RealType<T>, I ex
         public void setNumberBins(final int bins);
 
         /**
-         * Set the instance that should be wrapped.<br>
+         * Get the wrapped transfer function control instance.<br>
          *
-         * This also sets the {@link EventService} of the panel to the same that is used by the instance of this interface.
-         *
-         * @param panle the panle to wrap
+         * @return the instance
          */
-        public void setPanel(final TransferFunctionControlPanel panel);
+        public TransferFunctionControlPanel getControl();
 }

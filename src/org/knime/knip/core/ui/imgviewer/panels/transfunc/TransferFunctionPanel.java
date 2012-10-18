@@ -47,6 +47,7 @@
  */
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -82,6 +83,8 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
         private final HistogramPainter m_histogramPainter = new HistogramPainter();
         private final TransferFunctionBundlePainter m_tfPainter = new TransferFunctionBundlePainter();
+
+        private final Dimension m_preferredSize = new Dimension(250, 150);
 
         /**
          * Set up a new Panel displaying a bundle of transfer functions.
@@ -193,7 +196,6 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
                 if (m_bundle != null) {
                         for (TransferFunction tf : m_bundle) {
                                 tf.zoom(frac[0], frac[1]);
-                                int z = 0;
                         }
                 }
 
@@ -234,5 +236,10 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
         public void stateChanged(final ChangeEvent e) {
                 setCursor(m_tfPainter.getCursor());
                 repaint();
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+                return m_preferredSize;
         }
 }

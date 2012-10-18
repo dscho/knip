@@ -14,8 +14,8 @@ public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends Rand
                 extends AbstractTFCDataProvider<T, I, Integer> {
 
 
-        private long[] m_pos = new long[] {0, 0};
-        private int[] m_indices = new int[] {0, 1};
+        private long[] m_pos = new long[0];
+        private final int[] m_indices = new int[] { 0, 1 };
         private Interval m_src = new FinalInterval(new long[2], new long[2]);
         private Interval m_histogramInterval = new FinalInterval(new long[2], new long[2]);
 
@@ -54,6 +54,17 @@ public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends Rand
                 if (m_src.numDimensions() != m_pos.length) {
                         m_pos = new long[src.numDimensions()];
                         Arrays.fill(m_pos, 0);
+
+                        long[] min = new long[src.numDimensions()];
+                        long[] max = new long[src.numDimensions()];
+
+                        Arrays.fill(min, 0);
+                        Arrays.fill(max, 0);
+
+                        max[m_indices[0]] = m_src.dimension(m_indices[0]) - 1;
+                        max[m_indices[1]] = m_src.dimension(m_indices[1]) - 1;
+
+                        m_histogramInterval = new FinalInterval(min, max);
                 }
 
                 return hash(m_pos, m_indices, src);

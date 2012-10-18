@@ -36,8 +36,8 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
 
         private final JTabbedPane m_tabPane = new JTabbedPane();
 
-        private TransferFunctionControlDataProvider<T, I> m_provider;
-        private final TransferFunctionControlPanel m_tfc = new TransferFunctionControlPanel();
+        private final TransferFunctionControlDataProvider<T, I> m_provider;
+        private final TransferFunctionControlPanel m_tfc;
 
         private final ViewerComponent m_rendererSelection = ViewerComponents.RENDERER_SELECTION.createInstance();
         private final ViewerComponent m_imageEnhance = ViewerComponents.IMAGE_ENHANCE.createInstance();
@@ -45,24 +45,15 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
         private ImageRenderer<T, RandomAccessibleInterval<T>> m_lastRenderer = new Real2GreyRenderer();
 
 
-        public MappingSelectionPanel() {
-                // set up the provider as a dummy for less chances of bugs
-                this(new TransferFunctionControlDataProvider<T, I>() {
-                        @Override
-                        public void setEventService(EventService service) { }
-
-                        @Override
-                        public void setNumberBins(int bins) {}
-
-                        @Override
-                        public void setPanel(final TransferFunctionControlPanel panel) { }
-                });
-        }
-
         public MappingSelectionPanel(final TransferFunctionControlDataProvider<T, I> provider) {
                 super("Mapping", true);
 
-                setProvider(provider);
+                if (provider == null) {
+                        throw new NullPointerException();
+                }
+
+                m_provider = provider;
+                m_tfc = provider.getControl();
 
                 // add the two mapping options
                 JPanel simpleMapping = new JPanel();
@@ -98,18 +89,6 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
                 this.add(m_tabPane);
         }
 
-        /**
-         * Set the data provider to use.<br>
-         *
-         * @param provider the new provider
-         */
-        public void setProvider(final TransferFunctionControlDataProvider<T, I> provider) {
-                if (provider == null) throw new NullPointerException();
-
-                m_provider = provider;
-                m_provider.setPanel(m_tfc);
-                m_provider.setEventService(m_eventService);
-        }
 
         @SuppressWarnings("unchecked")
         @EventListener
@@ -128,7 +107,6 @@ public class MappingSelectionPanel<T extends RealType<T>, I extends RandomAccess
                 }
 
                 m_provider.setEventService(m_eventService);
-                m_tfc.setEventService(m_eventService);
                 m_imageEnhance.setEventService(m_eventService);
                 m_rendererSelection.setEventService(m_eventService);
 

@@ -1,13 +1,13 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.imglib2.Cursor;
-import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
@@ -26,6 +26,27 @@ import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>, KEY>
                 implements TransferFunctionControlDataProvider<T, I> {
 
+        private class ActionAdapter implements ActionListener {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                        switch (e.getID()) {
+                        case TransferFunctionControlPanel.ID_APPLY:
+                                fireTransferFunctionChgEvent();
+                                break;
+                        case TransferFunctionControlPanel.ID_NORMALIZE:
+                                fireTransferFunctionChgEvent();
+                                break;
+                        case TransferFunctionControlPanel.ID_ONLYONE:
+                                m_onlyOne = m_tfc.isOnlyOneFunc();
+                                break;
+                        default:
+                                throw new RuntimeException(
+                                                "No action implemented for id "
+                                                                + e.getID());
+                        }
+                }
+        }
+
         private static final int NUM_BINS = 250;
 
         protected EventService m_eventService;
@@ -38,7 +59,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
 
         private final Map<KEY, TransferFunctionControlPanel.Memento> m_mementos = new HashMap<KEY, TransferFunctionControlPanel.Memento>();
 
-        private boolean m_autoApply = true;
+        private boolean m_onlyOne = false;
 
         private TransferFunctionControlPanel.Memento m_currentMemento;
         private KEY m_currentKey;
@@ -54,7 +75,11 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                         throw new NullPointerException();
 
                 m_currentMemento = createStartingMemento(panel);
-                setPanel(panel);
+
+                m_tfc = panel;
+                m_tfc.setState(m_currentMemento);
+                m_tfc.setOnlyOneFunc(m_onlyOne);
+                m_tfc.addActionListener(new ActionAdapter());
         }
 
         /**
@@ -82,7 +107,6 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 return hist.hist();
         }
 
-
         /**
          * This method is called everytime the src changes and must return the
          * key that corresponds to the current settings.<br>
@@ -105,44 +129,39 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
          */
         protected final void setMementoToTFC(final KEY key) {
 
-                m_currentKey = key;
-                m_currentMemento = m_mementos.get(m_currentKey);
+                TransferFunctionControlPanel.Memento newMemento;
 
-                if (m_currentMemento == null) {
+                if (m_onlyOne) {
                         int[] histogram = calcNewHistogram(currentHistogramInterval());
+                        newMemento = m_tfc.createMemento(m_currentMemento,
+                                        histogram);
+                } else {
 
-                        m_currentMemento = m_tfc.createMemento(histogram);
+                        m_currentKey = key;
+                        newMemento = m_mementos.get(m_currentKey);
 
-                        m_mementos.put(m_currentKey, m_currentMemento);
+                        if (newMemento == null) {
+                                int[] histogram = calcNewHistogram(currentHistogramInterval());
+
+                                newMemento = m_tfc.createMemento(histogram);
+
+                                m_mementos.put(m_currentKey, newMemento);
+                        }
                 }
 
+                m_currentMemento = newMemento;
                 m_tfc.setState(m_currentMemento);
 
-                if (m_autoApply) {
-                        m_eventService.publish(new ImgRedrawEvent());
-                }
+                fireTransferFunctionChgEvent();
         }
 
         @EventListener
         public final void onImgUpdated(
                         final IntervalWithMetadataChgEvent<I> event) {
                 m_src = event.getInterval();
-
-                m_currentKey = updateKey(m_src);
-                m_currentMemento = m_mementos.get(m_currentKey);
-
-                if (m_currentMemento == null) {
-                        m_currentMemento = createStartingMementoWithHistogram();
-                        m_mementos.put(m_currentKey, m_currentMemento);
-                }
-
-                m_tfc.setState(m_currentMemento);
+                setMementoToTFC(updateKey(m_src));
         }
 
-        @EventListener
-        public final void onApplyChg(final ApplyChgEvent event) {
-                m_autoApply = event.getVal();
-        }
 
         @EventListener
         public final void onApply(final ApplyEvent event) {
@@ -162,39 +181,12 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                         m_eventService = service;
                 }
 
-                m_tfc.setEventService(m_eventService);
                 m_eventService.subscribe(this);
         }
 
         @Override
-        public final void setPanel(final TransferFunctionControlPanel panel) {
-                if (panel == null)
-                        throw new NullPointerException();
-
-                m_tfc = panel;
-                m_tfc.setState(m_currentMemento);
-        }
-
-        private TransferFunctionControlPanel.Memento createStartingMementoWithHistogram() {
-                assert m_src != null;
-                assert m_tfc != null;
-
-                // create the arrays for the histogram interval
-                long[] min = new long[m_src.numDimensions()];
-                long[] max = new long[m_src.numDimensions()];
-
-                long[] test = new long[m_src.numDimensions()];
-                m_src.dimensions(test);
-
-                Arrays.fill(min, 0);
-                Arrays.fill(max, 0);
-
-                max[0] = m_src.dimension(0) - 1;
-                max[1] = m_src.dimension(1) - 1;
-
-                int[] histogram = calcNewHistogram(new FinalInterval(min, max));
-
-                return m_tfc.createMemento(histogram);
+        public final TransferFunctionControlPanel getControl() {
+                return m_tfc;
         }
 
         private List<TransferFunctionBundle> createStartingBundle() {
@@ -210,5 +202,12 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 assert panel != null;
 
                 return panel.createMemento(createStartingBundle(), null);
+        }
+
+        private void fireTransferFunctionChgEvent() {
+                m_eventService.publish(new TransferFunctionChgKNIPEvent(m_tfc
+                                .getLastModifiedFunction(), m_tfc
+                                .getCurrentBundle(), m_tfc.isNormalize()));
+                m_eventService.publish(new ImgRedrawEvent());
         }
 }

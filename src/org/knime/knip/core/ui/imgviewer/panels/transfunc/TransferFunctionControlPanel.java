@@ -48,12 +48,8 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,11 +61,11 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
+import javax.swing.event.EventListenerList;
 
 import org.knime.knip.core.ui.event.EventService;
-import org.knime.knip.core.ui.imgviewer.ViewerComponent;
-import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.transfunc.TransferFunction;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
@@ -78,9 +74,9 @@ import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
  * A Panel used to control the Transferfunctions and the actually drawn values
  * of the image to be shown.
  *
- * @author Clemens MÃ¼thing (clemens.muething@uni-konstanz.de)
+ * @author Clemens MŸthing (clemens.muething@uni-konstanz.de)
  */
-public class TransferFunctionControlPanel extends ViewerComponent implements
+public class TransferFunctionControlPanel extends JPanel implements
                 TransferFunctionChgListener {
 
         public final class Memento {
@@ -98,15 +94,12 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                 }
         }
 
-        /**
-         * Eclipse generated.
-         */
-        private static final long serialVersionUID = -2037066021463028825L;
-
-        /**
-         * This class is used to wrap some necessary information about the
-         * bundles.
-         */
+        public static final String CMD_NORMALIZE = "normalize";
+        public static final int ID_NORMALIZE = 1;
+        public static final String CMD_APPLY = "apply";
+        public static final int ID_APPLY = 2;
+        public static final String CMD_ONLYONE = "only_one";
+        public static final int ID_ONLYONE = 3;
 
         /**
          * The Adapter for the Scale ComboBox.
@@ -154,42 +147,30 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
 
         private final TransferFunctionPanel m_transferPanel;
 
-        private EventService m_eventService;
+        private final EventListenerList m_listener = new EventListenerList();
 
         private final JComboBox m_bundleBox;
         private final JComboBox m_scaleBox;
         private final JComboBox m_focusBox;
 
         private final JCheckBox m_boxNormalize;
-        private final JCheckBox m_boxForce;
+        private final JCheckBox m_boxOnlyOneFunc;
         private final JCheckBox m_boxAutoApply;
         private final JButton m_buttonApply;
-
-        private final Dimension m_preferredSize = new Dimension(400, 200);
 
         // Save this adapter to unset/set while changing content
         private final ActionListener m_focusAdapter;
         private final ActionListener m_bundleAdapter;
 
-        /* the last transfer function that was changed */
-        private TransferFunction m_lastChangedFunction;
+        private TransferFunction m_lastModified;
 
         /**
-         * Construct a new TransferPanel and use a fresh EventService.
-         */
-        public TransferFunctionControlPanel() {
-                this(new EventService());
-        }
-
-        /**
-         * Sets up a new TransferPanel and hooks the histogram and
-         * Transferfunction Viewer to the given EventService.
+         * Sets up a new TransferPanel.
          *
          * @param service
          *                The {@link EventService} to be used
          */
-        public TransferFunctionControlPanel(final EventService service) {
-                super("Transfer Function", false);
+        public TransferFunctionControlPanel() {
 
                 // Set up the Comboboxes
                 m_scaleBox = new JComboBox(HistogramPainter.Scale.values());
@@ -200,14 +181,17 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                 m_transferPanel = new TransferFunctionPanel();
 
                 // set up the checkboxes and the button
-                m_boxForce = new JCheckBox("Force this settings");
-                m_boxForce.addActionListener(new ActionListener() {
+                m_boxOnlyOneFunc = new JCheckBox("Use only set of functions");
+                m_boxOnlyOneFunc.setToolTipText("Unchecking this option results"
+                                + " in a unique set of transfer function for each "
+                                + "slice/volume. Usefull for rendering two volumes"
+                                + " simulatneously.");
+                m_boxOnlyOneFunc.addActionListener(new ActionListener() {
 
                         @Override
                         public final void actionPerformed(
                                         final ActionEvent event) {
-                                m_eventService.publish(new ForceChgEvent(
-                                                m_boxForce.isSelected()));
+                                fireActionEvent(ID_ONLYONE, CMD_ONLYONE);
                         }
                 });
 
@@ -221,7 +205,8 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                         @Override
                         public final void actionPerformed(
                                         final ActionEvent event) {
-                                m_transferPanel.normalize(m_boxNormalize.isSelected());
+                                applyNormalize(m_boxNormalize.isSelected());
+                                fireActionEvent(ID_NORMALIZE, CMD_NORMALIZE);
                         }
                 });
 
@@ -230,7 +215,7 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                         @Override
                         public final void actionPerformed(
                                         final ActionEvent event) {
-                                fireTransferFunctionChgEvent();
+                                fireActionEvent(ID_APPLY, CMD_APPLY);
                         }
                 });
 
@@ -248,7 +233,7 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                 // numbers are colums/rows respectivly
                 // use fixed size horizontally
                 GroupLayout.ParallelGroup box0 = layout.createParallelGroup()
-                                .addComponent(m_boxForce)
+                                .addComponent(m_boxOnlyOneFunc)
                                 .addComponent(m_boxAutoApply);
 
                 GroupLayout.SequentialGroup boxgroup = layout
@@ -296,7 +281,8 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                 GroupLayout.ParallelGroup vertical1 = layout
                                 .createParallelGroup()
                                 .addComponent(m_boxNormalize)
-                                .addComponent(glue).addComponent(m_boxForce);
+                                .addComponent(glue)
+                                .addComponent(m_boxOnlyOneFunc);
 
                 GroupLayout.ParallelGroup vertical2 = layout
                                 .createParallelGroup()
@@ -339,8 +325,6 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                                 null, null);
 
                 m_transferPanel.addTransferFunctionChgListener(this);
-
-                setEventService(service);
         }
 
         /**
@@ -379,6 +363,10 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
          * @return the current state
          */
         public final Memento setState(final Memento memento) {
+                if (memento == null) {
+                        throw new NullPointerException();
+                }
+
                 Memento oldMemento = m_memento;
 
                 m_memento = memento;
@@ -430,14 +418,32 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
          * @return the new memento
          */
         public final Memento createMemento(final int[] data) {
+                return createMemento(m_memento, data);
+        }
+
+        /**
+         * Create a new memento using the passed data for the histogram, and
+         * copying the transfer functions from the passed memento.<br>
+         *
+         * This will perform a deep copy of the functions in the passed memento.
+         *
+         * @param memento
+         *                the memento used for copying the transfer functions
+         * @param data
+         *                the new data
+         * @return a new memento
+         */
+        public final Memento createMemento(final Memento memento,
+                        final int[] data) {
+
                 List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
 
                 TransferFunctionBundle current = null;
 
-                for (TransferFunctionBundle b : m_memento.map.keySet()) {
+                for (TransferFunctionBundle b : memento.map.keySet()) {
                         TransferFunctionBundle copy = b.copy();
 
-                        if (b == m_memento.currentBundle) {
+                        if (b == memento.currentBundle) {
                                 current = copy;
                         }
 
@@ -448,7 +454,7 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
         }
 
         /**
-         * Create a new memento for that can than be used to set the state.<br>
+         * Create a new memento that can than be used to set the state.<br>
          *
          * I.e. if you want to set different data, first create an memento and
          * then put it in the control.
@@ -505,6 +511,7 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                 return memento;
         }
 
+
         /**
          * Sets the mode this panel operates in and that of all its children.
          *
@@ -537,22 +544,43 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
 
                 m_focusBox.setSelectedItem(focus);
 
-                fireTransferFunctionChgEvent();
+                fireActionEvent(ID_APPLY, CMD_APPLY);
+
+                repaint();
+        }
+
+        public final void setAutoApply(final boolean value) {
+                m_boxAutoApply.setSelected(value);
         }
 
         public final void setNormalize(final boolean value) {
+                applyNormalize(value);
                 m_boxNormalize.setSelected(value);
-                m_eventService.publish(new NormalizationChgEvent(m_boxNormalize
-                                .isSelected()));
+        }
+
+        public final void setOnlyOneFunc(final boolean value) {
+                m_boxOnlyOneFunc.setSelected(value);
+        }
+
+        public final TransferFunction getLastModifiedFunction() {
+                return m_lastModified;
+        }
+
+        public final TransferFunctionBundle getCurrentBundle() {
+                return m_memento.currentBundle;
         }
 
         /**
-         * Check wheter the force option is currently given.
+         * Check wheter the only one function option is selected.
          *
          * @return true if force checkbox is selected.
          */
-        public final boolean isForce() {
-                return m_boxForce.isSelected();
+        public final boolean isOnlyOneFunc() {
+                return m_boxOnlyOneFunc.isSelected();
+        }
+
+        public final boolean isNormalize() {
+                return m_boxNormalize.isSelected();
         }
 
         /**
@@ -564,99 +592,32 @@ public class TransferFunctionControlPanel extends ViewerComponent implements
                 return m_boxAutoApply.isSelected();
         }
 
-        private void fireTransferFunctionChgEvent() {
-                m_eventService.publish(new TransferFunctionChgKNIPEvent(
-                                m_lastChangedFunction, m_memento.currentBundle,
-                                m_boxNormalize.isSelected()));
-                m_eventService.publish(new ImgRedrawEvent());
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @see javax.swing.JComponent#getPreferredSize()
-         */
-        @Override
-        public final Dimension getPreferredSize() {
-                return m_preferredSize;
-        }
-
         @Override
         public final void transferFunctionChg(
                         final TransferFunctionChgEvent event) {
-                m_lastChangedFunction = event.getFunction();
+                m_lastModified = event.getFunction();
 
                 if (m_boxAutoApply.isSelected()) {
-                        fireTransferFunctionChgEvent();
+                        fireActionEvent(ID_APPLY, CMD_APPLY);
                 }
         }
 
-        /**
-         * {@inheritDoc}
-         *
-         * @see org.knime.knip.core.ui.event.EventServiceClient#setEventService(EventService)
-         */
-        @Override
-        public final void setEventService(final EventService eventService) {
-                if (eventService == null) {
-                        m_eventService = new EventService();
-                } else {
-                        m_eventService = eventService;
+        private void applyNormalize(final boolean value) {
+                m_transferPanel.normalize(value);
+        }
+
+        public void addActionListener(final ActionListener l) {
+                m_listener.add(ActionListener.class, l);
+        }
+
+        public void removeActionListener(final ActionListener l) {
+                m_listener.remove(ActionListener.class, l);
+        }
+
+        private void fireActionEvent(final int id, final String command) {
+                for (ActionListener l : m_listener
+                                .getListeners(ActionListener.class)) {
+                        l.actionPerformed(new ActionEvent(this, id, command));
                 }
-
-                m_eventService.subscribe(this);
         }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @see ViewerComponent#setParent(Component)
-         */
-        @Override
-        public void setParent(final Component parent) {
-                // ignore
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @see ViewerComponent#getPosition()
-         */
-        @Override
-        public final Position getPosition() {
-                return Position.SOUTH;
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @see ViewerComponent#reset()
-         */
-        @Override
-        public void reset() {
-                // not used
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @see ViewerComponent#saveComponentConfiguration(ObjectOutput)
-         */
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                // not used
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @see ViewerComponent#loadComponentConfiguration(ObjectInput)
-         */
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-                // not used
-        }
-
 }
