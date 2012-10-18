@@ -1,84 +1,82 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
+import net.imglib2.FinalInterval;
+import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
-import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 
-public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>> extends AbstractTFCDataProvider<T, I> {
+public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>>
+                extends AbstractTFCDataProvider<T, I, Integer> {
 
-        /**
-         * Class to wrap the postional array into, because using arrays
-         * as keys for hashmaps sadly does not work.
-         */
-        private class Position {
-                private final long[] m_pos;
 
-                public Position(final long[] pos, final int[] indices) {
-                        m_pos = pos;
-                        m_pos[indices[0]] = -1000;
-                        m_pos[indices[1]] = -1000;
-                }
-
-                @Override
-                public boolean equals(final Object o) {
-                        // simply ignore that o might not be of type
-                        // Position, this is an internal class and
-                        // nothing bad will happen
-                        return hashCode() == o.hashCode();
-                }
-
-                @Override
-                public int hashCode() {
-                        int hash = 0;
-
-                        for (long i : m_pos) {
-                                hash = hash * 31 + (int) i;
-                        }
-
-                        return hash;
-                }
-        }
-
-        private final Map<Position, TransferFunctionControlPanel.Memento> m_map = new HashMap<Position, TransferFunctionControlPanel.Memento>();
-
+        private long[] m_pos = new long[] {0, 0};
+        private int[] m_indices = new int[] {0, 1};
+        private Interval m_src = new FinalInterval(new long[2], new long[2]);
+        private Interval m_histogramInterval = new FinalInterval(new long[2], new long[2]);
 
         public PlaneSelectionTFCDataProvider() {
                 this(new TransferFunctionControlPanel());
         }
 
-
-        public PlaneSelectionTFCDataProvider(final TransferFunctionControlPanel panel) {
+        public PlaneSelectionTFCDataProvider(
+                        final TransferFunctionControlPanel panel) {
                 super(panel);
         }
 
         @EventListener
         public void onPlaneSelectionChg(final PlaneSelectionEvent event) {
 
-                Position key = new Position(event.getPlanePos(), event.getDimIndices());
-                TransferFunctionControlPanel.Memento memento = m_map.get(key);
+                // update the values
+                m_indices[0] = event.getPlaneDimIndex1();
+                m_indices[1] = event.getPlaneDimIndex2();
 
-                // if no such memento exists, create a new one
-                if (memento == null) {
-                        int[] histogram = super.calcNewHistogram(event.getInterval(super.getSrcInterval()));
+                m_pos = event.getPlanePos();
+                Integer key = hash(m_pos, event.getDimIndices(), m_src);
+                m_histogramInterval = event.getInterval(m_src);
 
-                        List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
-                        bundles.add(TransferFunctionBundle.newRGBBundle());
-                        bundles.add(TransferFunctionBundle.newGBundle());
+                super.setMementoToTFC(key);
+        }
 
-                        memento = m_tfc.createMemento(bundles, histogram);
+        @Override
+        protected final Interval currentHistogramInterval() {
+                return m_histogramInterval;
+        }
 
-                        m_map.put(key, memento);
+        @Override
+        protected final Integer updateKey(final Interval src) {
+                m_src = src;
+
+                if (m_src.numDimensions() != m_pos.length) {
+                        m_pos = new long[src.numDimensions()];
+                        Arrays.fill(m_pos, 0);
                 }
 
-                m_tfc.setState(memento);
-                m_tfc.repaint();
+                return hash(m_pos, m_indices, src);
+        }
+
+
+        private int hash(final long[] pos, final int[] indices,
+                        final Interval src) {
+
+                // set the two indices to values that can not occur in
+                // normal settings
+                pos[indices[0]] = -1000;
+                pos[indices[1]] = -1000;
+
+                // create the hash code
+                int hash = 31;
+
+                for (long i : pos) {
+                        hash = hash * 31 + (int) i;
+                }
+
+                hash += 31 * src.hashCode();
+
+                return hash;
         }
 }
