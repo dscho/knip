@@ -1,7 +1,11 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +20,7 @@ import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
+import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
@@ -24,7 +29,8 @@ import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
  * Class that wraps the panel and connects it to the knip event service.
  */
 public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>, KEY>
-                implements TransferFunctionControlDataProvider<T, I> {
+                extends ViewerComponent implements
+                TransferFunctionControlDataProvider<T, I> {
 
         private class ActionAdapter implements ActionListener {
                 @Override
@@ -71,6 +77,8 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
          *                the panel that should be wrapped
          */
         public AbstractTFCDataProvider(final TransferFunctionControlPanel panel) {
+                super("Transfer Function", false);
+
                 if (panel == null)
                         throw new NullPointerException();
 
@@ -80,6 +88,8 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 m_tfc.setState(m_currentMemento);
                 m_tfc.setOnlyOneFunc(m_onlyOne);
                 m_tfc.addActionListener(new ActionAdapter());
+
+                add(m_tfc);
         }
 
         /**
@@ -162,7 +172,6 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 setMementoToTFC(updateKey(m_src));
         }
 
-
         @EventListener
         public final void onApply(final ApplyEvent event) {
                 m_eventService.publish(new ImgRedrawEvent());
@@ -210,4 +219,32 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                                 .getCurrentBundle(), m_tfc.isNormalize()));
                 m_eventService.publish(new ImgRedrawEvent());
         }
+
+        @Override
+        public void setParent(Component parent) {
+                // ignore
+        }
+
+        @Override
+        public Position getPosition() {
+                return Position.SOUTH;
+        }
+
+        @Override
+        public void reset() {
+                // ignore
+        }
+
+        @Override
+        public void saveComponentConfiguration(ObjectOutput out)
+                        throws IOException {
+                // ignore
+        }
+
+        @Override
+        public void loadComponentConfiguration(ObjectInput in)
+                        throws IOException, ClassNotFoundException {
+                // ignore
+        }
+
 }
