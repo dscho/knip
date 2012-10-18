@@ -68,6 +68,7 @@ import javax.swing.LayoutStyle;
 
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
+import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
 
@@ -183,8 +184,6 @@ public class TransferFunctionControlPanel extends ViewerComponent {
         public TransferFunctionControlPanel(final EventService service) {
                 super("Transfer Function", false);
 
-                setEventService(service);
-
                 // Set up the Comboboxes
                 m_scaleBox = new JComboBox(HistogramPainter.Scale.values());
                 m_bundleBox = new JComboBox();
@@ -235,6 +234,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                         public final void actionPerformed(
                                         final ActionEvent event) {
                                 m_eventService.publish(new ApplyEvent());
+                                m_eventService.publish(new ImgRedrawEvent());
                         }
                 });
 
@@ -343,6 +343,8 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 m_memento.map = m_bundleMap;
                 m_memento.scale = (HistogramPainter.Scale) m_scaleBox
                                 .getSelectedItem();
+
+                setEventService(service);
         }
 
         /**
@@ -562,7 +564,15 @@ public class TransferFunctionControlPanel extends ViewerComponent {
          */
         @Override
         public final void setEventService(final EventService eventService) {
-                m_eventService = eventService;
+                if (eventService == null) {
+                        m_eventService = new EventService();
+                } else {
+                        m_eventService = eventService;
+                }
+
+                m_transferPicker.setEventService(m_eventService);
+
+                m_eventService.subscribe(this);
         }
 
         /**
