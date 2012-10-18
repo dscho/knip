@@ -7,7 +7,10 @@ import java.awt.Color;
  *
  * @author muethingc, University of Konstanz
  */
-public final class ColorDispenser {
+public enum ColorDispenser {
+
+        INSTANCE;
+
         // start at one cause BufferedImage.getRGB returns 0 on empty
         private int m_c = 1;
 
