@@ -53,6 +53,7 @@ package org.knime.knip.core.ui.imgviewer;
 import org.knime.knip.core.ui.imgviewer.panels.ImagePropertiesPanel;
 import org.knime.knip.core.ui.imgviewer.panels.ImgNormalizationPanel;
 import org.knime.knip.core.ui.imgviewer.panels.LabelFilterPanel;
+import org.knime.knip.core.ui.imgviewer.panels.MappingSelectionPanel;
 import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
 import org.knime.knip.core.ui.imgviewer.panels.PlaneSelectionPanel;
 import org.knime.knip.core.ui.imgviewer.panels.RendererSelectionPanel;
@@ -127,6 +128,12 @@ public enum ViewerComponents {
                 @Override
                 public ViewerComponent createInstance() {
                         return new TransferFunctionControlPanel();
+                }
+        },
+        MAPPING_SELECTION() {
+                @Override
+                public ViewerComponent createInstance() {
+                        return new MappingSelectionPanel();
                 }
         };
 
