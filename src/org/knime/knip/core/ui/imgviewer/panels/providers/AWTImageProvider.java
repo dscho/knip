@@ -76,6 +76,7 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ResetCacheEvent;
+import org.knime.knip.core.ui.imgviewer.events.SetCachingEvent;
 import org.knime.knip.core.ui.imgviewer.panels.HiddenViewerComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -264,6 +265,16 @@ public abstract class AWTImageProvider<T extends Type<T>, I extends RandomAccess
                         m_awtImageCache.clear();
                         LOGGER.debug("Image cache cleared.");
                 }
+        }
+
+        /**
+         * Turns of the caching, e.g. the TransferFunctionRenderer creates different images all the time, it is not possible to store all of them.
+         *
+         * @param e
+         */
+        @EventListener
+        public void onSetCaching(final SetCachingEvent e) {
+                m_isCachingActive = e.caching();
         }
 
         /**
