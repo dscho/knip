@@ -82,11 +82,18 @@ public class TransferFunctionControlPanel extends ViewerComponent {
 
         public final class Memento {
 
-                private HistogramPainter.Scale scale;
+                private final HistogramPainter.Scale scale;
                 private TransferFunctionBundle currentBundle;
-                private Map<TransferFunctionBundle, TransferFunctionColor> map;
-                private int[] histogramData;
+                private final Map<TransferFunctionBundle, TransferFunctionColor> map = new HashMap<TransferFunctionBundle, TransferFunctionColor>();
+                private final int[] histogramData;
 
+                public Memento(final HistogramPainter.Scale s,
+                                final TransferFunctionBundle cb,
+                                final int[] d) {
+                        scale = s;
+                        currentBundle = cb;
+                        histogramData = d;
+                }
         }
 
         /**
@@ -123,7 +130,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                                         .getSelectedItem();
 
                         m_transferPicker.setTransferFocus(color);
-                        m_bundleMap.put(m_currentBundle, color);
+                        m_memento.map.put(m_memento.currentBundle, color);
                 }
         }
 
@@ -152,9 +159,6 @@ public class TransferFunctionControlPanel extends ViewerComponent {
         private final JComboBox m_bundleBox;
         private final JComboBox m_scaleBox;
         private final JComboBox m_focusBox;
-
-        private Map<TransferFunctionBundle, TransferFunctionColor> m_bundleMap = new HashMap<TransferFunctionBundle, TransferFunctionColor>();
-        private TransferFunctionBundle m_currentBundle;
 
         private final JCheckBox m_boxNormalize;
         private final JCheckBox m_boxForce;
@@ -337,12 +341,10 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 m_bundleBox.addActionListener(m_bundleAdapter);
 
                 // create an empty memento
-                m_memento = new Memento();
-                m_memento.histogramData = null;
-                m_memento.currentBundle = null;
-                m_memento.map = m_bundleMap;
-                m_memento.scale = (HistogramPainter.Scale) m_scaleBox
-                                .getSelectedItem();
+                m_memento = new Memento(
+                                (HistogramPainter.Scale) m_scaleBox
+                                                .getSelectedItem(),
+                                null, null);
 
                 setEventService(service);
         }
@@ -397,10 +399,8 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 // remove the listener so that we do not get constant events
                 m_bundleBox.removeActionListener(m_bundleAdapter);
 
-                m_bundleMap = m_memento.map;
-
                 m_bundleBox.removeAllItems();
-                for (TransferFunctionBundle b : m_bundleMap.keySet()) {
+                for (TransferFunctionBundle b : m_memento.map.keySet()) {
                         m_bundleBox.addItem(b);
                 }
 
@@ -420,7 +420,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
          * @return the bundle of the current mode
          */
         public final TransferFunctionBundle getBundle() {
-                return m_currentBundle;
+                return m_memento.currentBundle;
         }
 
         /**
@@ -468,23 +468,15 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                         throw new IllegalArgumentException(
                                         "The current bundle must be part of the bundles list");
 
-                Memento memento = new Memento();
+                Memento memento = new Memento(
+                                (HistogramPainter.Scale) m_scaleBox
+                                                .getSelectedItem(),
+                                current, data);
 
                 // set up the map
-                memento.map = new HashMap<TransferFunctionBundle, TransferFunctionColor>();
                 for (TransferFunctionBundle b : bundles) {
                         memento.map.put(b, b.getKeys().iterator().next());
                 }
-
-                // use the currently set scale for the new memento
-                memento.scale = (HistogramPainter.Scale) m_scaleBox
-                                .getSelectedItem();
-
-                // the data
-                memento.histogramData = data;
-
-                // the current bundle
-                memento.currentBundle = current;
 
                 return memento;
         }
@@ -497,17 +489,16 @@ public class TransferFunctionControlPanel extends ViewerComponent {
          */
         private void setActiveBundle(final TransferFunctionBundle bundle) {
 
-                // Only change if something happend
-                if (bundle == m_currentBundle) {
-                        return;
-                }
+                assert m_memento != null;
 
-                m_currentBundle = bundle;
+                m_memento.currentBundle = bundle;
 
-                m_transferPicker.setFunctions(m_currentBundle);
+                m_transferPicker.setFunctions(m_memento.currentBundle);
 
-                Set<TransferFunctionColor> content = m_currentBundle.getKeys();
-                TransferFunctionColor focus = m_bundleMap.get(m_currentBundle);
+                Set<TransferFunctionColor> content = m_memento.currentBundle
+                                .getKeys();
+                TransferFunctionColor focus = m_memento.map
+                                .get(m_memento.currentBundle);
 
                 // change contents or focus box
                 // remove the adapter to not set focus to first inserted item
