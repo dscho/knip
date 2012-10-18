@@ -54,6 +54,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,8 +89,7 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                 private final int[] histogramData;
 
                 public Memento(final HistogramPainter.Scale s,
-                                final TransferFunctionBundle cb,
-                                final int[] d) {
+                                final TransferFunctionBundle cb, final int[] d) {
                         scale = s;
                         currentBundle = cb;
                         histogramData = d;
@@ -421,6 +421,36 @@ public class TransferFunctionControlPanel extends ViewerComponent {
          */
         public final TransferFunctionBundle getBundle() {
                 return m_memento.currentBundle;
+        }
+
+        /**
+         * Create a new memento with new histogram data, but keep the state of
+         * the current TransferFunctionBundle.<br>
+         *
+         * To achieve this a deep copy of all currently set bundles is made and
+         * then put into this memento.
+         *
+         * @param data
+         *                the data for the histogram background
+         *
+         * @return the new memento
+         */
+        public final Memento createMemento(final int[] data) {
+                List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
+
+                TransferFunctionBundle current = null;
+
+                for (TransferFunctionBundle b : m_memento.map.keySet()) {
+                        TransferFunctionBundle copy = b.copy();
+
+                        if (b == m_memento.currentBundle) {
+                                current = copy;
+                        }
+
+                        bundles.add(copy);
+                }
+
+                return createMemento(bundles, data, current);
         }
 
         /**
