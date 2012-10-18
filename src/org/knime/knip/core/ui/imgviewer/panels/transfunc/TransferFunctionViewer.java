@@ -63,6 +63,7 @@ import mpicbg.ij.integral.Scale;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
+import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.transfunc.PolylineTransferFunction;
 import org.knime.knip.core.ui.transfunc.TransferFunction;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
@@ -80,150 +81,155 @@ import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
  */
 public class TransferFunctionViewer extends ViewerComponent {
 
-    private EventService m_eventService;
+        private EventService m_eventService;
 
-    private TransferFunctionBundle m_functions;
+        private TransferFunctionBundle m_functions;
 
         private final HistogramPainter m_histogram;
-    private final TransferFunctionPainter m_tfDrawer;
+        private final TransferFunctionPainter m_tfDrawer;
 
-    private final Cursor m_moveCursor = new Cursor(Cursor.MOVE_CURSOR);
-    private final Cursor m_defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+        private final Cursor m_moveCursor = new Cursor(Cursor.MOVE_CURSOR);
+        private final Cursor m_defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
 
-    /**
-     * Set up a new Panel displaying the given transfer functions.
-     *
-     * @param bundle
-     *            the bundle of transfer functions to display
-     * @param eventService
-     *            the EventService to use
-     * @param data
-     *            the data for the histogram background
-     */
-    public TransferFunctionViewer(final EventService eventService) {
-        super("Color Transfer Picker", true);
+        /**
+         * Set up a new Panel displaying the given transfer functions.
+         *
+         * @param bundle
+         *                the bundle of transfer functions to display
+         * @param eventService
+         *                the EventService to use
+         * @param data
+         *                the data for the histogram background
+         */
+        public TransferFunctionViewer(final EventService eventService) {
+                super("Color Transfer Picker", true);
 
-        setEventService(eventService);
+                setEventService(eventService);
 
-        // set up the histogram
+                // set up the histogram
                 m_histogram = new HistogramPainter();
 
-        // Set up the TFDrawer
-        EventService componentService = new EventService();
-        componentService.subscribe(this);
-        m_tfDrawer = new TransferFunctionPainter(m_functions, componentService);
+                // Set up the TFDrawer
+                EventService componentService = new EventService();
+                componentService.subscribe(this);
+                m_tfDrawer = new TransferFunctionPainter(m_functions,
+                                componentService);
 
-        // listen to mouseEvents
-        addMouseListener(m_tfDrawer.getMouseAdapter());
-        addMouseMotionListener(m_tfDrawer.getMouseAdapter());
+                // listen to mouseEvents
+                addMouseListener(m_tfDrawer.getMouseAdapter());
+                addMouseMotionListener(m_tfDrawer.getMouseAdapter());
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(final ComponentEvent e) {
-                m_tfDrawer.setSize(getWidth(), getHeight());
-                repaint();
-            }
-        });
-    }
+                addComponentListener(new ComponentAdapter() {
+                        @Override
+                        public void componentResized(final ComponentEvent e) {
+                                m_tfDrawer.setSize(getWidth(), getHeight());
+                                repaint();
+                        }
+                });
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see javax.swing.JComponent#paintComponent(Graphics)
-     */
-    @Override
-    public final void paintComponent(final Graphics g) {
+        /**
+         * {@inheritDoc}
+         *
+         * @see javax.swing.JComponent#paintComponent(Graphics)
+         */
+        @Override
+        public final void paintComponent(final Graphics g) {
 
-        int width = getWidth();
-        int height = getHeight();
+                int width = getWidth();
+                int height = getHeight();
 
-        // call super for painting background etc
-        super.paintComponent(g);
-        final Graphics2D g2 = (Graphics2D) g.create();
+                // call super for painting background etc
+                super.paintComponent(g);
+                final Graphics2D g2 = (Graphics2D) g.create();
 
-        // turn on anti aliasing for nicer looks
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+                // turn on anti aliasing for nicer looks
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // paint the histogram in the background
-        m_histogram.paintHistogram(g2, width, height);
+                // paint the histogram in the background
+                m_histogram.paintHistogram(g2, width, height);
 
-        // paint the transfer functions
-        m_tfDrawer.paint(g2);
-    }
+                // paint the transfer functions
+                m_tfDrawer.paint(g2);
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.knime.knip.core.ui.event.EventServiceClient#setEventService(EventService)
-     */
-    @Override
-    public final void setEventService(final EventService eventService) {
-        m_eventService = eventService;
-        m_eventService.subscribe(this);
-    }
+        /**
+         * {@inheritDoc}
+         *
+         * @see org.knime.knip.core.ui.event.EventServiceClient#setEventService(EventService)
+         */
+        @Override
+        public final void setEventService(final EventService eventService) {
+                if (m_eventService == null) {
+                        m_eventService = new EventService();
+                } else {
+                        m_eventService = eventService;
+                }
+                m_eventService.subscribe(this);
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ViewerComponent#setParent(Component)
-     */
-    @Override
-    public void setParent(final Component parent) {
-        // Ignore this method
-    }
+        /**
+         * {@inheritDoc}
+         *
+         * @see ViewerComponent#setParent(Component)
+         */
+        @Override
+        public void setParent(final Component parent) {
+                // Ignore this method
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ViewerComponent#getPosition()
-     */
-    @Override
-    public final Position getPosition() {
-        // not used
-        return null;
-    }
+        /**
+         * {@inheritDoc}
+         *
+         * @see ViewerComponent#getPosition()
+         */
+        @Override
+        public final Position getPosition() {
+                // not used
+                return null;
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ViewerComponent#reset()
-     */
-    @Override
-    public void reset() {
-        // not used
-    }
+        /**
+         * {@inheritDoc}
+         *
+         * @see ViewerComponent#reset()
+         */
+        @Override
+        public void reset() {
+                // not used
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ViewerComponent#saveComponentConfiguration(ObjectOutput)
-     */
-    @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
-        // not used
-    }
+        /**
+         * {@inheritDoc}
+         *
+         * @see ViewerComponent#saveComponentConfiguration(ObjectOutput)
+         */
+        @Override
+        public void saveComponentConfiguration(final ObjectOutput out)
+                        throws IOException {
+                // not used
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see ViewerComponent#loadComponentConfiguration(ObjectInput)
-     */
-    @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
-        // not used
-    }
+        /**
+         * {@inheritDoc}
+         *
+         * @see ViewerComponent#loadComponentConfiguration(ObjectInput)
+         */
+        @Override
+        public void loadComponentConfiguration(final ObjectInput in)
+                        throws IOException, ClassNotFoundException {
+                // not used
+        }
 
         /**
          * @see HistogramPainter#setData(int[])
          * @param data
          *                the new data
          */
-    public final void setData(final int[] data) {
-        m_histogram.setData(data);
-    }
+        public final void setData(final int[] data) {
+                m_histogram.setData(data);
+        }
 
         /**
          * @see HistogramPainter#setScale(Scale)
@@ -231,112 +237,115 @@ public class TransferFunctionViewer extends ViewerComponent {
          *                the new scale
          */
         public final void setScale(final HistogramPainter.Scale scale) {
-        m_histogram.setScale(scale);
+                m_histogram.setScale(scale);
 
-        // repaint
-        repaint();
-    }
-
-    /**
-     * @see TransferFunctionPainter#setTransferFocus(String)
-     * @param color
-     *            the name of the function to draw topmost
-     */
-    public final void setTransferFocus(final TransferFunctionColor color) {
-        m_tfDrawer.setTransferFocus(color);
-        repaint();
-    }
-
-    /**
-     * @see TransferFunctionPainter#setFunctions(TransferFunctionBundle)
-     * @param functions
-     *            the bundle of functions to display
-     */
-    public final void setFunctions(final TransferFunctionBundle functions) {
-        m_functions = functions;
-        normalizeFunctions();
-    }
-
-    public final void normalizeFunctions() {
-        double[] frac = m_histogram.getNormalizationFractions();
-
-        for (TransferFunction tf : m_functions) {
-            tf.zoom(frac[0], frac[1]);
+                // repaint
+                repaint();
         }
 
-        // update the drawing info in the drawer
-        m_tfDrawer.setFunctions(m_functions);
+        /**
+         * @see TransferFunctionPainter#setTransferFocus(String)
+         * @param color
+         *                the name of the function to draw topmost
+         */
+        public final void setTransferFocus(final TransferFunctionColor color) {
+                m_tfDrawer.setTransferFocus(color);
+                repaint();
+        }
 
-        repaint();
-    }
+        /**
+         * @see TransferFunctionPainter#setFunctions(TransferFunctionBundle)
+         * @param functions
+         *                the bundle of functions to display
+         */
+        public final void setFunctions(final TransferFunctionBundle functions) {
+                m_functions = functions;
+                normalizeFunctions();
+        }
 
-    @EventListener
-    public final void onNormalizationChg(final NormalizationChgEvent e) {
-        m_histogram.setNormalize(e.normalize());
-        normalizeFunctions();
+        public final void normalizeFunctions() {
+                double[] frac = m_histogram.getNormalizationFractions();
 
-        m_eventService.publish(new NormalizationPerformedEvent(e.normalize()));
-    }
+                for (TransferFunction tf : m_functions) {
+                        tf.zoom(frac[0], frac[1]);
+                }
 
-    /**
-     * Called when an element of the bundle has been highlighted.
-     */
-    @EventListener
-    public final void onHighlightingChanged(HilitingChgEvent e) {
-        setCursor(m_moveCursor);
-        repaint();
-    }
+                // update the drawing info in the drawer
+                m_tfDrawer.setFunctions(m_functions);
 
-    /**
-     * Called when nothing should be highlighted.
-     */
-    @EventListener
-    public final void onHighlightingCleared(HilitingClearedEvent e) {
-        setCursor(m_defaultCursor);
-        repaint();
-    }
+                repaint();
+        }
 
-    /**
-     * Called when a point is added.
-     *
-     * @param func
-     *            the function to which the point has been added
-     */
-    @EventListener
-    public final void onPointAdded(PointAddedEvent e) {
-        transferFunctionChanged(e.getFunc());
-    }
+        @EventListener
+        public final void onNormalizationChg(final NormalizationChgEvent e) {
+                m_histogram.setNormalize(e.normalize());
+                normalizeFunctions();
 
-    /**
-     * Called when a point is removed.
-     *
-     * @param func
-     *            the function to which the point has been removed
-     */
-    @EventListener
-    public final void onPointRemoved(PointRemovedEvent e) {
-        transferFunctionChanged(e.getFunc());
-    }
+                m_eventService.publish(new NormalizationPerformedEvent(e
+                                .normalize()));
+        }
 
-    /**
-     * Called when a point is moved.
-     *
-     * @param func
-     *            the function of which the point has been moved
-     */
-    @EventListener
-    public final void onPointMoved(PointMovedEvent e) {
-        transferFunctionChanged(e.getFunc());
-    }
+        /**
+         * Called when an element of the bundle has been highlighted.
+         */
+        @EventListener
+        public final void onHighlightingChanged(HilitingChgEvent e) {
+                setCursor(m_moveCursor);
+                repaint();
+        }
 
-    /**
-     * Called whenever a transfer function changes.
-     *
-     * This method than forwards the change and adds the bundle to which the
-     * changed functions belongs to the event.
-     */
-    private void transferFunctionChanged(final PolylineTransferFunction func) {
-        repaint();
-        m_eventService.publish(new TransferFuncChgEvent(func, m_functions));
-    }
+        /**
+         * Called when nothing should be highlighted.
+         */
+        @EventListener
+        public final void onHighlightingCleared(HilitingClearedEvent e) {
+                setCursor(m_defaultCursor);
+                repaint();
+        }
+
+        /**
+         * Called when a point is added.
+         *
+         * @param func
+         *                the function to which the point has been added
+         */
+        @EventListener
+        public final void onPointAdded(PointAddedEvent e) {
+                transferFunctionChanged(e.getFunc());
+        }
+
+        /**
+         * Called when a point is removed.
+         *
+         * @param func
+         *                the function to which the point has been removed
+         */
+        @EventListener
+        public final void onPointRemoved(PointRemovedEvent e) {
+                transferFunctionChanged(e.getFunc());
+        }
+
+        /**
+         * Called when a point is moved.
+         *
+         * @param func
+         *                the function of which the point has been moved
+         */
+        @EventListener
+        public final void onPointMoved(PointMovedEvent e) {
+                transferFunctionChanged(e.getFunc());
+        }
+
+        /**
+         * Called whenever a transfer function changes.
+         *
+         * This method than forwards the change and adds the bundle to which the
+         * changed functions belongs to the event.
+         */
+        private void transferFunctionChanged(final PolylineTransferFunction func) {
+                repaint();
+                m_eventService.publish(new TransferFuncChgEvent(func,
+                                m_functions));
+                m_eventService.publish(new ImgRedrawEvent());
+        }
 }
