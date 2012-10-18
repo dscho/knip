@@ -69,7 +69,6 @@ import javax.swing.LayoutStyle;
 
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
-import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
 import org.knime.knip.core.ui.transfunc.TransferFunctionColor;
 
@@ -238,7 +237,6 @@ public class TransferFunctionControlPanel extends ViewerComponent {
                         public final void actionPerformed(
                                         final ActionEvent event) {
                                 m_eventService.publish(new ApplyEvent());
-                                m_eventService.publish(new ImgRedrawEvent());
                         }
                 });
 

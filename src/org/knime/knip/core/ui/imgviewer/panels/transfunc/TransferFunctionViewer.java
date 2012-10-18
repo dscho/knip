@@ -63,7 +63,6 @@ import mpicbg.ij.integral.Scale;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
-import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.transfunc.PolylineTransferFunction;
 import org.knime.knip.core.ui.transfunc.TransferFunction;
 import org.knime.knip.core.ui.transfunc.TransferFunctionBundle;
@@ -346,6 +345,5 @@ public class TransferFunctionViewer extends ViewerComponent {
                 repaint();
                 m_eventService.publish(new TransferFuncChgEvent(func,
                                 m_functions));
-                m_eventService.publish(new ImgRedrawEvent());
         }
 }
