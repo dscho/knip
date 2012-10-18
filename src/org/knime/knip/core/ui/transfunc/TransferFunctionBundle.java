@@ -192,7 +192,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
                 // and copy all functions
                 for (TransferFunction old : tfb.getFunctions()) {
                         TransferFunction copy = old.copy();
-                        TransferFunctionColor key = tfb.getNameOfFunction(old);
+                        TransferFunctionColor key = tfb.getColorOfFunction(old);
 
                         m_functions.put(key, copy);
                         m_names.put(copy, key);
@@ -313,16 +313,16 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
         }
 
         /**
-         * Get the name that is used as key for a transfer function.
-         *
+         * Get the color that is used as key for a transfer function.
+         * 
          * @param func
          *                the transfer function
          * @return the key that belongs to the function
-         *
+         * 
          * @throws IllegalArgumentException
          *                 if no function is registered under this name
          */
-        public final TransferFunctionColor getNameOfFunction(
+        public final TransferFunctionColor getColorOfFunction(
                         final TransferFunction func)
                         throws IllegalArgumentException {
 
