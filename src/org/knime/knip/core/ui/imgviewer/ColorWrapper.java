@@ -19,11 +19,24 @@ public final class ColorWrapper {
         @Override
         public int hashCode() {
                 return m_c.getRed() + 255 * m_c.getGreen() + 255 * 255
-                                * m_c.getBlue();
+                                * m_c.getBlue() + 255 * 255 * 255 * m_c.getAlpha();
         }
 
         @Override
         public boolean equals(final Object w) {
-                return hashCode() == w.hashCode() ? true : false;
+                if ( ! (w instanceof ColorWrapper) ) {
+                        return false;
+                } else {
+                        return hashCode() == w.hashCode() ? true : false;
+                }
+        }
+
+        /**
+         * Get a copy of the stored color.<br>
+         *
+         * @return a copy of the color
+         */
+        public Color getColor() {
+                return new Color(m_c.getRed(), m_c.getGreen(), m_c.getBlue(), m_c.getAlpha());
         }
 }
