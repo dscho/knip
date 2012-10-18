@@ -9,13 +9,19 @@ import java.io.ObjectOutput;
 import net.imglib2.display.ScreenImage;
 import net.imglib2.img.Img;
 import net.imglib2.type.Type;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.AWTImageTools;
+import org.knime.knip.core.awt.lookup.LookupTable;
+import org.knime.knip.core.awt.lookup.RealLookupTable;
+import org.knime.knip.core.awt.parametersupport.RendererWithLookupTable;
 import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
+import org.knime.knip.core.ui.imgviewer.panels.transfunc.BundleChgEvent;
+import org.knime.knip.core.ui.imgviewer.panels.transfunc.TransferFuncChgEvent;
 
 /**
  * Converts an {@link Img} to a {@link BufferedImage}.
@@ -35,11 +41,25 @@ public class BufferedImageProvider<T extends RealType<T>, I extends Img<T>>
                 extends AWTImageProvider<T, I> {
 
         /**
-	 *
-	 */
+         * A simple class that can be injected in the converter so that we will
+         * always get some result.
+         */
+        private class SimpleTable implements LookupTable<T, ARGBType> {
+
+                @Override
+                public final ARGBType lookup(final T value) {
+                        return new ARGBType(1);
+                }
+        }
+
+        /**
+         *
+	     */
         private static final long serialVersionUID = 1L;
 
         protected NormalizationParametersChgEvent<T> m_normalizationParameters;
+
+        protected LookupTable<T, ARGBType> m_lookupTable = new SimpleTable();
 
         /**
          * @param cacheSize
@@ -57,6 +77,7 @@ public class BufferedImageProvider<T extends RealType<T>, I extends Img<T>>
          *
          * @return
          */
+        @SuppressWarnings("unchecked")
         @Override
         protected Image createImage() {
                 double[] normParams = m_normalizationParameters
@@ -67,6 +88,11 @@ public class BufferedImageProvider<T extends RealType<T>, I extends Img<T>>
                                         .setNormalizationParameters(
                                                         normParams[0],
                                                         normParams[1]);
+                }
+
+                if (m_renderer instanceof RendererWithLookupTable) {
+                        ((RendererWithLookupTable<T, ARGBType>) m_renderer)
+                                        .setLookupTable(m_lookupTable);
                 }
 
                 ScreenImage ret = m_renderer.render(m_src,
@@ -87,6 +113,19 @@ public class BufferedImageProvider<T extends RealType<T>, I extends Img<T>>
         public void onUpdated(
                         NormalizationParametersChgEvent<T> normalizationParameters) {
                 m_normalizationParameters = normalizationParameters;
+        }
+
+        /**
+         *
+         * {@link EventListener} for {@link BundleChgEvent}. A new lookup table
+         * will be constructed using the given transfer function bundle.
+         *
+         * @param event
+         */
+        @EventListener
+        public void onTransferFunctionChgEvent(final TransferFuncChgEvent event) {
+                m_lookupTable = new RealLookupTable<T>(m_src.firstElement()
+                                .createVariable(), event.getBundle());
         }
 
         @Override
