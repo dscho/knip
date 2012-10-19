@@ -19,9 +19,12 @@ import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.ops.operation.subset.views.SubsetViews;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.Real2ColorByLookupTableRenderer;
+import org.knime.knip.core.awt.lookup.LookupTable;
+import org.knime.knip.core.awt.lookup.RealLookupTable;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
@@ -36,6 +39,21 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>, KEY>
                 extends ViewerComponent implements
                 TransferFunctionControlDataProvider<T, I> {
+
+        private static final int MIN = 0;
+        private static final int MAX = 1;
+        private static final int MIN_NORM = 2;
+        private static final int MAX_NORM = 3;
+
+        private class Wrapper {
+                private final int[] hist;
+                private final double[] minMax;
+
+                public Wrapper(final int[] h, final double[] mm) {
+                        hist = h;
+                        minMax = mm;
+                }
+        }
 
         private class ActionAdapter implements ActionListener {
                 @Override
@@ -69,11 +87,14 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         private int m_numBins = NUM_BINS;
 
         private final Map<KEY, TransferFunctionControlPanel.Memento> m_mementos = new HashMap<KEY, TransferFunctionControlPanel.Memento>();
+        private final Map<KEY, Wrapper> m_histData = new HashMap<KEY, Wrapper>();
 
-        private boolean m_onlyOne = false;
+        private boolean m_onlyOne = true;
 
         private TransferFunctionControlPanel.Memento m_currentMemento;
-        private KEY m_currentKey;
+
+        /* the possible min and max values of the currently selected plane */
+        private double[] m_minMax = new double[] { 0, 0, 0, 0 };
 
         /**
          * Set up a new instance and wrap the passed panel.
@@ -93,7 +114,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 m_tfc.setState(m_currentMemento);
                 m_tfc.setOnlyOneFunc(m_onlyOne);
                 m_tfc.addActionListener(new ActionAdapter());
-                m_tfc.setOnlyOneFunc(true);
+                m_tfc.setOnlyOneFunc(m_onlyOne);
 
                 setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
                 add(m_tfc);
@@ -103,7 +124,8 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
          * Use this to calculate a new histogram for a given interval on the
          * current source data.
          */
-        protected final int[] calcNewHistogram(final Interval interval) {
+        protected final int[] calcNewHistogram(final Interval interval,
+                        final double[] minMax) {
                 assert m_src != null;
                 assert interval != null;
 
@@ -114,11 +136,24 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 T sample = cur.get().createVariable();
                 cur.reset();
 
+                minMax[MIN] = sample.getMinValue();
+                minMax[MAX] = sample.getMaxValue();
+
+                minMax[MIN_NORM] = sample.getMaxValue();
+                minMax[MAX_NORM] = sample.getMinValue();
+
                 // create the histogram
                 OpsHistogram hist = new OpsHistogram(m_numBins, sample);
                 while (cur.hasNext()) {
                         cur.fwd();
-                        hist.incByValue(cur.get().getRealDouble());
+
+                        double val = cur.get().getRealDouble();
+                        hist.incByValue(val);
+
+                        minMax[MIN_NORM] = minMax[MIN_NORM] > val ? val
+                                        : minMax[MIN_NORM];
+                        minMax[MAX_NORM] = minMax[MAX_NORM] < val ? val
+                                        : minMax[MAX_NORM];
                 }
 
                 return hist.hist();
@@ -147,29 +182,41 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         protected final void setMementoToTFC(final KEY key) {
 
                 TransferFunctionControlPanel.Memento newMemento;
+                Wrapper hist = getHistogramData(key);
 
                 if (m_onlyOne) {
-                        int[] histogram = calcNewHistogram(currentHistogramInterval());
                         newMemento = m_tfc.createMemento(m_currentMemento,
-                                        histogram);
+                                        hist.hist);
                 } else {
-
-                        m_currentKey = key;
-                        newMemento = m_mementos.get(m_currentKey);
+                        newMemento = m_mementos.get(key);
 
                         if (newMemento == null) {
-                                int[] histogram = calcNewHistogram(currentHistogramInterval());
+                                newMemento = m_tfc.createMemento(hist.hist);
 
-                                newMemento = m_tfc.createMemento(histogram);
-
-                                m_mementos.put(m_currentKey, newMemento);
+                                m_mementos.put(key, newMemento);
                         }
                 }
 
                 m_currentMemento = newMemento;
                 m_tfc.setState(m_currentMemento);
+                m_minMax = hist.minMax;
 
                 fireTransferFunctionChgEvent();
+        }
+
+        private Wrapper getHistogramData(final KEY key) {
+                Wrapper hist = m_histData.get(key);
+
+                if (hist == null) {
+                        double[] minMax = new double[4];
+                        int[] histogram = calcNewHistogram(
+                                        currentHistogramInterval(), minMax);
+
+                        hist = new Wrapper(histogram, minMax);
+                        m_histData.put(key, hist);
+                }
+
+                return hist;
         }
 
         @EventListener
@@ -178,21 +225,23 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
 
                 /*
                  * because of the way the AWTImageProvider reacts to new images
-                 * (simply choosing a new Renderer from a list and keeping the old one
-                 * if the current renderer is also on the list) and the fact that I
-                 * cannot add my renderer to this list (the lookup table renderer is
-                 * only suitable if you have a source for a lookup table, clearly not
-                 * the case if only the simple image enhance is used), I need to issue
-                 * a renderer changed request each time the image changes.
+                 * (simply choosing a new Renderer from a list and keeping the
+                 * old one if the current renderer is also on the list) and the
+                 * fact that I cannot add my renderer to this list (the lookup
+                 * table renderer is only suitable if you have a source for a
+                 * lookup table, clearly not the case if only the simple image
+                 * enhance is used), I need to issue a renderer changed request
+                 * each time the image changes.
                  *
-                 * Moreover this needs to be after the AWTImageProvider has processed this
-                 * request, so we need to do this after the current AWTEvent has been
-                 * finished processing.
+                 * Moreover this needs to be after the AWTImageProvider has
+                 * processed this request, so we need to do this after the
+                 * current AWTEvent has been finished processing.
                  */
                 SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                                m_eventService.publish(new RendererSelectionChgEvent(new Real2ColorByLookupTableRenderer<T>()));
+                                m_eventService.publish(new RendererSelectionChgEvent(
+                                                new Real2ColorByLookupTableRenderer<T>()));
                                 m_eventService.publish(new ImgRedrawEvent());
                         }
                 });
@@ -243,9 +292,23 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         }
 
         private void fireTransferFunctionChgEvent() {
-                m_eventService.publish(new TransferFunctionChgKNIPEvent(m_tfc
-                                .getLastModifiedFunction(), m_tfc
-                                .getCurrentBundle(), m_tfc.isNormalize()));
+
+                double min;
+                double max;
+
+                if (!m_tfc.isNormalize()) {
+                        min = m_minMax[MIN];
+                        max = m_minMax[MAX];
+                } else {
+
+                        min = m_minMax[MIN_NORM];
+                        max = m_minMax[MAX_NORM];
+                }
+
+                LookupTable<T, ARGBType> table = new RealLookupTable<T>(min,
+                                max, m_tfc.getCurrentBundle());
+                m_eventService.publish(new LookupTableChgEvent<T, ARGBType>(
+                                table));
                 m_eventService.publish(new ImgRedrawEvent());
         }
 

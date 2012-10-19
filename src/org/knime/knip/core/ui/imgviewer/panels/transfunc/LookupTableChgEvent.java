@@ -1,7 +1,7 @@
 /*
  * ------------------------------------------------------------------------
  *
- *  Copyright (C) 2003 - 2010
+ *  Copyright (C) 2003, 2010
  *  University of Konstanz, Germany and
  *  KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
@@ -44,65 +44,33 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- *
- * History
- *   Apr 10, 2012 (hornm): created
  */
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
+import org.knime.knip.core.awt.lookup.LookupTable;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- * Published whenever a change on any transfer function occurs.
+ * @author muethingc
  *
- * This event has two arguments, of kind Viewer3DNodeTransferFunction and of
- * kind Viewer3DNodeTFBundle, in that order. These are the transfer function
- * that changed and the bundle the function belongs to.
  */
-public class TransferFunctionChgKNIPEvent implements KNIPEvent {
+public class LookupTableChgEvent<T, U> implements KNIPEvent {
 
-        private final TransferFunction m_func;
-        private final TransferFunctionBundle m_bundle;
+        private final LookupTable<T, U> m_table;
 
-        private final boolean m_normalize;
-
-        public TransferFunctionChgKNIPEvent(final TransferFunction func,
-                        final TransferFunctionBundle bundle,
-                        final boolean normalize) {
-                m_func = func;
-                m_bundle = bundle;
-                m_normalize = normalize;
+        public LookupTableChgEvent(final LookupTable<T, U> table) {
+                m_table = table;
         }
 
-        /**
-         * @return the func
-         */
-        public TransferFunction getFunc() {
-                return m_func;
+        public LookupTable<T, U> getTable() {
+                return m_table;
         }
 
-        /**
-         * @return the bundle
-         */
-        public TransferFunctionBundle getBundle() {
-                return m_bundle;
-        }
-
-        public boolean normalize() {
-                return m_normalize;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public ExecutionPriority getExecutionOrder() {
                 return ExecutionPriority.NORMAL;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
                 return false;
