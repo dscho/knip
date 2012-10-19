@@ -11,7 +11,21 @@ public enum ColorDispenser {
 
         INSTANCE;
 
-        // start at one cause BufferedImage.getRGB returns 0 on empty
+        /**
+         * The color that should be used for painting backgrounds when using the
+         * ColorDispenser. This Color is guaranteed to not be returned on a call
+         * to {@link next()}.
+         */
+        public static final int BACKGROUND_RGB = 0;
+
+        /**
+         * The color that should be used for painting backgrounds when using the
+         * ColorDispenser. This Color is guaranteed to not be returned on a call
+         * to {@link next()}.
+         */
+        public static final Color BACKGROUND_COLOR = new Color(BACKGROUND_RGB);
+
+        // start at one cause BufferedImage.getRGB returns 0 on empty private
         private int m_c = 1;
 
         /**
@@ -23,6 +37,9 @@ public enum ColorDispenser {
                 // cannot interfere
                 // with the identification
                 m_c += 100;
+
+                m_c = m_c == BACKGROUND_RGB ? m_c + 100 : m_c;
+
                 return c;
         }
 }

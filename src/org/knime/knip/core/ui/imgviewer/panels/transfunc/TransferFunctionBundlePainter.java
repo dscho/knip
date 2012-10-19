@@ -63,6 +63,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
+import org.knime.knip.core.ui.imgviewer.ColorDispenser;
 
 /**
  * This class is used to paint a bundle of transfer functions.
@@ -113,7 +114,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
                 Graphics2D g2 = (Graphics2D) m_backBuffer.getGraphics();
 
                 // paint the background
-                g2.setColor(Color.white);
+                g2.setColor(ColorDispenser.BACKGROUND_COLOR);
                 g2.fillRect(0, 0, m_backBuffer.getWidth(),
                                 m_backBuffer.getHeight());
 
