@@ -155,7 +155,8 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         private static final Color COLOR_HILITE = Color.lightGray;
 
         /* The cursor we use when highlighted, moving and otherwise */
-        private static final Cursor CURSOR_MOVE = new Cursor(Cursor.MOVE_CURSOR);
+        private static final Cursor CURSOR_MOVE = new Cursor(
+                        Cursor.CROSSHAIR_CURSOR);
         private static final Cursor CURSOR_DEFAULT = new Cursor(
                         Cursor.DEFAULT_CURSOR);
 
