@@ -63,6 +63,7 @@ import java.util.Map;
 import javax.swing.event.EventListenerList;
 
 import org.knime.knip.core.ui.imgviewer.ColorDispenser;
+import org.knime.knip.core.ui.imgviewer.InputUtil;
 
 /**
  * @author muethingc
@@ -121,6 +122,13 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                         }
                 }
         }
+
+        private static final int MOVE_HORIZONTAL = MouseEvent.SHIFT_DOWN_MASK
+                        | MouseEvent.BUTTON1_DOWN_MASK;
+        private static final int MOVE_VERTICAL = InputUtil.CTRL_DOWN_MASK
+                        | MouseEvent.BUTTON1_DOWN_MASK;
+        private static final int ADD_POINT = MouseEvent.BUTTON1_DOWN_MASK;
+
 
         /* Some values that control how the lines look in the end */
         private final int m_pointSIZE = 10;
@@ -218,9 +226,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         public void mousePressed(final MouseEvent event) {
 
                 if (m_selected instanceof LineSegment
-                                && event.getButton() == MouseEvent.BUTTON1
-                                && !event.isControlDown()
-                                && !event.isShiftDown()) {
+                                && event.getModifiersEx() == ADD_POINT) {
                         double x = getXPointCoordinate(event.getX());
                         double y = getYPointCoordinate(event.getY());
 
@@ -234,7 +240,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                 storeCoord(event);
         }
 
-        private boolean moveLineSegmentLeftRight(final LineSegment line,
+        private boolean moveLineSegmentHorizontal(final LineSegment line,
                         final MouseEvent event) {
 
                 int x0 = (event.getX() - m_oldX)
@@ -256,7 +262,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                 return false;
         }
 
-        private boolean moveLineSegmentUpDown(final LineSegment line,
+        private boolean moveLineSegmentVertical(final LineSegment line,
                         final MouseEvent event) {
 
                 int y0 = (event.getY() - m_oldY)
@@ -286,13 +292,13 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
                         LineSegment line = (LineSegment) m_selected;
 
-                        if (event.isShiftDown()) {
-                                emitEvent = moveLineSegmentLeftRight(line,
+                        if (event.getModifiersEx() == MOVE_HORIZONTAL) {
+                                emitEvent = moveLineSegmentHorizontal(line,
                                                 event);
                         }
 
-                        if (event.isControlDown()) {
-                                emitEvent = moveLineSegmentUpDown(line, event);
+                        if (event.getModifiersEx() == MOVE_VERTICAL) {
+                                emitEvent = moveLineSegmentVertical(line, event);
                         }
                 }
 
