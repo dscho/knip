@@ -30,7 +30,9 @@ public class StringTransformer {
                         int start = expression.indexOf(delim, current);
 
                         if (start == -1) {
-                                res.add(new Pair<String, Boolean>(expression,
+                                res.add(new Pair<String, Boolean>(expression
+                                                .substring(current, expression
+                                                                .length()),
                                                 true));
                                 break;
                         }
@@ -92,7 +94,7 @@ public class StringTransformer {
                 map.put("name", "Name");
                 map.put("label", "myLabel");
 
-                System.out.println(new StringTransformer("$name$#$label$", "$")
+                System.out.println(new StringTransformer("$name$#_chrome", "$")
                                 .transform(map).toString());
         }
 
