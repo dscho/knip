@@ -40,21 +40,6 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 extends ViewerComponent implements
                 TransferFunctionControlDataProvider<T, I> {
 
-        private static final int MIN = 0;
-        private static final int MAX = 1;
-        private static final int MIN_NORM = 2;
-        private static final int MAX_NORM = 3;
-
-        private class Wrapper {
-                private final int[] hist;
-                private final double[] minMax;
-
-                public Wrapper(final int[] h, final double[] mm) {
-                        hist = h;
-                        minMax = mm;
-                }
-        }
-
         private class ActionAdapter implements ActionListener {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
@@ -87,14 +72,13 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         private int m_numBins = NUM_BINS;
 
         private final Map<KEY, TransferFunctionControlPanel.Memento> m_mementos = new HashMap<KEY, TransferFunctionControlPanel.Memento>();
-        private final Map<KEY, Wrapper> m_histData = new HashMap<KEY, Wrapper>();
+        private final Map<KEY, HistogramWithNormalization> m_histData = new HashMap<KEY, HistogramWithNormalization>();
 
         private boolean m_onlyOne = true;
 
         private TransferFunctionControlPanel.Memento m_currentMemento;
-
-        /* the possible min and max values of the currently selected plane */
-        private double[] m_minMax = new double[] { 0, 0, 0, 0 };
+        private HistogramWithNormalization m_currentHistogram = new HistogramWithNormalization(
+                        new int[] { 0, 1 }, 0, 1);
 
         /**
          * Set up a new instance and wrap the passed panel.
@@ -124,8 +108,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
          * Use this to calculate a new histogram for a given interval on the
          * current source data.
          */
-        protected final int[] calcNewHistogram(final Interval interval,
-                        final double[] minMax) {
+        private HistogramWithNormalization calcNewHistogram(final Interval interval) {
                 assert m_src != null;
                 assert interval != null;
 
@@ -136,12 +119,6 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 T sample = cur.get().createVariable();
                 cur.reset();
 
-                minMax[MIN] = sample.getMinValue();
-                minMax[MAX] = sample.getMaxValue();
-
-                minMax[MIN_NORM] = sample.getMaxValue();
-                minMax[MAX_NORM] = sample.getMinValue();
-
                 // create the histogram
                 OpsHistogram hist = new OpsHistogram(m_numBins, sample);
                 while (cur.hasNext()) {
@@ -149,14 +126,9 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
 
                         double val = cur.get().getRealDouble();
                         hist.incByValue(val);
-
-                        minMax[MIN_NORM] = minMax[MIN_NORM] > val ? val
-                                        : minMax[MIN_NORM];
-                        minMax[MAX_NORM] = minMax[MAX_NORM] < val ? val
-                                        : minMax[MAX_NORM];
                 }
 
-                return hist.hist();
+                return new HistogramWithNormalization(hist.hist(), sample.getMinValue(), sample.getMaxValue());
         }
 
         /**
@@ -182,16 +154,16 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         protected final void setMementoToTFC(final KEY key) {
 
                 TransferFunctionControlPanel.Memento newMemento;
-                Wrapper hist = getHistogramData(key);
+                HistogramWithNormalization hist = getHistogramData(key);
 
                 if (m_onlyOne) {
                         newMemento = m_tfc.createMemento(m_currentMemento,
-                                        hist.hist);
+                                        hist);
                 } else {
                         newMemento = m_mementos.get(key);
 
                         if (newMemento == null) {
-                                newMemento = m_tfc.createMemento(hist.hist);
+                                newMemento = m_tfc.createMemento(hist);
 
                                 m_mementos.put(key, newMemento);
                         }
@@ -199,20 +171,16 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
 
                 m_currentMemento = newMemento;
                 m_tfc.setState(m_currentMemento);
-                m_minMax = hist.minMax;
+                m_currentHistogram = hist;
 
                 fireTransferFunctionChgEvent();
         }
 
-        private Wrapper getHistogramData(final KEY key) {
-                Wrapper hist = m_histData.get(key);
+        private HistogramWithNormalization getHistogramData(final KEY key) {
+                HistogramWithNormalization hist = m_histData.get(key);
 
                 if (hist == null) {
-                        double[] minMax = new double[4];
-                        int[] histogram = calcNewHistogram(
-                                        currentHistogramInterval(), minMax);
-
-                        hist = new Wrapper(histogram, minMax);
+                        hist = calcNewHistogram(currentHistogramInterval());
                         m_histData.put(key, hist);
                 }
 
@@ -292,21 +260,14 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
         }
 
         private void fireTransferFunctionChgEvent() {
+                Histogram hist = m_currentHistogram;
 
-                double min;
-                double max;
-
-                if (!m_tfc.isNormalize()) {
-                        min = m_minMax[MIN];
-                        max = m_minMax[MAX];
-                } else {
-
-                        min = m_minMax[MIN_NORM];
-                        max = m_minMax[MAX_NORM];
+                if (m_tfc.isNormalize()) {
+                        hist = m_currentHistogram.getNormalizedHistogram();
                 }
 
-                LookupTable<T, ARGBType> table = new RealLookupTable<T>(min,
-                                max, m_tfc.getCurrentBundle());
+                LookupTable<T, ARGBType> table = new RealLookupTable<T>(hist.getMinValue(),
+                                hist.getMaxValue(), m_tfc.getCurrentBundle());
                 m_eventService.publish(new LookupTableChgEvent<T, ARGBType>(
                                 table));
                 m_eventService.publish(new ImgRedrawEvent());

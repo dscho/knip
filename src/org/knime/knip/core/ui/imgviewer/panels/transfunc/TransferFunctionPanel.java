@@ -51,6 +51,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -58,13 +60,14 @@ import javax.swing.event.EventListenerList;
 
 import mpicbg.ij.integral.Scale;
 
-
 /**
  * This class displays and allows the manipulation of Transferfunctions.
  *
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  */
-public class TransferFunctionPanel extends JPanel implements TransferFunctionChgListener, ChangeListener {
+public class TransferFunctionPanel extends JPanel implements TransferFunctionChgListener {
+
+        private final static String DEFAULT_MSG = "Count ---";
 
         private final EventListenerList m_listener = new EventListenerList();
 
@@ -73,50 +76,65 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
         /* the current histogram */
         private HistogramWithNormalization m_histogram;
-        private HistogramWithNormalization m_histogramNormalized;
+        private Histogram m_histogramNormalized;
 
         /* controls wheter functions should be displayed normalized */
         private boolean m_normalize = false;
 
         private final HistogramPainter m_histogramPainter = new HistogramPainter();
         private final TransferFunctionBundlePainter m_tfPainter = new TransferFunctionBundlePainter();
+        private final JLabel m_histInfoLabel = new JLabel(DEFAULT_MSG);
+        private final JPanel m_tfPanel = new JPanel() {
+                @Override
+                public final void paintComponent(final Graphics g) {
 
-        private final Dimension m_preferredSize = new Dimension(250, 150);
+                        // call super for painting background etc
+                        super.paintComponent(g);
+                        final Graphics2D g2 = (Graphics2D) g.create();
+
+                        m_histogramPainter.paint(g2);
+                        m_tfPainter.paint(g2);
+                }
+
+        };
+
+        private final Dimension m_preferredSize = new Dimension(250, 50);
 
         /**
          * Set up a new Panel displaying a bundle of transfer functions.
          */
         public TransferFunctionPanel() {
 
-                addMouseListener(m_tfPainter);
-                addMouseMotionListener(m_tfPainter);
+                m_tfPanel.addMouseListener(m_tfPainter);
+                m_tfPanel.addMouseMotionListener(m_tfPainter);
+                m_tfPanel.addMouseMotionListener(m_histogramPainter);
 
                 m_tfPainter.addTransferFunctionChgListener(this);
-                m_tfPainter.addChangeListener(this);
-        }
+                m_tfPainter.addChangeListener(new ChangeListener() {
+                        @Override
+                        public void stateChanged(final ChangeEvent e) {
+                                setCursor(m_tfPainter.getCursor());
+                                repaint();
+                        }
+                });
 
-        @Override
-        public final void paintComponent(final Graphics g) {
+                m_histogramPainter.addChangeListener(new ChangeListener() {
+                        @Override
+                        public void stateChanged(final ChangeEvent e) {
+                                String text = m_histogramPainter.getMessage();
 
-                // call super for painting background etc
-                super.paintComponent(g);
-                final Graphics2D g2 = (Graphics2D) g.create();
+                                if (text.length() == 0) {
+                                        text = DEFAULT_MSG;
+                                }
 
-                m_histogramPainter.paint(g2);
-                m_tfPainter.paint(g2);
-        }
+                                m_histInfoLabel.setText(text);
+                                repaint();
+                        }
+                });
 
-        /**
-         * Set the new data for the histogram.<br>
-         *
-         * @param data the new data
-         */
-        public final void setData(final int[] data) {
-                if (data == null) {
-                        setHistogram(null);
-                } else {
-                        setHistogram(new HistogramWithNormalization(data));
-                }
+                setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+                add(m_histInfoLabel);
+                add(m_tfPanel);
         }
 
         /**
@@ -124,13 +142,15 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
          *
          * @param hist the new histogram
          */
-        public final void setHistogram(final HistogramWithNormalization hist) {
+        public final void setHistogram(final Histogram hist) {
 
-                m_histogram = hist;
-                if (m_histogram != null) {
-                        m_histogramNormalized = new HistogramWithNormalization(m_histogram.getNormalizedData());
-                } else {
+
+                if (hist == null) {
                         m_histogramNormalized = null;
+                        m_histogram = null;
+                } else {
+                        m_histogram = getHistogram(hist);
+                        m_histogramNormalized = m_histogram.getNormalizedHistogram();
                 }
 
                 setHistogram();
@@ -138,6 +158,14 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
                 normalizeFunctions();
 
                 repaint();
+        }
+
+        private HistogramWithNormalization getHistogram(final Histogram hist) {
+                if (hist instanceof HistogramWithNormalization) {
+                        return (HistogramWithNormalization) hist;
+                } else {
+                        return new HistogramWithNormalization(hist);
+                }
         }
 
         /**
@@ -230,13 +258,12 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
         }
 
         @Override
-        public void stateChanged(final ChangeEvent e) {
-                setCursor(m_tfPainter.getCursor());
-                repaint();
+        public Dimension getMinimumSize() {
+                return m_histogramPainter.getMinimumSize();
         }
 
         @Override
-        public Dimension getMinimumSize() {
+        public Dimension getPreferredSize() {
                 return m_preferredSize;
         }
 }

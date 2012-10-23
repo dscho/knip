@@ -81,13 +81,13 @@ public class TransferFunctionControlPanel extends JPanel implements
                 private final HistogramPainter.Scale scale;
                 private TransferFunctionBundle currentBundle;
                 private final Map<TransferFunctionBundle, TransferFunctionColor> map = new HashMap<TransferFunctionBundle, TransferFunctionColor>();
-                private final int[] histogramData;
+                private final Histogram histogram;
 
                 public Memento(final HistogramPainter.Scale s,
-                                final TransferFunctionBundle cb, final int[] d) {
+                                final TransferFunctionBundle cb, final Histogram hist) {
                         scale = s;
                         currentBundle = cb;
-                        histogramData = d;
+                        histogram = hist;
                 }
         }
 
@@ -369,7 +369,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                 m_memento = memento;
 
                 // data
-                m_transferPanel.setData(m_memento.histogramData);
+                m_transferPanel.setHistogram(m_memento.histogram);
 
                 // selected scale
                 m_scaleBox.setSelectedItem(m_memento.scale);
@@ -409,13 +409,13 @@ public class TransferFunctionControlPanel extends JPanel implements
          * To achieve this a deep copy of all currently set bundles is made and
          * then put into this memento.
          *
-         * @param data
+         * @param hist
          *                the data for the histogram background
          *
          * @return the new memento
          */
-        public final Memento createMemento(final int[] data) {
-                return createMemento(m_memento, data);
+        public final Memento createMemento(final Histogram hist) {
+                return createMemento(m_memento, hist);
         }
 
         /**
@@ -426,12 +426,12 @@ public class TransferFunctionControlPanel extends JPanel implements
          *
          * @param memento
          *                the memento used for copying the transfer functions
-         * @param data
+         * @param hist
          *                the new data
          * @return a new memento
          */
         public final Memento createMemento(final Memento memento,
-                        final int[] data) {
+                        final Histogram hist) {
 
                 List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
 
@@ -447,7 +447,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                         bundles.add(copy);
                 }
 
-                return createMemento(bundles, data, current);
+                return createMemento(bundles, hist, current);
         }
 
         /**
@@ -459,15 +459,15 @@ public class TransferFunctionControlPanel extends JPanel implements
          * @param bundles
          *                a list of the bundles to display, the first element of
          *                this list will be active first
-         * @param data
+         * @param hist
          *                the data for the histogram
          *
          * @return the new memento
          */
         public final Memento createMemento(
                         final List<TransferFunctionBundle> bundles,
-                        final int[] data) {
-                return createMemento(bundles, data, bundles.get(0));
+                        final Histogram hist) {
+                return createMemento(bundles, hist, bundles.get(0));
         }
 
         /**
@@ -479,7 +479,7 @@ public class TransferFunctionControlPanel extends JPanel implements
          * @param bundles
          *                a list of the bundles to display, the first element of
          *                this list will be active first
-         * @param data
+         * @param hist
          *                the data for the histogram
          * @param current
          *                the bundle from the bundles list that should be active
@@ -489,7 +489,7 @@ public class TransferFunctionControlPanel extends JPanel implements
          */
         public final Memento createMemento(
                         final List<TransferFunctionBundle> bundles,
-                        final int[] data, final TransferFunctionBundle current) {
+                        final Histogram hist, final TransferFunctionBundle current) {
 
                 if (!bundles.contains(current))
                         throw new IllegalArgumentException(
@@ -498,7 +498,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                 Memento memento = new Memento(
                                 (HistogramPainter.Scale) m_scaleBox
                                                 .getSelectedItem(),
-                                current, data);
+                                current, hist);
 
                 // set up the map
                 for (TransferFunctionBundle b : bundles) {

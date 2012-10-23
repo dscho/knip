@@ -141,7 +141,6 @@ public class TransferFunctionBundlePainter implements MouseListener,
 
                 paint(g2, false);
                 repaintBackBuffer();
-
         }
 
         private final void paint(final Graphics2D g2, final boolean backBufSel) {
