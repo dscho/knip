@@ -85,6 +85,13 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                                 g.setColor(getBOX_RGB_COLOR());
                         }
 
+                        int X = 0;
+                        int Y = 1;
+                        if (dimX > dimY) {
+                                Y = 0;
+                                X = 1;
+                        }
+
                         // test active labels (null = all active)
                         if (activeLabels == null
                                         || activeLabels.contains(label)) {
@@ -93,16 +100,16 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                                                 .getIterableRegionOfInterest(label);
                                 Interval ii = roi
                                                 .getIterableIntervalOverROI(source);
-                                g.drawRect((int) (ii.min(dimX) * scale),
-                                                (int) (ii.min(dimY) * scale),
-                                                (int) ((ii.dimension(dimX) - 1) * scale),
-                                                (int) ((ii.dimension(dimY) - 1) * scale));
+                                g.drawRect((int) (ii.min(X) * scale),
+                                                (int) (ii.min(Y) * scale),
+                                                (int) ((ii.dimension(X) - 1) * scale),
+                                                (int) ((ii.dimension(Y) - 1) * scale));
 
                                 if (scale > .6) {
 
                                         g.drawString(label.toString(),
-                                                        (int) ((ii.min(dimX) + 1) * scale),
-                                                        (int) ((ii.min(dimY) + 10) * scale));
+                                                        (int) ((ii.min(X) + 1) * scale),
+                                                        (int) ((ii.min(Y) + 10) * scale));
                                 }
                         }
                 }
