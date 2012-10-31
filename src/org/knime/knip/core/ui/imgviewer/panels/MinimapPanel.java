@@ -72,6 +72,8 @@ public class MinimapPanel extends ViewerComponent {
 
         private Rectangle m_visibleRect;
 
+        private Rectangle m_imgCanvasRectangle;
+
         private BufferedImage m_img;
 
         private int[] m_offset;
@@ -90,6 +92,7 @@ public class MinimapPanel extends ViewerComponent {
                 m_offset = new int[2];
 
                 m_visibleRect = new Rectangle();
+                m_imgCanvasRectangle = new Rectangle();
                 addComponentListener(new ComponentAdapter() {
                         @Override
                         public void componentResized(ComponentEvent e) {
@@ -295,28 +298,19 @@ public class MinimapPanel extends ViewerComponent {
         public void onBufferedImageUpdated(AWTImageChgEvent e) {
                 m_img = (BufferedImage) e.getImage();
 
-                SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                                if (m_visibleRect.width == 0
-                                                && m_visibleRect.height == 0) {
-                                        m_scaleFactor = m_canvas.getWidth()
-                                                        / (float) m_img.getWidth();
-                                        float t = m_canvas.getHeight()
-                                                        / (float) m_img.getHeight();
-                                        if (t < m_scaleFactor) {
-                                                m_scaleFactor = t;
-                                        }
-                                        m_visibleRect.setBounds(
-                                                        0,
-                                                        0,
-                                                        (int) (m_img.getWidth() * m_scaleFactor),
-                                                        (int) (m_img.getHeight() * m_scaleFactor));
-                                }
+                m_scaleFactor = m_canvas.getWidth() / (float) m_img.getWidth();
+                float t = m_canvas.getHeight() / (float) m_img.getHeight();
+                if (t < m_scaleFactor) {
+                        m_scaleFactor = t;
+                }
 
-                                repaint();
-                        }
-                });
+                m_visibleRect.setBounds(
+                                0,
+                                0,
+                                (int) (m_imgCanvasRectangle.width * m_scaleFactor),
+                                (int) (m_imgCanvasRectangle.height * m_scaleFactor));
+
+                repaint();
         }
 
         @EventListener
@@ -327,6 +321,10 @@ public class MinimapPanel extends ViewerComponent {
                 m_visibleRect.setBounds(0, 0,
                                 (int) (e.getRectangle().width * m_scaleFactor),
                                 (int) (e.getRectangle().height * m_scaleFactor));
+
+                // store this temporary to allow a correct redraw on initial
+                // component resize
+                m_imgCanvasRectangle = e.getRectangle();
 
                 m_canvas.repaint();
         }

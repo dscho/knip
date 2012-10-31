@@ -247,7 +247,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 add(m_imageScrollPane, gc);
 
                 m_factor = 1;
-                updateImageCanvas();
+                updateImageCanvas(false);
 
         }
 
@@ -320,7 +320,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         @EventListener
         public void onZoomFactorChanged(ViewZoomfactorChgEvent zoomEvent) {
                 m_factor = zoomEvent.getZoomFactor();
-                updateImageCanvas();
+                updateImageCanvas(false);
         }
 
         /**
@@ -334,21 +334,22 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 m_currentRectangle.x = (int) (e.getOffest()[0] * m_factor);
                 m_currentRectangle.y = (int) (e.getOffest()[1] * m_factor);
                 m_imageCanvas.scrollRectToVisible(m_currentRectangle);
-                updateImageCanvas();
+                updateImageCanvas(false);
         }
 
         @EventListener
         public void onBufferedImageChanged(AWTImageChgEvent e) {
                 m_image = (BufferedImage) e.getImage();
                 m_blockMouseEvents = false;
-                updateImageCanvas();
+
+                updateImageCanvas(true);
         }
 
-        public void updateImageCanvas() {
+        public void updateImageCanvas(boolean enforceRecalculation) {
                 if (m_image == null)
                         return;
 
-                if (m_oldFactor != m_factor) {
+                if (enforceRecalculation || m_oldFactor != m_factor) {
 
                         // get old center of the image
 
@@ -405,7 +406,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
                         m_blockMouseEvents = true;
                         m_image = TEXTMSGIMG;
-                        updateImageCanvas();
+                        updateImageCanvas(false);
                 }
         }
 
