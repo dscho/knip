@@ -226,7 +226,8 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                                         new ConstantRandomAccessible<BitType>(
                                                                         new BitType(),
                                                                         lab.numDimensions()));
-                        final double[] centroidD = new Centroid().compute(ii);
+                        final double[] centroidD = new Centroid().compute(ii,
+                                        new double[ii.numDimensions()]);
 
                         final long[] centroidL = new long[numDim];
                         for (int d = 0; d < numDim; ++d)

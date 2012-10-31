@@ -1,6 +1,7 @@
 package org.knime.knip.core.ops.img;
 
 import net.imglib2.Cursor;
+import net.imglib2.algorithm.convolver.DirectConvolver;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
@@ -16,14 +17,14 @@ import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.view.Views;
 
 import org.knime.knip.core.features.seg.ExtractOutlineImg;
-import org.knime.knip.core.ops.convolution.DirectConvolver;
 import org.knime.knip.core.util.ImgUtils;
 
 /**
  * Input: Outline Image {@link ExtractOutlineImg}
- *
- * @author dietzc, schoenenbergerf
- *
+ * 
+ * @author Christian Dietz (University of Konstanz)
+ * @author Felix Schoenenberger (University of Konstanz)
+ * 
  */
 public class CalculatePerimeter implements
                 UnaryOutputOperation<Img<BitType>, DoubleType> {

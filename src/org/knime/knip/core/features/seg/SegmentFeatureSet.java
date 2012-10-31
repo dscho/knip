@@ -61,6 +61,7 @@ import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.real.DoubleType;
 
 import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
@@ -207,7 +208,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
                                 if (m_enabled.get(5 + m_defaultAxis.length)) {
                                         m_diameter = m_calculateDiameter
-                                                        .compute(m_outline)
+                                                        .compute(m_outline,
+                                                                        new DoubleType())
                                                         .get();
                                 }
                         }

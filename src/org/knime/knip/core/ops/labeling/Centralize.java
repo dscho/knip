@@ -75,7 +75,8 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
                                         .getIterableRegionOfInterest(label)
                                         .getIterableIntervalOverROI(img);
 
-                        final double[] centroid = centroidOp.compute(labelRoi);
+                        final double[] centroid = centroidOp.compute(labelRoi,
+                                        new double[labelRoi.numDimensions()]);
 
                         final long[] centroidAsLong = new long[centroid.length];
                         for (int d = 0; d < centroid.length; d++) {
