@@ -290,8 +290,8 @@ public class FileChooserPanel extends JPanel {
                 });
 
                 m_fileChooser.setCurrentDirectory(defDir);
-                m_fileChooser.setVisible(false);
-                m_fileChooser.setVisible(true);
+                // m_fileChooser.setVisible(false);
+                // m_fileChooser.setVisible(true);
         }
 
         /*
@@ -577,6 +577,7 @@ public class FileChooserPanel extends JPanel {
                                                 oldValue, newValue);
                         } catch (Exception e) { // This is a hack to avoid
                                                 // stupid mac behaviour
+                        } catch (Throwable t) {
 
                         }
 
