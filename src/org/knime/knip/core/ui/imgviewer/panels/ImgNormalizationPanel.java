@@ -86,12 +86,16 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
                 extends ViewerComponent {
 
+        // 0..400 with steps of 1 <=> (0..50 with steps of 0.125) * 8
+        private final int SATURATION_SLIDER_MAX = 400;
+        private final int SATURATION_SLIDER_FACTOR = 8;
+
         /**
 	 *
 	 */
         private static final long serialVersionUID = 1L;
 
-        /* The saturation slider going in steps of 0.25 from 0 to 50 */
+        /* The saturation slider going in steps of 0.125 from 0 to 50 */
         private final JSlider m_saturationSlider;
 
         /* CheckBox indicating weather the image should be normalized or not */
@@ -137,7 +141,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
                                                 .isSelected());
                                 m_sat.setEnabled(m_normalize.isSelected());
                                 m_eventService.publish(new NormalizationParametersChgEvent<T>(
-                                                m_saturationSlider.getValue(),
+                                                (m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR),
                                                 m_normalize.isSelected()));
                                 m_eventService.publish(new ImgRedrawEvent());
                         }
@@ -147,18 +151,22 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
                 m_sat.setEnabled(false);
                 add(m_normalize);
                 add(saturation);
-                m_saturationSlider = new JSlider(0, 400);
-                m_saturationSlider.setValue((int) (sat * 8));
+                // DO NOT CHANGE THE SLIDER W
+                m_saturationSlider = new JSlider(0, SATURATION_SLIDER_MAX);
+                m_saturationSlider
+                                .setValue((int) (sat * SATURATION_SLIDER_FACTOR));
                 m_saturationSlider.setEnabled(false);
                 m_saturationSlider.addChangeListener(new ChangeListener() {
                         @Override
                         public void stateChanged(final ChangeEvent e) {
                                 m_eventService.publish(new NormalizationParametersChgEvent<T>(
-                                                m_saturationSlider.getValue() / 8,
+                                                m_saturationSlider.getValue()
+                                                                / SATURATION_SLIDER_FACTOR,
                                                 m_normalize.isSelected()));
                                 m_eventService.publish(new ImgRedrawEvent());
                                 float percent = ((float) m_saturationSlider
-                                                .getValue()) / 8;
+                                                .getValue())
+                                                / SATURATION_SLIDER_FACTOR;
                                 m_sat.setText("             " + percent + "%");
                         }
                 });
