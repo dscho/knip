@@ -50,6 +50,7 @@
  */
 package org.knime.knip.core.ui.imgviewer;
 
+import org.knime.knip.core.ui.imgviewer.panels.CaptureScreenshot;
 import org.knime.knip.core.ui.imgviewer.panels.ImagePropertiesPanel;
 import org.knime.knip.core.ui.imgviewer.panels.ImgNormalizationPanel;
 import org.knime.knip.core.ui.imgviewer.panels.LabelFilterPanel;
@@ -120,6 +121,12 @@ public enum ViewerComponents {
                 @Override
                 public ViewerComponent createInstance() {
                         return new LabelFilterPanel();
+                }
+        },
+        SCREENSHOT() {
+                @Override
+                public ViewerComponent createInstance() {
+                        return new CaptureScreenshot();
                 }
         };
 
