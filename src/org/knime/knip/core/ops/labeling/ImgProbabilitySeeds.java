@@ -59,6 +59,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
+import net.imglib2.ops.img.Operations;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
 import net.imglib2.type.numeric.IntegerType;
@@ -105,7 +106,8 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
                         final RandomAccess<LabelingType<L>> out = output
                                         .randomAccess();
                         final Cursor<T> in = input.cursor();
-                        final Pair<T, T> mm = new MinMax<T>().compute(input);
+                        final Pair<T, T> mm = Operations.compute(
+                                        new MinMax<T>(), input);
                         final double range = mm.b.getRealDouble()
                                         - mm.a.getRealDouble();
                         final double min = mm.a.getRealDouble();

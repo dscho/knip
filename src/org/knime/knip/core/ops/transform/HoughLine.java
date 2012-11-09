@@ -5,6 +5,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
@@ -131,14 +132,18 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
         }
 
         @Override
-        public Img<S> createEmptyOutput(K in) {
-                return new ArrayImgFactory<S>().create(new long[] {
-                                m_numBinsRho, m_numBinsTheta },
-                                m_outType.createVariable());
+        public UnaryObjectFactory<K, Img<S>> bufferFactory() {
+                return new UnaryObjectFactory<K, Img<S>>() {
+
+                        @Override
+                        public Img<S> instantiate(K a) {
+                                return new ArrayImgFactory<S>()
+                                                .create(new long[] {
+                                                                m_numBinsRho,
+                                                                m_numBinsTheta },
+                                                                m_outType.createVariable());
+                        }
+                };
         }
 
-        @Override
-        public Img<S> compute(K in) {
-                return compute(in, createEmptyOutput(in));
-        }
 }

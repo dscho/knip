@@ -59,6 +59,8 @@ import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.ops.img.Operations;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
 import net.imglib2.ops.operation.subset.views.SubsetViews;
@@ -187,15 +189,14 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                                                                                 min,
                                                                                 max)));
 
-                                bins = hist.compute(view,
-                                                hist.createEmptyOutput(view))
-                                                .hist();
+                                bins = Operations.compute(hist, view).hist();
                         } else {
 
                                 bins = hist.compute(
                                                 Views.iterable(src),
-                                                hist.createEmptyOutput(Views
-                                                                .iterable(src)))
+                                                hist.bufferFactory()
+                                                                .instantiate(Views
+                                                                                .iterable(src)))
                                                 .hist();
                         }
 
@@ -406,35 +407,40 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
         }
 
         @Override
-        public O createEmptyOutput(I in) {
-                if (m_dimFeat != -1) {
-                        // check dimensionality
-                        if (m_sinkVal.length != in.dimension(m_dimFeat)
-                                        || m_srcVal.length != in
-                                                        .dimension(m_dimFeat)) {
-                                throw new IllegalArgumentException(
-                                                "Vectors of the source or sink values are not of the same size as the feature dimensions of the image.!");
+        public UnaryObjectFactory<I, O> bufferFactory() {
+                return new UnaryObjectFactory<I, O>() {
+
+                        @SuppressWarnings("unchecked")
+                        @Override
+                        public O instantiate(I in) {
+                                if (m_dimFeat != -1) {
+                                        // check dimensionality
+                                        if (m_sinkVal.length != in
+                                                        .dimension(m_dimFeat)
+                                                        || m_srcVal.length != in
+                                                                        .dimension(m_dimFeat)) {
+                                                throw new IllegalArgumentException(
+                                                                "Vectors of the source or sink values are not of the same size as the feature dimensions of the image.!");
+                                        }
+                                }
+
+                                try {
+                                        ImgFactory<BitType> factory;
+                                        if (in instanceof Img) {
+                                                factory = ((Img<T>) in)
+                                                                .factory()
+                                                                .imgFactory(new BitType());
+                                        } else {
+                                                factory = new ArrayImgFactory<BitType>();
+                                        }
+                                        return (O) factory.create(
+                                                        resultDims(in),
+                                                        new BitType());
+
+                                } catch (IncompatibleTypeException e) {
+                                        throw new RuntimeException(e);
+                                }
                         }
-                }
-
-                try {
-                        ImgFactory<BitType> factory;
-                        if (in instanceof Img) {
-                                factory = ((Img<T>) in).factory().imgFactory(
-                                                new BitType());
-                        } else {
-                                factory = new ArrayImgFactory<BitType>();
-                        }
-                        return (O) factory
-                                        .create(resultDims(in), new BitType());
-
-                } catch (IncompatibleTypeException e) {
-                        throw new RuntimeException(e);
-                }
-        }
-
-        @Override
-        public O compute(I in) {
-                return compute(in, createEmptyOutput(in));
+                };
         }
 }

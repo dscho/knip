@@ -3,6 +3,7 @@ package org.knime.knip.core.ops.metadata;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.Type;
 
@@ -21,7 +22,7 @@ public class DimSwapper<T extends Type<T>> implements
          * mapping[1] = 2; // Y &lt;- C, C becomes Y
          * mapping[2] = 0; // C &lt;- X, X becomes C
          * </pre>
-         * 
+         *
          * @param backMapping
          */
         public DimSwapper(final int[] backMapping) {
@@ -30,7 +31,7 @@ public class DimSwapper<T extends Type<T>> implements
         }
 
         /**
-         * 
+         *
          * @param backMapping
          * @param srcOffset
          *                Offset in source coordinates.
@@ -42,17 +43,6 @@ public class DimSwapper<T extends Type<T>> implements
                 m_backMapping = backMapping;
                 m_srcOffset = srcOffset;
                 m_srcSize = srcSize;
-        }
-
-        @Override
-        public Img<T> createEmptyOutput(Img<T> op) {
-                final long[] size = m_srcSize.clone();
-                for (int i = 0; i < size.length; i++) {
-                        if (size[i] <= 0)
-                                size[i] = op.dimension(m_backMapping[i]);
-                }
-                return op.factory().create(size,
-                                op.firstElement().createVariable());
         }
 
         @Override
@@ -89,7 +79,21 @@ public class DimSwapper<T extends Type<T>> implements
         }
 
         @Override
-        public Img<T> compute(Img<T> in) {
-                return compute(in, createEmptyOutput(in));
+        public UnaryObjectFactory<Img<T>, Img<T>> bufferFactory() {
+                return new UnaryObjectFactory<Img<T>, Img<T>>() {
+
+                        @Override
+                        public Img<T> instantiate(Img<T> op) {
+                                final long[] size = m_srcSize.clone();
+                                for (int i = 0; i < size.length; i++) {
+                                        if (size[i] <= 0)
+                                                size[i] = op.dimension(m_backMapping[i]);
+                                }
+                                return op.factory()
+                                                .create(size,
+                                                                op.firstElement()
+                                                                                .createVariable());
+                        }
+                };
         }
 }

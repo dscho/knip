@@ -55,9 +55,11 @@ import java.util.BitSet;
 
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
+import net.imglib2.algorithm.features.seg.CalculatePerimeter;
 import net.imglib2.img.Img;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.ops.img.Operations;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
 import net.imglib2.type.logic.BitType;
@@ -67,7 +69,6 @@ import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
 import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
-import org.knime.knip.core.ops.img.CalculatePerimeter;
 import org.knime.knip.core.util.ImgUtils;
 
 /**
@@ -182,8 +183,10 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                                 m_outline = m_outlineOp
                                                 .compute(bitMask,
                                                                 ImgUtils.createEmptyImg(bitMask));
-                                m_perimeter = m_calculatePerimeter.compute(
-                                                m_outline).get();
+                                m_perimeter = Operations
+                                                .compute(m_calculatePerimeter,
+                                                                m_outline)
+                                                .get();
 
                                 if (m_enabled.get(1 + m_defaultAxis.length)
                                                 || m_enabled.get(3 + m_defaultAxis.length)) {

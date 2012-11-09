@@ -311,11 +311,14 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                                                 src.factory());
                                 bins = histOp.compute(
                                                 subImg,
-                                                histOp.createEmptyOutput(subImg))
+                                                histOp.bufferFactory()
+                                                                .instantiate(subImg))
                                                 .hist();
                         } else {
-                                bins = histOp.compute(src,
-                                                histOp.createEmptyOutput(src))
+                                bins = histOp.compute(
+                                                src,
+                                                histOp.bufferFactory()
+                                                                .instantiate(src))
                                                 .hist();
                         }
 

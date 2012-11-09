@@ -8,6 +8,7 @@ import java.util.Map;
 import net.imglib2.Cursor;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
+import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
@@ -15,29 +16,29 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 /**
  * Dependencies of labels to each other are computed. e.g. if one LabelingType
  * contains two labels A and B, then A has reflexive relation to B.
- * 
+ *
  * The node can be used in two modes:
- * 
+ *
  * a. Intersection mode: A must appear at least once together with B two have a
  * relation to B.
- * 
+ *
  * b. Complete mode: A must always appear with B two have a relation to B.
- * 
+ *
  * Two filters are helping to reduce the amount of labels, for which the
  * relations are computed. 1. The left one filters the labels on the left left
  * side of the relation 2. The right one filters the labels on the right side of
  * the relation. Both filters use the given Rules {@link RulebasedLabelFilter}.
- * 
+ *
  * @author dietzc, hornm
  **/
 public class LabelingDependency<L extends Comparable<L>> implements
                 UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
 
-        private RulebasedLabelFilter<L> m_leftFilter;
+        private final RulebasedLabelFilter<L> m_leftFilter;
 
-        private RulebasedLabelFilter<L> m_rightFilter;
+        private final RulebasedLabelFilter<L> m_rightFilter;
 
-        private boolean m_intersectionMode;
+        private final boolean m_intersectionMode;
 
         public LabelingDependency(RulebasedLabelFilter<L> leftFilter,
                         RulebasedLabelFilter<L> rightFilter,
@@ -45,11 +46,6 @@ public class LabelingDependency<L extends Comparable<L>> implements
                 m_leftFilter = leftFilter;
                 m_rightFilter = rightFilter;
                 m_intersectionMode = intersectionMode;
-        }
-
-        @Override
-        public HashMap<L, List<L>> createEmptyOutput(Labeling<L> op) {
-                return new HashMap<L, List<L>>();
         }
 
         @Override
@@ -123,13 +119,20 @@ public class LabelingDependency<L extends Comparable<L>> implements
 
         }
 
-        public Map<L, List<L>> compute(Labeling<L> lab) {
-                return compute(lab, createEmptyOutput(lab));
-        }
-
         @Override
         public UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> copy() {
                 return new LabelingDependency<L>(m_leftFilter.copy(),
                                 m_leftFilter.copy(), m_intersectionMode);
+        }
+
+        @Override
+        public UnaryObjectFactory<Labeling<L>, Map<L, List<L>>> bufferFactory() {
+                return new UnaryObjectFactory<Labeling<L>, Map<L, List<L>>>() {
+
+                        @Override
+                        public Map<L, List<L>> instantiate(Labeling<L> a) {
+                                return new HashMap<L, List<L>>();
+                        }
+                };
         }
 }
