@@ -9,7 +9,7 @@ import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.operation.BinaryOperation;
+import net.imglib2.ops.img.BinaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.Centroid;
 import net.imglib2.type.numeric.RealType;
@@ -36,11 +36,6 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
                 m_numAngles = numAngles;
                 m_maxIterations = maxIterations;
                 m_filter = filter;
-        }
-
-        @Override
-        public Labeling<L> createEmptyOutput(Img<T> op0, Labeling<L> op1) {
-                return createType(op0, op1, resultDims(op0, op1));
         }
 
         @Override
@@ -106,13 +101,21 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
         }
 
         @Override
-        public BinaryOperation<Img<T>, Labeling<L>, Labeling<L>> copy() {
+        public BinaryOutputOperation<Img<T>, Labeling<L>, Labeling<L>> copy() {
                 return new Centralize<T, L>(m_filter, m_radius, m_numAngles,
                                 m_maxIterations);
         }
 
         @Override
-        public Labeling<L> compute(Img<T> in1, Labeling<L> in2) {
-                return compute(in1, in2);
+        public BinaryObjectFactory<Img<T>, Labeling<L>, Labeling<L>> bufferFactory() {
+                return new BinaryObjectFactory<Img<T>, Labeling<L>, Labeling<L>>() {
+
+                        @Override
+                        public Labeling<L> instantiate(Img<T> op0,
+                                        Labeling<L> op1) {
+                                return createType(op0, op1,
+                                                resultDims(op0, op1));
+                        }
+                };
         }
 }

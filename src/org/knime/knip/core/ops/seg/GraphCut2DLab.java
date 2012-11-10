@@ -62,6 +62,7 @@ import net.imglib2.RandomAccess;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.labeling.Labeling;
+import net.imglib2.ops.img.BinaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
 import net.imglib2.ops.operation.subset.views.ImgView;
@@ -144,22 +145,6 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
         public GraphCut2DLab(double lambda, String fgLabel, String bgLabel,
                         int dimX, int dimY) {
                 this(lambda, fgLabel, bgLabel, dimX, dimY, -1);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Img<BitType> createEmptyOutput(Img<T> src, Labeling<L> labeling) {
-                try {
-                        return createEmptyOutput(src, labeling,
-                                        resultDims(src, labeling));
-                } catch (IncompatibleTypeException e) {
-                        // TODO: handle exception
-                        e.printStackTrace();
-                }
-
-                return null;
         }
 
         /**
@@ -618,7 +603,24 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
         }
 
         @Override
-        public Img<BitType> compute(Img<T> in1, Labeling<L> in2) {
-                return compute(in1, in2, createEmptyOutput(in1, in2));
+        public BinaryObjectFactory<Img<T>, Labeling<L>, Img<BitType>> bufferFactory() {
+                return new BinaryObjectFactory<Img<T>, Labeling<L>, Img<BitType>>() {
+
+                        @Override
+                        public Img<BitType> instantiate(Img<T> src,
+                                        Labeling<L> labeling) {
+                                try {
+                                        return createEmptyOutput(
+                                                        src,
+                                                        labeling,
+                                                        resultDims(src,
+                                                                        labeling));
+                                } catch (IncompatibleTypeException e) {
+                                        e.printStackTrace();
+                                }
+
+                                return null;
+                        }
+                };
         }
 }

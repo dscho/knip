@@ -10,20 +10,23 @@ import net.imglib2.outofbounds.OutOfBoundsPeriodicFactory;
 import net.imglib2.type.numeric.RealType;
 
 public class OutOfBoundsStrategyFactory {
-        /**
-         *
-         * @param <T>
-         *                Type of the factory. Will be copied and value (min,
-         *                max, zero) will be set if needed
-         * @param <O>
-         *                Type of the factory. Type to determine min or max
-         * @param <IN>
-         *                Type of the RandomAccessibleInterval to be wrapped
-         * @param strategyEnum
-         * @param inValue
-         * @param refType
-         * @return
-         */
+
+        public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
+                        String strategy, T val) {
+                return getStrategy(strategy, val, val);
+        }
+
+        public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
+                        String strategy, T val, O refType) {
+                return getStrategy(Enum.valueOf(OutOfBoundsStrategyEnum.class,
+                                strategy), val, val);
+        }
+
+        public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
+                        OutOfBoundsStrategyEnum strategyEnum, T val) {
+                return getStrategy(strategyEnum, val, val);
+        }
+
         public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
                         OutOfBoundsStrategyEnum strategyEnum, T val, O refType) {
                 T inValue = val.createVariable();

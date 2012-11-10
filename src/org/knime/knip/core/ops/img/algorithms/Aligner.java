@@ -11,6 +11,7 @@ import net.imglib2.algorithm.legacy.fft.PhaseCorrelationPeak;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.ImgPlus;
+import net.imglib2.ops.img.BinaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.ops.operation.img.unary.ImgCopyOperation;
 import net.imglib2.ops.operation.imgplus.unary.ImgPlusCrop;
@@ -728,13 +729,14 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
         }
 
         @Override
-        public Img<T> createEmptyOutput(Img<T> in1, Img<V> in2) {
-                return createType(in1, in2);
-        }
+        public BinaryObjectFactory<Img<T>, Img<V>, Img<T>> bufferFactory() {
+                return new BinaryObjectFactory<Img<T>, Img<V>, Img<T>>() {
 
-        @Override
-        public Img<T> compute(Img<T> in1, Img<V> in2) {
-                return compute(in1, in2, createEmptyOutput(in1, in2));
+                        @Override
+                        public Img<T> instantiate(Img<T> inputA, Img<V> inputB) {
+                                return createType(inputA, inputB);
+                        }
+                };
         }
 
 }
