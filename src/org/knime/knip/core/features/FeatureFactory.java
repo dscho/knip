@@ -290,11 +290,18 @@ public class FeatureFactory {
          *         assigned according to the order the feature sets were added
          */
         public double getFeatureValue(final int featID) {
-                return m_featureSetList
-                                .get(m_featIdxMap[featID])
-                                .value(m_featIdxMap[featID]
-                                                - m_featureSetIdOffset
-                                                                .get(m_featIdxMap[featID]));
+                return m_featureSetList.get(m_featIdxMap[featID]).value(
+                                getFeatureSetFeatureID(featID));
+        }
+
+        /**
+         * @param featID
+         * @return the feature id in the feature set, where featID points to
+         */
+        protected int getFeatureSetFeatureID(final int featID) {
+                return m_featIdxMap[featID]
+                                - m_featureSetIdOffset
+                                                .get(m_featIdxMap[featID]);
         }
 
         // /**
