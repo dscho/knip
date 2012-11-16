@@ -65,19 +65,23 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
 
         private int m_stepsize;
 
+        private int m_minPixOverlap;
+
         public Aligner(int[] selectedDims, int alignDim, Interval iv,
-                        SIZEMODES sizemode, ALIGNMODES alignmode, int stepsize) {
+                        SIZEMODES sizemode, ALIGNMODES alignmode, int stepsize,
+                        int minPixOverlap) {
                 m_selectedDims = selectedDims.clone();
                 m_alignDim = alignDim;
                 m_sizemode = sizemode;
                 m_alignmode = alignmode;
                 m_iv = iv;
                 m_stepsize = stepsize;
+                m_minPixOverlap = minPixOverlap;
         }
 
         public Aligner(int[] selectedDims, int alignDim, Interval iv) {
                 this(selectedDims, alignDim, iv, SIZEMODES.CROP,
-                                ALIGNMODES.FIRST, 1);
+                                ALIGNMODES.FIRST, 1, 1);
         }
 
         /**
@@ -225,6 +229,9 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
 
                         p = new PhaseCorrelation<V, V>(sis[(int) ref],
                                         sis[(int) t]);
+
+                        p.setMinimalPixelOverlap(m_minPixOverlap);
+
                         if (p.process()) { // success
                                 // List<PhaseCorrelationPeak> peaks =
                                 // p.getAllShifts();
@@ -725,7 +732,8 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
         @Override
         public BinaryOutputOperation<Img<T>, Img<V>, Img<T>> copy() {
                 return new Aligner<T, V>(m_selectedDims, m_alignDim, m_iv,
-                                m_sizemode, m_alignmode, m_stepsize);
+                                m_sizemode, m_alignmode, m_stepsize,
+                                m_minPixOverlap);
         }
 
         @Override
