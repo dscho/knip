@@ -67,6 +67,8 @@ import mpicbg.ij.integral.Scale;
  */
 public class TransferFunctionPanel extends JPanel implements TransferFunctionChgListener {
 
+        private final static Dimension PREFERRED_SIZE = new Dimension(250, 50);
+
         private final static String DEFAULT_MSG = "Count ---";
 
         private final EventListenerList m_listener = new EventListenerList();
@@ -97,8 +99,6 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
                 }
 
         };
-
-        private final Dimension m_preferredSize = new Dimension(250, 50);
 
         /**
          * Set up a new Panel displaying a bundle of transfer functions.
@@ -264,6 +264,11 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
         @Override
         public Dimension getPreferredSize() {
-                return m_preferredSize;
+                Dimension h = m_histogramPainter.getPreferredSize();
+
+                int width = Math.max(h.width, PREFERRED_SIZE.width);
+                int height = Math.max(h.height, PREFERRED_SIZE.height);
+
+                return new Dimension(width, height);
         }
 }

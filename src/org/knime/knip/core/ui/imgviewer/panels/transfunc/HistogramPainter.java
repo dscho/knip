@@ -79,7 +79,7 @@ public class HistogramPainter implements MouseMotionListener {
         private static final Color HILITE_BACKGROUND = Color.lightGray;
         private static final Color BACKGROUND = Color.white;
 
-        private static final int MIN_HEIGHT = 100;
+        private static final int MIN_HEIGHT = 50;
 
         private class Bin {
                 private final Color colorSelection = ColorDispenser.INSTANCE
@@ -451,5 +451,9 @@ public class HistogramPainter implements MouseMotionListener {
                         width = m_histogram.size();
                 }
                 return new Dimension(width, MIN_HEIGHT);
+        }
+
+        public final Dimension getPreferredSize() {
+                return getMinimumSize();
         }
 }
