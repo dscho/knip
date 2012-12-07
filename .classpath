@@ -6,7 +6,7 @@
 	<classpathentry kind="src" path="res"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar" sourcepath="C:/Users/zinsmaie/Desktop/Workspaces/imglib/imglib2/ops/src"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-realtransform-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-log4j12-1.6.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-codec-20041127.091804.jar"/>
