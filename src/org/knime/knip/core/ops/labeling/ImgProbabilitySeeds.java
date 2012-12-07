@@ -59,7 +59,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.img.Operations;
+import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
 import net.imglib2.type.numeric.IntegerType;

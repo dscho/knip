@@ -57,7 +57,6 @@ import java.lang.ref.SoftReference;
 
 import javax.swing.Renderer;
 
-import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.meta.CalibratedSpace;
@@ -93,8 +92,8 @@ import org.slf4j.LoggerFactory;
  *                The {@link Img} class which will be converted to a
  *                {@link BufferedImage}
  */
-public abstract class AWTImageProvider<T extends Type<T>, I extends RandomAccessibleInterval<T> & IterableInterval<T>>
-                extends HiddenViewerComponent {
+public abstract class AWTImageProvider<T extends Type<T>> extends
+                HiddenViewerComponent {
 
         /**
 	 *
@@ -110,7 +109,7 @@ public abstract class AWTImageProvider<T extends Type<T>, I extends RandomAccess
         /**
          * {@link Img} rendered as {@link BufferedImage}
          */
-        protected I m_src;
+        protected RandomAccessibleInterval<T> m_src;
 
         /**
          * {@link PlaneSelectionEvent} indicating the current plane coordinates
@@ -223,15 +222,15 @@ public abstract class AWTImageProvider<T extends Type<T>, I extends RandomAccess
          *                The name of the img
          */
         @EventListener
-        public void onUpdated(IntervalWithMetadataChgEvent<I> e) {
-                m_src = e.getInterval();
+        public void onUpdated(IntervalWithMetadataChgEvent<T> e) {
+                m_src = e.getRandomAccessibleInterval();
 
-                long[] dims = new long[e.getInterval().numDimensions()];
-                e.getInterval().dimensions(dims);
+                long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+                e.getRandomAccessibleInterval().dimensions(dims);
 
                 if (m_sel == null || !isInsideDims(m_sel.getPlanePos(), dims)) {
                         m_sel = new PlaneSelectionEvent(0, 1, new long[e
-                                        .getInterval().numDimensions()]);
+                                        .getRandomAccessibleInterval().numDimensions()]);
                 }
 
                 ImageRenderer[] renderers = RendererFactory

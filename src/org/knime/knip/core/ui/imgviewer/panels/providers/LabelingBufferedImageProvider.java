@@ -8,7 +8,6 @@ import java.io.ObjectOutput;
 import java.util.Set;
 
 import net.imglib2.display.ScreenImage;
-import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 
@@ -18,6 +17,7 @@ import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelColoringChangeEvent;
+import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelVisibleLabelsChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
@@ -28,7 +28,7 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
  * @author hornm, University of Konstanz
  */
 public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
-                AWTImageProvider<LabelingType<L>, Labeling<L>> {
+                AWTImageProvider<LabelingType<L>> {
 
         /**
 	 *
@@ -46,14 +46,17 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
         private Color m_boundingBoxColor = SegmentColorTable
                         .getBoundingBoxColor();
 
+        protected boolean m_withLabelStrings = false;
+
         public LabelingBufferedImageProvider(int cacheSize) {
                 super(cacheSize);
         }
 
         @Override
         @EventListener
-        public void onUpdated(IntervalWithMetadataChgEvent<Labeling<L>> e) {
-                m_labelMapping = e.getInterval().firstElement().getMapping();
+        public void onUpdated(IntervalWithMetadataChgEvent<LabelingType<L>> e) {
+                m_labelMapping = e.getIterableInterval().firstElement()
+                                .getMapping();
                 super.onUpdated(e);
         }
 
@@ -61,6 +64,11 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
         public void onLabelColoringChangeEvent(LabelColoringChangeEvent e) {
                 m_ColorMapNr = e.getColorMapNr();
                 m_boundingBoxColor = e.getBoundingBoxColor();
+        }
+
+        @EventListener
+        public void onLabelOptionsChangeEvent(LabelOptionsChangeEvent e) {
+                m_withLabelStrings = e.getRenderWithLabelStrings();
         }
 
         @Override
@@ -79,6 +87,12 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
                 hash += m_boundingBoxColor.hashCode();
                 hash *= 31;
                 hash += m_ColorMapNr;
+                hash *= 31;
+                if (m_withLabelStrings) {
+                        hash += 1;
+                } else {
+                        hash += 2;
+                }
 
                 return hash;
         }
@@ -90,6 +104,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
                         r.setActiveLabels(m_activeLabels);
                         r.setOperator(m_operator);
                         r.setLabelMapping(m_labelMapping);
+                        r.setRenderingWithLabelStrings(m_withLabelStrings);
                 }
 
                 ScreenImage ret = m_renderer.render(m_src,

@@ -93,7 +93,7 @@ public class ImgGenerator {
 
         private int m_sizeZ = 0;
 
-        private int m_sizeC = 0;
+        private int m_sizeChannel = 0;
 
         private int m_sizeT = 0;
 
@@ -157,7 +157,7 @@ public class ImgGenerator {
                 setSizeX(sizeX);
                 setSizeY(sizeY);
                 setSizeZ(sizeZ);
-                setSizeC(sizeC);
+                setSizeChannel(sizeC);
                 setSizeT(sizeT);
         }
 
@@ -220,8 +220,8 @@ public class ImgGenerator {
                 processDimension(m_sizeX, "X");
                 processDimension(m_sizeY, "Y");
                 processDimension(m_sizeZ, "Z");
-                processDimension(m_sizeC, "C");
-                processDimension(m_sizeT, "T");
+                processDimension(m_sizeChannel, "Channel");
+                processDimension(m_sizeT, "Time");
 
                 long[] dims = new long[m_dimList.size()];
 
@@ -361,14 +361,14 @@ public class ImgGenerator {
          *
          * A value of 0 will mean do not create this dimension.
          *
-         * @param sizeC
+         * @param sizeChannel
          *                The sizeC.
          */
-        public final void setSizeC(final int sizeC) {
-                m_sizeC = sizeC;
+        public final void setSizeChannel(final int sizeChannel) {
+                m_sizeChannel = sizeChannel;
 
                 // assert bounds
-                m_sizeC = m_sizeC < 0 ? 0 : m_sizeC;
+                m_sizeChannel = m_sizeChannel < 0 ? 0 : m_sizeChannel;
         }
 
         /**

@@ -12,7 +12,7 @@ import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 
 /**
- * composite of a {@link TransparencyPanel} and a {@link ColorSelectionPanel}.
+ * composite of a {@link TransparencyPanel} and a {@link LabelOptionPanel}.
  *
  * @author zinsmaie
  *
@@ -21,13 +21,13 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
 
 
         private final TransparencyPanel m_transparencyPanel;
-        private final ColorSelectionPanel m_colorSelectionPanel;
+        private final LabelOptionPanel m_colorSelectionPanel;
 
         public TransparencyColorSelectionPanel() {
                 super("Color Options", false);
 
                 m_transparencyPanel = new TransparencyPanel(true);
-                m_colorSelectionPanel = new ColorSelectionPanel(true);
+                m_colorSelectionPanel = new LabelOptionPanel(true);
 
                 setLayout(new GridBagLayout());
                 GridBagConstraints gc = new GridBagConstraints();
@@ -51,6 +51,7 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
         public void setEventService(EventService eventService) {
                 m_transparencyPanel.setEventService(eventService);
                 m_colorSelectionPanel.setEventService(eventService);
+                eventService.subscribe(this);
         }
 
         @Override
@@ -82,5 +83,4 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
                 m_transparencyPanel.loadComponentConfiguration(in);
                 m_colorSelectionPanel.loadComponentConfiguration(in);
         }
-
 }

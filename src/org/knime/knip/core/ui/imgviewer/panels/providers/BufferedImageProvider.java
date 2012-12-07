@@ -36,8 +36,8 @@ import org.knime.knip.core.ui.imgviewer.panels.transfunc.LookupTableChgEvent;
  * @param <I>
  *                the {@link Img} converted to a {@link BufferedImage}
  */
-public class BufferedImageProvider<T extends RealType<T>, I extends Img<T>>
-                extends AWTImageProvider<T, I> {
+public class BufferedImageProvider<T extends RealType<T>> extends
+                AWTImageProvider<T> {
 
         /**
          * A simple class that can be injected in the converter so that we will

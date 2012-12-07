@@ -50,6 +50,7 @@
  */
 package org.knime.knip.core.features;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -265,21 +266,47 @@ public class FeatureFactory {
                 if (clazz == null) {
                         return;
                 }
-                List<FeatureTargetUpdater> ftus = m_targetListeners.get(clazz);
-                if (ftus != null) {
-                        for (FeatureTargetUpdater ftu : ftus)
-                                ftu.updateFeatureTarget(obj);
-                        return;
-                } else {
-                        // LOG.debug("No listener registert for feature target "
-                        // + obj.getClass().getSimpleName() + "!");
-                        updateFeatureTargetRecursively(obj,
-                                        clazz.getSuperclass());
-                        Class<?>[] interfaces = clazz.getInterfaces();
-                        for (Class<?> interfaze : interfaces) {
-                                updateFeatureTargetRecursively(obj, interfaze);
-                        }
 
+                try {
+                        List<FeatureTargetUpdater> ftus = m_targetListeners
+                                        .get(clazz);
+                        if (ftus != null) {
+                                for (FeatureTargetUpdater ftu : ftus)
+                                        ftu.updateFeatureTarget(obj);
+                                return;
+                        } else {
+                                updateFeatureTargetRecursively(obj,
+                                                clazz.getSuperclass());
+                                Class<?>[] interfaces = clazz.getInterfaces();
+                                for (Class<?> interfaze : interfaces) {
+                                        updateFeatureTargetRecursively(obj,
+                                                        interfaze);
+                                }
+
+                        }
+                } catch (IllegalArgumentException e) {
+                        LOG.debug("Error thrown: " + e.getMessage()
+                                        + ". Class "
+                                        + obj.getClass().getSimpleName() + "!");
+                } catch (Exception e) {
+                        if (e instanceof RuntimeException) {
+                                Throwable t = e.getCause();
+
+                                while (t instanceof InvocationTargetException) {
+                                        t = t.getCause();
+                                }
+
+                                if (t instanceof IllegalArgumentException) {
+                                        LOG.debug("Error thrown: "
+                                                        + t.getMessage()
+                                                        + ". Class "
+                                                        + obj.getClass()
+                                                                        .getSimpleName()
+                                                        + "!");
+                                } else {
+                                        t.printStackTrace();
+                                }
+                        }
                 }
         }
 

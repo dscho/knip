@@ -73,16 +73,17 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.read.ConvertedRandomAccessibleInterval;
 import net.imglib2.img.Img;
-import net.imglib2.img.planar.PlanarImgFactory;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
+import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
 import net.imglib2.ops.operation.real.unary.Convert;
 import net.imglib2.ops.operation.real.unary.Convert.TypeConversionTypes;
-import net.imglib2.ops.operation.subset.views.ImgView;
+import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.Views;
 
 import org.apache.commons.codec.binary.Base64;
 import org.knime.knip.core.ui.event.EventService;
@@ -97,7 +98,7 @@ import org.slf4j.LoggerFactory;
  * @author dietzc, hornm, University of Konstanz
  * @param <T>
  */
-public class ImgViewer<T extends Type<T>, I extends IterableInterval<T> & RandomAccessibleInterval<T>>
+public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
                 extends JPanel implements ViewerComponentContainer {
 
         /* def */
@@ -234,23 +235,37 @@ public class ImgViewer<T extends Type<T>, I extends IterableInterval<T> & Random
          */
         public void setImg(I img, CalibratedSpace axes, Named name,
                         Sourced source) {
-                if (img.firstElement() instanceof DoubleType) {
+
+                // make sure that at least two dimensions exist
+                CalibratedSpace axes2d;
+                RandomAccessibleInterval<T> img2d;
+                if (img.numDimensions() > 1) {
+                        axes2d = axes;
+                        img2d = img;
+                } else {
+                        img2d = Views.addDimension(img, 0, 0);
+                        axes2d = new CopyCalibratedSpace<CalibratedSpace>(img2d)
+                                        .compute(axes, new CalibratedSpaceImpl(
+                                                        2));
+                }
+
+                IterableInterval<T> iterable = Views.iterable(img2d);
+
+                if (iterable.firstElement() instanceof DoubleType) {
                         Convert<DoubleType, FloatType> convertOp = new Convert<DoubleType, FloatType>(
                                         new DoubleType(), new FloatType(),
                                         TypeConversionTypes.DIRECT);
 
-                        m_eventService.publish(new IntervalWithMetadataChgEvent<Img<FloatType>>(
-                                        new ImgView<FloatType>(
-                                                        new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                                                        (RandomAccessibleInterval<DoubleType>) img,
-                                                                        convertOp,
-                                                                        new FloatType()),
-                                                        new PlanarImgFactory<FloatType>()),
-                                        name, source, axes));
+                        m_eventService.publish(new IntervalWithMetadataChgEvent(
+                                        new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
+                                                        (RandomAccessibleInterval<DoubleType>) img2d,
+                                                        convertOp,
+                                                        new FloatType()), name,
+                                        source, axes2d));
                         m_eventService.publish(new ImgRedrawEvent());
                 } else {
-                        m_eventService.publish(new IntervalWithMetadataChgEvent<I>(
-                                        img, name, source, axes));
+                        m_eventService.publish(new IntervalWithMetadataChgEvent(
+                                        img2d, name, source, axes2d));
                         m_eventService.publish(new ImgRedrawEvent());
                 }
 

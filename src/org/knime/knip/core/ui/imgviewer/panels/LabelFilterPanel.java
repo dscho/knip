@@ -19,9 +19,10 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -29,6 +30,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -37,6 +39,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.imglib2.labeling.Labeling;
+import net.imglib2.labeling.LabelingType;
 
 import org.knime.knip.core.awt.SegmentColorTable;
 import org.knime.knip.core.ui.event.EventListener;
@@ -49,8 +52,11 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelHiliteSelectionChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelIsHiliteModeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelVisibleLabelsChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.NameSetbasedLabelFilter;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
+import org.knime.knip.core.util.MiscViews;
 
 /**
  * Panel to generate a Rulebased LabelFilter.
@@ -71,7 +77,9 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
         private JScrollPane m_scrollPane;
 
-        private RulebasedLabelFilter<L> m_filter;
+        private RulebasedLabelFilter<L> m_ruleFilter;
+
+        private NameSetbasedLabelFilter<L> m_hiliteFilter;
 
         private List<JTextField> m_textFields;
 
@@ -79,7 +87,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
         private JPanel m_textFieldsPanel;
 
-        private Set<String> m_hilitedLabels;
+        private HashSet<String> m_hilitedLabels;
 
         private Labeling<L> m_labeling;
 
@@ -89,6 +97,16 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
         private JScrollPane m_filters;
 
+        private boolean m_showHilitedOnly = false;
+
+        private boolean m_showUnhilitedOnly = false;
+
+        private JPopupMenu m_contextMenu;
+
+        private JMenuItem m_hiliteSelected;
+
+        private JMenuItem m_unhiliteSelected;
+
         public LabelFilterPanel() {
                 this(false);
         }
@@ -97,7 +115,8 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 super("Labels/Filter", false);
                 setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-                m_filter = new RulebasedLabelFilter<L>();
+                m_ruleFilter = new RulebasedLabelFilter<L>();
+                m_hiliteFilter = new NameSetbasedLabelFilter<L>(false);
 
                 m_textFields = new ArrayList<JTextField>();
 
@@ -105,6 +124,8 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
                 m_jLabelList = new JList();
                 m_jLabelList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+                m_contextMenu = createContextMenu(enableHilite);
 
                 // TODO
                 m_jLabelList.addMouseListener(new MouseAdapter() {
@@ -114,7 +135,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                         @Override
                         public void mousePressed(MouseEvent evt) {
                                 if (evt.getButton() == MouseEvent.BUTTON3) {
-                                        showMenu(evt, enableHilite);
+                                        showMenu(evt);
                                 }
                         }
                 });
@@ -245,21 +266,66 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
         }
 
+        private void updateHiliteFilter() {
+                // legal states false,false true,false false, true
+                assert (m_showHilitedOnly && m_showUnhilitedOnly != true);
+
+                if (!m_showHilitedOnly && !m_showUnhilitedOnly) {
+                        // show all
+                        m_hiliteFilter.clear();
+                } else if (m_showHilitedOnly) {
+                        // only hilited
+                        HashSet<String> filterSet = new HashSet<String>();
+                        if (m_hilitedLabels != null
+                                        && m_hilitedLabels.size() > 0) {
+                                for (L o : m_labeling.getLabels()) {
+                                        if (!m_hilitedLabels.contains(o
+                                                        .toString())) {
+                                                filterSet.add(o.toString());
+                                        }
+                                }
+                        } else {
+                                for (L o : m_labeling.getLabels()) {
+                                        filterSet.add(o.toString());
+                                }
+                        }
+                        m_hiliteFilter.setFilterSet(filterSet);
+                } else {
+                        // only unhilited
+                        if (m_hilitedLabels != null
+                                        && m_hilitedLabels.size() > 0) {
+                                m_hiliteFilter.setFilterSet((HashSet<String>) m_hilitedLabels
+                                                .clone());
+                        } else {
+                                m_hiliteFilter.clear();
+                        }
+                }
+        }
+
         protected void doFilter() {
                 try {
                         Set<String> allLabels = new HashSet<String>();
-                        m_filter.clear();
+                        m_ruleFilter.clear();
                         for (int i = 0; i < m_textFields.size(); i++) {
-                                m_filter.addRules(RulebasedLabelFilter
+                                m_ruleFilter.addRules(RulebasedLabelFilter
                                                 .formatRegExp(m_textFields.get(
                                                                 i).getText()));
                         }
                         m_activeLabels.clear();
-                        Collection<L> filtered = m_filter
+
+                        // filter with hilites
+                        Collection<L> filtered = m_ruleFilter
                                         .filterLabeling(m_labeling
                                                         .firstElement()
                                                         .getMapping()
                                                         .getLabels());
+
+                        // filter with rules
+                        if (m_showHilitedOnly || m_showUnhilitedOnly) {
+                                filtered = m_hiliteFilter
+                                                .filterLabeling(filtered);
+                        }
+
                         m_activeLabels.addAll(filtered);
 
                         for (L label : filtered) {
@@ -267,18 +333,19 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                         }
 
                         // As this is faster than checking all labels
-                        if (m_filter.getRules().size() == 0) {
+                        if (m_ruleFilter.getRules().size() == 0
+                                        && !m_showHilitedOnly
+                                        && !m_showUnhilitedOnly) {
                                 m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(
                                                 null, null));
-                                m_eventService.publish(new ImgRedrawEvent());
                         } else {
                                 m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(
                                                 allLabels,
                                                 (Operator) (m_operatorBox)
                                                                 .getSelectedItem()));
-                                m_eventService.publish(new ImgRedrawEvent());
                         }
 
+                        m_eventService.publish(new ImgRedrawEvent());
                         Collections.sort(m_activeLabels);
                         m_jLabelList.setListData(m_activeLabels);
                 }
@@ -298,13 +365,14 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
          */
         @EventListener
         public void onLabelingUpdated(
-                        IntervalWithMetadataChgEvent<Labeling<L>> e) {
-                m_labeling = e.getInterval();
+                        IntervalWithMetadataChgEvent<LabelingType<L>> e) {
+                m_labeling = MiscViews.labelingView(
+                                e.getRandomAccessibleInterval(), null);
 
                 m_activeLabels.clear();
                 for (L label : m_labeling.firstElement().getMapping()
                                 .getLabels()) {
-                        if (m_filter.isValid(label))
+                        if (m_ruleFilter.isValid(label))
                                 m_activeLabels.add(label);
                 }
 
@@ -316,6 +384,14 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
         public void onHiliteChanged(HilitedLabelsChgEvent e) {
                 m_hilitedLabels = new HashSet<String>(e.getHilitedLabels());
                 m_jLabelList.setListData(m_activeLabels);
+
+                if (m_showHilitedOnly || m_showUnhilitedOnly) {
+                        // do filter
+                        // triggeres
+                        // redraw
+                        updateHiliteFilter();
+                        doFilter();
+                }
         }
 
         /**
@@ -339,7 +415,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
         @Override
         public void saveComponentConfiguration(ObjectOutput out)
                         throws IOException {
-                m_filter.writeExternal(out);
+                m_ruleFilter.writeExternal(out);
         }
 
         @Override
@@ -348,11 +424,11 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
                 m_textFields.clear();
                 m_textFieldsPanel.removeAll();
-                m_filter = new RulebasedLabelFilter<L>();
-                m_filter.readExternal(in);
+                m_ruleFilter = new RulebasedLabelFilter<L>();
+                m_ruleFilter.readExternal(in);
 
-                for (int s = 0; s < m_filter.getRules().size(); s++) {
-                        addTextField(m_filter.getRules().get(s));
+                for (int s = 0; s < m_ruleFilter.getRules().size(); s++) {
+                        addTextField(m_ruleFilter.getRules().get(s));
                 }
         }
 
@@ -371,9 +447,25 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
          *
          * @param evt
          *                Mouse Event
-         * @param enableHilite
          */
-        public void showMenu(MouseEvent evt, boolean enableHilite) {
+        public void showMenu(MouseEvent evt) {
+
+                /*
+                 * Disables some options if no item is selected because these
+                 * options need a selected Item
+                 */
+                if (m_jLabelList.isSelectionEmpty()) {
+                        m_hiliteSelected.setEnabled(false);
+                        m_unhiliteSelected.setEnabled(false);
+                } else {
+                        m_hiliteSelected.setEnabled(true);
+                        m_unhiliteSelected.setEnabled(true);
+                }
+
+                m_contextMenu.show(m_jLabelList, evt.getX(), evt.getY());
+        }
+
+        private JPopupMenu createContextMenu(boolean enableHilite) {
                 JPopupMenu contextMenu = new JPopupMenu();
 
                 JMenuItem jumpToLabel = new JMenuItem("Jump to label");
@@ -406,7 +498,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                                 }
 
                                 if (buf.length() > 0) {
-                                        m_filter.clear();
+                                        m_ruleFilter.clear();
                                         m_textFieldsPanel.removeAll();
                                         m_textFields.clear();
 
@@ -422,7 +514,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                                m_filter.clear();
+                                m_ruleFilter.clear();
                                 m_textFieldsPanel.removeAll();
                                 m_textFields.clear();
                                 doFilter();
@@ -435,47 +527,40 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 contextMenu.add(clearFilters);
 
                 if (enableHilite) {
-                        JMenuItem hiliteAll = new JMenuItem("HiLite All");
-                        hiliteAll.addActionListener(new ActionListener() {
+                        m_unhiliteSelected = new JMenuItem("Unhilite Selected");
+                        m_unhiliteSelected
+                                        .addActionListener(new ActionListener() {
 
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                        Set<String> selection = new HashSet<String>();
-                                        for (L o : m_activeLabels) {
-                                                selection.add(o.toString());
-                                                m_hilitedLabels.add(o
-                                                                .toString());
-                                        }
+                                                @Override
+                                                public void actionPerformed(
+                                                                ActionEvent e) {
+                                                        Set<String> selection = new HashSet<String>();
+                                                        for (Object o : m_jLabelList
+                                                                        .getSelectedValues()) {
+                                                                selection.add(o.toString());
+                                                                m_hilitedLabels.remove(o
+                                                                                .toString());
+                                                        }
 
-                                        m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
-                                                        selection, true));
-                                        m_eventService.publish(new ImgRedrawEvent());
-                                }
-                        });
+                                                        m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
+                                                                        selection,
+                                                                        false));
 
-                        JMenuItem clearSelected = new JMenuItem(
-                                        "Clear Selected Hilite");
-                        clearSelected.addActionListener(new ActionListener() {
+                                                        if (m_showHilitedOnly
+                                                                        || m_showUnhilitedOnly) {
+                                                                // do filter
+                                                                // triggeres
+                                                                // redraw
+                                                                updateHiliteFilter();
+                                                                doFilter();
+                                                        } else {
+                                                                m_eventService.publish(new ImgRedrawEvent());
+                                                        }
+                                                }
+                                        });
 
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                        Set<String> selection = new HashSet<String>();
-                                        for (Object o : m_jLabelList
-                                                        .getSelectedValues()) {
-                                                selection.add(o.toString());
-                                                m_hilitedLabels.remove(o
-                                                                .toString());
-                                        }
-
-                                        m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
-                                                        selection, false));
-                                        m_eventService.publish(new ImgRedrawEvent());
-                                }
-                        });
-
-                        JMenuItem hiliteSelected = new JMenuItem(
-                                        "HiLite Selected");
-                        hiliteSelected.addActionListener(new ActionListener() {
+                        m_hiliteSelected = new JMenuItem("HiLite Selected");
+                        m_hiliteSelected.addActionListener(new ActionListener() {
 
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
@@ -489,90 +574,85 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
                                         m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
                                                         selection, true));
-                                        m_eventService.publish(new ImgRedrawEvent());
+
+                                        if (m_showHilitedOnly
+                                                        || m_showUnhilitedOnly) {
+                                                // do filter triggeres redraw
+                                                updateHiliteFilter();
+                                                doFilter();
+                                        } else {
+                                                m_eventService.publish(new ImgRedrawEvent());
+                                        }
                                 }
                         });
 
-                        JMenuItem hiliteOnly = new JMenuItem(
+                        JRadioButtonMenuItem hiliteOnly = new JRadioButtonMenuItem(
                                         "Show HiLited Only");
                         hiliteOnly.addActionListener(new ActionListener() {
 
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                        StringBuffer buf = new StringBuffer();
 
-                                        if (m_hilitedLabels != null) {
-
-                                                for (Object o : m_hilitedLabels) {
-                                                        buf.append(o.toString()
-                                                                        + "|");
-                                                }
-
-                                                if (buf.length() > 0) {
-                                                        m_filter.clear();
-                                                        m_textFieldsPanel
-                                                                        .removeAll();
-                                                        m_textFields.clear();
-
-                                                        addTextField(buf.substring(
-                                                                        0,
-                                                                        buf.length() - 1));
-                                                        doFilter();
-                                                }
-                                        }
-
+                                        m_showHilitedOnly = true;
+                                        m_showUnhilitedOnly = false;
+                                        updateHiliteFilter();
+                                        doFilter();
                                 }
                         });
 
-                        JMenuItem uniliteOnly = new JMenuItem(
+                        JRadioButtonMenuItem unhiliteOnly = new JRadioButtonMenuItem(
                                         "Show UnHiLited Only");
-                        uniliteOnly.addActionListener(new ActionListener() {
+                        unhiliteOnly.addActionListener(new ActionListener() {
 
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                        if (m_hilitedLabels != null) {
-                                                StringBuffer buf = new StringBuffer();
-                                                for (L o : m_labeling
-                                                                .getLabels()) {
-                                                        if (!m_hilitedLabels
-                                                                        .contains(o.toString())) {
-                                                                buf.append(o.toString()
-                                                                                + "|");
-                                                        }
-                                                }
-
-                                                if (buf.length() > 0) {
-                                                        m_filter.clear();
-                                                        m_textFieldsPanel
-                                                                        .removeAll();
-                                                        m_textFields.clear();
-                                                        addTextField(buf.substring(
-                                                                        0,
-                                                                        buf.length() - 1));
-                                                        doFilter();
-                                                }
-                                        }
+                                        m_showHilitedOnly = false;
+                                        m_showUnhilitedOnly = true;
+                                        updateHiliteFilter();
+                                        doFilter();
                                 }
                         });
+
+                        JRadioButtonMenuItem showAll = new JRadioButtonMenuItem(
+                                        "Show All");
+                        showAll.addActionListener(new ActionListener() {
+
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                        m_showHilitedOnly = false;
+                                        m_showUnhilitedOnly = false;
+                                        updateHiliteFilter();
+                                        doFilter();
+                                }
+                        });
+
+                        ButtonGroup group = new ButtonGroup();
+                        group.add(hiliteOnly);
+                        group.add(unhiliteOnly);
+                        group.add(showAll);
+                        showAll.setSelected(true);
 
                         JMenuItem clearAll = new JMenuItem("Clear Hilite");
                         clearAll.addActionListener(new ActionListener() {
-
+                                // clears all hilites
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                        Set<String> selection = new HashSet<String>();
-                                        for (Object o : m_activeLabels) {
-                                                selection.add(o.toString());
-                                        }
-
-                                        m_hilitedLabels.clear();
                                         m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
-                                                        selection, false));
-                                        m_eventService.publish(new ImgRedrawEvent());
+                                                        m_hilitedLabels, false));
+                                        m_hilitedLabels.clear();
+
+                                        if (m_hiliteFilter.sizeOfFilterSet() > 0) {
+                                                m_hiliteFilter.clear();
+                                                // do filter issues img redraw
+                                                doFilter();
+                                        } else {
+                                                m_eventService.publish(new ImgRedrawEvent());
+                                        }
                                 }
                         });
 
-                        JCheckBox hiliteMode = new JCheckBox("HiLite mode On");
+                        JCheckBoxMenuItem hiliteMode = new JCheckBoxMenuItem(
+                                        "HiLite mode On");
                         if (m_hMode) {
                                 hiliteMode.setSelected(true);
                         }
@@ -582,7 +662,8 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                                 @Override
                                 public void stateChanged(ChangeEvent e) {
                                         boolean old = m_hMode;
-                                        m_hMode = ((JCheckBox) e.getSource())
+                                        m_hMode = ((JCheckBoxMenuItem) e
+                                                        .getSource())
                                                         .isSelected();
 
                                         if (old != m_hMode) {
@@ -597,28 +678,23 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                         contextMenu.add(hiliteMode);
                         contextMenu.addSeparator();
 
-                        contextMenu.add(hiliteSelected);
-                        contextMenu.add(hiliteAll);
+                        contextMenu.add(m_hiliteSelected);
+                        contextMenu.add(m_unhiliteSelected);
                         contextMenu.addSeparator();
 
-                        contextMenu.add(clearSelected);
                         contextMenu.add(clearAll);
                         contextMenu.addSeparator();
 
                         contextMenu.add(hiliteOnly);
-                        contextMenu.add(uniliteOnly);
-
-                        /*
-                         * Disables some options if no item is selected because
-                         * these options need a selected Item
-                         */
-                        if (m_jLabelList.isSelectionEmpty()) {
-                                hiliteSelected.setEnabled(false);
-                                clearSelected.setEnabled(false);
-                        }
+                        contextMenu.add(unhiliteOnly);
+                        contextMenu.add(showAll);
                 }
 
-                contextMenu.show(m_jLabelList, evt.getX(), evt.getY());
+                return contextMenu;
         }
 
+        @EventListener
+        public void onClose(ViewClosedEvent e) {
+                m_labeling = null;
+        }
 }

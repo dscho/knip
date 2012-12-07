@@ -11,9 +11,9 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Set;
 
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ScreenImage;
-import net.imglib2.img.Img;
-import net.imglib2.labeling.Labeling;
+import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.AWTImageTools;
@@ -27,6 +27,7 @@ import org.knime.knip.core.ui.imgviewer.events.HilitedLabelsChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgAndLabelingChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelColoringChangeEvent;
+import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelIsHiliteModeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelVisibleLabelsChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
@@ -50,7 +51,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         private Real2GreyRenderer<T> m_greyRenderer;
 
-        private Img<T> m_img;
+        private RandomAccessibleInterval<T> m_img;
 
         private Integer m_transparency;
 
@@ -150,6 +151,13 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
                 m_labChanged = true;
         }
 
+        @Override
+        @EventListener
+        public void onLabelOptionsChangeEvent(LabelOptionsChangeEvent e) {
+                super.onLabelOptionsChangeEvent(e);
+                m_labChanged = true;
+        }
+
         private BufferedImage renderImage() {
                 double[] normParams = m_normalizationParameters
                                 .getNormalizationParameters(m_img, m_sel);
@@ -189,6 +197,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
                         r.setActiveLabels(m_activeLabels);
                         r.setOperator(m_operator);
                         r.setLabelMapping(m_labelMapping);
+                        r.setRenderingWithLabelStrings(m_withLabelStrings);
                 }
 
                 if (m_renderer instanceof RendererWithHilite
@@ -213,18 +222,19 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         @EventListener
         public void onLabelingUpdated(final ImgAndLabelingChgEvent<T, L> e) {
-                m_img = e.getInterval();
+                m_img = e.getRandomAccessibleInterval();
                 m_rowKey = e.getName().getName();
 
                 m_imgChanged = true;
                 m_labChanged = true;
-                super.onUpdated(new IntervalWithMetadataChgEvent<Labeling<L>>(e
+                super.onUpdated(new IntervalWithMetadataChgEvent<LabelingType<L>>(
+                                e
                                 .getLabeling(), e.getName(), e.getSource(), e
                                 .getCalibratedSpace()));
         }
 
         @Override
-        public void onUpdated(IntervalWithMetadataChgEvent<Labeling<L>> e) {
+        public void onUpdated(IntervalWithMetadataChgEvent<LabelingType<L>> e) {
                 //
         }
 
@@ -232,6 +242,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
         public void onClose(ViewClosedEvent event) {
                 m_img = null;
                 m_greyRenderer = null;
+                m_src = null;
                 m_normalizationParameters = null;
                 m_config = null;
                 m_bufLab = null;

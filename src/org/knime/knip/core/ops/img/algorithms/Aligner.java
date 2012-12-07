@@ -11,12 +11,12 @@ import net.imglib2.algorithm.legacy.fft.PhaseCorrelationPeak;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.ImgPlus;
-import net.imglib2.ops.img.BinaryObjectFactory;
+import net.imglib2.ops.operation.BinaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOutputOperation;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.img.unary.ImgCopyOperation;
 import net.imglib2.ops.operation.imgplus.unary.ImgPlusCrop;
 import net.imglib2.ops.operation.subset.views.ImgView;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.numeric.RealType;
 
 /**
@@ -159,7 +159,8 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                         // sis[(int) (t - tmin)] = new SubImg<T>(smoothedimg,
                         // i);
 
-                        tmpsis = new ImgView<V>(SubsetViews.subsetView(src, i),
+                        tmpsis = new ImgView<V>(SubsetOperations.subsetview(
+                                        src, i),
                                         imgPlus.factory());
                         long[] tmpmin = new long[tmpsis.numDimensions()];
                         long[] tmpmax = new long[tmpsis.numDimensions()];
@@ -171,7 +172,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                         // can't this be directlny pushed to res?
                         // ggf. hier copy anlegen
                         sis[(int) (t - tmin)] = new ImgView<V>(
-                                        SubsetViews.subsetView(tmpsis, i),
+                                        SubsetOperations.subsetview(tmpsis, i),
                                         tmpsis.factory());
                 }
 
@@ -535,8 +536,9 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                         ipmax[selectedDim2] = t;
 
                         Interval i = new FinalInterval(ipmin, ipmax);
-                        ImgView<T> si = new ImgView<T>(SubsetViews.subsetView(
-                                        res2, i), res2.factory());
+                        ImgView<T> si = new ImgView<T>(
+                                        SubsetOperations.subsetview(res2, i),
+                                        res2.factory());
                         RandomAccess<T> c = si.randomAccess();
                         int[] pos = new int[2];
                         pos[0] = (int) spmin[selectedDims1[0]];

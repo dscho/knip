@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
-import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.numeric.RealType;
@@ -13,6 +13,7 @@ import net.imglib2.view.Views;
 
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.ImgAndLabelingChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  *
@@ -21,7 +22,7 @@ import org.knime.knip.core.ui.imgviewer.events.ImgAndLabelingChgEvent;
  * @author dietzc
  */
 public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparable<L>>
-                extends ViewInfoPanel<LabelingType<L>, Labeling<L>> {
+                extends ViewInfoPanel<LabelingType<L>> {
 
         /**
      *
@@ -34,17 +35,17 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
 
         @Override
         protected String updateMouseLabel(StringBuffer buffer,
-                        Labeling<L> labeling, CalibratedSpace axes,
+                        Interval interval, CalibratedSpace axes,
                         RandomAccess<LabelingType<L>> rndAccess, long[] coords) {
 
-                if (labeling == null || m_imgRA == null)
+                if (interval == null || m_imgRA == null)
                         return "";
 
                 buffer.setLength(0);
 
                 for (int i = 0; i < coords.length; i++) {
                         buffer.append(" ");
-                        if (i < labeling.numDimensions()) {
+                        if (i < interval.numDimensions()) {
                                 buffer.append(axes != null ? axes.axis(i)
                                                 .getLabel() : i);
                         }
@@ -52,7 +53,7 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
                                 buffer.append("[ Not set ];");
                         } else {
                                 buffer.append("[" + (coords[i] + 1) + "/"
-                                                + labeling.dimension(i) + "];");
+                                                + interval.dimension(i) + "];");
                         }
                 }
                 if (buffer.length() > 0) {
@@ -90,7 +91,7 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
 
         @Override
         protected String updateImageLabel(StringBuffer buffer,
-                        Labeling<L> labeling,
+                        Interval interval,
                         RandomAccess<LabelingType<L>> rndAccess, String imgName) {
 
                 buffer.setLength(0);
@@ -100,7 +101,7 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
 
                 m_imageInfo = buffer.toString();
 
-                if (labeling == null || m_imgRA == null) {
+                if (interval == null || m_imgRA == null) {
                         return "loading..";
                 } else {
                         return m_imageInfo;
@@ -114,10 +115,18 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
          */
         @EventListener
         public void onImgChanged(ImgAndLabelingChgEvent<T, L> e) {
-                m_imgRA = Views.extendValue(e.getInterval(),
-                                e.getInterval().firstElement()).randomAccess();
+                m_imgRA = Views.extendValue(e.getRandomAccessibleInterval(),
+                                e.getIterableInterval().firstElement())
+                                .randomAccess();
 
                 super.manualTextUpdate("", m_imageInfo);
+        }
+
+        @Override
+        @EventListener
+        public void onClose(ViewClosedEvent ev) {
+                super.onClose(ev);
+                m_imgRA = null;
         }
 
         public ImgLabelingViewInfoPanel() {

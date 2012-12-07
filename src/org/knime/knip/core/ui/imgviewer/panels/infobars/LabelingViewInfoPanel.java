@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
-import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.meta.CalibratedSpace;
 
@@ -15,8 +15,8 @@ import net.imglib2.meta.CalibratedSpace;
  *
  * @author dietzc, hornm, schoenenbergerf
  */
-public class LabelingViewInfoPanel<L extends Comparable<L>> extends
-                ViewInfoPanel<LabelingType<L>, Labeling<L>> {
+public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPanel<LabelingType<L>> {
+
 
         /**
      *
@@ -25,11 +25,12 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends
 
         /** Updates cursor probe label. */
         @Override
-        protected String updateMouseLabel(StringBuffer buffer, Labeling<L> img,
+        protected String updateMouseLabel(StringBuffer buffer,
+                        Interval interval,
                         CalibratedSpace axes,
                         RandomAccess<LabelingType<L>> rndAccess, long[] coords) {
 
-                if (img == null)
+                if (interval == null)
                         return "";
                 if (m_sel == null)
                         return "No plane selected";
@@ -38,7 +39,7 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends
 
                 for (int i = 0; i < coords.length; i++) {
                         buffer.append(" ");
-                        if (i < img.numDimensions()) {
+                        if (i < interval.numDimensions()) {
                                 buffer.append(axes != null ? axes.axis(i)
                                                 .getLabel() : i);
                         }
@@ -46,7 +47,7 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends
                                 buffer.append("[ Not set ];");
                         } else {
                                 buffer.append("[" + (coords[i] + 1) + "/"
-                                                + img.dimension(i) + "];");
+                                                + interval.dimension(i) + "];");
                         }
                 }
                 if (buffer.length() > 0) {
@@ -79,10 +80,11 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends
         }
 
         @Override
-        protected String updateImageLabel(StringBuffer buffer, Labeling<L> img,
+        protected String updateImageLabel(StringBuffer buffer,
+                        Interval interval,
                         RandomAccess<LabelingType<L>> rndAccess, String imgName) {
 
-                if (img == null) {
+                if (interval == null) {
                         return "No image set";
                 }
 

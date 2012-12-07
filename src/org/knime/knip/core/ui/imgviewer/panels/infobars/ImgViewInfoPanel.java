@@ -4,32 +4,28 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
-import net.imglib2.img.Img;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.Type;
 
 /**
- *
- *
- *
  * @author dietzc
  */
-public class ImgViewInfoPanel<T extends Type<T>> extends
-                ViewInfoPanel<T, Img<T>> {
+public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
 
         /**
-     *
-     */
+         *
+         */
         private static final long serialVersionUID = 1L;
 
         /** Updates cursor probe label. */
         @Override
-        protected String updateMouseLabel(StringBuffer buffer, Img<T> img,
-                        CalibratedSpace axes, RandomAccess<T> rndAccess,
-                        long[] coords) {
+        protected String updateMouseLabel(StringBuffer buffer,
+                        Interval interval, CalibratedSpace axes,
+                        RandomAccess<T> rndAccess, long[] coords) {
 
-                if (img == null)
+                if (interval == null)
                         return "";
                 if (m_sel == null)
                         return "No plane selected";
@@ -38,7 +34,7 @@ public class ImgViewInfoPanel<T extends Type<T>> extends
 
                 for (int i = 0; i < coords.length; i++) {
                         buffer.append(" ");
-                        if (i < img.numDimensions()) {
+                        if (i < interval.numDimensions()) {
                                 buffer.append(axes != null ? axes.axis(i)
                                                 .getLabel() : i);
                         }
@@ -46,7 +42,7 @@ public class ImgViewInfoPanel<T extends Type<T>> extends
                                 buffer.append("[ Not set ];");
                         } else {
                                 buffer.append("[" + (coords[i] + 1) + "/"
-                                                + img.dimension(i) + "];");
+                                                + interval.dimension(i) + "];");
                         }
                 }
                 if (buffer.length() > 0) {
@@ -70,10 +66,11 @@ public class ImgViewInfoPanel<T extends Type<T>> extends
         }
 
         @Override
-        protected String updateImageLabel(StringBuffer buffer, Img<T> img,
-                        RandomAccess<T> rndAccess, String imgName) {
+        protected String updateImageLabel(StringBuffer buffer,
+                        Interval interval, RandomAccess<T> rndAccess,
+                        String imgName) {
 
-                if (img == null)
+                if (interval == null)
                         return "No image set";
 
                 buffer.setLength(0);

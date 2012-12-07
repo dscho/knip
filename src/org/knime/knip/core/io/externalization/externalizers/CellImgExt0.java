@@ -114,8 +114,8 @@ public class CellImgExt0 implements Externalizer<CellImg> {
                 boolean indicateStop = false;
                 while (true) {
 
-                        in.readLArray(((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursor)
-                                        .getCell().getData()
+                        in.readLArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursor)
+                                        .getCell().getData())
                                         .getCurrentStorageArray());
 
                         if (indicateStop)
@@ -152,8 +152,9 @@ public class CellImgExt0 implements Externalizer<CellImg> {
 
                 boolean indicateStop = false;
                 while (true) {
-                        out.writeArray(((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursorOnCells)
-                                        .getCell().getData()
+                        // TODO extend for other types
+                        out.writeArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursorOnCells)
+                                        .getCell().getData())
                                         .getCurrentStorageArray());
 
                         if (indicateStop)

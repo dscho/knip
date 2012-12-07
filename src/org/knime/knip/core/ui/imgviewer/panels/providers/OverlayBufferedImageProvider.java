@@ -11,7 +11,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 import net.imglib2.display.ScreenImage;
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.AWTImageTools;
@@ -37,7 +36,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
  * @author hornm, University of Konstanz
  */
 public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Comparable<L>>
-                extends AWTImageProvider<T, Img<T>> {
+                extends AWTImageProvider<T> {
 
         /**
 	 *
@@ -91,7 +90,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
                                                         normParams[1]);
                 }
 
-                ScreenImage res = ((ImageRenderer<T, Img<T>>) m_renderer)
+                ScreenImage res = ((ImageRenderer<T>) m_renderer)
                                 .render(m_src, m_sel.getPlaneDimIndex1(),
                                                 m_sel.getPlaneDimIndex2(),
                                                 m_sel.getPlanePos());
@@ -138,7 +137,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         @Override
-        public void onUpdated(IntervalWithMetadataChgEvent<Img<T>> e) {
+        public void onUpdated(IntervalWithMetadataChgEvent<T> e) {
                 // Do nothing
         }
 
@@ -161,11 +160,11 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
                         }
                 }
 
-                ImageRenderer<T, Img<T>>[] renderers = RendererFactory
+                ImageRenderer<T>[] renderers = RendererFactory
                                 .createSuitableRenderer(m_src);
                 if (m_renderer != null) {
                         boolean contained = false;
-                        for (ImageRenderer<T, Img<T>> renderer : renderers) {
+                        for (ImageRenderer<T> renderer : renderers) {
                                 if (m_renderer.toString().equals(
                                                 renderer.toString())) {
                                         m_renderer = renderer;

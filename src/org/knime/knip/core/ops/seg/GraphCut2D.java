@@ -59,15 +59,14 @@ import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.ops.img.Operations;
 import net.imglib2.ops.img.UnaryObjectFactory;
+import net.imglib2.ops.operation.Operations;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.IntervalIndexer;
-import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
 /**
@@ -182,14 +181,15 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                         if (m_dimFeat != -1) {
                                 min[m_dimFeat] = i;
                                 max[m_dimFeat] = i;
-                                IterableRandomAccessibleInterval<T> view = new IterableRandomAccessibleInterval<T>(
-                                                SubsetViews.iterableSubsetView(
-                                                                src,
-                                                                new FinalInterval(
-                                                                                min,
-                                                                                max)));
 
-                                bins = Operations.compute(hist, view).hist();
+                                bins = Operations
+                                                .compute(hist,
+                                                                Views.iterable(SubsetOperations
+                                                                                .subsetview(src,
+                                                                                                new FinalInterval(
+                                                                                                                min,
+                                                                                                                max))))
+                                                .hist();
                         } else {
 
                                 bins = hist.compute(

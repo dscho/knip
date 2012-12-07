@@ -13,7 +13,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.Type;
 
 import org.knime.knip.core.awt.ImageRenderer;
@@ -32,7 +31,7 @@ import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
  *
  * @author dietzc, hornm, fschoenenberger
  */
-public class RendererSelectionPanel<T extends Type<T>, I extends RandomAccessibleInterval<T>>
+public class RendererSelectionPanel<T extends Type<T>>
                 extends ViewerComponent {
 
         private static final long serialVersionUID = 1L;
@@ -82,11 +81,11 @@ public class RendererSelectionPanel<T extends Type<T>, I extends RandomAccessibl
          * @param name
          */
         @EventListener
-        public void onImgUpdated(IntervalWithMetadataChgEvent<I> e) {
+        public void onImgUpdated(IntervalWithMetadataChgEvent<T> e) {
                 // if (m_imgRenderers.isEmpty()) {
 
-                ImageRenderer<T, I>[] tmp = RendererFactory
-                                .createSuitableRenderer(e.getInterval());
+                ImageRenderer<T>[] tmp = RendererFactory
+                                .createSuitableRenderer(e.getRandomAccessibleInterval());
                 m_blockEvent = true;
                 m_rendList.setListData(tmp);
                 // m_rendList.setSelectedIndex(0);

@@ -13,4 +13,6 @@ public interface RendererWithLabels<L extends Comparable<L>> {
         public void setOperator(Operator operator);
 
         public void setLabelMapping(LabelingMapping<L> labelMapping);
+
+        public void setRenderingWithLabelStrings(boolean withNumbers);
 }

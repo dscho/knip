@@ -62,11 +62,11 @@ import net.imglib2.RandomAccess;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.labeling.Labeling;
-import net.imglib2.ops.img.BinaryObjectFactory;
+import net.imglib2.ops.operation.BinaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOutputOperation;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
 import net.imglib2.ops.operation.subset.views.ImgView;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.sampler.special.ConstantRandomAccessible;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
@@ -288,7 +288,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                                 min[m_dimFeat] = i;
                                 max[m_dimFeat] = i;
                                 ImgView<T> subImg = new ImgView<T>(
-                                                SubsetViews.iterableSubsetView(
+                                                SubsetOperations.subsetview(
                                                                 src,
                                                                 new FinalInterval(
                                                                                 min,

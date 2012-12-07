@@ -18,8 +18,8 @@ import net.imglib2.img.NativeImgFactory;
 import net.imglib2.img.planar.PlanarImgFactory;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.NativeImgLabeling;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.subset.views.LabelingView;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -315,7 +315,7 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
 
                         e.renderOnSegmentationImage(
                                         new LabelingView<String>(
-                                                        SubsetViews.iterableSubsetView(
+                                                        SubsetOperations.subsetview(
                                                                         res,
                                                                         new FinalInterval(
                                                                                         minExtend,

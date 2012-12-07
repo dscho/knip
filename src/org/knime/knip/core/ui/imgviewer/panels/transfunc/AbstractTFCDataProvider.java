@@ -17,10 +17,11 @@ import javax.swing.SwingUtilities;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 
 import org.knime.knip.core.awt.Real2ColorByLookupTableRenderer;
 import org.knime.knip.core.awt.lookup.LookupTable;
@@ -36,9 +37,14 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 /**
  * Class that wraps the panel and connects it to the knip event service.
  */
-public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>, KEY>
+public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
                 extends ViewerComponent implements
-                TransferFunctionControlDataProvider<T, I> {
+                TransferFunctionControlDataProvider<T> {
+
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
 
         private class ActionAdapter implements ActionListener {
                 @Override
@@ -108,12 +114,14 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
          * Use this to calculate a new histogram for a given interval on the
          * current source data.
          */
-        private HistogramWithNormalization calcNewHistogram(final Interval interval) {
+        private HistogramWithNormalization calcNewHistogram(
+                        final Interval interval) {
                 assert m_src != null;
                 assert interval != null;
 
                 // find min value
-                Cursor<T> cur = SubsetViews.iterableSubsetView(m_src, interval)
+                Cursor<T> cur = Views.iterable(
+                                SubsetOperations.subsetview(m_src, interval))
                                 .cursor();
                 cur.fwd();
                 T sample = cur.get().createVariable();
@@ -128,7 +136,8 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                         hist.incByValue(val);
                 }
 
-                return new HistogramWithNormalization(hist.hist(), sample.getMinValue(), sample.getMaxValue());
+                return new HistogramWithNormalization(hist.hist(),
+                                sample.getMinValue(), sample.getMaxValue());
         }
 
         /**
@@ -157,8 +166,8 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                 HistogramWithNormalization hist = getHistogramData(key);
 
                 if (m_onlyOne) {
-                        newMemento = m_tfc.createMemento(m_currentMemento,
-                                        hist);
+                        newMemento = m_tfc
+                                        .createMemento(m_currentMemento, hist);
                 } else {
                         newMemento = m_mementos.get(key);
 
@@ -189,7 +198,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
 
         @EventListener
         public final void onImgUpdated(
-                        final IntervalWithMetadataChgEvent<I> event) {
+                        final IntervalWithMetadataChgEvent<T> event) {
 
                 /*
                  * because of the way the AWTImageProvider reacts to new images
@@ -214,7 +223,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                         }
                 });
 
-                m_src = event.getInterval();
+                m_src = event.getRandomAccessibleInterval();
                 setMementoToTFC(updateKey(m_src));
         }
 
@@ -266,8 +275,9 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, I extends R
                         hist = m_currentHistogram.getNormalizedHistogram();
                 }
 
-                LookupTable<T, ARGBType> table = new RealLookupTable<T>(hist.getMinValue(),
-                                hist.getMaxValue(), m_tfc.getCurrentBundle());
+                LookupTable<T, ARGBType> table = new RealLookupTable<T>(
+                                hist.getMinValue(), hist.getMaxValue(),
+                                m_tfc.getCurrentBundle());
                 m_eventService.publish(new LookupTableChgEvent<T, ARGBType>(
                                 table));
                 m_eventService.publish(new ImgRedrawEvent());

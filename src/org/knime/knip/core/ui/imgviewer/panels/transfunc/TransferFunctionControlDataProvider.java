@@ -1,11 +1,10 @@
 package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.ui.event.EventService;
 
-public interface TransferFunctionControlDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>> {
+public interface TransferFunctionControlDataProvider<T extends RealType<T>> {
 
         /**
          * Set a new EventService for this data provider and the wrapped {@link TransferFunctionControlPanel}.<br>

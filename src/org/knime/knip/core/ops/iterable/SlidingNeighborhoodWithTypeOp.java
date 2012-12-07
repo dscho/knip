@@ -8,8 +8,8 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.region.localneighborhood.Neighborhood;
 import net.imglib2.algorithm.region.localneighborhood.Shape;
 import net.imglib2.ops.operation.BinaryOperation;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.Type;
 import net.imglib2.view.IntervalView;
@@ -48,8 +48,9 @@ public class SlidingNeighborhoodWithTypeOp<T extends Type<T>, V extends Type<V>,
                         throw new IllegalArgumentException(
                                         "Iteration order doesn't fit in SlidingNeighborhoodWithTypeOp");
 
-                Cursor<T> inCursor = SubsetViews.iterableSubsetView(input,
-                                input).cursor();
+                Cursor<T> inCursor = Views.iterable(
+                                SubsetOperations.subsetview(input, input))
+                                .cursor();
                 Cursor<V> outCursor = output.cursor();
                 for (final Neighborhood<T> neighborhood : neighborhoods) {
                         op.compute(neighborhood.cursor(), inCursor.next(),

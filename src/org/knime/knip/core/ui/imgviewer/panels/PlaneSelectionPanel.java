@@ -375,7 +375,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          * @param name
          */
         @EventListener
-        public void onImgUpdated(IntervalWithMetadataChgEvent<I> e) {
+        public void onImgUpdated(IntervalWithMetadataChgEvent<T> e) {
 
                 if (m_dims == null)
                         m_dims = new long[e.getCalibratedSpace()
@@ -393,8 +393,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 // lokale dims //axes labels
                 e.getCalibratedSpace().axes(m_axesLabels);
-                m_dims = new long[e.getInterval().numDimensions()];
-                e.getInterval().dimensions(m_dims);
+                m_dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+                e.getRandomAccessibleInterval().dimensions(m_dims);
 
                 if (!Arrays.equals(oldDims, m_dims)
                                 || !Arrays.equals(m_axesLabels, oldAxes)) {

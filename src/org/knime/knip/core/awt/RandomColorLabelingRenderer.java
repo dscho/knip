@@ -195,4 +195,9 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
                 return intersected;
         }
 
+        @Override
+        public void setRenderingWithLabelStrings(boolean withNumbers) {
+                // nothing to do here
+        }
+
 }

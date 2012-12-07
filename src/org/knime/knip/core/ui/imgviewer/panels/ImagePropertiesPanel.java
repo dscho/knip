@@ -102,38 +102,38 @@ public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<
          * @param name
          */
         @EventListener
-        public void onImgUpdated(IntervalWithMetadataChgEvent<I> e) {
-                final String[][] properties = new String[2 + e.getInterval()
+        public void onImgUpdated(IntervalWithMetadataChgEvent<T> e) {
+                final String[][] properties = new String[2 + e.getRandomAccessibleInterval()
                                 .numDimensions()][2];
                 properties[0][0] = "Type";
-                properties[0][1] = e.getInterval().firstElement()
+                properties[0][1] = e.getIterableInterval().firstElement()
                                 .createVariable().getClass().getCanonicalName();
                 properties[1][0] = "Image type";
-                if (e.getInterval() instanceof ImgPlus) {
-                        properties[1][1] = ((ImgPlus<T>) e.getInterval())
+                if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
+                        properties[1][1] = ((ImgPlus<T>) e.getRandomAccessibleInterval())
                                         .getImg().getClass().getCanonicalName();
                 } else {
-                        properties[1][1] = e.getInterval().getClass()
+                        properties[1][1] = e.getRandomAccessibleInterval().getClass()
                                         .getCanonicalName();
                 }
 
-                if (e.getInterval() instanceof ImgPlus) {
-                        for (int i = 0; i < e.getInterval().numDimensions(); i++) {
+                if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
+                        for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
                                 properties[2 + i][0] = "Size "
-                                                + ((ImgPlus<T>) e.getInterval())
+                                                + ((ImgPlus<T>) e.getRandomAccessibleInterval())
                                                                 .axis(i)
                                                                 .getLabel();
                                 properties[2 + i][1] = ""
-                                                + e.getInterval().dimension(i);
+                                                + e.getRandomAccessibleInterval().dimension(i);
                         }
                 } else {
-                        for (int i = 0; i < e.getInterval().numDimensions(); i++) {
+                        for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
                                 properties[2 + i][0] = "Size "
                                                 + e.getCalibratedSpace()
                                                                 .axis(i)
                                                                 .getLabel();
                                 properties[2 + i][1] = ""
-                                                + e.getInterval().dimension(i);
+                                                + e.getRandomAccessibleInterval().dimension(i);
                         }
                 }
                 m_propertiesTable.setModel(new AbstractTableModel() {

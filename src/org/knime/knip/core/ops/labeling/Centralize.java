@@ -9,7 +9,7 @@ import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.ops.img.BinaryObjectFactory;
+import net.imglib2.ops.operation.BinaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.Centroid;
 import net.imglib2.type.numeric.RealType;

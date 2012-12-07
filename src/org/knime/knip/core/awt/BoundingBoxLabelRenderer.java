@@ -6,13 +6,14 @@ import java.util.Set;
 
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ARGBScreenImage;
 import net.imglib2.display.ScreenImage;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.subset.views.LabelingView;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.type.Type;
 
@@ -21,7 +22,7 @@ import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
-                implements ImageRenderer<LabelingType<L>, Labeling<L>>,
+                implements ImageRenderer<LabelingType<L>>,
                 RendererWithLabels<L>, RendererWithHilite {
 
         private final Color HILITED_RGB_COLOR = new Color(
@@ -36,38 +37,46 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
 
         protected double m_scale = 1.0;
 
+        protected boolean m_withLabelStrings = true;
+
         @Override
-        public ScreenImage render(Labeling<L> source, int dimX, int dimY,
-                        long[] planePos) {
+        public ScreenImage render(
+                        RandomAccessibleInterval<LabelingType<L>> source,
+                        int dimX, int dimY, long[] planePos) {
                 return render(dimX, dimY, planePos, source, m_activeLabels,
-                                m_scale);
+                                m_scale, m_withLabelStrings);
         }
 
         private ScreenImage render(int dimX, int dimY, long[] planePos,
-                        Labeling<L> source, Set<String> activeLabels,
-                        double scale) {
+                        RandomAccessibleInterval<LabelingType<L>> labeling,
+                        Set<String> activeLabels, double scale,
+                        boolean withLabelString) {
+                Labeling<L> subLab = null;
+                if (labeling instanceof Labeling) {
+                        subLab = (Labeling<L>) labeling;
+                } else {
+                        subLab = new LabelingView<L>(labeling, null);
+                }
 
-                Labeling<L> subLab = source;
-
-                if (source.numDimensions() > 2) {
+                if (subLab.numDimensions() > 2) {
                         long[] min = planePos.clone();
                         long[] max = planePos.clone();
 
                         min[dimX] = 0;
                         min[dimY] = 0;
 
-                        max[dimX] = source.max(dimX);
-                        max[dimY] = source.max(dimY);
+                        max[dimX] = subLab.max(dimX);
+                        max[dimY] = subLab.max(dimY);
 
                         subLab = new LabelingView<L>(
-                                        SubsetViews.iterableSubsetView(source,
+                                        SubsetOperations.subsetview(subLab,
                                                         new FinalInterval(min,
                                                                         max)),
-                                        source.<L> factory());
+                                        subLab.<L> factory());
                 }
 
-                long[] dims = new long[source.numDimensions()];
-                source.dimensions(dims);
+                long[] dims = new long[subLab.numDimensions()];
+                subLab.dimensions(dims);
                 int width = (int) Math.round(dims[dimX] * scale) + 1;
                 int height = (int) Math.round(dims[dimY] * scale) + 1;
 
@@ -99,17 +108,19 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                                 IterableRegionOfInterest roi = subLab
                                                 .getIterableRegionOfInterest(label);
                                 Interval ii = roi
-                                                .getIterableIntervalOverROI(source);
+                                                .getIterableIntervalOverROI(subLab);
                                 g.drawRect((int) (ii.min(X) * scale),
                                                 (int) (ii.min(Y) * scale),
                                                 (int) ((ii.dimension(X) - 1) * scale),
                                                 (int) ((ii.dimension(Y) - 1) * scale));
 
-                                if (scale > .6) {
+                                if (withLabelString) {
+                                        if (scale > .6) {
 
-                                        g.drawString(label.toString(),
+                                                g.drawString(label.toString(),
                                                         (int) ((ii.min(X) + 1) * scale),
                                                         (int) ((ii.min(Y) + 10) * scale));
+                                        }
                                 }
                         }
                 }
@@ -136,6 +147,11 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
         }
 
         @Override
+        public void setRenderingWithLabelStrings(boolean withNumbers) {
+                m_withLabelStrings = withNumbers;
+        }
+
+        @Override
         public void setHilitedLabels(Set<String> hilitedLabels) {
                 m_hilitedLabels = hilitedLabels;
         }
@@ -149,7 +165,6 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
         public void setHiliteMode(boolean isHiliteMode) {
                 // TODO: Nothing going on here
         }
-
 
         @Override
         public void setLabelMapping(LabelingMapping<L> labelMapping) {

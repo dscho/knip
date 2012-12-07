@@ -76,7 +76,6 @@ import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.interpolation.randomaccess.NearestNeighborInterpolatorFactory;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.outofbounds.OutOfBoundsBorderFactory;
 import net.imglib2.realtransform.AffineGet;
 import net.imglib2.realtransform.AffineTransform2D;
@@ -85,6 +84,8 @@ import net.imglib2.realtransform.RealViews;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
+
+import org.knime.knip.core.util.MiscViews;
 
 /**
  *
@@ -402,7 +403,7 @@ public final class AWTImageTools {
 
         public static <T extends Type<T>> BufferedImage renderScaledStandardColorImg(
                         RandomAccessibleInterval<T> img,
-                        ImageRenderer<T, RandomAccessibleInterval<T>> renderer,
+                        ImageRenderer<T> renderer,
                         double factor, long[] startPos) {
 
                 int width;
@@ -417,7 +418,7 @@ public final class AWTImageTools {
                         ((AffineTransform2D) transform).scale(factor);
                         interval = new FinalInterval(
                                         new long[] { width, height });
-                        img = SubsetViews.synchronizeDimensionality(img,
+                        img = MiscViews.synchronizeDimensionality(img,
                                         interval);
                 } else if (img.numDimensions() == 2) {
                         width = (int) (img.dimension(0) * factor);

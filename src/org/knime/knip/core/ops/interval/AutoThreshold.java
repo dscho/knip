@@ -1,8 +1,8 @@
 package org.knime.knip.core.ops.interval;
 
 import net.imglib2.IterableInterval;
-import net.imglib2.ops.img.Operations;
 import net.imglib2.ops.img.UnaryRelationAssigment;
+import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
 import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;

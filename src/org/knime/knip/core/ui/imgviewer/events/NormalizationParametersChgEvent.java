@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
-import net.imglib2.ops.operation.iterableinterval.unary.NormalizeIterableInterval;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
+import net.imglib2.ops.operation.Operations;
+import net.imglib2.ops.operation.SubsetOperations;
+import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
+import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.util.Pair;
 import net.imglib2.view.Views;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
@@ -34,8 +37,6 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
 
         /* Weather the img shall be normalized or not */
         private boolean m_isNormalized;
-
-        private NormalizeIterableInterval<T, IterableInterval<T>> m_normalizer;
 
         /**
          * Empty constructor for serialization
@@ -68,7 +69,6 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
          */
         public NormalizationParametersChgEvent(double saturation,
                         boolean isNormalized) {
-                m_normalizer = new NormalizeIterableInterval<T, IterableInterval<T>>();
                 m_saturation = saturation;
                 m_isNormalized = isNormalized;
 
@@ -114,19 +114,28 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
          *
          * @return [0]: the normalization factor, [1]: the local minimum
          */
-        public double[] getNormalizationParameters(Img<T> src,
-                        PlaneSelectionEvent sel) {
+        public double[] getNormalizationParameters(
+                        RandomAccessibleInterval<T> src, PlaneSelectionEvent sel) {
                 if (!m_isNormalized)
-                        return new double[] { 1.0,
-                                        src.firstElement().getMinValue() };
+                        return new double[] {
+                                        1.0,
+                                        Views.iterable(src).firstElement()
+                                                        .getMinValue() };
                 else {
-                        return m_normalizer
-                                        .getNormalizationProperties(
-                                                        Views.iterable(SubsetViews
-                                                                        .iterableSubsetView(
-                                                                                        src,
-                                                                                        sel.getInterval(src))),
-                                                        m_saturation);
+                        T element = src.randomAccess().get().createVariable();
+                        Pair<T, T> oldMinMax = Operations
+                                        .compute(new MinMax<T>(m_saturation,
+                                                        element),
+                                                        Views.iterable(SubsetOperations
+                                                                        .subsetview(src,
+                                                                                        sel.getInterval(src))));
+                        return new double[] {
+                                        Normalize.normalizationFactor(
+                                                        oldMinMax.a.getRealDouble(),
+                                                        oldMinMax.b.getRealDouble(),
+                                                        element.getMinValue(),
+                                                        element.getMaxValue()),
+                                        oldMinMax.a.getRealDouble() };
                 }
 
         }

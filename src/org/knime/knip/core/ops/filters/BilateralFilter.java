@@ -6,10 +6,10 @@ import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.view.IterableRandomAccessibleInterval;
+import net.imglib2.view.Views;
 
 /**
  * Bilateral filtering
@@ -63,7 +63,7 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
                 long[] ma = new long[srcIn.numDimensions()];
                 long mma1 = srcIn.max(0);
                 long mma2 = srcIn.max(1);
-                IterableRandomAccessibleInterval<T> si;
+                IterableInterval<T> si;
                 Cursor<T> cq;
                 while (cp.hasNext()) {
                         cp.fwd();
@@ -77,8 +77,8 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
                         ma[0] = Math.min(mma1, mi[0] + m_radius);
                         ma[1] = Math.min(mma2, mi[1] + m_radius);
                         Interval in = new FinalInterval(mi, ma);
-                        si = new IterableRandomAccessibleInterval<T>(
-                                        SubsetViews.iterableSubsetView(srcIn,
+                        si = Views.iterable(
+                                        SubsetOperations.subsetview(srcIn,
                                                         in));
                         cq = si.localizingCursor();
                         double s, v = 0.0;

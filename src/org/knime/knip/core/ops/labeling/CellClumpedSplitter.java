@@ -70,6 +70,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.read.ConvertedRandomAccessibleInterval;
 import net.imglib2.img.Img;
+import net.imglib2.img.ImgPlus;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.sparse.NtreeImgFactory;
 import net.imglib2.labeling.Labeling;
@@ -204,9 +205,11 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                 distanceMap, new ArrayList<long[]>());
 
                 final Img<BitType> maxima = new PositionsToBitTypeImage()
-                                .compute(posses, new NtreeImgFactory<BitType>()
-                                                .create(cellLabeling,
-                                                                new BitType()));
+                                .compute(posses,
+                                                new ImgPlus<BitType>(
+                                                                new NtreeImgFactory<BitType>()
+                                                                                .create(cellLabeling,
+                                                                                                new BitType())));
 
                 final Labeling<Integer> lab = new NativeImgLabeling<Integer, IntType>(
                                 new NtreeImgFactory<IntType>().create(
@@ -238,11 +241,12 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                 /*
                  * computed centroids and saved into localMaxima BitType Img
                  */
-                final Img<BitType> localMaxima = new PositionsToBitTypeImage()
+                final ImgPlus<BitType> localMaxima = new PositionsToBitTypeImage()
                                 .compute(centroidsList,
-                                                new NtreeImgFactory<BitType>()
-                                                                .create(cellLabeling,
-                                                                                new BitType()));
+                                                new ImgPlus<BitType>(
+                                                                new NtreeImgFactory<BitType>()
+                                                                                .create(cellLabeling,
+                                                                                                new BitType())));
 
                 // AWTImageTools.showInSameFrame(localMaxima, 1.0);
                 /*

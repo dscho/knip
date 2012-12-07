@@ -8,7 +8,7 @@ import net.imglib2.type.Type;
 import net.imglib2.type.numeric.ARGBType;
 
 public abstract class ProjectingRenderer<T extends Type<T>> implements
-                ImageRenderer<T, RandomAccessibleInterval<T>> {
+                ImageRenderer<T> {
 
         @Override
         public ScreenImage render(RandomAccessibleInterval<T> source,

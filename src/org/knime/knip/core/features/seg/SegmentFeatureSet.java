@@ -59,9 +59,11 @@ import net.imglib2.algorithm.features.seg.CalculatePerimeter;
 import net.imglib2.img.Img;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.ops.img.Operations;
+import net.imglib2.ops.operation.Operations;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
 import net.imglib2.ops.operation.randomaccessibleinterval.unary.ConvexHull2D;
+import net.imglib2.ops.operation.subset.views.ImgView;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.real.DoubleType;
 
@@ -73,15 +75,12 @@ import org.knime.knip.core.util.ImgUtils;
 
 /**
  *
- * @author hornm, University of Konstanz
+ * @author hornm, dietzc, University of Konstanz
  */
 public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
         private double[] m_centroid = null;
 
-        /**
-         * feature names
-         */
         public final String[] FEATURES;
 
         private final ExtractOutlineImg m_outlineOp;
@@ -171,11 +170,14 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                                 || m_enabled.get(m_defaultAxis.length + 3)
                                 || m_enabled.get(m_defaultAxis.length + 5)) {
                         if (activeDims > 2) {
-                                System.out.println("Perimeter, Convexity and Circularity and Diameter can only be calculated on 2 dimensional segments. Settings them to Double.Nan");
                                 m_solidity = Double.NaN;
                                 m_perimeter = Double.NaN;
                                 m_circularity = Double.NaN;
                                 m_diameter = Double.NaN;
+
+                                throw new IllegalArgumentException(
+                                                "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
+
                         } else {
 
                                 final Img<BitType> bitMask = m_ocac
@@ -190,23 +192,48 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
                                 if (m_enabled.get(1 + m_defaultAxis.length)
                                                 || m_enabled.get(3 + m_defaultAxis.length)) {
-                                        m_convexityOp.compute(bitMask, bitMask);
-                                        final Cursor<BitType> convexBitMaskCursor = bitMask
-                                                        .cursor();
 
-                                        double ctr = 0;
-                                        while (convexBitMaskCursor.hasNext()) {
-                                                convexBitMaskCursor.fwd();
-                                                ctr += convexBitMaskCursor
-                                                                .get().get() ? 1
-                                                                : 0;
+                                        if (activeDims == 2) {
+                                                m_convexityOp.compute(
+                                                                new ImgView<BitType>(
+                                                                                SubsetOperations.subsetview(
+                                                                                                bitMask,
+                                                                                                bitMask),
+                                                                                null),
+                                                                new ImgView<BitType>(
+                                                                                SubsetOperations.subsetview(
+                                                                                                bitMask,
+                                                                                                bitMask),
+                                                                                null));
+                                                final Cursor<BitType> convexBitMaskCursor = bitMask
+                                                                .cursor();
+
+                                                double ctr = 0;
+                                                while (convexBitMaskCursor
+                                                                .hasNext()) {
+                                                        convexBitMaskCursor
+                                                                        .fwd();
+                                                        ctr += convexBitMaskCursor
+                                                                        .get()
+                                                                        .get() ? 1
+                                                                        : 0;
+                                                }
+
+                                                m_circularity = (4d * Math.PI * m_interval
+                                                                .size())
+                                                                / Math.pow(m_perimeter,
+                                                                                2);
+                                                m_solidity = interval.size()
+                                                                / ctr;
+
+                                        } else {
+                                                m_circularity = Double.NaN;
+                                                m_solidity = Double.NaN;
+
+                                                throw new IllegalArgumentException(
+                                                                "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
                                         }
 
-                                        m_circularity = (4d * Math.PI * m_interval
-                                                        .size())
-                                                        / Math.pow(m_perimeter,
-                                                                        2);
-                                        m_solidity = interval.size() / ctr;
                                 }
 
                                 if (m_enabled.get(5 + m_defaultAxis.length)) {

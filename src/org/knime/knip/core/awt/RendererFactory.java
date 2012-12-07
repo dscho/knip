@@ -12,8 +12,8 @@ import net.imglib2.type.numeric.RealType;
 public class RendererFactory {
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        public static <T extends Type<T>, I extends RandomAccessibleInterval<T>> ImageRenderer<T, I>[] createSuitableRenderer(
-                        final I img) {
+        public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
+                        final RandomAccessibleInterval<T> img) {
 
                 List<ImageRenderer> res = new ArrayList<ImageRenderer>();
 

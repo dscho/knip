@@ -6,7 +6,6 @@ import java.util.Set;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ARGBScreenImage;
 import net.imglib2.display.ScreenImage;
-import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.Type;
@@ -27,7 +26,9 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
         }
 
         @Override
-        public ScreenImage render(Labeling<L> source, int dimX, int dimY,
+        public ScreenImage render(
+                        RandomAccessibleInterval<LabelingType<L>> source,
+                        int dimX, int dimY,
                         long[] planePos) {
                 m_dimX = dimX;
                 m_dimY = dimY;

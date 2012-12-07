@@ -60,9 +60,9 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.data.CooccurrenceMatrix;
 import net.imglib2.ops.data.CooccurrenceMatrix.MatrixOrientation;
+import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeCooccurrenceMatrix;
 import net.imglib2.ops.operation.subset.views.ImgView;
-import net.imglib2.ops.operation.subset.views.SubsetViews;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
 
@@ -135,7 +135,7 @@ public class ObjectCalcAndCache {
                                 maskRA.get().set(true);
                         }
                         binaryMask2D = new ImgView<BitType>(
-                                        SubsetViews.iterableSubsetView(mask,
+                                        SubsetOperations.subsetview(mask,
                                                         new FinalInterval(dims)),
                                         mask.factory());
                 }

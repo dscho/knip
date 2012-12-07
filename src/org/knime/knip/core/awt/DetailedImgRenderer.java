@@ -71,7 +71,7 @@ import org.knime.knip.core.data.img.GeneralMetadataImpl;
  * @param <T>
  */
 public class DetailedImgRenderer<T extends Type<T>> implements
-                ImageRenderer<T, RandomAccessibleInterval<T>> {
+ ImageRenderer<T> {
 
         /* for source images below that size, no details will be shown */
         private static final Dimension MIN_SIZE = new Dimension(150, 150);
@@ -106,7 +106,7 @@ public class DetailedImgRenderer<T extends Type<T>> implements
                 m_axes = meta;
         }
 
-        public ImageRenderer<T, RandomAccessibleInterval<T>> getUnderlyingRenderer() {
+        public ImageRenderer<T> getUnderlyingRenderer() {
                 return m_projectingRenderer;
         }
 

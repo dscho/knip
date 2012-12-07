@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
@@ -29,12 +30,12 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
  *
  * @author dietzc, hornm, schoenenbergerf
  */
-public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibleInterval<T> & IterableInterval<T>>
+public abstract class ViewInfoPanel<T extends Type<T>>
                 extends ViewerComponent {
 
         private static final long serialVersionUID = 1L;
 
-        protected I m_img;
+        protected RandomAccessibleInterval<T> m_randomAccessible;
 
         protected RandomAccess<T> m_rndAccess;
 
@@ -58,6 +59,8 @@ public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibl
 
         private final JPanel m_imageInfoPanel;
 
+        private IterableInterval<T> m_iterable;
+
         public ViewInfoPanel() {
                 super("Image Info", false);
                 m_infoBuffer = new StringBuffer();
@@ -75,16 +78,18 @@ public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibl
                 add(m_imageInfoPanel);
         }
 
-        protected abstract String updateMouseLabel(StringBuffer buffer, I img,
+        protected abstract String updateMouseLabel(StringBuffer buffer,
+                        Interval img,
                         CalibratedSpace axes, RandomAccess<T> rndAccess,
                         long[] coords);
 
-        protected abstract String updateImageLabel(StringBuffer buffer, I img,
+        protected abstract String updateImageLabel(StringBuffer buffer,
+                        Interval img,
                         RandomAccess<T> rndAccess, String imgName);
 
         @EventListener
         public void onClose(ViewClosedEvent ev) {
-                m_img = null;
+                m_randomAccessible = null;
                 m_dims = null;
                 m_mouseInfoLabel = null;
                 m_imageInfoLabel = null;
@@ -92,29 +97,37 @@ public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibl
                 m_infoBuffer = null;
                 m_pos = null;
                 m_rndAccess = null;
+                m_iterable = null;
+
         }
 
         /**
          * @param name
          */
         @EventListener
-        public void onImgChanged(IntervalWithMetadataChgEvent<I> e) {
-                m_img = e.getInterval();
-                m_dims = new long[e.getInterval().numDimensions()];
-                m_img.dimensions(m_dims);
+        public void onImgChanged(IntervalWithMetadataChgEvent<T> e) {
+                m_randomAccessible = e.getRandomAccessibleInterval();
+                m_iterable = Views.iterable(m_randomAccessible);
+
+                m_dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+
+                m_randomAccessible.dimensions(m_dims);
                 m_imgAxes = e.getCalibratedSpace();
-                T val = e.getInterval().firstElement().createVariable();
-                m_rndAccess = Views.extendValue(m_img, val).randomAccess();
+
+                T val = m_iterable.firstElement().createVariable();
+                m_rndAccess = Views.extendValue(m_randomAccessible, val)
+                                .randomAccess();
 
                 if (m_sel == null
-                                || m_sel.numDimensions() != e.getInterval()
+                                || m_sel.numDimensions() != e.getRandomAccessibleInterval()
                                                 .numDimensions()) {
                         onPlaneSelectionChanged(new PlaneSelectionEvent(0, 1,
-                                        new long[e.getInterval()
+                                        new long[e.getRandomAccessibleInterval()
                                                         .numDimensions()]));
                 }
 
-                m_imageInfoLabel.setText(updateImageLabel(m_infoBuffer, m_img,
+                m_imageInfoLabel.setText(updateImageLabel(m_infoBuffer,
+                                m_randomAccessible,
                                 m_rndAccess, e.getName().getName()));
         }
 
@@ -132,7 +145,8 @@ public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibl
                         m_pos[m_sel.getPlaneDimIndex2()] = -1;
                 }
 
-                m_mouseInfoLabel.setText(updateMouseLabel(m_infoBuffer, m_img,
+                m_mouseInfoLabel.setText(updateMouseLabel(m_infoBuffer,
+                                m_randomAccessible,
                                 m_imgAxes, m_rndAccess, m_pos));
 
                 m_infoBuffer.setLength(0);
@@ -147,7 +161,8 @@ public abstract class ViewInfoPanel<T extends Type<T>, I extends RandomAccessibl
                         m_pos = m_sel.getPlanePos(m_currentCoords.getPosX(),
                                         m_currentCoords.getPosY());
                         m_mouseInfoLabel.setText(updateMouseLabel(m_infoBuffer,
-                                        m_img, m_imgAxes, m_rndAccess, m_pos));
+                                        m_randomAccessible, m_imgAxes,
+                                        m_rndAccess, m_pos));
                         m_infoBuffer.setLength(0);
                 }
         }

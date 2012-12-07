@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.SegmentColorTable;
@@ -41,7 +40,7 @@ import org.knime.knip.core.ui.imgviewer.panels.HiddenViewerComponent;
  * @author Christian
  *
  */
-public class AnnotatorManager<T extends RealType<T>, I extends Img<T>> extends
+public class AnnotatorManager<T extends RealType<T>> extends
                 HiddenViewerComponent {
 
         /**
@@ -156,28 +155,28 @@ public class AnnotatorManager<T extends RealType<T>, I extends Img<T>> extends
          * @param axes
          */
         @EventListener
-        public void onUpdate(IntervalWithMetadataChgEvent<I> e) {
+        public void onUpdate(IntervalWithMetadataChgEvent<T> e) {
 
                 m_currentOverlay = getOverlayMap().get(
                                 e.getSource().getSource());
 
                 if (m_currentOverlay == null) {
-                        m_currentOverlay = new Overlay<String>(e.getInterval());
+                        m_currentOverlay = new Overlay<String>(e.getRandomAccessibleInterval());
                         getOverlayMap().put(e.getSource().getSource(),
                                         m_currentOverlay);
                         m_currentOverlay.setEventService(m_eventService);
                 }
 
-                long[] dims = new long[e.getInterval().numDimensions()];
-                e.getInterval().dimensions(dims);
+                long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+                e.getRandomAccessibleInterval().dimensions(dims);
 
                 if (m_sel == null || !isInsideDims(m_sel.getPlanePos(), dims)) {
                         m_sel = new PlaneSelectionEvent(0, 1, new long[e
-                                        .getInterval().numDimensions()]);
+                                        .getRandomAccessibleInterval().numDimensions()]);
                 }
 
                 m_eventService.publish(new AnnotatorImgAndOverlayChgEvent(e
-                                .getInterval(), m_currentOverlay));
+                                .getRandomAccessibleInterval(), m_currentOverlay));
 
                 m_eventService.publish(new ImgRedrawEvent());
         }

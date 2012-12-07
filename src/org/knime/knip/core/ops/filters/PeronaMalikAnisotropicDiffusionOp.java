@@ -1,14 +1,18 @@
 package org.knime.knip.core.ops.filters;
 
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.pde.PeronaMalikAnisotropicDiffusion;
 import net.imglib2.algorithm.pde.PeronaMalikAnisotropicDiffusion.DiffusionFunction;
-import net.imglib2.img.Img;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.ops.operation.img.unary.ImgCopyOperation;
+import net.imglib2.ops.operation.iterableinterval.unary.IterableIntervalCopy;
+import net.imglib2.ops.operation.subset.views.ImgView;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.view.Views;
 
-public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T>>
-                implements UnaryOperation<Img<T>, Img<T>> {
+public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T> & NativeType<T>, I extends RandomAccessibleInterval<T>>
+                implements UnaryOperation<I, I> {
 
         private final double m_deltat;
         // Iterations
@@ -43,18 +47,20 @@ public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T>>
         }
 
         @Override
-        public Img<T> compute(Img<T> input, Img<T> output) {
+        public I compute(I input, I output) {
 
                 // this is ugly and a hack but needed as the implementation of
                 // this
                 // algorithms doesn't accept the input img
+                ImgView<T> out = new ImgView<T>(output,
+                                new ArrayImgFactory<T>());
 
-                ImgCopyOperation<T> copyOp = new ImgCopyOperation<T>();
+                new IterableIntervalCopy<T>().compute(Views.iterable(input),
+                                out);
 
                 // build a new diffusion scheme
                 PeronaMalikAnisotropicDiffusion<T> diff = new PeronaMalikAnisotropicDiffusion<T>(
-                                copyOp.compute(input, output), this.m_deltat,
-                                this.m_fun);
+                                out, this.m_deltat, this.m_fun);
 
                 // set threads //TODO: noch ne "auto"-funktion einbauen, das das
                 // autmatisch passiert? bis der fehler gefunden ist...
@@ -70,9 +76,10 @@ public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T>>
         }
 
         @Override
-        public UnaryOperation<Img<T>, Img<T>> copy() {
-                return new PeronaMalikAnisotropicDiffusionOp<T>(this.m_deltat,
-                                this.m_n, this.m_fun, this.threads);
+        public UnaryOperation<I, I> copy() {
+                return new PeronaMalikAnisotropicDiffusionOp<T, I>(
+                                this.m_deltat, this.m_n, this.m_fun,
+                                this.threads);
         }
 
 }

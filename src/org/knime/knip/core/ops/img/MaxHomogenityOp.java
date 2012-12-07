@@ -1,8 +1,9 @@
 package org.knime.knip.core.ops.img;
 
 import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
 import net.imglib2.Point;
-import net.imglib2.img.Img;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.iterable.unary.Mean;
 import net.imglib2.ops.operation.iterable.unary.Variance;
@@ -14,15 +15,15 @@ import net.imglib2.view.Views;
 
 //TODO: Use circle instead of rectangle??
 //TODO: Input: RandomAccessibleInterval Output: IterableInterval
-public class MaxHomogenityOp<T extends RealType<T>> implements
-                UnaryOperation<Img<T>, Img<T>> {
+public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleInterval<T>>
+                implements UnaryOperation<I, I> {
 
         private final long[] m_span;
         private final double m_lambda;
-        private final OutOfBoundsFactory<T, Img<T>> m_outofbounds;
+        private final OutOfBoundsFactory<T, I> m_outofbounds;
 
         public MaxHomogenityOp(double lambda, long[] span,
-                        OutOfBoundsFactory<T, Img<T>> outofbounds) {
+                        OutOfBoundsFactory<T, I> outofbounds) {
                 m_span = span;
                 m_lambda = lambda;
                 m_outofbounds = outofbounds;
@@ -30,16 +31,17 @@ public class MaxHomogenityOp<T extends RealType<T>> implements
         }
 
         @Override
-        public Img<T> compute(Img<T> input, Img<T> output) {
+        public I compute(I input, I output) {
 
-                PolygonRegionOfInterest[] rois = createROIs(input
+                IterableInterval<T> inputIterable = Views.iterable(input);
+                PolygonRegionOfInterest[] rois = createROIs(inputIterable
                                 .firstElement().createVariable(), m_span);
 
                 double[] displacement = new double[input.numDimensions()];
                 double[] position = new double[input.numDimensions()];
 
-                Cursor<T> cursor = input.cursor();
-                Cursor<T> outCursor = output.cursor();
+                Cursor<T> cursor = inputIterable.cursor();
+                Cursor<T> outCursor = Views.iterable(output).cursor();
                 while (cursor.hasNext()) {
                         cursor.fwd();
                         outCursor.fwd();
@@ -202,8 +204,8 @@ public class MaxHomogenityOp<T extends RealType<T>> implements
         }
 
         @Override
-        public UnaryOperation<Img<T>, Img<T>> copy() {
-                return new MaxHomogenityOp<T>(m_lambda, m_span.clone(),
+        public UnaryOperation<I, I> copy() {
+                return new MaxHomogenityOp<T, I>(m_lambda, m_span.clone(),
                                 m_outofbounds);
         }
 
