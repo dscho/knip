@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/jama-1.0.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.14.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-20111128.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20121208.220151-55.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/jcommon-1.0.16.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.16.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-common-4.5-20121207.102508-48.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-legacy-4.5-20121208.220236-49.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.5-20121208.220310-54.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.5-20121207.102225-50.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.5-20121207.102434-48.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20121208.220323-54.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20121207.102307-50.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.5-20121208.220340-53.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-devel-4.5-20121208.220222-49.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
@@ -22,7 +7,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-legacy-2.0.0-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-realtransform-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-log4j12-1.6.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-codec-20041127.091804.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-logging-1.1.1.jar"/>
@@ -34,9 +21,21 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/backport-util-concurrent-3.1.jar" sourcepath="/home/hornm/.m2/repository/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/serializer-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/xalan-2.7.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-legacy-2.0.0-SNAPSHOT.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-ui-2.0.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-legacy-4.5-20121208.220236-49.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.5-20121208.220310-54.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.5-20121207.102225-50.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.5-20121207.102434-48.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20121208.220323-54.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20121207.102307-50.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.5-20121208.220340-53.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-devel-4.5-20121208.220222-49.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20121208.220151-55.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/jcommon-1.0.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/jama-1.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-20111128.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
