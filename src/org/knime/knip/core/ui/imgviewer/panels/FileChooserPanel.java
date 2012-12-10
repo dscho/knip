@@ -12,8 +12,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import java.util.prefs.Preferences;
@@ -95,7 +95,7 @@ public class FileChooserPanel extends JPanel {
                 m_fileChooser = new MacHackedFileChooserPanel();
 
                 m_addButton = new JButton("add");
-                m_addAllButton = new JButton("add all");
+                m_addAllButton = new JButton("add all files");
                 m_remButton = new JButton("remove");
                 m_remAllButton = new JButton("    remove all    ");
                 m_selectedFileList = new JList();
@@ -152,6 +152,7 @@ public class FileChooserPanel extends JPanel {
                 m_fileChooser.setPreferredSize(new Dimension(300, 100));
                 JPanel browsePane = new JPanel();
                 browsePane.setLayout(new BoxLayout(browsePane, BoxLayout.Y_AXIS));
+
                 browsePane.add(m_fileChooser);
 
                 if (fileFilter != null) {
@@ -229,7 +230,7 @@ public class FileChooserPanel extends JPanel {
                 m_addAllButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(final ActionEvent e) {
-                                onAddAll();
+                                onAddAllTopLevelFiles();
                         }
                 });
 
@@ -308,13 +309,9 @@ public class FileChooserPanel extends JPanel {
                         return;
                 }
 
-                if (m_fileChooser.getSelectedFile().isDirectory()) {
-                        File[] f = m_fileChooser.getSelectedFile().listFiles();
-                        m_selectedFileListModel.addFiles(f, ff);
-                } else {
-                        File[] files = m_fileChooser.getSelectedFiles();
-                        m_selectedFileListModel.addFiles(files, ff);
-                }
+                m_selectedFileListModel.addFiles(
+                                m_fileChooser.getSelectedFiles(), ff);
+
                 filePref.put("Path", m_fileChooser.getCurrentDirectory()
                                 .toString());
                 fireSelectionChangedEvent();
@@ -326,12 +323,20 @@ public class FileChooserPanel extends JPanel {
          * action add all button
          */
 
-        private void onAddAll() {
-                // FileFilter f = m_fileChooser.getFileFilter();
-                // m_fileChooser.getCurrentDirectory().listFiles((FilenameFilter)
-                // f);
-                m_selectedFileListModel.addFiles(m_fileChooser
-                                .getCurrentDirectory().listFiles(), fileFilter);
+        private void onAddAllTopLevelFiles() {
+                File[] files = m_fileChooser.getCurrentDirectory().listFiles();
+                ArrayList<File> topLevelFiles = new ArrayList<File>();
+
+                // remove directories
+                for (File f : files) {
+                        if (!f.isDirectory()) {
+                                topLevelFiles.add(f);
+                        }
+                }
+
+                m_selectedFileListModel.addFiles(
+                                topLevelFiles.toArray(new File[] {}),
+                                fileFilter);
                 filePref.put("Path", m_fileChooser.getCurrentDirectory()
                                 .toString());
                 fireSelectionChangedEvent();
@@ -453,17 +458,34 @@ public class FileChooserPanel extends JPanel {
 
                 }
 
+                private void insertTopFiles(LinkedList<File> directoryQueue,
+                                FileFilter fileFilter, File[] files) {
+                        for (File f : files) {
+                                if (f.isDirectory()) {
+                                        directoryQueue.add(f);
+                                } else {
+                                        if (fileFilter.accept(f)
+                                                        && !m_files.contains(f)) {
+                                                m_files.add(f);
+                                        }
+                                }
+                        }
+                }
+
                 public void addFiles(final File[] files, FileFilter fileFilter) {
 
-                        Arrays.sort(files, this);
-                        for (File f : files) {
+                        LinkedList<File> directoryQueue = new LinkedList<File>();
 
-                                if (!f.isDirectory() && !m_files.contains(f)
-                                                && fileFilter.accept(f))
+                        // init
+                        insertTopFiles(directoryQueue, fileFilter, files);
 
-                                        m_files.add(f);
-
+                        //loop
+                        while (!directoryQueue.isEmpty()) {
+                                File dir = directoryQueue.poll();
+                                insertTopFiles(directoryQueue,
+                                                fileFilter, dir.listFiles());
                         }
+
                         notifyListDataListener();
 
                 }
