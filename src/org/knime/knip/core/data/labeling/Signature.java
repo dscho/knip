@@ -904,7 +904,7 @@ public class Signature {
                  */
                 @Override
                 public int compareTo(IndexedDouble val2) {
-                        return (int) Math.round(m_val * 100 - val2.m_val * 100);
+                        return Double.compare(m_val, m_val);
                 }
         }
 
