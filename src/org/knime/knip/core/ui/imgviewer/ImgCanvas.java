@@ -89,6 +89,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         private boolean m_blockMouseEvents;
 
+        private boolean m_blockPanning = false;
+
         public ImgCanvas() {
                 this("Image", false);
         }
@@ -161,14 +163,16 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         public void mouseDragged(MouseEvent e) {
                                 if (m_keyDraggingEnabled
                                                 || ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 1024)) {
-                                        m_currentRectangle
-                                                        .setBounds(m_dragRect);
-                                        m_currentRectangle.translate(
-                                                        (m_dragPoint.x - e
-                                                                        .getXOnScreen()),
-                                                        (m_dragPoint.y - e
-                                                                        .getYOnScreen()));
-                                        m_imageCanvas.scrollRectToVisible(m_currentRectangle);
+                                        if (!m_blockPanning) {
+                                                m_currentRectangle
+                                                                .setBounds(m_dragRect);
+                                                m_currentRectangle
+                                                                .translate((m_dragPoint.x - e
+                                                                                .getXOnScreen()),
+                                                                                (m_dragPoint.y - e
+                                                                                                .getYOnScreen()));
+                                                m_imageCanvas.scrollRectToVisible(m_currentRectangle);
+                                        }
                                 }
                                 fireImageCoordMouseDragged(e);
                         }
@@ -249,6 +253,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 m_factor = 1;
                 updateImageCanvas(false);
 
+        }
+
+        protected void blockPanning(boolean block) {
+                m_blockPanning = block;
         }
 
         private void handleScrollbarEvent() {
@@ -378,8 +386,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         m_oldFactor = m_factor;
 
                 }
-                        m_imageScrollPane.validate();
-                        m_imageScrollPane.repaint();
+                m_imageScrollPane.validate();
+                m_imageScrollPane.repaint();
         }
 
         /**

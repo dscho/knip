@@ -33,6 +33,9 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
 
         private String m_imageInfo = "";
 
+        public ImgLabelingViewInfoPanel() {
+        }
+
         @Override
         protected String updateMouseLabel(StringBuffer buffer,
                         Interval interval, CalibratedSpace axes,
@@ -129,9 +132,6 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
                 m_imgRA = null;
         }
 
-        public ImgLabelingViewInfoPanel() {
-                //
-        }
 
         @Override
         public void saveComponentConfiguration(ObjectOutput out)

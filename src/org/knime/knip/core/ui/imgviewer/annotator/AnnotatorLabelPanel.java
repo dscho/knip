@@ -55,7 +55,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         public AnnotatorLabelPanel(String... defaultLabels) {
                 super("Labels", false);
 
-                setPreferredSize(new Dimension(PANEL_WIDTH, 100));
+                setPreferredSize(new Dimension(PANEL_WIDTH, 200));
 
                 JPanel buttonPanel = new JPanel();
                 buttonPanel.setLayout(new BoxLayout(buttonPanel,

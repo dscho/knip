@@ -21,6 +21,7 @@ import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorToolChgEvent;
 import org.knime.knip.core.ui.imgviewer.annotator.tools.AnnotatorFreeFormTool;
 import org.knime.knip.core.ui.imgviewer.annotator.tools.AnnotatorFreeLineTool;
+import org.knime.knip.core.ui.imgviewer.annotator.tools.AnnotatorNoTool;
 import org.knime.knip.core.ui.imgviewer.annotator.tools.AnnotatorPointTool;
 import org.knime.knip.core.ui.imgviewer.annotator.tools.AnnotatorPolygonTool;
 import org.knime.knip.core.ui.imgviewer.annotator.tools.AnnotatorRectangleTool;
@@ -131,7 +132,8 @@ public class AnnotatorToolbar extends ViewerComponent {
         }
 
         public static ViewerComponent createStandardToolbar() {
-                return new AnnotatorToolbar(new AnnotatorSelectionTool(),
+                return new AnnotatorToolbar(new AnnotatorNoTool("pan"),
+                                new AnnotatorSelectionTool(),
                                 new AnnotatorPointTool(),
                                 new AnnotatorRectangleTool(),
                                 new AnnotatorPolygonTool(),
