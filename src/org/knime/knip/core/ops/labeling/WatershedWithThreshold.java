@@ -215,8 +215,8 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
                                         .getStructuringElement(image
                                                         .numDimensions());
                 if (output == null) {
-                        long[] dimensions = new long[seeds.numDimensions()];
-                        seeds.dimensions(dimensions);
+                        long[] dimensions = new long[image.numDimensions()];
+                        image.dimensions(dimensions);
                         NativeImgLabeling<L, IntType> o = new NativeImgLabeling<L, IntType>(
                                         new ArrayImgFactory<IntType>().create(
                                                         dimensions,
