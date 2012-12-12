@@ -111,7 +111,7 @@ public class CellImgExt0 implements Externalizer<CellImg> {
                 DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursor = new DirectCellCursor(
                                 cellImg.cursor());
 
-                boolean indicateStop = false;
+                boolean indicateStop = cursor.isLastCell();
                 while (true) {
 
                         in.readLArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursor)
@@ -150,7 +150,7 @@ public class CellImgExt0 implements Externalizer<CellImg> {
                                 ((CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) obj)
                                                 .cursor());
 
-                boolean indicateStop = false;
+                boolean indicateStop = cursorOnCells.isLastCell();
                 while (true) {
                         // TODO extend for other types
                         out.writeArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursorOnCells)
