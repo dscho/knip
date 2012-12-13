@@ -74,8 +74,8 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
                         cp.localize(ma);
                         mi[0] = Math.max(0, mi[0] - m_radius);
                         mi[1] = Math.max(0, mi[1] - m_radius);
-                        ma[0] = Math.min(mma1, mi[0] + m_radius);
-                        ma[1] = Math.min(mma2, mi[1] + m_radius);
+                        ma[0] = Math.min(mma1, ma[0] + m_radius);
+                        ma[1] = Math.min(mma2, ma[1] + m_radius);
                         Interval in = new FinalInterval(mi, ma);
                         si = Views.iterable(
                                         SubsetOperations.subsetview(srcIn,
