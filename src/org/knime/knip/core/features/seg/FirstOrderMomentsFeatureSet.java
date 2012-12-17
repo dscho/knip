@@ -233,4 +233,8 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
 
         }
 
+        public ObjectCalcAndCache getCache() {
+                return m_ocac;
+        }
+
 }
