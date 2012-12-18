@@ -50,7 +50,7 @@
  */
 package org.knime.knip.core.ops.img;
 
-import net.imglib2.img.Img;
+import net.imglib2.img.ImgPlus;
 import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOutputOperation;
@@ -59,8 +59,10 @@ import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Pair;
 
-public class ImgNormalize<T extends RealType<T>> implements
-                UnaryOutputOperation<Img<T>, Img<T>> {
+import org.knime.knip.core.util.ImgPlusFactory;
+
+public class ImgPlusNormalize<T extends RealType<T>> implements
+                UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> {
 
         private final double m_saturation;
         private final T m_val;
@@ -68,7 +70,7 @@ public class ImgNormalize<T extends RealType<T>> implements
         private final boolean m_isManual;
         private final boolean m_isTarget;
 
-        public ImgNormalize(double saturation, T val, Pair<T, T> minmax,
+        public ImgPlusNormalize(double saturation, T val, Pair<T, T> minmax,
                         boolean isTarget) {
                 m_saturation = saturation;
                 m_val = val;
@@ -84,7 +86,7 @@ public class ImgNormalize<T extends RealType<T>> implements
         }
 
         @Override
-        public Img<T> compute(Img<T> input, Img<T> output) {
+        public ImgPlus<T> compute(ImgPlus<T> input, ImgPlus<T> output) {
 
                 if (m_minmaxtarget == null) {
                         T min = m_val.createVariable();
@@ -117,21 +119,13 @@ public class ImgNormalize<T extends RealType<T>> implements
         }
 
         @Override
-        public UnaryObjectFactory<Img<T>, Img<T>> bufferFactory() {
-                return new UnaryObjectFactory<Img<T>, Img<T>>() {
-                        @Override
-                        public Img<T> instantiate(Img<T> a) {
-                                return a.factory()
-                                                .create(a,
-                                                                a.firstElement()
-                                                                                .createVariable());
-                        }
-                };
+        public UnaryObjectFactory<ImgPlus<T>, ImgPlus<T>> bufferFactory() {
+                return new ImgPlusFactory<T, T>(m_val);
         }
 
         @Override
-        public UnaryOutputOperation<Img<T>, Img<T>> copy() {
-                return new ImgNormalize(m_saturation, m_val.createVariable(),
+        public UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> copy() {
+                return new ImgPlusNormalize(m_saturation, m_val.createVariable(),
                                 m_isTarget ? m_minmaxtarget : m_minmaxsource,
                                 m_isTarget);
         }
