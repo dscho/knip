@@ -52,69 +52,33 @@ package org.knime.knip.core.ops.img;
 
 import net.imglib2.img.ImgPlus;
 import net.imglib2.ops.img.UnaryObjectFactory;
-import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOutputOperation;
-import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
-import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 
 import org.knime.knip.core.util.ImgPlusFactory;
 
 public class ImgPlusNormalize<T extends RealType<T>> implements
                 UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> {
 
-        private final double m_saturation;
+        private final ImgNormalize<T> m_op;
         private final T m_val;
-        private Pair<T, T> m_minmaxtarget, m_minmaxsource;
-        private final boolean m_isManual;
-        private final boolean m_isTarget;
 
-        public ImgPlusNormalize(double saturation, T val, Pair<T, T> minmax,
+        public ImgPlusNormalize(double saturation, T val,
+                        ValuePair<T, T> minmax,
                         boolean isTarget) {
-                m_saturation = saturation;
                 m_val = val;
-                m_isTarget = isTarget;
-                if (isTarget) {
-                        m_minmaxtarget = minmax;
-                } else {
-                        m_minmaxsource = minmax;
-                }
+                m_op = new ImgNormalize<T>(saturation, val, minmax, isTarget);
+        }
 
-                m_isManual = minmax != null;
-
+        protected ImgPlusNormalize(ImgNormalize<T> op, T val) {
+                m_op = op;
+                m_val = val;
         }
 
         @Override
         public ImgPlus<T> compute(ImgPlus<T> input, ImgPlus<T> output) {
-
-                if (m_minmaxtarget == null) {
-                        T min = m_val.createVariable();
-                        T max = m_val.createVariable();
-                        min.setReal(m_val.getMinValue());
-                        max.setReal(m_val.getMaxValue());
-
-                        m_minmaxtarget = new Pair<T, T>(min, max);
-                }
-
-                if (m_minmaxsource == null) {
-                        m_minmaxsource = Operations.compute(new MinMax<T>(
-                                        m_saturation, m_val), input);
-                }
-
-                Operations.map(new Normalize<T>(m_minmaxsource.a,
-                                m_minmaxsource.b, m_minmaxtarget.a,
-                                m_minmaxtarget.b)).compute(input, output);
-
-                if (!m_isManual) {
-                        m_minmaxsource = null;
-                        m_minmaxtarget = null;
-                } else if (m_isTarget) {
-                        m_minmaxsource = null;
-                } else {
-                        m_minmaxtarget = null;
-                }
-
+                m_op.compute(input, output);
                 return output;
         }
 
@@ -125,8 +89,7 @@ public class ImgPlusNormalize<T extends RealType<T>> implements
 
         @Override
         public UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> copy() {
-                return new ImgPlusNormalize(m_saturation, m_val.createVariable(),
-                                m_isTarget ? m_minmaxtarget : m_minmaxsource,
-                                m_isTarget);
+                return new ImgPlusNormalize<T>((ImgNormalize<T>) m_op.copy(),
+                                m_val.createVariable());
         }
 }

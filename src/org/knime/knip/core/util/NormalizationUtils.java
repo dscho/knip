@@ -4,7 +4,7 @@ import net.imglib2.IterableInterval;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 
 public class NormalizationUtils {
 
@@ -26,13 +26,14 @@ public class NormalizationUtils {
                 T type = interval.firstElement().createVariable();
                 MinMax<T> minMax = new MinMax<T>(saturation, type);
 
-                Pair<T, T> pair = Operations.compute(minMax, interval);
+                ValuePair<T, T> ValuePair = Operations
+                                .compute(minMax, interval);
                 return new double[] {
                                 1
-                                                / (pair.b.getRealDouble() - pair.a
+                                                / (ValuePair.b.getRealDouble() - ValuePair.a
                                                                 .getRealDouble())
                                                 * (type.getMaxValue() - type
                                                                 .getMinValue()),
-                                pair.a.getRealDouble() };
+                                ValuePair.a.getRealDouble() };
         }
 }

@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 
 public class StringTransformer {
 
-        private final List<Pair<String, Boolean>> m_parsedList;
+        private final List<ValuePair<String, Boolean>> m_parsedList;
 
         public StringTransformer(String expression, String delim)
                         throws IllegalArgumentException {
@@ -20,17 +20,18 @@ public class StringTransformer {
          * Pre-calculates the parsing of the expression, which can be used later
          * on
          */
-        private List<Pair<String, Boolean>> parse(String expression,
+        private List<ValuePair<String, Boolean>> parse(String expression,
                         String delim) throws IllegalArgumentException {
                 int current = 0;
-                List<Pair<String, Boolean>> res = new ArrayList<Pair<String, Boolean>>();
+                List<ValuePair<String, Boolean>> res = new ArrayList<ValuePair<String, Boolean>>();
 
                 while (current < expression.length()) {
 
                         int start = expression.indexOf(delim, current);
 
                         if (start == -1) {
-                                res.add(new Pair<String, Boolean>(expression
+                                res.add(new ValuePair<String, Boolean>(
+                                                expression
                                                 .substring(current, expression
                                                                 .length()),
                                                 true));
@@ -38,7 +39,8 @@ public class StringTransformer {
                         }
 
                         if (start != current) {
-                                res.add(new Pair<String, Boolean>(expression
+                                res.add(new ValuePair<String, Boolean>(
+                                                expression
                                                 .substring(current, start),
                                                 true));
                                 current = start;
@@ -60,7 +62,8 @@ public class StringTransformer {
 
                         current = end + 1;
 
-                        res.add(new Pair<String, Boolean>(expression.substring(
+                        res.add(new ValuePair<String, Boolean>(expression
+                                        .substring(
                                         start + 1, end), false));
                 }
                 return res;
@@ -77,11 +80,11 @@ public class StringTransformer {
         public String transform(Map<String, Object> input)
                         throws IllegalArgumentException {
                 StringBuffer bf = new StringBuffer();
-                for (Pair<String, Boolean> pair : m_parsedList) {
-                        if (pair.b) {
-                                bf.append(pair.a);
+                for (ValuePair<String, Boolean> ValuePair : m_parsedList) {
+                        if (ValuePair.b) {
+                                bf.append(ValuePair.a);
                         } else {
-                                bf.append(input.get(pair.a).toString());
+                                bf.append(input.get(ValuePair.a).toString());
                         }
                 }
 

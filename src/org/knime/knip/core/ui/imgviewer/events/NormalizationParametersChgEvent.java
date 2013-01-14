@@ -12,7 +12,7 @@ import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
 import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
@@ -123,7 +123,7 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
                                                         .getMinValue() };
                 else {
                         T element = src.randomAccess().get().createVariable();
-                        Pair<T, T> oldMinMax = Operations
+                        ValuePair<T, T> oldMinMax = Operations
                                         .compute(new MinMax<T>(m_saturation,
                                                         element),
                                                         Views.iterable(SubsetOperations

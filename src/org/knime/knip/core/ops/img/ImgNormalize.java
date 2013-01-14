@@ -57,18 +57,18 @@ import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
 import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 
 public class ImgNormalize<T extends RealType<T>> implements
                 UnaryOutputOperation<Img<T>, Img<T>> {
 
         private final double m_saturation;
         private final T m_val;
-        private Pair<T, T> m_minmaxtarget, m_minmaxsource;
+        private ValuePair<T, T> m_minmaxtarget, m_minmaxsource;
         private final boolean m_isManual;
         private final boolean m_isTarget;
 
-        public ImgNormalize(double saturation, T val, Pair<T, T> minmax,
+        public ImgNormalize(double saturation, T val, ValuePair<T, T> minmax,
                         boolean isTarget) {
                 m_saturation = saturation;
                 m_val = val;
@@ -92,7 +92,7 @@ public class ImgNormalize<T extends RealType<T>> implements
                         min.setReal(m_val.getMinValue());
                         max.setReal(m_val.getMaxValue());
 
-                        m_minmaxtarget = new Pair<T, T>(min, max);
+                        m_minmaxtarget = new ValuePair<T, T>(min, max);
                 }
 
                 if (m_minmaxsource == null) {
@@ -131,7 +131,8 @@ public class ImgNormalize<T extends RealType<T>> implements
 
         @Override
         public UnaryOutputOperation<Img<T>, Img<T>> copy() {
-                return new ImgNormalize(m_saturation, m_val.createVariable(),
+                return new ImgNormalize<T>(m_saturation,
+                                m_val.createVariable(),
                                 m_isTarget ? m_minmaxtarget : m_minmaxsource,
                                 m_isTarget);
         }

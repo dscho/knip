@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 
 /**
  * This class bundles a group of Transfer functions together.
@@ -218,9 +218,9 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          *                list of the keys and functions to add
          */
         public final void add(
-                        final List<Pair<TransferFunction, TransferFunctionColor>> list) {
+                        final List<ValuePair<TransferFunction, TransferFunctionColor>> list) {
 
-                for (Pair<TransferFunction, TransferFunctionColor> p : list) {
+                for (ValuePair<TransferFunction, TransferFunctionColor> p : list) {
                         add(p.a, p.b);
                 }
         }
@@ -314,11 +314,11 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
         /**
          * Get the color that is used as key for a transfer function.
-         * 
+         *
          * @param func
          *                the transfer function
          * @return the key that belongs to the function
-         * 
+         *
          * @throws IllegalArgumentException
          *                 if no function is registered under this name
          */

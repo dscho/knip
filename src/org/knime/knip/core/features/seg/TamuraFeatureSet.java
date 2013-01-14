@@ -55,7 +55,7 @@ import java.util.List;
 
 import net.imglib2.IterableInterval;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.knime.knip.core.features.FeatureSet;
@@ -92,7 +92,7 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
         @FeatureTargetListener
         public final void iiUpdated(IterableInterval<T> interval) {
 
-                Pair<Integer, Integer> validDims = getValidDims(interval);
+                ValuePair<Integer, Integer> validDims = getValidDims(interval);
 
                 if (validDims == null) {
                         m_valid = false;
@@ -109,7 +109,8 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
                 }
         }
 
-        private Pair<Integer, Integer> getValidDims(IterableInterval<T> interval) {
+        private ValuePair<Integer, Integer> getValidDims(
+                        IterableInterval<T> interval) {
 
                 int dimX = -1;
                 int dimY = -1;
@@ -126,7 +127,7 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
                 if (dimX < 0 || dimY < 0)
                         return null;
 
-                return new Pair<Integer, Integer>(dimX, dimY);
+                return new ValuePair<Integer, Integer>(dimX, dimY);
         }
 
         /**

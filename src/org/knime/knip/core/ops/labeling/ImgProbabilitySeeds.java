@@ -65,7 +65,7 @@ import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 
 import org.knime.knip.core.data.LabelGenerator;
@@ -106,7 +106,7 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
                         final RandomAccess<LabelingType<L>> out = output
                                         .randomAccess();
                         final Cursor<T> in = input.cursor();
-                        final Pair<T, T> mm = Operations.compute(
+                        final ValuePair<T, T> mm = Operations.compute(
                                         new MinMax<T>(), input);
                         final double range = mm.b.getRealDouble()
                                         - mm.a.getRealDouble();

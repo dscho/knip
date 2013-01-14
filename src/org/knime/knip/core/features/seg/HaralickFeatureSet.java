@@ -57,7 +57,7 @@ import net.imglib2.ops.data.CooccurrenceMatrix;
 import net.imglib2.ops.data.CooccurrenceMatrix.MatrixOrientation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeCooccurrenceMatrix.HaralickFeature;
 import net.imglib2.type.numeric.RealType;
-import net.imglib2.util.Pair;
+import net.imglib2.util.ValuePair;
 
 import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
@@ -83,7 +83,7 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
 
         private IterableInterval<T> m_interval;
 
-        private Pair<Integer, Integer> m_validDims;
+        private ValuePair<Integer, Integer> m_validDims;
 
         private int m_dimX;
 
@@ -170,7 +170,8 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
 
         }
 
-        private Pair<Integer, Integer> getValidDims(IterableInterval<T> interval) {
+        private ValuePair<Integer, Integer> getValidDims(
+                        IterableInterval<T> interval) {
 
                 int dimX = -1;
                 int dimY = -1;
@@ -187,7 +188,7 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
                 if (dimX < 0 || dimY < 0)
                         return null;
 
-                return new Pair<Integer, Integer>(dimX, dimY);
+                return new ValuePair<Integer, Integer>(dimX, dimY);
         }
 
         /**
