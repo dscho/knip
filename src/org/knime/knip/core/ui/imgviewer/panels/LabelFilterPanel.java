@@ -442,24 +442,25 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 // Nothing to do here
         }
 
-        /**
+        /*
          * Shows a contextmenu which contains highlighting options
          *
-         * @param evt
-         *                Mouse Event
+         * @param evt Mouse Event
          */
-        public void showMenu(MouseEvent evt) {
+        private void showMenu(MouseEvent evt) {
 
                 /*
                  * Disables some options if no item is selected because these
                  * options need a selected Item
                  */
-                if (m_jLabelList.isSelectionEmpty()) {
-                        m_hiliteSelected.setEnabled(false);
-                        m_unhiliteSelected.setEnabled(false);
-                } else {
-                        m_hiliteSelected.setEnabled(true);
-                        m_unhiliteSelected.setEnabled(true);
+                if (m_hiliteSelected != null) { // if hiliting is enabled
+                        if (m_jLabelList.isSelectionEmpty()) {
+                                m_hiliteSelected.setEnabled(false);
+                                m_unhiliteSelected.setEnabled(false);
+                        } else {
+                                m_hiliteSelected.setEnabled(true);
+                                m_unhiliteSelected.setEnabled(true);
+                        }
                 }
 
                 m_contextMenu.show(m_jLabelList, evt.getX(), evt.getY());
