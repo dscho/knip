@@ -106,7 +106,8 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                 }
 
                 // Color Tables are serialized
-                int numTables = obj.getColorTableCount();
+                // int numTables = obj.getColorTableCount();
+                int numTables = 0;
                 out.writeInt(numTables);
 
                 for (int t = 0; t < numTables; t++) {
