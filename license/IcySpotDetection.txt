@@ -1,4 +1,4 @@
-Our spot detection plugin uses the class B3SplineUDWT from the Icy Spot Detection Plugin.
+Our spot detection plugin uses the class B3SplineUDWT and WaveletConfigException from the Icy Spot Detection Plugin.
 The original copyright is reproduced below:
 
 /*
@@ -23,7 +23,7 @@ The original copyright is reproduced below:
 
 => our additions
 
-
+B3SplineUDWT
 /*
  * edited by
  * Michael Zinsmaier, University of Konstanz
@@ -31,6 +31,14 @@ The original copyright is reproduced below:
  * I removed some methods that we didn't need. Thre remaining code is
  * the same as in the original implementation. The original file can be
  * found in the ICY release of the Spot Detection Plugin.
+ */
+ 
+ WaveletConfigException
+ /*
+ * copied by
+ * Michael Zinsmaier, University of Konstanz
+ *
+ * no changes used in conjunction with B3SplineUDWT
  */
  
  The original code can be found here: http://icy.bioimageanalysis.org/plugin/Spot_Detector
