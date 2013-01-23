@@ -21,7 +21,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mines-jtk-20100113.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/backport-util-concurrent-3.1.jar" sourcepath="/home/hornm/.m2/repository/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/serializer-2.7.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/xalan-2.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/xalan-2.7.1.jar" sourcepath="C:/Users/zinsmaie/.m2/repository/xalan/xalan/2.7.1/xalan-2.7.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.5-20130114.083436-77.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20130114.083156-79.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/jama-1.0.2.jar"/>
