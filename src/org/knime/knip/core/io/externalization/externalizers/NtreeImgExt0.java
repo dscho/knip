@@ -208,8 +208,10 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
                 LinkedList<NtreeNode<? extends Comparable<?>>> queue = new LinkedList<NtreeNode<? extends Comparable<?>>>();
                 queue.add(current);
 
-                if (current.getChildren() == null)
+                if (current.getChildren() == null) {
+                        out.flush();
                         return;
+                }
 
                 while (!queue.isEmpty()) {
 
