@@ -71,7 +71,7 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                                         short[][] ct16 = new short[componentCount][length];
 
                                         for (int c = 0; c < componentCount; c++)
-                                                for (int k = 0; k < componentCount; k++)
+                                                for (int k = 0; k < length; k++)
                                                         ct16[c][k] = in.readShort();
 
                                         obj.setColorTable(
@@ -106,8 +106,9 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                 }
 
                 // Color Tables are serialized
-                // int numTables = obj.getColorTableCount();
-                int numTables = 0;
+                int numTables = obj.getColorTableCount();
+
+                // int numTables = 0;
                 out.writeInt(numTables);
 
                 for (int t = 0; t < numTables; t++) {
