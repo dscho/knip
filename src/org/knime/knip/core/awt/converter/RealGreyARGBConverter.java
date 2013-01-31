@@ -1,7 +1,6 @@
 package org.knime.knip.core.awt.converter;
 
 import net.imglib2.converter.Converter;
-import net.imglib2.display.ColorTable8;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
@@ -10,21 +9,10 @@ public class RealGreyARGBConverter<R extends RealType<R>> implements
 
         private final double m_localMin;
         private final double m_normalizationFactor;
-        private int m_colorDim;
-        private ColorTable8 m_colorTable;
 
         public RealGreyARGBConverter(double normalizationFactor, double localMin) {
-
                 m_localMin = localMin;
                 m_normalizationFactor = normalizationFactor;
-        }
-
-        public void setColorDim(int dim) {
-                m_colorDim = dim;
-        }
-
-        public void setColorTable(ColorTable8 table) {
-                m_colorTable = table;
         }
 
         @Override
@@ -35,8 +23,7 @@ public class RealGreyARGBConverter<R extends RealType<R>> implements
 
                 if (m_normalizationFactor == 1) {
                         val = ((input.getRealDouble() - input.getMinValue()) / (input
-                                        .getMaxValue() - input
-                                        .getMinValue()));
+                                        .getMaxValue() - input.getMinValue()));
 
                 } else {
                         val = ((input.getRealDouble() - m_localMin)
@@ -51,8 +38,6 @@ public class RealGreyARGBConverter<R extends RealType<R>> implements
                         b = 0;
                 else if (b > 255)
                         b = 255;
-
-                m_colorTable.get(m_colorDim, b);
 
                 output.set(0xff000000 | (((b << 8) | b) << 8) | b);
         }
