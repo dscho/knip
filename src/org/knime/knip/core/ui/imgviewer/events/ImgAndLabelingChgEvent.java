@@ -53,16 +53,17 @@ package org.knime.knip.core.ui.imgviewer.events;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-import net.imglib2.type.Type;
+import net.imglib2.type.numeric.RealType;
 
 /**
  *
  * @author hornm, University of Konstanz
  */
-public class ImgAndLabelingChgEvent<T extends Type<T>, L extends Comparable<L>>
-                extends IntervalWithMetadataChgEvent<T> {
+public class ImgAndLabelingChgEvent<T extends RealType<T>, L extends Comparable<L>>
+                extends ImgWithMetadataChgEvent<T> {
 
         private final Labeling<L> m_labeling;
 
@@ -72,11 +73,10 @@ public class ImgAndLabelingChgEvent<T extends Type<T>, L extends Comparable<L>>
          * @param cspace
          */
         public ImgAndLabelingChgEvent(RandomAccessibleInterval<T> img,
-                        Labeling<L> labeling,
-                        Named name, Sourced source, CalibratedSpace cspace) {
-                super(img, name, source, cspace);
+                        Labeling<L> labeling, Named name, Sourced source,
+                        CalibratedSpace cspace, ImageMetadata imageMetaData) {
+                super(img, name, source, cspace, imageMetaData);
                 m_labeling = labeling;
-
         }
 
         /**
