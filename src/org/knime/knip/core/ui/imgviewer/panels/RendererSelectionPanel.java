@@ -82,6 +82,10 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
          */
         @EventListener
         public void onIntervalUpdated(IntervalWithMetadataChgEvent<T> e) {
+                if (e instanceof ImgWithMetadataChgEvent) {
+                        // event already processed
+                        return;
+                }
                 ImageRenderer<T>[] tmp = RendererFactory
                                 .createSuitableRenderer(e
                                                 .getRandomAccessibleInterval());

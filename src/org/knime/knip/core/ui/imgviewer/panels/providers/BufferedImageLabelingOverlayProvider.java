@@ -13,7 +13,6 @@ import java.util.Set;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ScreenImage;
-import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.AWTImageTools;
@@ -25,7 +24,6 @@ import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.HilitedLabelsChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgAndLabelingChgEvent;
-import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelColoringChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelIsHiliteModeEvent;
@@ -227,16 +225,9 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
                 m_imgChanged = true;
                 m_labChanged = true;
-                super.onUpdated(new IntervalWithMetadataChgEvent<LabelingType<L>>(
-                                e
-                                .getLabeling(), e.getName(), e.getSource(), e
-                                .getCalibratedSpace()));
+
         }
 
-        @Override
-        public void onUpdated(IntervalWithMetadataChgEvent<LabelingType<L>> e) {
-                //
-        }
 
         @EventListener
         public void onClose(ViewClosedEvent event) {

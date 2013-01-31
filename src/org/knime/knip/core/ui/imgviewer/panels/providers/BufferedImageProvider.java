@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.display.ColorTable;
 import net.imglib2.display.ScreenImage;
 import net.imglib2.img.Img;
 import net.imglib2.type.Type;
@@ -14,10 +15,12 @@ import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.awt.AWTImageTools;
 import org.knime.knip.core.awt.lookup.LookupTable;
+import org.knime.knip.core.awt.parametersupport.RendererWithColorTable;
 import org.knime.knip.core.awt.parametersupport.RendererWithLookupTable;
 import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ImgWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 import org.knime.knip.core.ui.imgviewer.panels.transfunc.BundleChgEvent;
 import org.knime.knip.core.ui.imgviewer.panels.transfunc.LookupTableChgEvent;
@@ -60,6 +63,8 @@ public class BufferedImageProvider<T extends RealType<T>> extends
 
         protected LookupTable<T, ARGBType> m_lookupTable = new SimpleTable();
 
+        private ColorTable[] m_colorTables = new ColorTable[] {};
+
         /**
          * @param cacheSize
          *                The size of the cache beeing used in
@@ -94,6 +99,11 @@ public class BufferedImageProvider<T extends RealType<T>> extends
                                         .setLookupTable(m_lookupTable);
                 }
 
+                if (m_renderer instanceof RendererWithColorTable) {
+                        ((RendererWithColorTable) m_renderer)
+                                        .setColorTables(m_colorTables);
+                }
+
                 ScreenImage ret = m_renderer.render(m_src,
                                 m_sel.getPlaneDimIndex1(),
                                 m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
@@ -126,6 +136,16 @@ public class BufferedImageProvider<T extends RealType<T>> extends
                         final LookupTableChgEvent<T, ARGBType> event) {
                 m_lookupTable = event.getTable();
 
+        }
+
+        @EventListener
+        public void onImageUpdated(ImgWithMetadataChgEvent<T> e) {
+                int size = e.getImgMetaData().getColorTableCount();
+                m_colorTables = new ColorTable[size];
+
+                for (int i = 0; i < size; i++) {
+                        m_colorTables[i] = e.getImgMetaData().getColorTable(i);
+                }
         }
 
         @Override

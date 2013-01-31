@@ -53,7 +53,18 @@ public class RendererFactory {
                 T type = img.randomAccess().get();
 
                 if (type instanceof RealType) {
-                        // if (imageMetaData != null && imageMetaData.)
+                        if (imageMetaData != null
+                                        && imageMetaData.getColorTableCount() > 0) {
+
+                                for (int d = 0; d < img.numDimensions(); d++) {
+                                        if (img.dimension(d) == imageMetaData
+                                                        .getColorTableCount()) {
+
+                                                res.add(new Real2TableColorRenderer(
+                                                                d));
+                                        }
+                                }
+                        }
                 }
 
                 return res.toArray(new ImageRenderer[res.size()]);
