@@ -126,8 +126,8 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                                                         .getComponentCount(); c++)
                                                 for (int k = 0; k < table
                                                                 .getLength(); k++)
-                                                        out.writeByte((byte) table
-                                                                        .get(c,
+                                                        out.writeByte(((ColorTable8) table)
+                                                                        .getNative(c,
                                                                                         k));
                                 } else if (table instanceof ColorTable16) {
                                         out.writeInt(ColorTables.ColorTable16
@@ -136,8 +136,8 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                                                         .getComponentCount(); c++)
                                                 for (int k = 0; k < table
                                                                 .getLength(); k++)
-                                                        out.writeShort((short) table
-                                                                        .get(c,
+                                                        out.writeShort(((ColorTable16) table)
+                                                                        .getNative(c,
                                                                                         k));
                                 }
                         }

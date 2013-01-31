@@ -18,6 +18,14 @@ import org.knime.knip.core.awt.specializedrendering.Projector2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Renders the real values of a X,Y slice as ScreenImage. The position in the
+ * colorDim defines which of the provided color tables is used.
+ * 
+ * @author zinsmaie
+ *
+ * @param <R>
+ */
 public class Real2TableColorRenderer<R extends RealType<R>> extends
                 ProjectingRenderer<R> implements RendererWithNormalization,
                 RendererWithColorTable {
@@ -27,13 +35,13 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
 
         // default
         private RealTableColorARGBConverter<R> m_converter;
-        private final int m_coloredDim;
+        private final int m_colorDim;
         private ColorTable[] m_colorTables;
 
-        public Real2TableColorRenderer(int coloredDim) {
-                this.m_coloredDim = coloredDim;
-                m_converter = new RealTableColorARGBConverter<R>(1.0, 0.0);
 
+        public Real2TableColorRenderer(int colorDim) {
+                m_colorDim = colorDim;
+                m_converter = new RealTableColorARGBConverter<R>(1.0, 0.0);
         }
 
         @Override
@@ -42,7 +50,7 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
 
                         // default implementation
 
-                ColorTable ct = m_colorTables[(int) planePos[m_coloredDim]];
+                ColorTable ct = m_colorTables[(int) planePos[m_colorDim]];
 
                 if (ct instanceof ColorTable8) {
                         m_converter.setColorTable((ColorTable8) ct);
@@ -64,7 +72,7 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
 
         @Override
         public String toString() {
-                return "ColorTable based Image Renderer (dim:" + m_coloredDim
+                return "ColorTable based Image Renderer (dim:" + m_colorDim
                                 + ")";
         }
 
