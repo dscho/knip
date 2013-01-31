@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.display.ColorTable;
 import net.imglib2.display.ScreenImage;
 import net.imglib2.type.numeric.RealType;
 
@@ -17,10 +18,12 @@ import org.knime.knip.core.awt.AWTImageTools;
 import org.knime.knip.core.awt.ImageRenderer;
 import org.knime.knip.core.awt.Real2GreyRenderer;
 import org.knime.knip.core.awt.RendererFactory;
+import org.knime.knip.core.awt.parametersupport.RendererWithColorTable;
 import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorImgAndOverlayChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ImgWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.OverlayChgEvent;
@@ -57,6 +60,8 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
         private final GraphicsConfiguration m_config;
 
+        private ColorTable[] m_colorTables;
+
         public OverlayBufferedImageProvider() {
                 super(0);
                 m_renderer = new Real2GreyRenderer<T>();
@@ -90,10 +95,14 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
                                                         normParams[1]);
                 }
 
-                ScreenImage res = ((ImageRenderer<T>) m_renderer)
-                                .render(m_src, m_sel.getPlaneDimIndex1(),
-                                                m_sel.getPlaneDimIndex2(),
-                                                m_sel.getPlanePos());
+                if (m_renderer instanceof RendererWithColorTable) {
+                        ((RendererWithColorTable) m_renderer)
+                                        .setColorTables(m_colorTables);
+                }
+
+                ScreenImage res = ((ImageRenderer<T>) m_renderer).render(m_src,
+                                m_sel.getPlaneDimIndex1(),
+                                m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
                 m_tmpRes = loci.formats.gui.AWTImageTools.makeBuffered(res
                                 .image());
@@ -206,6 +215,16 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
                 }
         }
 
+        @EventListener
+        public void onImageUpdated(ImgWithMetadataChgEvent<T> e) {
+                int size = e.getImgMetaData().getColorTableCount();
+                m_colorTables = new ColorTable[size];
+
+                for (int i = 0; i < size; i++) {
+                        m_colorTables[i] = e.getImgMetaData().getColorTable(i);
+                }
+        }
+
         @Override
         public void saveComponentConfiguration(ObjectOutput out)
                         throws IOException {
@@ -222,9 +241,6 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
                 m_overlay = new Overlay<L>();
                 m_overlay.readExternal(in);
-                // m_overlay = ( Overlay< L > ) in.readObject();
-                // m_normalizationParameters = ( NormalizationParameters< T > )
-                // in.readObject();
                 m_normalizationParameters = new NormalizationParametersChgEvent<T>();
                 m_normalizationParameters.readExternal(in);
                 m_transparency = in.readInt();
