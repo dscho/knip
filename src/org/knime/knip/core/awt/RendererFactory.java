@@ -1,10 +1,12 @@
 package org.knime.knip.core.awt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.labeling.Labeling;
+import net.imglib2.meta.ImageMetadata;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.RealType;
 
@@ -34,6 +36,24 @@ public class RendererFactory {
                                         }
                                 }
                         }
+                }
+
+                return res.toArray(new ImageRenderer[res.size()]);
+        }
+
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
+                        final RandomAccessibleInterval<T> img,
+                        ImageMetadata imageMetaData) {
+
+                List<ImageRenderer> res = new ArrayList<ImageRenderer>();
+                res.addAll(Arrays.asList(createSuitableRenderer(img)));
+
+                // color rendering
+                T type = img.randomAccess().get();
+
+                if (type instanceof RealType) {
+                        // if (imageMetaData != null && imageMetaData.)
                 }
 
                 return res.toArray(new ImageRenderer[res.size()]);

@@ -5,11 +5,11 @@ import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.Type;
 
 import org.knime.knip.core.data.img.ImageMetadataImpl;
 
-public class ImgWithMetadataChgEvent<T extends RealType<T>> extends
+public class ImgWithMetadataChgEvent<T extends Type<T>> extends
                 IntervalWithMetadataChgEvent<T> {
 
         private final ImageMetadata m_imageMetaData;

@@ -225,12 +225,14 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
         public void onUpdated(IntervalWithMetadataChgEvent<T> e) {
                 m_src = e.getRandomAccessibleInterval();
 
-                long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+                long[] dims = new long[e.getRandomAccessibleInterval()
+                                .numDimensions()];
                 e.getRandomAccessibleInterval().dimensions(dims);
 
                 if (m_sel == null || !isInsideDims(m_sel.getPlanePos(), dims)) {
                         m_sel = new PlaneSelectionEvent(0, 1, new long[e
-                                        .getRandomAccessibleInterval().numDimensions()]);
+                                        .getRandomAccessibleInterval()
+                                        .numDimensions()]);
                 }
 
                 ImageRenderer[] renderers = RendererFactory
@@ -267,7 +269,9 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
         }
 
         /**
-         * Turns of the caching, e.g. the TransferFunctionRenderer creates different images all the time, it is not possible to store all of them.
+         * Turns of the caching, e.g. the TransferFunctionRenderer creates
+         * different images all the time, it is not possible to store all of
+         * them.
          *
          * @param e
          */

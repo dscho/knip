@@ -74,6 +74,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.read.ConvertedRandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
@@ -88,6 +89,7 @@ import net.imglib2.view.Views;
 import org.apache.commons.codec.binary.Base64;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
+import org.knime.knip.core.ui.imgviewer.events.ImgWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.slf4j.LoggerFactory;
 
@@ -232,9 +234,12 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
          *                {@link CalibratedSpace} of the {@link Img}
          * @param name
          *                {@link Named} of the {@link Img}
+         * @param imageMetaData
+         *                {@link ImageMetadata} might be null if no metadata
+         *                exists
          */
         public void setImg(I img, CalibratedSpace axes, Named name,
-                        Sourced source) {
+                        Sourced source, ImageMetadata imageMetaData) {
 
                 // make sure that at least two dimensions exist
                 CalibratedSpace axes2d;
@@ -256,16 +261,34 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
                                         new DoubleType(), new FloatType(),
                                         TypeConversionTypes.DIRECT);
 
-                        m_eventService.publish(new IntervalWithMetadataChgEvent(
-                                        new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                                        (RandomAccessibleInterval<DoubleType>) img2d,
-                                                        convertOp,
-                                                        new FloatType()), name,
-                                        source, axes2d));
+                        if (imageMetaData != null) {
+                                m_eventService.publish(new ImgWithMetadataChgEvent<FloatType>(
+                                                new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
+                                                                (RandomAccessibleInterval<DoubleType>) img2d,
+                                                                convertOp,
+                                                                new FloatType()),
+                                                name, source, axes2d,
+                                                imageMetaData));
+                        } else {
+                                m_eventService.publish(new IntervalWithMetadataChgEvent<FloatType>(
+                                                new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
+                                                                (RandomAccessibleInterval<DoubleType>) img2d,
+                                                                convertOp,
+                                                                new FloatType()),
+                                                name, source, axes2d));
+                        }
                         m_eventService.publish(new ImgRedrawEvent());
                 } else {
-                        m_eventService.publish(new IntervalWithMetadataChgEvent(
-                                        img2d, name, source, axes2d));
+                        if (imageMetaData != null) {
+                                m_eventService.publish(new ImgWithMetadataChgEvent<T>(
+                                                img2d, name, source, axes2d,
+                                                imageMetaData));
+
+                        } else {
+                                m_eventService.publish(new IntervalWithMetadataChgEvent<T>(
+                                                img2d, name, source, axes2d));
+
+                        }
                         m_eventService.publish(new ImgRedrawEvent());
                 }
 

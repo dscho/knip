@@ -21,6 +21,7 @@ import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
+import org.knime.knip.core.ui.imgviewer.events.ImgWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
 
@@ -31,8 +32,7 @@ import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
  *
  * @author dietzc, hornm, fschoenenberger
  */
-public class RendererSelectionPanel<T extends Type<T>>
-                extends ViewerComponent {
+public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
 
         private static final long serialVersionUID = 1L;
 
@@ -81,18 +81,29 @@ public class RendererSelectionPanel<T extends Type<T>>
          * @param name
          */
         @EventListener
-        public void onImgUpdated(IntervalWithMetadataChgEvent<T> e) {
-                // if (m_imgRenderers.isEmpty()) {
-
+        public void onIntervalUpdated(IntervalWithMetadataChgEvent<T> e) {
                 ImageRenderer<T>[] tmp = RendererFactory
-                                .createSuitableRenderer(e.getRandomAccessibleInterval());
+                                .createSuitableRenderer(e
+                                                .getRandomAccessibleInterval());
+
                 m_blockEvent = true;
                 m_rendList.setListData(tmp);
-                // m_rendList.setSelectedIndex(0);
                 m_rendList.repaint();
                 m_blockEvent = false;
 
-                // }
+        }
+
+        @EventListener
+        public void onImageUpdated(ImgWithMetadataChgEvent<T> e) {
+                ImageRenderer<T>[] tmp = RendererFactory
+                                .createSuitableRenderer(
+                                                e.getRandomAccessibleInterval(),
+                                                e.getImgMetaData());
+
+                m_blockEvent = true;
+                m_rendList.setListData(tmp);
+                m_rendList.repaint();
+                m_blockEvent = false;
         }
 
         /**
