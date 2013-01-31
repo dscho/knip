@@ -50,22 +50,29 @@
  */
 package org.knime.knip.core.ui.imgviewer.events;
 
+import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.Type;
+import net.imglib2.view.Views;
+
+import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  *
  * @author hornm, University of Konstanz
  */
-public class ImgAndLabelingChgEvent<T extends RealType<T>, L extends Comparable<L>>
-                extends ImgWithMetadataChgEvent<T> {
+public class ImgAndLabelingChgEvent<T extends Type<T>, L extends Comparable<L>>
+                implements KNIPEvent {
 
         private final Labeling<L> m_labeling;
+        private final RandomAccessibleInterval<T> m_img;
+        private final Named m_name;
+        private final CalibratedSpace m_cspace;
+        private final Sourced m_source;
 
         /**
          * @param interval
@@ -73,10 +80,59 @@ public class ImgAndLabelingChgEvent<T extends RealType<T>, L extends Comparable<
          * @param cspace
          */
         public ImgAndLabelingChgEvent(RandomAccessibleInterval<T> img,
-                        Labeling<L> labeling, Named name, Sourced source,
-                        CalibratedSpace cspace, ImageMetadata imageMetaData) {
-                super(img, name, source, cspace, imageMetaData);
+                        Labeling<L> labeling,
+                        Named name, Sourced source, CalibratedSpace cspace) {
+                m_img = img;
+                m_name = name;
+                m_source = source;
+                m_cspace = cspace;
                 m_labeling = labeling;
+
+        }
+
+        @Override
+        public ExecutionPriority getExecutionOrder() {
+                return ExecutionPriority.NORMAL;
+        }
+
+        /**
+         * implements object equality {@inheritDoc}
+         */
+        @Override
+        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+                return this.equals(thatEvent);
+        }
+
+        /**
+         * @return the interval
+         */
+        public RandomAccessibleInterval<T> getRandomAccessibleInterval() {
+                return m_img;
+        }
+
+        public IterableInterval<T> getIterableInterval() {
+                return Views.iterable(m_img);
+        }
+
+        /**
+         * @return the name
+         */
+        public Named getName() {
+                return m_name;
+        }
+
+        /**
+         * @return the source
+         */
+        public Sourced getSource() {
+                return m_source;
+        }
+
+        /**
+         * @return the axes
+         */
+        public CalibratedSpace getCalibratedSpace() {
+                return m_cspace;
         }
 
         /**
