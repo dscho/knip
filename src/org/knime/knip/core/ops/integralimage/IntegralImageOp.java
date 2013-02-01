@@ -36,8 +36,6 @@ package org.knime.knip.core.ops.integralimage;
  * #L%
  */
 
-import java.util.Arrays;
-
 import net.imglib2.Localizable;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
@@ -338,32 +336,28 @@ public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
 
                 RandomAccess<T> ra = integralImage.randomAccess();
                 int d = p1.numDimensions();
-                char[] p;
+                boolean[] p;
                 long[] position = new long[d];
                 double sum = 0;
 
                 for (int i = 0; i < Math.pow(2, d); i++) {
-                        p = Arrays.copyOf(Long.toBinaryString(i).toCharArray(),
-                                        d);
-                        // gives as {0,1}^d all binary combinations 0,0,..,0 ...
-                        // 1,1,...,1
-
+                        p = getBinaryRep(i, d);
                         int ones = 0;
 
                         for (int j = 0; j < p.length; j++) {
-                                if (p[j] == '1') {
+                                if (p[j]) { // = 1
                                         ones++;
                                         // +1 because the integral image
                                         // contains a zero column
-                                        position[i] = p2.getLongPosition(i) + 1l;
-                                } else {
+                                        position[j] = p2.getLongPosition(j) + 1l;
+                                } else { // = 0
                                         // no +1 because integrating from 3..5
                                         // inc. 3 & 5 means [5] - [2]
-                                        position[i] = p1.getLongPosition(i);
+                                        position[j] = p1.getLongPosition(j);
                                 }
                         }
 
-                        ra.localize(position);
+                        ra.setPosition(position);
                         int sign = (int) Math.pow(-1, d - ones);
 
                         sum += sign * ra.get().getRealDouble();
@@ -373,6 +367,20 @@ public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
                 result.setReal(sum);
 
                 return result;
+        }
+
+        // gives as {0,1}^d all binary combinations 0,0,..,0 ...
+        // 1,1,...,1
+        private static boolean[] getBinaryRep(int i, int d) {
+                char[] tmp = Long.toBinaryString(i).toCharArray();
+                boolean[] p = new boolean[d];
+                for (int pos = 0; pos < tmp.length; pos++) {
+                        if (tmp[pos] == '1') {
+                                p[tmp.length - (pos + 1)] = true;
+                        }
+                }
+
+                return p;
         }
 
 
