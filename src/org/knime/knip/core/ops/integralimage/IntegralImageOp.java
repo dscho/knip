@@ -11,13 +11,13 @@ package org.knime.knip.core.ops.integralimage;
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -29,15 +29,19 @@ package org.knime.knip.core.ops.integralimage;
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
  * #L%
  */
 
+import java.util.Arrays;
+
+import net.imglib2.Localizable;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.iterator.LocalizingZeroMinIntervalIterator;
 import net.imglib2.ops.img.UnaryObjectFactory;
@@ -52,27 +56,33 @@ import net.imglib2.type.numeric.real.DoubleType;
 
 /*
  * original authors
- * 
+ *
  * @author Stephan Preibisch
  * @author Albert Cardona
+ *
+ * - added sum calculation method
+ * - //TODO make integral image same size as input image and use ExtendedRandomAccess with 0 border instead
  */
 
-/** n-dimensional integral image that stores sums using type {@param <T>}.
- * Care must be taken that sums do not overflow the capacity of type {@param <T>}.
+/**
+ * n-dimensional integral image that stores sums using type {@param <T>}. Care
+ * must be taken that sums do not overflow the capacity of type {@param <T>}.
  *
- * The integral image will be one pixel larger in each dimension as for easy computation
- * of sums it has to contain "zeros" at the beginning of each dimension. User {@link #bufferFactory()} to
- * create an appropriate image.
+ * The integral image will be one pixel larger in each dimension as for easy
+ * computation of sums it has to contain "zeros" at the beginning of each
+ * dimension. User {@link #bufferFactory()} to create an appropriate image.
  *
- * Sums are done with the precision of {@param <T>} and then set to the integral image type,
- * which may crop the values according to the type's capabilities.
+ * Sums are done with the precision of {@param <T>} and then set to the integral
+ * image type, which may crop the values according to the type's capabilities.
  *
- * @param <R> The type of the input image.
- * @param <T> The type of the integral image.
+ * @param <R>
+ *                The type of the input image.
+ * @param <T>
+ *                The type of the integral image.
  */
 public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
 		implements
-		UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
+                UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
 	private final ImgFactory<T> m_factory;
 	private final T m_type;
@@ -115,7 +125,7 @@ public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
 				final long integralSize[] = new long[numDimensions];
 
 				for (int d = 0; d < numDimensions; ++d)
-					integralSize[d] = input.dimension(d) + 1;
+                                        integralSize[d] = input.dimension(d) + 1;
 
 				return m_factory.create(integralSize, type);
 			}
@@ -229,7 +239,7 @@ public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
 			integrateLineDim0(cursorIn, cursorOut, sum, tmpVar, size);
 		}
 	}
-	
+
 	private void process_nD_remainingDimensions(
 			RandomAccessibleInterval<R> input,
 			RandomAccessibleInterval<T> output) {
@@ -310,6 +320,60 @@ public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
 		}
 	}
 
-	
+        public static <T extends RealType<T>> T getSum(Localizable p1,
+                        Localizable p2,
+                        RandomAccessibleInterval<T> integralImage)
+                        throws IncompatibleTypeException {
+
+                if (p1.numDimensions() != p2.numDimensions()
+                                || p1.numDimensions() != integralImage
+                                                .numDimensions()) {
+                        throw new IncompatibleTypeException(integralImage,
+                                        "the two positions and the integral image do not have the same dimensionality");
+                }
+
+                // implemented according to
+                // http://en.wikipedia.org/wiki/Summed_area_table high
+                // dimensional variant
+
+                RandomAccess<T> ra = integralImage.randomAccess();
+                int d = p1.numDimensions();
+                char[] p;
+                long[] position = new long[d];
+                double sum = 0;
+
+                for (int i = 0; i < Math.pow(2, d); i++) {
+                        p = Arrays.copyOf(Long.toBinaryString(i).toCharArray(),
+                                        d);
+                        // gives as {0,1}^d all binary combinations 0,0,..,0 ...
+                        // 1,1,...,1
+
+                        int ones = 0;
+
+                        for (int j = 0; j < p.length; j++) {
+                                if (p[j] == '1') {
+                                        ones++;
+                                        // +1 because the integral image
+                                        // contains a zero column
+                                        position[i] = p2.getLongPosition(i) + 1l;
+                                } else {
+                                        // no +1 because integrating from 3..5
+                                        // inc. 3 & 5 means [5] - [2]
+                                        position[i] = p1.getLongPosition(i);
+                                }
+                        }
+
+                        ra.localize(position);
+                        int sign = (int) Math.pow(-1, d - ones);
+
+                        sum += sign * ra.get().getRealDouble();
+                }
+
+                T result = integralImage.randomAccess().get().createVariable();
+                result.setReal(sum);
+
+                return result;
+        }
+
 
 }
