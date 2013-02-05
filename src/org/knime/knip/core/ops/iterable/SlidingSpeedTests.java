@@ -5,7 +5,6 @@
 //import net.imglib2.img.Img;
 //import net.imglib2.img.ImgFactory;
 //import net.imglib2.img.array.ArrayImgFactory;
-//import net.imglib2.ops.UnaryOperation;
 //import net.imglib2.outofbounds.OutOfBoundsBorderFactory;
 //import net.imglib2.type.numeric.integer.UnsignedByteType;
 //

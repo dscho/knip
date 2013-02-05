@@ -33,7 +33,7 @@ public class SlidingShapeOpBinaryInside<T extends Type<T>, V extends Type<V>, IN
         }
 
         @Override
-        protected OUT process(IterableInterval<Neighborhood<T>> neighborhoods,
+        protected OUT compute(IterableInterval<Neighborhood<T>> neighborhoods,
                         IN input, OUT output) {
 
                 Cursor<T> inCursor = Views.iterable(

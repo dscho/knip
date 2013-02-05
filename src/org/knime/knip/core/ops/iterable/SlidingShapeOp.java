@@ -17,9 +17,8 @@ public abstract class SlidingShapeOp<T extends Type<T>, V extends Type<V>, IN ex
 
         protected final OutOfBoundsFactory<T, IN> outofbounds;
 
-        public SlidingShapeOp(Shape neighborhood,
-                        OutOfBoundsFactory<T, IN> outofbounds) {
-                this.shape = neighborhood;
+        public SlidingShapeOp(Shape shape, OutOfBoundsFactory<T, IN> outofbounds) {
+                this.shape = shape;
                 this.outofbounds = outofbounds;
         }
 
@@ -39,11 +38,10 @@ public abstract class SlidingShapeOp<T extends Type<T>, V extends Type<V>, IN ex
                         throw new IllegalArgumentException(
                                         "Iteration order doesn't fit in SlidingNeighborhoodOp");
 
-
-                return process(neighborhoods, input, output);
+                return compute(neighborhoods, input, output);
         }
 
-        protected abstract OUT process(
+        protected abstract OUT compute(
                         IterableInterval<Neighborhood<T>> neighborhoods,
                         IN input, OUT output);
 }

@@ -26,7 +26,7 @@ public class SlidingShapeOpUnaryInside<T extends Type<T>, V extends Type<V>, IN 
 
 
         @Override
-        protected OUT process(IterableInterval<Neighborhood<T>> neighborhoods,
+        protected OUT compute(IterableInterval<Neighborhood<T>> neighborhoods,
                         IN input, OUT output) {
                 Cursor<V> outCursor = output.cursor();
                 for (final Neighborhood<T> neighborhood : neighborhoods) {
