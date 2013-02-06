@@ -20,12 +20,12 @@ import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.view.Views;
 
-import org.knime.knip.core.ops.integralimage.TwoDIntegralImg;
+import org.knime.knip.core.ops.integralimage.IntegralImg2D;
 
 public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends RealType<V> & NativeType<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
                 extends SlidingShapeOp<T, V, IN, OUT> {
 
-        private final TwoDIntegralImg<T, IntType> m_iiOp;
+        private final IntegralImg2D<T, IntType> m_iiOp;
         private final BinaryOperation<DoubleType, T, V> m_binaryOp;
         private final OutOfBoundsFactory<IntType, RandomAccessibleInterval<IntType>> m_outOfBoundsII;
 
@@ -37,7 +37,7 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                 super(shape, outOfBounds);
                 m_binaryOp = binaryOp;
                 m_outOfBoundsII = outOfBoundsII;
-                m_iiOp = new TwoDIntegralImg<T, IntType>();
+                m_iiOp = new IntegralImg2D<T, IntType>();
         }
 
         @Override

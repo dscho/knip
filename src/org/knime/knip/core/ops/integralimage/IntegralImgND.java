@@ -75,19 +75,19 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @param <T>
  *                The type of the integral image.
  */
-public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
+public class IntegralImgND<R extends RealType<R>, T extends RealType<T>>
                 implements
                 UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
         private final ImgFactory<T> m_factory;
         private final T m_type;
 
-        public IntegralImageOp(ImgFactory<T> factory, T type) {
+        public IntegralImgND(ImgFactory<T> factory, T type) {
                 m_factory = factory;
                 m_type = type;
         }
 
-        public IntegralImageOp(ImgFactory<T> factory) {
+        public IntegralImgND(ImgFactory<T> factory) {
                 m_factory = factory;
                 m_type = null;
         }
@@ -129,7 +129,7 @@ public class IntegralImageOp<R extends RealType<R>, T extends RealType<T>>
 
         @Override
         public UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> copy() {
-                return new IntegralImageOp<R, T>(m_factory, m_type);
+                return new IntegralImgND<R, T>(m_factory, m_type);
         }
 
         @Override

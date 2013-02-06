@@ -12,7 +12,7 @@ import net.imglib2.view.Views;
  * @author dietzc, friedrichm
  *
  */
-public class TwoDIntegralImg<T extends RealType<T>, P extends IntegerType<P>>
+public class IntegralImg2D<T extends RealType<T>, P extends IntegerType<P>>
                 implements
                 UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<P>> {
 
@@ -34,16 +34,18 @@ public class TwoDIntegralImg<T extends RealType<T>, P extends IntegerType<P>>
 
                 Cursor<T> inCursor = Views.flatIterable(input).cursor();
                 Cursor<P> outCursor = Views.flatIterable(output).cursor();
+                double valueLookup = 0;
 
                 while (inCursor.hasNext()) {
                         inCursor.fwd();
                         outCursor.fwd();
 
-                        double valueLookup = 0;
-
                         // lookup rows are written and read alternately.
                         int y = inCursor.getIntPosition(1);
                         int x = inCursor.getIntPosition(0);
+
+                        if (x == 0)
+                                valueLookup = 0;
 
                         int curLookupRow = y % 2;
                         int nextLookupRow = (y + 1) % 2;
@@ -58,6 +60,7 @@ public class TwoDIntegralImg<T extends RealType<T>, P extends IntegerType<P>>
                         valueLookupRow[nextLookupRow][x + 1] = value;
 
                         outCursor.get().setReal(value);
+
                 }
 
                 return output;
@@ -65,7 +68,7 @@ public class TwoDIntegralImg<T extends RealType<T>, P extends IntegerType<P>>
 
         @Override
         public UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<P>> copy() {
-                return new TwoDIntegralImg<T, P>();
+                return new IntegralImg2D<T, P>();
         }
 
 }
