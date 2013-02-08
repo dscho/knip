@@ -1,18 +1,18 @@
 package org.knime.knip.core.ops.iterable;
 
 import net.imglib2.Cursor;
+import net.imglib2.FinalInterval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.region.localneighborhood.Neighborhood;
-import net.imglib2.algorithm.region.localneighborhood.Shape;
+import net.imglib2.algorithm.region.localneighborhood.RectangleShape;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.BinaryOperation;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.outofbounds.OutOfBounds;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
@@ -27,29 +27,39 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
 
         private final IntegralImg2D<T, IntType> m_iiOp;
         private final BinaryOperation<DoubleType, T, V> m_binaryOp;
-        private final OutOfBoundsFactory<IntType, RandomAccessibleInterval<IntType>> m_outOfBoundsII;
+        private final int m_span;
 
         public SlidingMeanIntegralImgBinaryOp(
                         BinaryOperation<DoubleType, T, V> binaryOp,
-                        Shape shape,
-                        OutOfBoundsFactory<T, IN> outOfBounds,
-                        OutOfBoundsFactory<IntType, RandomAccessibleInterval<IntType>> outOfBoundsII) {
+                        RectangleShape shape, int span,
+                        OutOfBoundsFactory<T, IN> outOfBounds) {
                 super(shape, outOfBounds);
                 m_binaryOp = binaryOp;
-                m_outOfBoundsII = outOfBoundsII;
                 m_iiOp = new IntegralImg2D<T, IntType>();
+                m_span = span;
         }
 
         @Override
         public UnaryOperation<IN, OUT> copy() {
                 return new SlidingMeanIntegralImgBinaryOp<T, V, IN, OUT>(
-                                m_binaryOp.copy(), shape, outofbounds,
-                                m_outOfBoundsII);
+                                m_binaryOp.copy(), (RectangleShape) shape,
+                                m_span, outofbounds);
         }
 
         @Override
         protected OUT compute(IterableInterval<Neighborhood<T>> neighborhoods,
                         IN input, OUT output) {
+
+                if (input.numDimensions() != 2 || output.numDimensions() != 2) {
+                        throw new IllegalArgumentException(
+                                        "Only two dimensional images allowed");
+                }
+
+                long[] extendedDims = new long[input.numDimensions()];
+                input.dimensions(extendedDims);
+
+                extendedDims[0] += m_span;
+                extendedDims[1] += m_span;
 
                 Cursor<T> inCursor = Views.iterable(
                                 SubsetOperations.subsetview(input, input))
@@ -68,10 +78,15 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                                                                                                 .create(a,
                                                                                                                 new IntType());
                                                                         }
-                                                                }), input);
+                                                                }),
+                                                Views.interval(Views.extend(
+                                                                input,
+                                                                outofbounds),
+                                                                new FinalInterval(
+                                                                                extendedDims)));
 
-                OutOfBounds<IntType> randomAccess = Views.extend(ii,
-                                m_outOfBoundsII).randomAccess();
+                RandomAccess<IntType> randomAccess = Views.extendValue(ii,
+                                new IntType(0)).randomAccess();
 
                 DoubleType mean = new DoubleType();
                 long[] tmpStore = new long[2];
