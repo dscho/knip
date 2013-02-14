@@ -324,4 +324,10 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T>>
                 }
         }
 
+        // convenience method
+        public final static <T extends RealType<T>> IntegralImageSumAgent<T> getSumAgent(
+                        RandomAccessibleInterval<T> integralImage) {
+                return new IntegralImageSumAgent<T>(integralImage);
+        }
+
 }
