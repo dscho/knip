@@ -55,7 +55,7 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @author Stephan Preibisch
  * @author Albert Cardona
  *
- * - added sum calculation method
+ * - added associated SumAgent object and the getSumAgent method
  * - //TODO make integral image same size as input image and use ExtendedRandomAccess with 0 border instead
  */
 
@@ -325,9 +325,15 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T>>
         }
 
         // convenience method
-        public final static <T extends RealType<T>> IntegralImageSumAgent<T> getSumAgent(
+        /**
+         *
+         * @param integralImage
+         * @return a helper object that efficiently computes sums on the
+         *         provided integral image.
+         */
+        public final static <T extends RealType<T>> IntegralImgSumAgent<T> getSumAgent(
                         RandomAccessibleInterval<T> integralImage) {
-                return new IntegralImageSumAgent<T>(integralImage);
+                return new IntegralImgSumAgent<T>(integralImage);
         }
 
 }

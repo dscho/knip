@@ -4,7 +4,15 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
-public class IntegralImageSumAgent<T extends RealType<T>> {
+/**
+ * Helper object for {@link IntegralImgND} that executes efficient region sum
+ * queries on the integral image.
+ *
+ * @author zinsmaie
+ *
+ * @param <T>
+ */
+public class IntegralImgSumAgent<T extends RealType<T>> {
 
         private final boolean[][] m_binaryRep;
         private final int[] m_signs;
@@ -12,7 +20,13 @@ public class IntegralImageSumAgent<T extends RealType<T>> {
         private final int m_dims;
         private final int m_points;
 
-        public IntegralImageSumAgent(RandomAccessibleInterval<T> ii) {
+        /**
+         * Initializes member variables that are needed for the nd sum
+         * calculation.
+         *
+         * @param ii
+         */
+        public IntegralImgSumAgent(RandomAccessibleInterval<T> ii) {
                 m_iiRA = ii.randomAccess();
 
                 // initialize the binary representation of the control points
@@ -39,6 +53,16 @@ public class IntegralImageSumAgent<T extends RealType<T>> {
                 }
         }
 
+        /**
+         * get the sum of the area including leftUpper and rightLower corner.
+         * The positions are defined with respect to the original input image of
+         * the integral image. Therefore you can safely ignore the helper zeros
+         * of the integral image.
+         *
+         * @param leftUpper
+         * @param rightLower
+         * @return
+         */
         public double getSum(long[] leftUpper, long[] rightLower) {
 
                 // implemented according to

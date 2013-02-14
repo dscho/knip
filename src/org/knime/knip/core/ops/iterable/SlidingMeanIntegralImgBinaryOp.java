@@ -18,7 +18,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-import org.knime.knip.core.ops.integralimage.IntegralImageSumAgent;
+import org.knime.knip.core.ops.integralimage.IntegralImgSumAgent;
 import org.knime.knip.core.ops.integralimage.IntegralImgND;
 
 public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends RealType<V> & NativeType<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
@@ -79,7 +79,7 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                 long[] p1 = new long[input.numDimensions()];
                 long[] p2 = new long[input.numDimensions()];
 
-                IntegralImageSumAgent<IntType> sumAgent = new IntegralImageSumAgent<IntType>(
+                IntegralImgSumAgent<IntType> sumAgent = new IntegralImgSumAgent<IntType>(
                                 ii);
 
                 for (final Neighborhood<T> neighborhood : neighborhoods) {
