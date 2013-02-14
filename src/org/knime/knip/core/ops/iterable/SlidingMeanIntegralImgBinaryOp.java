@@ -11,17 +11,16 @@ import net.imglib2.ops.operation.BinaryOperation;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.outofbounds.OutOfBoundsFactory;
-import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-import org.knime.knip.core.ops.integralimage.IntegralImgSumAgent;
 import org.knime.knip.core.ops.integralimage.IntegralImgND;
+import org.knime.knip.core.ops.integralimage.IntegralImgSumAgent;
 
-public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends RealType<V> & NativeType<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
+public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends RealType<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
                 extends SlidingShapeOp<T, V, IN, OUT> {
 
         private final IntegralImgND<T, IntType> m_iiOp;
