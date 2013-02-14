@@ -98,7 +98,7 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                         int sizeX = (int) neighborhood.dimension(0);
                         int sizeY = (int) neighborhood.dimension(1);
 
-                        mean.setReal(getAvg(inCursor.getLongPosition(0),
+                        mean.setReal(getSum(inCursor.getLongPosition(0),
                                         inCursor.getLongPosition(1), tmpStore,
                                         randomAccess, sizeX, sizeY)
                                         / neighborhood.size());
@@ -110,7 +110,7 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                 return output;
         }
 
-        private double getAvg(long x, long y, long[] tmpStore,
+        private double getSum(long x, long y, long[] tmpStore,
                         RandomAccess<IntType> ii, int sizeX, int sizeY) {
                 double res = 0;
 
