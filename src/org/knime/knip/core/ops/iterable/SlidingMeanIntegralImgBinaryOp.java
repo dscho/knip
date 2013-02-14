@@ -15,6 +15,7 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
+import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 import org.knime.knip.core.ops.integralimage.IntegralImageSumAgent;
@@ -63,10 +64,16 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                 // extend such that image is 2*span larger in each dimension
                 // with corresponding outofbounds extension
                 // Result: We have a IntegralImage
+
+                IntervalView<T> extended = Views.offset(Views.interval(
+                                Views.extend(input, outofbounds),
+                                new FinalInterval(min, max)), min);
+
+
+
                 RandomAccessibleInterval<IntType> ii = Operations.compute(
-                                m_iiOp, Views.interval(Views.extend(input,
-                                                outofbounds),
-                                                new FinalInterval(min, max)));
+                                m_iiOp, extended);
+
 
                 DoubleType mean = new DoubleType();
                 long[] p1 = new long[input.numDimensions()];
