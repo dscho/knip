@@ -23,6 +23,20 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/serializer-2.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/xalan-2.7.1.jar" sourcepath="C:/Users/zinsmaie/.m2/repository/xalan/xalan/2.7.1/xalan-2.7.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/jama-1.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.5-20130220.135633-94.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/forms-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20130220.135356-96.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-legacy-4.5-20130220.135442-90.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.5-20130220.135515-95.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.5-20130220.135415-96.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.5-20130220.135615-94.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-0.6.0-20130110.144655-4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/netcdf-4.0.03.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20130220.135528-95.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20130220.135501-96.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.5-20130220.135548-94.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-devel-4.5-20130220.135428-90.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
