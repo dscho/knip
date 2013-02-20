@@ -39,7 +39,8 @@ Bundle-ClassPath: .,
  lib/mvn/ome-xml-4.5-20130220.135528-95.jar,
  lib/mvn/poi-loci-4.5-20130220.135501-96.jar,
  lib/mvn/scifio-4.5-20130220.135548-94.jar,
- lib/mvn/scifio-devel-4.5-20130220.135428-90.jar
+ lib/mvn/scifio-devel-4.5-20130220.135428-90.jar,
+ lib/mvn/junit-3.8.1.jar
 Require-Bundle: org.apache.log4j;bundle-version="1.2.15",
  org.eclipse.core.runtime;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy

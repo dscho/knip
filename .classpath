@@ -37,6 +37,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20130220.135501-96.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.5-20130220.135548-94.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-devel-4.5-20130220.135428-90.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/junit-3.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
