@@ -58,7 +58,7 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                         max[d] = (input.dimension(d) - 1) + m_span;
                 }
 
-                Cursor<T> inCursor = Views.iterable(input).cursor();
+                Cursor<T> inCursor = Views.flatIterable(input).cursor();
                 Cursor<V> outCursor = output.cursor();
 
                 // extend such that image is 2*span larger in each dimension
