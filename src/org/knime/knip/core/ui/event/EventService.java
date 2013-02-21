@@ -185,25 +185,23 @@ public class EventService {
                 while (!m_eventQueue.isEmpty()) {
                         // priority queue => higher priority events first
                         KNIPEvent event = m_eventQueue.poll();
+                        Class<?> clazz = event.getClass();
 
-                        if (m_typeToSubscriber.get(event.getClass()) == null) {
-                                LOGGER.debug("Nobody is listening to: " + event);
-                        } else {
-                                Class<?> clazz = event.getClass();
+                        while (KNIPEvent.class.isAssignableFrom(clazz)) {
+                                List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber
+                                                .get(clazz);
 
-                                while (KNIPEvent.class.isAssignableFrom(clazz)) {
-                                        List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber
-                                                        .get(clazz);
-
-                                        if (suscribers != null) {
-                                                for (ProxyEventSubscriber l : suscribers) {
-                                                        l.onEvent(event);
-                                                }
-                                                LOGGER.debug("Event " + event
-                                                                + " processed");
+                                if (suscribers != null) {
+                                        for (ProxyEventSubscriber l : suscribers) {
+                                                l.onEvent(event);
                                         }
-                                        clazz = clazz.getSuperclass();
+                                        LOGGER.debug("Event " + event
+                                                        + " processed");
+                                } else {
+                                        LOGGER.debug("Nobody is listening to: "
+                                                        + event);
                                 }
+                                clazz = clazz.getSuperclass();
                         }
 
                         m_eventQueue.remove(event);
