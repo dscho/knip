@@ -36,18 +36,22 @@ package org.knime.knip.core.ops.integralimage;
  * #L%
  */
 
+import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.ImgFactory;
 import net.imglib2.iterator.LocalizingZeroMinIntervalIterator;
 import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
+import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.LongType;
 import net.imglib2.type.numeric.integer.Unsigned12BitType;
 import net.imglib2.type.numeric.real.DoubleType;
+import net.imglib2.view.Views;
 
 /*
  * original authors
@@ -75,12 +79,12 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @param <T>
  *                The type of the integral image.
  */
-public class IntegralImgND<R extends RealType<R>, T extends RealType<T>>
+public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & NativeType<T>>
                 implements
                 UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
         private final ImgFactory<T> m_factory;
-        private final T m_type;
+        private T m_type;
 
         public IntegralImgND(ImgFactory<T> factory, T type) {
                 m_factory = factory;
@@ -101,17 +105,16 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T>>
                         public RandomAccessibleInterval<T> instantiate(
                                         RandomAccessibleInterval<R> input) {
 
-                                T type = m_type;
-                                R probe = input.randomAccess().get();
-
+                                R probe = input.randomAccess().get()
+                                                .createVariable();
                                 if (m_type == null) {
                                         if (probe instanceof LongType
                                                         || probe instanceof Unsigned12BitType) {
-                                                type = (T) new LongType();
+                                                m_type = (T) new LongType();
                                         } else if (probe instanceof IntegerType) {
-                                                type = (T) new IntType();
+                                                m_type = (T) new IntType();
                                         } else {
-                                                type = (T) new DoubleType();
+                                                m_type = (T) new DoubleType();
                                         }
                                 }
 
@@ -122,7 +125,7 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T>>
                                 for (int d = 0; d < numDimensions; ++d)
                                         integralSize[d] = input.dimension(d) + 1;
 
-                                return m_factory.create(integralSize, type);
+                                return m_factory.create(integralSize, m_type);
                         }
                 };
         }
@@ -143,6 +146,28 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T>>
                 } else {
                         process_nD_initialDimension(input, output);
                         process_nD_remainingDimensions(input, output);
+                }
+
+                // iterate a 2nd time over the input for error testing
+                // this is expensive but we have to ensure that the
+                // bounds of the output type
+                // are big enough.
+                double errorSum = 0.0d;
+
+                Cursor<R> inputCursor = Views.iterable(input).cursor();
+                while (inputCursor.hasNext()) {
+                        errorSum += inputCursor.next().getRealDouble();
+                }
+
+                if (errorSum > output.randomAccess().get().createVariable()
+                                .getMaxValue()
+                                || Double.isInfinite(errorSum)) {
+                        throw new RuntimeException(
+                                        new IncompatibleTypeException(
+                                        output,
+                                                        "Integral image breaks type boundaries of the output image. (max value of "
+                                                        + errorSum
+                                                                        + " is too much)"));
                 }
 
                 return output;

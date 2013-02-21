@@ -23,7 +23,9 @@ import org.knime.knip.core.ops.integralimage.IntegralImgSumAgent;
 public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends RealType<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
                 extends SlidingShapeOp<T, V, IN, OUT> {
 
-        private final IntegralImgND<T, IntType> m_iiOp;
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        private final IntegralImgND m_iiOp = new IntegralImgND(
+                        new ArrayImgFactory());
         private final BinaryOperation<DoubleType, T, V> m_binaryOp;
         private final int m_span;
 
@@ -33,8 +35,6 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                         OutOfBoundsFactory<T, IN> outOfBounds) {
                 super(shape, outOfBounds);
                 m_binaryOp = binaryOp;
-                m_iiOp = new IntegralImgND<T, IntType>(
-                                new ArrayImgFactory<IntType>());
                 m_span = span;
         }
 
@@ -45,6 +45,7 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                                 m_span, outofbounds);
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         protected OUT compute(IterableInterval<Neighborhood<T>> neighborhoods,
                         IN input, OUT output) {
@@ -68,25 +69,21 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
                                 Views.extend(input, outofbounds),
                                 new FinalInterval(min, max)), min);
 
-
-
                 RandomAccessibleInterval<IntType> ii = Operations.compute(
                                 m_iiOp, extended);
-
 
                 DoubleType mean = new DoubleType();
                 long[] p1 = new long[input.numDimensions()];
                 long[] p2 = new long[input.numDimensions()];
 
-                IntegralImgSumAgent<IntType> sumAgent = new IntegralImgSumAgent<IntType>(
-                                ii);
+                IntegralImgSumAgent sumAgent = new IntegralImgSumAgent(ii);
 
                 for (final Neighborhood<T> neighborhood : neighborhoods) {
                         inCursor.fwd();
                         outCursor.fwd();
 
-                        for(int d = 0; d < p1.length; d++){
-                                long p =  inCursor.getLongPosition(d);
+                        for (int d = 0; d < p1.length; d++) {
+                                long p = inCursor.getLongPosition(d);
                                 p1[d] = p; // -span
                                 p2[d] = p + 2 * m_span; // +span
                         }
@@ -100,4 +97,5 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
 
                 return output;
         }
+
 }
