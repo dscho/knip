@@ -10,12 +10,12 @@ import net.imglib2.RealPoint;
 import net.imglib2.roi.PolygonRegionOfInterest;
 
 /**
- * 
+ *
  * @author hornm, dietzc, fschoenenberger
  */
 public class SplineOverlayElement<L extends Comparable<L>> extends
                 AbstractPolygonOverlayElement<L> {
-        private static final int SPLINE_STEPS = 8;
+        private static final int SPLINE_STEPS = 12;
 
         private Polygon m_tmpPoly;
 
@@ -30,17 +30,9 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
                 m_tmpPoly = new Polygon();
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Polygon getPolygon() {
-                return m_poly;
-        }
-
         @Override
         public boolean add(long x, long y) {
-                if (!super.add(x, y)) {
+                if (m_isClosed) {
                         return false;
                 } else {
                         m_tmpPoly.addPoint((int) x, (int) y);
@@ -175,7 +167,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
          * calculates the natural cubic spline that interpolates y[0], y[1], ...
          * y[n] The first segment is returned as C[0].a + C[0].b*u + C[0].c*u^2
          * + C[0].d*u^3 0<=u <1 the other segments are in C[1], C[2], ... C[n-1]
-         * 
+         *
          * source: http://www.cse.unsw.edu.au/~lambert/splines/
          */
 
@@ -189,7 +181,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
                  * | |D[1]| |3(x[2] - x[0]) | | 1 4 1 | | . | = | . | | ..... |
                  * | . | | . | | 1 4 1| | . | |3(x[n] - x[n-2])| [ 1 2] [D[n]]
                  * [3(x[n] - x[n-1])]
-                 * 
+                 *
                  * by using row operations to convert the matrix to upper
                  * triangular and then back sustitution. The D[i] are the
                  * derivatives at the knots.
@@ -228,7 +220,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
          * x[1], ... x[n] The first segment is returned as C[0].a + C[0].b*u +
          * C[0].c*u^2 + C[0].d*u^3 0<=u <1 the other segments are in C[1], C[2],
          * ... C[n]
-         * 
+         *
          * source: http://www.cse.unsw.edu.au/~lambert/splines/
          */
 
@@ -244,7 +236,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
                  * | |D[1]| |3(x[2] - x[0]) | | 1 4 1 | | . | = | . | | ..... |
                  * | . | | . | | 1 4 1| | . | |3(x[n] - x[n-2])| [1 1 4] [D[n]]
                  * [3(x[0] - x[n-1])]
-                 * 
+                 *
                  * by decomposing the matrix into upper triangular and lower
                  * matrices and then back sustitution. See Spath "Spline
                  * Algorithms for Curves and Surfaces" pp 19--21. The D[i] are
@@ -292,7 +284,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
          * calculates the natural cubic spline that interpolates y[0], y[1], ...
          * y[n] The first segment is returned as C[0].a + C[0].b*u + C[0].c*u^2
          * + C[0].d*u^3 0<=u <1 the other segments are in C[1], C[2], ... C[n-1]
-         * 
+         *
          * source: http://www.cse.unsw.edu.au/~lambert/splines/
          */
 
