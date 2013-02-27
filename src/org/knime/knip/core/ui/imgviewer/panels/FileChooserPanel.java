@@ -6,6 +6,8 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
@@ -33,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -40,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileView;
 
 import org.knime.knip.core.ui.event.EventService;
@@ -169,6 +173,7 @@ public class FileChooserPanel extends JPanel {
                 // center.add(buttonPan);
                 // rightTab.setPreferredSize(new Dimension(400, 300));
                 // browsePane.setPreferredSize(new Dimension(600, 500));
+                this.enterHack(m_fileChooser.getComponents());
                 right.add(rightTab);
                 left.add(browsePane);
                 browsePane.add(buttonPan);
@@ -249,11 +254,13 @@ public class FileChooserPanel extends JPanel {
                 });
 
                 m_fileChooser.addActionListener(new ActionListener() {
+
                         @Override
                         public void actionPerformed(final ActionEvent e) {
                                 onAdd();
                         }
                 });
+
 
                 m_selectedFileList.addMouseListener(new MouseListener() {
 
@@ -302,10 +309,12 @@ public class FileChooserPanel extends JPanel {
         private void onAdd() {
                 FileFilter ff = m_fileChooser.getFileFilter();
                 if (m_fileChooser.getSelectedFiles().length == 0) {
+
                         JOptionPane.showMessageDialog(
                                         this,
                                         "No files selected. Please select at least one file or directory.",
                                         "Warning", JOptionPane.ERROR_MESSAGE);
+
                         return;
                 }
 
@@ -649,4 +658,52 @@ public class FileChooserPanel extends JPanel {
                 }
         }
 
+        public void enterHack(Component[] comp) {
+                for (int x = 0; x < comp.length; x++) {
+                        if (comp[x] instanceof JPanel)
+                                enterHack(((JPanel) comp[x]).getComponents());
+                        else if (comp[x] instanceof JTextField) {
+                                final JTextField fl = ((JTextField) comp[x]);
+                                ((JTextField) comp[x])
+                                                .addKeyListener(new KeyListener() {
+                                                        @Override
+                                                        public void keyPressed(
+                                                                        KeyEvent arg0) {
+
+                                                                if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+                                                                        String fi = fl.getText();
+                                                                        System.out.println(fi);
+                                                                        if (fi.startsWith("*")) {
+                                                                                String[] f = fi.split("\\.");
+                                                                        FileFilter filter = new FileNameExtensionFilter(
+                                                                                                f[1],
+                                                                                                f[1]);
+                                                                        m_fileChooser.setFileFilter(filter);
+                                                                        }
+ else
+                                                                                m_fileChooser.setSelectedFile(new File(
+                                                                                                fi));
+                                                                        System.out.println("action");
+                                                                }
+
+                                                        }
+
+                                                        @Override
+                                                        public void keyReleased(
+                                                                        KeyEvent arg0) {
+
+
+                                                        }
+
+                                                        @Override
+                                                        public void keyTyped(
+                                                                        KeyEvent arg0) {
+
+
+                                                        }
+                                                });
+                                return;
+                        }
+                }
+        }
 }
