@@ -1,4 +1,3 @@
-
 package org.knime.knip.core.awt;
 
 import net.imglib2.RandomAccessibleInterval;
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Renders the real values of a X,Y slice as ScreenImage. The position in the
  * colorDim defines which of the provided color tables is used.
- * 
+ *
  * @author zinsmaie
  *
  * @param <R>
@@ -38,7 +37,6 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
         private final int m_colorDim;
         private ColorTable[] m_colorTables;
 
-
         public Real2TableColorRenderer(int colorDim) {
                 m_colorDim = colorDim;
                 m_converter = new RealTableColorARGBConverter<R>(1.0, 0.0);
@@ -48,8 +46,7 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
         public ScreenImage render(RandomAccessibleInterval<R> source, int dimX,
                         int dimY, long[] planePos) {
 
-                        // default implementation
-
+                // default implementation
                 ColorTable ct = m_colorTables[(int) planePos[m_colorDim]];
 
                 if (ct instanceof ColorTable8) {
