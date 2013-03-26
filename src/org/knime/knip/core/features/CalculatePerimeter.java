@@ -8,10 +8,7 @@ import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
 import net.imglib2.ops.img.UnaryObjectFactory;
-import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOutputOperation;
-import net.imglib2.ops.operation.img.unary.ImgConvert;
-import net.imglib2.ops.operation.img.unary.ImgConvert.ImgConversionTypes;
 import net.imglib2.outofbounds.OutOfBoundsMirrorFactory;
 import net.imglib2.outofbounds.OutOfBoundsMirrorFactory.Boundary;
 import net.imglib2.type.logic.BitType;
@@ -30,19 +27,11 @@ import org.knime.knip.core.features.seg.ExtractOutlineImg;
 public class CalculatePerimeter implements
                 UnaryOutputOperation<Img<BitType>, DoubleType> {
 
-        private final ImgConvert<BitType, UnsignedShortType> m_convert;
-
-        private final DirectConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType> m_convolve;
+        private final DirectConvolver<BitType, UnsignedShortType, UnsignedShortType> m_convolve;
 
         public CalculatePerimeter() {
 
-                // TODO make out of bounds
-                m_convolve = new DirectConvolver<UnsignedShortType, UnsignedShortType, UnsignedShortType>();
-
-                // TODO don't do this physically, use views!
-                m_convert = new ImgConvert<BitType, UnsignedShortType>(
-                                new BitType(), new UnsignedShortType(),
-                                ImgConversionTypes.DIRECT);
+                m_convolve = new DirectConvolver<BitType, UnsignedShortType, UnsignedShortType>();
         }
 
         private static synchronized Img<UnsignedShortType> getKernel() {
@@ -73,10 +62,8 @@ public class CalculatePerimeter implements
                 try {
                         img = (Img<UnsignedShortType>) m_convolve
                                         .compute(Views.extend(
-                                                        Operations.compute(
-                                                                        m_convert,
-                                                                        op),
-                                                        new OutOfBoundsMirrorFactory<UnsignedShortType, Img<UnsignedShortType>>(
+                                                        op,
+                                                        new OutOfBoundsMirrorFactory<BitType, Img<BitType>>(
                                                                         Boundary.SINGLE)),
                                                         getKernel(),
                                                         op.factory()
