@@ -19,6 +19,7 @@ import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
 import net.imglib2.sampler.special.ConstantRandomAccessible;
 import net.imglib2.type.Type;
 import net.imglib2.util.Intervals;
+import net.imglib2.view.IntervalView;
 import net.imglib2.view.IterableRandomAccessibleInterval;
 import net.imglib2.view.Views;
 
@@ -165,9 +166,9 @@ public class MiscViews {
          * @return Adjusted {@link RandomAccessibleInterval}
          */
         public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(
-                        final RandomAccessibleInterval<T> src,
-                        final Interval target) {
-                RandomAccessibleInterval<T> res = src;
+                        RandomAccessibleInterval<T> src, final Interval target) {
+                IntervalView<T> res = Views.interval(Views.extendBorder(src),
+                                target);
 
                 // Check direction of conversion
                 if (Intervals.equals(src, target))
@@ -189,7 +190,7 @@ public class MiscViews {
                 long[] resDims = new long[res.numDimensions()];
                 res.dimensions(resDims);
 
-                return Views.interval(Views.extendBorder(res), target);
+                return Views.interval(res, target);
 
         }
 
