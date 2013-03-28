@@ -89,13 +89,13 @@ public class MiscViews {
                 assert (srcSpace.numDimensions() == src.numDimensions() && target
                                 .numDimensions() == targetSpace.numDimensions());
 
-                // Extend
-                src = Views.interval(Views.extendBorder(src), target);
-
                 // Check direction of conversion
                 if (Intervals.equals(src, target)
                                 && spaceEquals(srcSpace, targetSpace))
                         return src;
+
+                // Extend
+                src = Views.interval(Views.extendBorder(src), src);
 
                 // Init result vars
                 RandomAccessibleInterval<T> res = src;
@@ -168,7 +168,7 @@ public class MiscViews {
         public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(
                         RandomAccessibleInterval<T> src, final Interval target) {
                 IntervalView<T> res = Views.interval(Views.extendBorder(src),
-                                target);
+                                src);
 
                 // Check direction of conversion
                 if (Intervals.equals(src, target))
