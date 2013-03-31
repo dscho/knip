@@ -27,17 +27,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/netcdf-4.0.03.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/junit-3.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.5-20130327.141611-114.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20130327.141242-117.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-legacy-4.5-20130327.141345-111.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.5-20130327.141439-116.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.5-20130327.141319-117.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.5-20130327.141558-114.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-0.6.0-20130322.230610-9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20130327.141452-116.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20130327.141406-117.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.5-20130327.141516-115.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-devel-4.5-20130327.141331-111.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
