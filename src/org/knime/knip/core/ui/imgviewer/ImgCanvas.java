@@ -32,6 +32,7 @@ import net.imglib2.type.Type;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.CalibrationUpdateEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseDraggedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMousePressedEvent;
@@ -67,9 +68,23 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         private BufferedImage m_image;
 
-        private double m_factor;
+        /** the current zoom factor */
+        private double m_zoomFactor;
 
-        private double m_oldFactor;
+        /**
+         * current calibration scale factors for x and y dimension (in the
+         * displayed image)
+         */
+        private double[] m_scaleFactors;
+
+        /**
+         * current combined factor for x and y dimension (in the displayed
+         * image)
+         */
+        private double[] m_factors;
+
+        /** old combined factor for x and y dimension (in the displayed image) */
+        private double[] m_oldFactors;
 
         private boolean m_keyDraggingEnabled;
 
@@ -102,7 +117,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 super(name, isImageHidden);
 
                 m_currentRectangle = new Rectangle();
-                m_oldFactor = 1;
+                m_oldFactors = new double[] { 1.0d, 1.0d };
+                m_factors = new double[] { 1.0d, 1.0d };
+                m_scaleFactors = new double[] { 1.0d, 1.0d };
+                m_zoomFactor = 1.0d;
 
                 m_imageCanvas = new JPanel() {
                         /**
@@ -118,8 +136,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                 g.drawImage(m_image,
                                                 0,
                                                 0,
-                                                (int) (m_image.getWidth(null) * m_factor),
-                                                (int) (m_image.getHeight(null) * m_factor),
+                                                (int) (m_image.getWidth(null) * m_factors[0]),
+                                                (int) (m_image.getHeight(null) * m_factors[1]),
                                                 null);
                         }
                 };
@@ -192,7 +210,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                                 direction = 1;
                                         }
 
-                                        int oldValue = (int) (m_factor * 100.0);
+                                        int oldValue = (int) (m_zoomFactor * 100.0);
 
                                         int change = (int) Math.sqrt(oldValue)
                                                         * direction;
@@ -250,7 +268,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
                 add(m_imageScrollPane, gc);
 
-                m_factor = 1;
+                m_zoomFactor = 1;
                 updateImageCanvas(false);
 
         }
@@ -280,17 +298,17 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
          */
         public Rectangle getVisibleImageRect() {
                 m_currentRectangle = m_imageCanvas.getVisibleRect();
-                m_currentRectangle.x = (int) (m_currentRectangle.x / m_factor);
-                m_currentRectangle.y = (int) (m_currentRectangle.y / m_factor);
-                m_currentRectangle.width = (int) (m_currentRectangle.width / m_factor);
-                m_currentRectangle.height = (int) (m_currentRectangle.height / m_factor);
+                m_currentRectangle.x = (int) (m_currentRectangle.x / m_factors[0]);
+                m_currentRectangle.y = (int) (m_currentRectangle.y / m_factors[1]);
+                m_currentRectangle.width = (int) (m_currentRectangle.width / m_factors[0]);
+                m_currentRectangle.height = (int) (m_currentRectangle.height / m_factors[1]);
                 return m_currentRectangle;
         }
 
         private void fireImageCoordMousePressed(MouseEvent e) {
                 if (!isMouseEventBlocked()) {
                         m_eventService.publish(new ImgViewerMousePressedEvent(
-                                        e, m_factor, m_image.getWidth(),
+                                        e, m_factors, m_image.getWidth(),
                                         m_image.getHeight()));
                 }
 
@@ -299,8 +317,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         private void fireImageCoordMouseReleased(MouseEvent e) {
                 if (!isMouseEventBlocked()) {
                         m_eventService.publish(
-
-                        new ImgViewerMouseReleasedEvent(e, m_factor, m_image
+                        // TODO CHANGE HERE TO FACTORS
+                        new ImgViewerMouseReleasedEvent(e, m_factors, m_image
                                         .getWidth(), m_image.getHeight()));
                 }
 
@@ -309,8 +327,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         private void fireImageCoordMouseDragged(MouseEvent e) {
                 if (!isMouseEventBlocked()) {
                         m_eventService.publish(
-
-                        new ImgViewerMouseDraggedEvent(e, m_factor, m_image
+                        // TODO CHANGE HERE TO FACTORS
+                        new ImgViewerMouseDraggedEvent(e, m_factors, m_image
                                         .getWidth(), m_image.getHeight()));
                 }
 
@@ -318,8 +336,9 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         private void fireImageCoordMouseMoved(MouseEvent e) {
                 if (!isMouseEventBlocked()) {
+                        // TODO CHANGE HERE TO FACTORS
                         m_eventService.publish(new ImgViewerMouseMovedEvent(e,
-                                        m_factor, m_image.getWidth(), m_image
+                                        m_factors, m_image.getWidth(), m_image
                                                         .getHeight()));
                 }
 
@@ -327,7 +346,15 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         @EventListener
         public void onZoomFactorChanged(ViewZoomfactorChgEvent zoomEvent) {
-                m_factor = zoomEvent.getZoomFactor();
+                m_zoomFactor = zoomEvent.getZoomFactor();
+                updateImageCanvas(false);
+        }
+
+        @EventListener
+        public void onCalibrationUpdateEvent(CalibrationUpdateEvent e) {
+                m_scaleFactors = new double[] {
+                                e.getScaleFactors()[e.getSelectedDims()[0]],
+                                e.getScaleFactors()[e.getSelectedDims()[1]], };
                 updateImageCanvas(false);
         }
 
@@ -339,8 +366,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         @EventListener
         public void onMinimapOffsetChanged(MinimapOffsetChgEvent e) {
                 m_currentRectangle = m_imageCanvas.getVisibleRect();
-                m_currentRectangle.x = (int) (e.getOffest()[0] * m_factor);
-                m_currentRectangle.y = (int) (e.getOffest()[1] * m_factor);
+                m_currentRectangle.x = (int) (e.getOffest()[0] * m_factors[0]);
+                m_currentRectangle.y = (int) (e.getOffest()[1] * m_factors[1]);
                 m_imageCanvas.scrollRectToVisible(m_currentRectangle);
                 updateImageCanvas(false);
         }
@@ -353,22 +380,28 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 updateImageCanvas(true);
         }
 
+
         public void updateImageCanvas(boolean enforceRecalculation) {
                 if (m_image == null)
                         return;
 
-                if (enforceRecalculation || m_oldFactor != m_factor) {
+                // calculate the new combined factor
+                m_factors[0] = m_scaleFactors[0] * m_zoomFactor;
+                m_factors[1] = m_scaleFactors[1] * m_zoomFactor;
+
+                if (enforceRecalculation || m_oldFactors[0] != m_factors[0]
+                                || m_oldFactors[1] != m_factors[1]) {
 
                         // get old center of the image
 
                         Rectangle rect = m_imageCanvas.getVisibleRect();
-                        double imgCenterX = rect.getCenterX() / m_oldFactor;
-                        double imgCenterY = rect.getCenterY() / m_oldFactor;
+                        double imgCenterX = rect.getCenterX() / m_oldFactors[0];
+                        double imgCenterY = rect.getCenterY() / m_oldFactors[1];
 
                         // enlarge canvas
                         Dimension d = new Dimension(
-                                        (int) (m_image.getWidth(null) * m_factor),
-                                        (int) (m_image.getHeight(null) * m_factor));
+                                        (int) (m_image.getWidth(null) * m_factors[0]),
+                                        (int) (m_image.getHeight(null) * m_factors[1]));
                         m_imageCanvas.setSize(d);
                         m_imageCanvas.setPreferredSize(d);
 
@@ -380,10 +413,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                         .getViewport()
                                         .setViewPosition(
                                                         new Point(
-                                                                        (int) (((imgCenterX - xCorrect) * m_factor)),
-                                                                        (int) (((imgCenterY - yCorrect) * m_factor))));
+                                                                        (int) (((imgCenterX - xCorrect) * m_factors[0])),
+                                                                        (int) (((imgCenterY - yCorrect) * m_factors[1]))));
 
-                        m_oldFactor = m_factor;
+                        m_oldFactors = m_factors.clone();
 
                 }
                 m_imageScrollPane.validate();
@@ -438,13 +471,11 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         @Override
         public void saveComponentConfiguration(ObjectOutput out)
                         throws IOException {
-                out.writeDouble(m_factor);
         }
 
         @Override
         public void loadComponentConfiguration(ObjectInput in)
                         throws IOException, ClassNotFoundException {
-                m_factor = in.readDouble();
         }
 
         /**
@@ -453,8 +484,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         @Override
         public void reset() {
                 m_currentRectangle = new Rectangle();
-                m_factor = 1;
-                m_oldFactor = 1;
+                m_factors = new double[] { 1.0d, 1.0d };
+                m_oldFactors = new double[] { 1.0d, 1.0d };
+                m_scaleFactors = new double[] {1.0d, 1.0d};
+                m_zoomFactor = 1.0d;
                 m_image = null;
         }
 

@@ -29,7 +29,7 @@ public abstract class ImgViewerMouseEvent implements KNIPEvent {
 
         private final boolean m_isControlDown;
 
-        private final double m_factor;
+        private final double[] m_factors;
 
         private final int m_posX;
 
@@ -39,16 +39,17 @@ public abstract class ImgViewerMouseEvent implements KNIPEvent {
 
         private final MouseEvent m_e;
 
-        public ImgViewerMouseEvent(MouseEvent e, double factor, int imgWidth,
+        public ImgViewerMouseEvent(MouseEvent e, double[] factors,
+                        int imgWidth,
                         int imgHeight) {
 
-                m_factor = factor;
+                m_factors = factors;
 
                 m_e = e;
                 setInside(isInsideImgView(imgWidth, imgHeight));
 
-                m_posX = (int) Math.min(e.getX() / m_factor, imgWidth);
-                m_posY = (int) Math.min(e.getY() / m_factor, imgHeight);
+                m_posX = (int) Math.min(e.getX() / m_factors[0], imgWidth);
+                m_posY = (int) Math.min(e.getY() / m_factors[1], imgHeight);
 
                 m_id = e.getID();
                 m_consumed = false;
@@ -74,10 +75,10 @@ public abstract class ImgViewerMouseEvent implements KNIPEvent {
                 // 0))
                 // System.out.println("test");
 
-                return !(m_e.getX() / m_factor >= dimA
-                                || m_e.getX() / m_factor < 0
-                                || m_e.getY() / m_factor >= dimB || m_e.getY()
-                                / m_factor < 0);
+                return !(m_e.getX() / m_factors[0] >= dimA
+                                || m_e.getX() / m_factors[0] < 0
+                                || m_e.getY() / m_factors[1] >= dimB || m_e
+                                .getY() / m_factors[1] < 0);
         }
 
         public boolean wasConsumed() {

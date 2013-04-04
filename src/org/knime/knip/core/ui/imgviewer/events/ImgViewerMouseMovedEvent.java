@@ -62,13 +62,13 @@ public class ImgViewerMouseMovedEvent extends ImgViewerMouseEvent {
 
         /**
          * @param e
-         * @param factor
+         * @param m_factors
          * @param imgWidth
          * @param imgHeight
          */
-        public ImgViewerMouseMovedEvent(MouseEvent e, double factor,
+        public ImgViewerMouseMovedEvent(MouseEvent e, double[] factors,
                         int imgWidth, int imgHeight) {
-                super(e, factor, imgWidth, imgHeight);
+                super(e, factors, imgWidth, imgHeight);
         }
 
         @Override

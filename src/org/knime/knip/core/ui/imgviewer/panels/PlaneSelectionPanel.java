@@ -82,11 +82,13 @@ import javax.swing.KeyStroke;
 
 import net.imglib2.Interval;
 import net.imglib2.meta.AxisType;
+import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.type.Type;
 
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
+import org.knime.knip.core.ui.imgviewer.events.CalibrationUpdateEvent;
 import org.knime.knip.core.ui.imgviewer.events.ForcePlanePosEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
@@ -117,9 +119,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private JFormattedTextField[] m_coordinateTextFields;
 
         /* the plane dimension indices */
-        private int m_dimX;
+        private int m_dim1;
 
-        private int m_dimY;
+        private int m_dim2;
 
         /* the steps to switch to the subsequent coordinate in one dimension */
         private int[] m_steps;
@@ -137,7 +139,13 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
         private boolean m_isAdjusting;
 
+        private boolean m_useCalibration = false;
+
         private long[] m_oldCoordinates;
+
+        private JCheckBox m_calibrationCheckbox;
+
+        private CalibratedSpace m_calibratedSpace;
 
         // private JTextField m_totalField;
 
@@ -167,6 +175,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 m_dims = null;
                 m_oldCoordinates = null;
                 m_steps = null;
+                m_calibratedSpace = null;
         }
 
         /**
@@ -178,26 +187,26 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private void setPlaneDimensionIndices(int dimX, int dimY) {
                 m_isAdjusting = true;
 
-                m_scrollBars[m_dimX].setEnabled(true);
-                m_scrollBars[m_dimY].setEnabled(true);
-                m_planeCheckBoxes[m_dimX].setSelected(false);
-                m_planeCheckBoxes[m_dimY].setSelected(false);
-                m_planeCheckBoxes[m_dimX].setEnabled(true);
-                m_planeCheckBoxes[m_dimY].setEnabled(true);
+                m_scrollBars[m_dim1].setEnabled(true);
+                m_scrollBars[m_dim2].setEnabled(true);
+                m_planeCheckBoxes[m_dim1].setSelected(false);
+                m_planeCheckBoxes[m_dim2].setSelected(false);
+                m_planeCheckBoxes[m_dim1].setEnabled(true);
+                m_planeCheckBoxes[m_dim2].setEnabled(true);
 
                 // m_planeFields[m_dimY].setEditable(false);
                 // m_planeFields[m_dimY].setEditable(false);
                 // m_planeFields[m_dimX].setEnabled(true);
                 // m_planeFields[m_dimY].setEnabled(true);
 
-                m_dimX = dimX;
-                m_dimY = dimY;
+                m_dim1 = dimX;
+                m_dim2 = dimY;
                 m_scrollBars[dimX].setEnabled(false);
                 m_scrollBars[dimY].setEnabled(false);
-                m_planeCheckBoxes[m_dimX].setSelected(true);
-                m_planeCheckBoxes[m_dimY].setSelected(true);
-                m_planeCheckBoxes[m_dimX].setEnabled(false);
-                m_planeCheckBoxes[m_dimY].setEnabled(false);
+                m_planeCheckBoxes[m_dim1].setSelected(true);
+                m_planeCheckBoxes[m_dim2].setSelected(true);
+                m_planeCheckBoxes[m_dim1].setEnabled(false);
+                m_planeCheckBoxes[m_dim2].setEnabled(false);
                 //
                 // m_planeFields[m_dimY].setEditable(true);
                 // m_planeFields[m_dimY].setEditable(true);
@@ -286,8 +295,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         }
 
                         m_eventService.publish(new PlaneSelectionEvent(Math
-                                        .min(m_dimX, m_dimY), Math.max(m_dimY,
-                                        m_dimX), imgCoords));
+                                        .min(m_dim1, m_dim2), Math.max(m_dim2,
+                                        m_dim1), imgCoords));
+                        fireCalibrationEvent();
                         m_eventService.publish(new ImgRedrawEvent());
                 }
         }
@@ -306,14 +316,15 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                 .getActionCommand());
 
                 if (m_alterDim == 0) {
-                        setPlaneDimensionIndices(idx, m_dimY);
+                        setPlaneDimensionIndices(idx, m_dim2);
                 } else {
-                        setPlaneDimensionIndices(m_dimX, idx);
+                        setPlaneDimensionIndices(m_dim1, idx);
                 }
                 m_alterDim = (m_alterDim + 1) % 2;
-                m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dimX,
-                                m_dimY), Math.max(m_dimY, m_dimX),
+                m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1,
+                                m_dim2), Math.max(m_dim2, m_dim1),
                                 getImageCoordinate()));
+                fireCalibrationEvent();
                 m_eventService.publish(new ImgRedrawEvent());
 
         }
@@ -323,7 +334,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 // calc index
                 int index = 0;
                 for (int i = 0; i < m_steps.length; i++) {
-                        if (i == m_dimX || i == m_dimY)
+                        if (i == m_dim1 || i == m_dim2)
                                 continue;
                         index += m_steps[i] * (m_scrollBars[i].getValue());
                 }
@@ -341,19 +352,73 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 int idx = m_totalSlider.getValue();
 
                 for (int i = coords.length - 1; i > -1; i--) {
-                        if (i == m_dimX || i == m_dimY)
+                        if (i == m_dim1 || i == m_dim2)
                                 continue;
                         coords[i] = idx / m_steps[i];
                         idx = idx % m_steps[i];
                 }
                 // update coordinates
                 for (int i = 0; i < coords.length; i++) {
-                        if (i == m_dimX || i == m_dimY)
+                        if (i == m_dim1 || i == m_dim2)
                                 continue;
                         m_isAdjusting = true;
                         m_scrollBars[i].setValue(coords[i]);
                         m_isAdjusting = false;
                 }
+        }
+
+        private void onCalibrationBoxChanged() {
+                if (m_calibrationCheckbox.isSelected() != m_useCalibration) {
+                        m_useCalibration = m_calibrationCheckbox.isSelected();
+                        fireCalibrationEvent();
+                        m_eventService.publish(new ImgRedrawEvent());
+                }
+        }
+
+        private void fireCalibrationEvent() {
+                // calculate calibration values
+                double[] scaleFactors = new double[m_dims.length];
+                for (int i = 0; i < scaleFactors.length; i++) {
+                        // = don't scale as default
+                        scaleFactors[i] = 1.0d;
+                }
+
+                if (m_useCalibration && m_calibratedSpace != null) {
+                        double[] tmpFactors = new double[scaleFactors.length];
+                        m_calibratedSpace.calibration(tmpFactors);
+
+                        double min = Double.MAX_VALUE;
+                        boolean foundAFactor = false;
+
+                        for (int i = 0; i < tmpFactors.length; i++) {
+                                // clean up
+                                if (tmpFactors[i] > 0.0d
+                                                && !Double.isNaN(tmpFactors[i])) {
+                                        foundAFactor = true;
+                                } else {
+                                        tmpFactors[i] = 1.0d;
+                                }
+
+                                // get minimum
+                                if (tmpFactors[i] < min) {
+                                        min = tmpFactors[i];
+                                }
+                        }
+
+                        if (foundAFactor) {
+                                // normalize with min and scale
+                                double norm = 1.0d / min;
+
+                                for (int i = 0; i < scaleFactors.length; i++) {
+                                        scaleFactors[i] = (tmpFactors[i] * norm);
+                                }
+
+                        }
+                }
+
+                m_eventService.publish(new CalibrationUpdateEvent(scaleFactors,
+                                new int[] { Math.min(m_dim1, m_dim2),
+                                                Math.max(m_dim1, m_dim2) }));
         }
 
         /**
@@ -393,8 +458,12 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 // lokale dims //axes labels
                 e.getCalibratedSpace().axes(m_axesLabels);
-                m_dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+                m_dims = new long[e.getRandomAccessibleInterval()
+                                .numDimensions()];
                 e.getRandomAccessibleInterval().dimensions(m_dims);
+
+                m_calibratedSpace = e.getCalibratedSpace();
+                fireCalibrationEvent(); // update to new calibration values
 
                 if (!Arrays.equals(oldDims, m_dims)
                                 || !Arrays.equals(m_axesLabels, oldAxes)) {
@@ -414,7 +483,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 m_isAdjusting = true;
                 for (int d = 0; d < e.getPosition().length; d++) {
 
-                        if (d == m_dimX || d == m_dimY)
+                        if (d == m_dim1 || d == m_dim2)
                                 m_scrollBars[d].setValue(0);
                         else
                                 m_scrollBars[d].setValue((int) e.getPosition()[d]);
@@ -545,7 +614,27 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                         }
 
+                        // add calibration checkbox
+                        m_calibrationCheckbox = new JCheckBox("use calibration");
+                        m_calibrationCheckbox.setSelected(m_useCalibration);
+                        m_calibrationCheckbox
+                                        .addActionListener(new ActionListener() {
+
+                                                @Override
+                                                public void actionPerformed(
+                                                                ActionEvent e) {
+                                                        onCalibrationBoxChanged();
+                                                }
+                                        });
+
+                        add(m_calibrationCheckbox);
+
                         setPlaneDimensionIndices(0, 1);
+
+                        m_eventService.publish(new PlaneSelectionEvent(Math
+                                        .min(m_dim1, m_dim2), Math.max(m_dim2,
+                                        m_dim1), getImageCoordinate()));
+                        fireCalibrationEvent();
                 }
 
                 updateUI();
