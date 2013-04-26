@@ -109,6 +109,10 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 ViewerComponent {
 
+        private final static int DEFAULT_X = 0;
+
+        private final static int DEFAULT_Y = 1;
+
         private JScrollBar[] m_scrollBars;
 
         private JScrollBar m_totalSlider;
@@ -119,9 +123,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private JFormattedTextField[] m_coordinateTextFields;
 
         /* the plane dimension indices */
-        private int m_dim1;
+        private int m_dim1 = DEFAULT_X;
 
-        private int m_dim2;
+        private int m_dim2 = DEFAULT_Y;
 
         /* the steps to switch to the subsequent coordinate in one dimension */
         private int[] m_steps;
@@ -146,6 +150,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         private JCheckBox m_calibrationCheckbox;
 
         private CalibratedSpace m_calibratedSpace;
+
 
         // private JTextField m_totalField;
 
@@ -453,14 +458,23 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         m_axesLabels = new AxisType[e.getCalibratedSpace()
                                         .numDimensions()];
 
+
+
+
                 long[] oldDims = m_dims.clone();
                 AxisType[] oldAxes = m_axesLabels.clone();
 
-                // lokale dims //axes labels
+                // local dims //axes labels
                 e.getCalibratedSpace().axes(m_axesLabels);
                 m_dims = new long[e.getRandomAccessibleInterval()
                                 .numDimensions()];
                 e.getRandomAccessibleInterval().dimensions(m_dims);
+
+                if (!Arrays.equals(m_axesLabels, oldAxes)) {
+                        // reset m_dim1, m_dim2 before calibration
+                        m_dim1 = DEFAULT_X;
+                        m_dim2 = DEFAULT_Y;
+                }
 
                 m_calibratedSpace = e.getCalibratedSpace();
                 fireCalibrationEvent(); // update to new calibration values
@@ -629,7 +643,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                         add(m_calibrationCheckbox);
 
-                        setPlaneDimensionIndices(0, 1);
+                        setPlaneDimensionIndices(m_dim1, m_dim2);
 
                         m_eventService.publish(new PlaneSelectionEvent(Math
                                         .min(m_dim1, m_dim2), Math.max(m_dim2,
