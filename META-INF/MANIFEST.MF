@@ -6,7 +6,7 @@ Bundle-Version: 1.0.3.qualifier
 Bundle-Vendor: University of Konstanz
 Eclipse-RegisterBuddy: org.knime.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: .,
+Bundle-ClassPath: knip-core.jar,
  lib/mvn/imglib2-2.0.0-SNAPSHOT.jar,
  lib/mvn/imglib2-algorithms-2.0.0-SNAPSHOT.jar,
  lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar,
