@@ -882,7 +882,23 @@ public class Signature {
 
         @Override
         public int compareTo(final Path o) {
-            return (int)Math.round((o.m_globalScore * 1000) - (m_globalScore * 1000));
+            return Double.compare(o.m_globalScore, m_globalScore);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object obj) {
+            return ((Path)obj).m_globalScore == m_globalScore;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return new Double(m_globalScore).hashCode();
         }
 
         @Override
