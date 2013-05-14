@@ -17,26 +17,27 @@ public abstract class SlidingShapeOp<T extends Type<T>, V extends Type<V>, IN ex
 
         protected final OutOfBoundsFactory<T, IN> outofbounds;
 
-        public SlidingShapeOp(Shape shape, OutOfBoundsFactory<T, IN> outofbounds) {
+        public SlidingShapeOp(final Shape shape, final OutOfBoundsFactory<T, IN> outofbounds) {
                 this.shape = shape;
                 this.outofbounds = outofbounds;
         }
 
         @Override
-        public OUT compute(IN input, OUT output) {
+        public OUT compute(final IN input, final OUT output) {
 
                 // Neighboor update
-                IntervalView<T> interval = Views.interval(
+                final IntervalView<T> interval = Views.interval(
                                 Views.extend(input, outofbounds), input);
 
-                IterableInterval<Neighborhood<T>> neighborhoods = shape
+                final IterableInterval<Neighborhood<T>> neighborhoods = shape
                                 .neighborhoods(interval);
 
                 // Create an iterable to check iteration order
                 if (!neighborhoods.iterationOrder().equals(
-                                output.iterationOrder()))
+                                output.iterationOrder())) {
                         throw new IllegalArgumentException(
                                         "Iteration order doesn't fit in SlidingNeighborhoodOp");
+                }
 
                 return compute(neighborhoods, input, output);
         }

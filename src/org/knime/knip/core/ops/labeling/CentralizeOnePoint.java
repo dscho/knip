@@ -27,8 +27,8 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
 
         private final int m_radius;
 
-        public CentralizeOnePoint(PolarImageFactory<T> factory,
-                        int numMaxIterations, int radius, int samplingRate) {
+        public CentralizeOnePoint(final PolarImageFactory<T> factory,
+                        final int numMaxIterations, final int radius, final int samplingRate) {
                 m_radius = radius;
                 m_directionGradientOp = new DirectionalGradient<T, Img<T>>(
                                 GradientDirection.HORIZONTAL, false);
@@ -38,7 +38,7 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
         }
 
         @Override
-        public long[] compute(long[] src, long[] res) {
+        public long[] compute(final long[] src, final long[] res) {
 
                 System.arraycopy(centralizeOnePoint(src, m_maxIterations), 0,
                                 res, 0, res.length);
@@ -46,16 +46,17 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
                 return res;
         }
 
-        public long[] compute(double[] point, long[] res) {
-                long[] intermediate = new long[point.length];
+        public long[] compute(final double[] point, final long[] res) {
+                final long[] intermediate = new long[point.length];
 
-                for (int d = 0; d < point.length; d++)
+                for (int d = 0; d < point.length; d++) {
                         intermediate[d] = Math.round(point[d]);
+                }
 
                 return compute(intermediate, res);
         }
 
-        private long[] centralizeOnePoint(long[] src, int maxIterations) {
+        private long[] centralizeOnePoint(final long[] src, final int maxIterations) {
 
                 if (src.length != 2) {
                         throw new IllegalArgumentException(
@@ -67,9 +68,9 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
                                         m_samplingRate);
                 }
 
-                long[] res = new long[src.length];
+                final long[] res = new long[src.length];
 
-                Img<T> polarImg = m_factory.createPolarImage(src, m_radius,
+                final Img<T> polarImg = m_factory.createPolarImage(src, m_radius,
                                 m_samplingRate);
 
                 // AWTImageTools.showInSameFrame(polarImg, 5);
@@ -80,12 +81,12 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
                 // new ImgNormalize<T, Img<T>>().compute(m_buffer,
                 // ImgUtils.createEmptyCopy(m_buffer)), 5);
 
-                RandomAccess<T> randomAccess = m_buffer.randomAccess();
+                final RandomAccess<T> randomAccess = m_buffer.randomAccess();
 
-                T type = randomAccess.get();
+                final T type = randomAccess.get();
                 for (int y = 0; y < (m_buffer.dimension(1) / 2); y++) {
                         randomAccess.setPosition(y, 1);
-                        ArrayList<BaseVals> baseVals = new ArrayList<BaseVals>();
+                        final ArrayList<BaseVals> baseVals = new ArrayList<BaseVals>();
 
                         for (int x = 0; x < m_buffer.dimension(0); x++) {
                                 randomAccess.setPosition(x, 0);
@@ -97,7 +98,7 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
 
                         randomAccess.setPosition(y
                                         + (m_buffer.dimension(1) / 2), 1);
-                        ArrayList<BaseVals> partnerVals = new ArrayList<BaseVals>();
+                        final ArrayList<BaseVals> partnerVals = new ArrayList<BaseVals>();
 
                         for (int x = 0; x < m_buffer.dimension(0); x++) {
                                 randomAccess.setPosition(x, 0);
@@ -123,7 +124,7 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
                         }
 
                         // Calc
-                        double difference = Math.abs(minDistBase
+                        final double difference = Math.abs(minDistBase
                                         - minDistPartner);
                         double relY = 0;
                         if (minDistBase > minDistPartner) {
@@ -142,9 +143,9 @@ public class CentralizeOnePoint<T extends RealType<T>> implements
                                         .dimension(1)) * 2 * Math.PI));
                 }
 
-                double newX = Math
+                final double newX = Math
                                 .round(res[0] / (m_buffer.dimension(1) / 2.0));
-                double newY = Math
+                final double newY = Math
                                 .round(res[1] / (m_buffer.dimension(1) / 2.0));
 
                 res[0] = (long) (src[0] + newX);
@@ -176,7 +177,7 @@ class BaseVals implements Comparable<BaseVals> {
 
         private final double m_d;
 
-        public BaseVals(int x, double d) {
+        public BaseVals(final int x, final double d) {
                 this.m_x = x;
                 this.m_d = d;
         }
@@ -185,13 +186,15 @@ class BaseVals implements Comparable<BaseVals> {
          * {@inheritDoc}
          */
         @Override
-        public int compareTo(BaseVals o) {
+        public int compareTo(final BaseVals o) {
 
-                if (m_d - o.m_d > 0)
+                if (m_d - o.m_d > 0) {
                         return 1;
+                }
 
-                if (m_d - o.m_d == 0)
+                if (m_d - o.m_d == 0) {
                         return 0;
+                }
 
                 return -1;
         }

@@ -60,10 +60,10 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
                 m_rendList.addListSelectionListener(new ListSelectionListener() {
 
                         @Override
-                        public void valueChanged(ListSelectionEvent e) {
-                                if (e.getValueIsAdjusting() || m_blockEvent)
+                        public void valueChanged(final ListSelectionEvent e) {
+                                if (e.getValueIsAdjusting() || m_blockEvent) {
                                         return;
-                                else {
+                                } else {
                                         m_eventService.publish(new RendererSelectionChgEvent(
                                                         (ImageRenderer) m_rendList
                                                                         .getSelectedValue()));
@@ -81,12 +81,12 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
          * @param name
          */
         @EventListener
-        public void onIntervalUpdated(IntervalWithMetadataChgEvent<T> e) {
+        public void onIntervalUpdated(final IntervalWithMetadataChgEvent<T> e) {
                 if (e instanceof ImgWithMetadataChgEvent) {
                         // event already processed
                         return;
                 }
-                ImageRenderer<T>[] tmp = RendererFactory
+                final ImageRenderer<T>[] tmp = RendererFactory
                                 .createSuitableRenderer(e
                                                 .getRandomAccessibleInterval());
 
@@ -98,8 +98,8 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
         }
 
         @EventListener
-        public void onImageUpdated(ImgWithMetadataChgEvent<T> e) {
-                ImageRenderer<T>[] tmp = RendererFactory
+        public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
+                final ImageRenderer<T>[] tmp = RendererFactory
                                 .createSuitableRenderer(
                                                 e.getRandomAccessibleInterval(),
                                                 e.getImgMetaData());
@@ -122,19 +122,19 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 out.writeInt(m_rendList.getSelectedIndex());
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 m_rendList.setSelectedIndex(in.readInt());
         }
@@ -147,7 +147,7 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 

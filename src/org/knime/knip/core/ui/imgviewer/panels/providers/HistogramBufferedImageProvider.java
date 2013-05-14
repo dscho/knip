@@ -29,7 +29,7 @@ public class HistogramBufferedImageProvider<T extends RealType<T>> extends
 
         private final int m_histHeight;
 
-        public HistogramBufferedImageProvider(int cacheSize, int histHeight) {
+        public HistogramBufferedImageProvider(final int cacheSize, final int histHeight) {
                 super(cacheSize);
 
                 m_histHeight = histHeight;
@@ -37,7 +37,7 @@ public class HistogramBufferedImageProvider<T extends RealType<T>> extends
 
         @Override
         protected Image createImage() {
-                int[] hist = Operations
+                final int[] hist = Operations
                                 .compute(new MakeHistogram<T>(),
                                                 Views.iterable(SubsetOperations
                                                                 .subsetview(m_src,
@@ -49,13 +49,13 @@ public class HistogramBufferedImageProvider<T extends RealType<T>> extends
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 super.saveComponentConfiguration(out);
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 super.loadComponentConfiguration(in);
         }

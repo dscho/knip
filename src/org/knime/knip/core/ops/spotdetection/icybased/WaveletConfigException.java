@@ -33,7 +33,7 @@ public class WaveletConfigException extends Exception {
 	 */
         private static final long serialVersionUID = 7526927005039578733L;
 
-        public WaveletConfigException(String message) {
+        public WaveletConfigException(final String message) {
                 super(message);
         }
 

@@ -88,7 +88,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
         /**
          * @param numAngles
          */
-        public FDCentralDistanceFeatureSet(int numAngles) {
+        public FDCentralDistanceFeatureSet(final int numAngles) {
                 m_numAngles = numAngles;
                 m_complexSignature = new Complex[numAngles];
                 m_transformed = new Complex[numAngles];
@@ -97,7 +97,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
         }
 
         @FeatureTargetListener
-        public void iiUpdated(IterableInterval<BitType> interval) {
+        public void iiUpdated(final IterableInterval<BitType> interval) {
                 m_signature = m_ocac.signature(interval, m_numAngles);
                 for (int x = 0; x < m_signature.length(); x++) {
                         m_complexSignature[x] = new Complex(
@@ -105,7 +105,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
                 }
 
                 m_transformed = InplaceFFT.fft(m_complexSignature);
-                double dcMagnitude = m_transformed[0].getMagnitude();
+                final double dcMagnitude = m_transformed[0].getMagnitude();
                 for (int t = 1; t < m_transformed.length / 2; t++) {
                         m_descriptor[t - 1] = (m_transformed[t].getMagnitude() / dcMagnitude);
                 }
@@ -115,7 +115,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public double value(int id) {
+        public double value(final int id) {
                 return m_descriptor[id];
         }
 
@@ -123,7 +123,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return "FD:CentralDistance [" + id + "]";
         }
 
@@ -147,7 +147,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 // nothing to do here
 
         }
@@ -164,7 +164,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public void setSharedObjectInstances(Object[] instances) {
+        public void setSharedObjectInstances(final Object[] instances) {
                 m_ocac = (ObjectCalcAndCache) instances[0];
 
         }

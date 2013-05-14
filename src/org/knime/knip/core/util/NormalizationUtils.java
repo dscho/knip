@@ -21,12 +21,12 @@ public class NormalizationUtils {
          *         image at position 1
          */
         public static synchronized <T extends RealType<T>, I extends IterableInterval<T>> double[] getNormalizationProperties(
-                        I interval, double saturation) {
+                        final I interval, final double saturation) {
 
-                T type = interval.firstElement().createVariable();
-                MinMax<T> minMax = new MinMax<T>(saturation, type);
+                final T type = interval.firstElement().createVariable();
+                final MinMax<T> minMax = new MinMax<T>(saturation, type);
 
-                ValuePair<T, T> ValuePair = Operations
+                final ValuePair<T, T> ValuePair = Operations
                                 .compute(minMax, interval);
                 return new double[] {
                                 1

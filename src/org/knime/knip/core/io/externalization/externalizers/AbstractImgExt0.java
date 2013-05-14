@@ -93,7 +93,7 @@ public class AbstractImgExt0 implements Externalizer<Img> {
          * {@inheritDoc}
          */
         @Override
-        public AbstractImg read(BufferedDataInputStream in) throws Exception {
+        public AbstractImg read(final BufferedDataInputStream in) throws Exception {
                 // delegate to the img externalizer
                 return ExternalizerManager.read(in);
         }
@@ -102,7 +102,7 @@ public class AbstractImgExt0 implements Externalizer<Img> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, Img obj)
+        public void write(final BufferedDataOutputStream out, final Img obj)
                         throws Exception {
                 // delegate to the img externalizer
                 ExternalizerManager.write(out, obj, Img.class);

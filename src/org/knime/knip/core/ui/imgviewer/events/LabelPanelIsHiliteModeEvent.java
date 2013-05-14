@@ -61,7 +61,7 @@ public class LabelPanelIsHiliteModeEvent implements KNIPEvent {
 
         private final boolean m_isHiliteMode;
 
-        public LabelPanelIsHiliteModeEvent(boolean isHiliteMode) {
+        public LabelPanelIsHiliteModeEvent(final boolean isHiliteMode) {
                 m_isHiliteMode = isHiliteMode;
 
         }
@@ -75,7 +75,7 @@ public class LabelPanelIsHiliteModeEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

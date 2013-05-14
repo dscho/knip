@@ -46,16 +46,17 @@ public class DimSwapper<T extends Type<T>> implements
         }
 
         @Override
-        public Img<T> compute(Img<T> op, Img<T> r) {
+        public Img<T> compute(final Img<T> op, final Img<T> r) {
                 if (r.numDimensions() != op.numDimensions()) {
                         throw new IllegalArgumentException(
                                         "Intervals not compatible");
                 }
                 final int nDims = r.numDimensions();
                 for (int i = 0; i < nDims; i++) {
-                        if (m_backMapping[i] >= nDims)
+                        if (m_backMapping[i] >= nDims) {
                                 throw new IllegalArgumentException(
                                                 "Channel mapping is out of bounds");
+                        }
                 }
                 final RandomAccess<T> opc = op.randomAccess();
                 final Cursor<T> rc = r.localizingCursor();
@@ -83,11 +84,12 @@ public class DimSwapper<T extends Type<T>> implements
                 return new UnaryObjectFactory<Img<T>, Img<T>>() {
 
                         @Override
-                        public Img<T> instantiate(Img<T> op) {
+                        public Img<T> instantiate(final Img<T> op) {
                                 final long[] size = m_srcSize.clone();
                                 for (int i = 0; i < size.length; i++) {
-                                        if (size[i] <= 0)
+                                        if (size[i] <= 0) {
                                                 size[i] = op.dimension(m_backMapping[i]);
+                                        }
                                 }
                                 return op.factory()
                                                 .create(size,

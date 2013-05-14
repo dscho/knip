@@ -60,7 +60,7 @@ public class ViewZoomfactorChgEvent implements KNIPEvent {
 
         private final double m_zoomFactor;
 
-        public ViewZoomfactorChgEvent(double zoomFactor) {
+        public ViewZoomfactorChgEvent(final double zoomFactor) {
                 m_zoomFactor = zoomFactor;
 
         }
@@ -74,7 +74,7 @@ public class ViewZoomfactorChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

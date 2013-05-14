@@ -11,7 +11,7 @@ public class StringTransformer {
 
         private final List<ValuePair<String, Boolean>> m_parsedList;
 
-        public StringTransformer(String expression, String delim)
+        public StringTransformer(final String expression, final String delim)
                         throws IllegalArgumentException {
                 m_parsedList = parse(expression, delim);
         }
@@ -20,14 +20,14 @@ public class StringTransformer {
          * Pre-calculates the parsing of the expression, which can be used later
          * on
          */
-        private List<ValuePair<String, Boolean>> parse(String expression,
-                        String delim) throws IllegalArgumentException {
+        private List<ValuePair<String, Boolean>> parse(final String expression,
+                        final String delim) throws IllegalArgumentException {
                 int current = 0;
-                List<ValuePair<String, Boolean>> res = new ArrayList<ValuePair<String, Boolean>>();
+                final List<ValuePair<String, Boolean>> res = new ArrayList<ValuePair<String, Boolean>>();
 
                 while (current < expression.length()) {
 
-                        int start = expression.indexOf(delim, current);
+                        final int start = expression.indexOf(delim, current);
 
                         if (start == -1) {
                                 res.add(new ValuePair<String, Boolean>(
@@ -47,7 +47,7 @@ public class StringTransformer {
                                 continue;
                         }
 
-                        int end = expression.indexOf(delim, start + 1);
+                        final int end = expression.indexOf(delim, start + 1);
 
                         if (end < start) {
                                 throw new IllegalArgumentException(
@@ -77,10 +77,10 @@ public class StringTransformer {
          * @return
          * @throws InvalidSettingsException
          */
-        public String transform(Map<String, Object> input)
+        public String transform(final Map<String, Object> input)
                         throws IllegalArgumentException {
-                StringBuffer bf = new StringBuffer();
-                for (ValuePair<String, Boolean> ValuePair : m_parsedList) {
+                final StringBuffer bf = new StringBuffer();
+                for (final ValuePair<String, Boolean> ValuePair : m_parsedList) {
                         if (ValuePair.b) {
                                 bf.append(ValuePair.a);
                         } else {
@@ -91,8 +91,8 @@ public class StringTransformer {
                 return bf.toString();
         }
 
-        public static void main(String[] args) throws IllegalArgumentException {
-                Map<String, Object> map = new HashMap<String, Object>();
+        public static void main(final String[] args) throws IllegalArgumentException {
+                final Map<String, Object> map = new HashMap<String, Object>();
 
                 map.put("name", "Name");
                 map.put("label", "myLabel");

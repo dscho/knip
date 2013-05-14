@@ -48,26 +48,26 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
 
         protected boolean m_withLabelStrings = false;
 
-        public LabelingBufferedImageProvider(int cacheSize) {
+        public LabelingBufferedImageProvider(final int cacheSize) {
                 super(cacheSize);
         }
 
         @Override
         @EventListener
-        public void onUpdated(IntervalWithMetadataChgEvent<LabelingType<L>> e) {
+        public void onUpdated(final IntervalWithMetadataChgEvent<LabelingType<L>> e) {
                 m_labelMapping = e.getIterableInterval().firstElement()
                                 .getMapping();
                 super.onUpdated(e);
         }
 
         @EventListener
-        public void onLabelColoringChangeEvent(LabelColoringChangeEvent e) {
+        public void onLabelColoringChangeEvent(final LabelColoringChangeEvent e) {
                 m_ColorMapNr = e.getColorMapNr();
                 m_boundingBoxColor = e.getBoundingBoxColor();
         }
 
         @EventListener
-        public void onLabelOptionsChangeEvent(LabelOptionsChangeEvent e) {
+        public void onLabelOptionsChangeEvent(final LabelOptionsChangeEvent e) {
                 m_withLabelStrings = e.getRenderWithLabelStrings();
         }
 
@@ -100,14 +100,14 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
         @Override
         protected Image createImage() {
                 if (m_renderer instanceof RendererWithLabels) {
-                        RendererWithLabels<L> r = (RendererWithLabels<L>) m_renderer;
+                        final RendererWithLabels<L> r = (RendererWithLabels<L>) m_renderer;
                         r.setActiveLabels(m_activeLabels);
                         r.setOperator(m_operator);
                         r.setLabelMapping(m_labelMapping);
                         r.setRenderingWithLabelStrings(m_withLabelStrings);
                 }
 
-                ScreenImage ret = m_renderer.render(m_src,
+                final ScreenImage ret = m_renderer.render(m_src,
                                 m_sel.getPlaneDimIndex1(),
                                 m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
@@ -115,13 +115,13 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
         }
 
         @EventListener
-        public void onUpdate(LabelPanelVisibleLabelsChgEvent e) {
+        public void onUpdate(final LabelPanelVisibleLabelsChgEvent e) {
                 m_activeLabels = e.getLabels();
                 m_operator = e.getOperator();
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 super.saveComponentConfiguration(out);
                 out.writeObject(m_activeLabels);
@@ -129,7 +129,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
 
         @SuppressWarnings("unchecked")
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 super.loadComponentConfiguration(in);
                 m_activeLabels = (Set<String>) in.readObject();

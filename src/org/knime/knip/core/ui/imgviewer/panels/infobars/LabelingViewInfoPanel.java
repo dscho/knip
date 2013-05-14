@@ -25,15 +25,17 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPane
 
         /** Updates cursor probe label. */
         @Override
-        protected String updateMouseLabel(StringBuffer buffer,
-                        Interval interval,
-                        CalibratedSpace axes,
-                        RandomAccess<LabelingType<L>> rndAccess, long[] coords) {
+        protected String updateMouseLabel(final StringBuffer buffer,
+                        final Interval interval,
+                        final CalibratedSpace axes,
+                        final RandomAccess<LabelingType<L>> rndAccess, final long[] coords) {
 
-                if (interval == null)
+                if (interval == null) {
                         return "";
-                if (m_sel == null)
+                }
+                if (m_sel == null) {
                         return "No plane selected";
+                }
 
                 buffer.setLength(0);
 
@@ -60,7 +62,7 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPane
                         rndAccess.setPosition(coords);
                         val = "[";
                         if (rndAccess.get().getLabeling().size() > 0) {
-                                for (L label : rndAccess.get().getLabeling()) {
+                                for (final L label : rndAccess.get().getLabeling()) {
                                         val += label.toString() + ";";
                                 }
                                 val = val.substring(0, val.length() - 1);
@@ -80,9 +82,9 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPane
         }
 
         @Override
-        protected String updateImageLabel(StringBuffer buffer,
-                        Interval interval,
-                        RandomAccess<LabelingType<L>> rndAccess, String imgName) {
+        protected String updateImageLabel(final StringBuffer buffer,
+                        final Interval interval,
+                        final RandomAccess<LabelingType<L>> rndAccess, final String imgName) {
 
                 if (interval == null) {
                         return "No image set";
@@ -105,13 +107,13 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPane
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // Nothing to do here
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 // Nothing to do here
         }

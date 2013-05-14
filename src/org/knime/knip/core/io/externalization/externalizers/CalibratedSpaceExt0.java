@@ -92,12 +92,12 @@ public class CalibratedSpaceExt0 implements Externalizer<CalibratedSpace> {
          * {@inheritDoc}
          */
         @Override
-        public CalibratedSpace read(BufferedDataInputStream in)
+        public CalibratedSpace read(final BufferedDataInputStream in)
                         throws Exception {
-                int numDims = in.readInt();
-                CalibratedSpace res = new CalibratedSpaceImpl(numDims);
+                final int numDims = in.readInt();
+                final CalibratedSpace res = new CalibratedSpaceImpl(numDims);
                 for (int d = 0; d < numDims; d++) {
-                        char[] label = new char[in.readInt()];
+                        final char[] label = new char[in.readInt()];
                         in.read(label);
                         res.setAxis(Axes.get(String.valueOf(label)), d);
                         res.setCalibration(in.readDouble(), d);
@@ -109,17 +109,18 @@ public class CalibratedSpaceExt0 implements Externalizer<CalibratedSpace> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, CalibratedSpace obj)
+        public void write(final BufferedDataOutputStream out, final CalibratedSpace obj)
                         throws Exception {
                 out.writeInt(obj.numDimensions());
                 for (int d = 0; d < obj.numDimensions(); d++) {
-                        char[] label = obj.axis(d).getLabel().toCharArray();
+                        final char[] label = obj.axis(d).getLabel().toCharArray();
                         out.writeInt(label.length);
                         out.write(label);
-                        if (Double.isNaN(obj.calibration(d)))
+                        if (Double.isNaN(obj.calibration(d))) {
                                 out.writeDouble(0.0d);
-                        else
+                        } else {
                                 out.writeDouble(obj.calibration(d));
+                        }
                 }
 
         }

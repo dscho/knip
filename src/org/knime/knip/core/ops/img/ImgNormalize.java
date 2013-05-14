@@ -68,8 +68,8 @@ public class ImgNormalize<T extends RealType<T>> implements
         private final boolean m_isManual;
         private final boolean m_isTarget;
 
-        public ImgNormalize(double saturation, T val, ValuePair<T, T> minmax,
-                        boolean isTarget) {
+        public ImgNormalize(final double saturation, final T val, final ValuePair<T, T> minmax,
+                        final boolean isTarget) {
                 m_saturation = saturation;
                 m_val = val;
                 m_isTarget = isTarget;
@@ -84,11 +84,11 @@ public class ImgNormalize<T extends RealType<T>> implements
         }
 
         @Override
-        public Img<T> compute(Img<T> input, Img<T> output) {
+        public Img<T> compute(final Img<T> input, final Img<T> output) {
 
                 if (m_minmaxtarget == null) {
-                        T min = m_val.createVariable();
-                        T max = m_val.createVariable();
+                        final T min = m_val.createVariable();
+                        final T max = m_val.createVariable();
                         min.setReal(m_val.getMinValue());
                         max.setReal(m_val.getMaxValue());
 
@@ -120,7 +120,7 @@ public class ImgNormalize<T extends RealType<T>> implements
         public UnaryObjectFactory<Img<T>, Img<T>> bufferFactory() {
                 return new UnaryObjectFactory<Img<T>, Img<T>>() {
                         @Override
-                        public Img<T> instantiate(Img<T> a) {
+                        public Img<T> instantiate(final Img<T> a) {
                                 return a.factory()
                                                 .create(a,
                                                                 a.firstElement()

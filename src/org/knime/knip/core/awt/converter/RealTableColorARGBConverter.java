@@ -25,8 +25,8 @@ public class RealTableColorARGBConverter<R extends RealType<R>> implements
         private AbstractArrayColorTable<?> m_table;
         private int m_rangeFactor;
 
-        public RealTableColorARGBConverter(double normalizationFactor,
-                        double localMin) {
+        public RealTableColorARGBConverter(final double normalizationFactor,
+                        final double localMin) {
 
                 m_localMin = localMin;
                 m_normalizationFactor = normalizationFactor;
@@ -35,12 +35,12 @@ public class RealTableColorARGBConverter<R extends RealType<R>> implements
                 m_rangeFactor = 255;
         }
 
-        public void setColorTable(ColorTable8 table) {
+        public void setColorTable(final ColorTable8 table) {
                 m_rangeFactor = 255;
                 m_table = table;
         }
 
-        public void setColorTable(ColorTable16 table) {
+        public void setColorTable(final ColorTable16 table) {
                 m_rangeFactor = 65535;
                 m_table = table;
         }
@@ -64,10 +64,11 @@ public class RealTableColorARGBConverter<R extends RealType<R>> implements
 
                 intVal = (int) Math.round(val * m_rangeFactor);
 
-                if (intVal < 0)
+                if (intVal < 0) {
                         intVal = 0;
-                else if (intVal > m_rangeFactor)
+                } else if (intVal > m_rangeFactor) {
                         intVal = m_rangeFactor;
+                }
 
                 output.set(m_table.argb(intVal));
         }

@@ -95,8 +95,9 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
         AbstractTFCDataProvider(final TransferFunctionControlPanel panel) {
                 super("Transfer Function", false);
 
-                if (panel == null)
+                if (panel == null) {
                         throw new NullPointerException();
+                }
 
                 m_currentMemento = createStartingMemento(panel);
 
@@ -120,19 +121,19 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
                 assert interval != null;
 
                 // find min value
-                Cursor<T> cur = Views.iterable(
+                final Cursor<T> cur = Views.iterable(
                                 SubsetOperations.subsetview(m_src, interval))
                                 .cursor();
                 cur.fwd();
-                T sample = cur.get().createVariable();
+                final T sample = cur.get().createVariable();
                 cur.reset();
 
                 // create the histogram
-                OpsHistogram hist = new OpsHistogram(m_numBins, sample);
+                final OpsHistogram hist = new OpsHistogram(m_numBins, sample);
                 while (cur.hasNext()) {
                         cur.fwd();
 
-                        double val = cur.get().getRealDouble();
+                        final double val = cur.get().getRealDouble();
                         hist.incByValue(val);
                 }
 
@@ -163,7 +164,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
         protected final void setMementoToTFC(final KEY key) {
 
                 TransferFunctionControlPanel.Memento newMemento;
-                HistogramWithNormalization hist = getHistogramData(key);
+                final HistogramWithNormalization hist = getHistogramData(key);
 
                 if (m_onlyOne) {
                         newMemento = m_tfc
@@ -254,7 +255,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
         }
 
         private List<TransferFunctionBundle> createStartingBundle() {
-                List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
+                final List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
                 bundles.add(TransferFunctionBundle.newRGBBundle());
                 bundles.add(TransferFunctionBundle.newGBundle());
 
@@ -275,7 +276,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
                         hist = m_currentHistogram.getNormalizedHistogram();
                 }
 
-                LookupTable<T, ARGBType> table = new RealLookupTable<T>(
+                final LookupTable<T, ARGBType> table = new RealLookupTable<T>(
                                 hist.getMinValue(), hist.getMaxValue(),
                                 m_tfc.getCurrentBundle());
                 m_eventService.publish(new LookupTableChgEvent<T, ARGBType>(
@@ -284,7 +285,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // ignore
         }
 
@@ -299,13 +300,13 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // ignore
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 // ignore
         }

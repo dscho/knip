@@ -29,14 +29,14 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
 
         private int m_radius = 10;
 
-        public BilateralFilter(double sigma_r, double sigma_s, int radius) {
+        public BilateralFilter(final double sigma_r, final double sigma_s, final int radius) {
                 m_sigma_r = sigma_r;
                 m_sigma_s = sigma_s;
                 m_radius = radius;
         }
 
-        private static double gauss(double x, double sigma) {
-                double mu = 0.0;
+        private static double gauss(final double x, final double sigma) {
+                final double mu = 0.0;
                 return (1 / (sigma * Math.sqrt(2 * Math.PI)))
                                 * Math.exp(-0.5 * (x - mu) * (x - mu)
                                                 / (sigma * sigma));
@@ -46,23 +46,24 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
          * {@inheritDoc}
          */
         @Override
-        public K compute(K srcIn, K res) {
+        public K compute(final K srcIn, final K res) {
 
-                if (srcIn.numDimensions() != 2)
+                if (srcIn.numDimensions() != 2) {
                         throw new IllegalArgumentException(
                                         "Input must be two dimensional");
+                }
 
-                long[] size = new long[srcIn.numDimensions()];
+                final long[] size = new long[srcIn.numDimensions()];
                 srcIn.dimensions(size);
 
-                RandomAccess<T> cr = res.randomAccess();
-                Cursor<T> cp = srcIn.localizingCursor();
-                int[] p = new int[srcIn.numDimensions()];
-                int[] q = new int[srcIn.numDimensions()];
-                long[] mi = new long[srcIn.numDimensions()];
-                long[] ma = new long[srcIn.numDimensions()];
-                long mma1 = srcIn.max(0);
-                long mma2 = srcIn.max(1);
+                final RandomAccess<T> cr = res.randomAccess();
+                final Cursor<T> cp = srcIn.localizingCursor();
+                final int[] p = new int[srcIn.numDimensions()];
+                final int[] q = new int[srcIn.numDimensions()];
+                final long[] mi = new long[srcIn.numDimensions()];
+                final long[] ma = new long[srcIn.numDimensions()];
+                final long mma1 = srcIn.max(0);
+                final long mma2 = srcIn.max(1);
                 IterableInterval<T> si;
                 Cursor<T> cq;
                 while (cp.hasNext()) {
@@ -76,7 +77,7 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
                         mi[1] = Math.max(0, mi[1] - m_radius);
                         ma[0] = Math.min(mma1, ma[0] + m_radius);
                         ma[1] = Math.min(mma2, ma[1] + m_radius);
-                        Interval in = new FinalInterval(mi, ma);
+                        final Interval in = new FinalInterval(mi, ma);
                         si = Views.iterable(
                                         SubsetOperations.subsetview(srcIn,
                                                         in));

@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class SerializationTests {
 
-        public static void main(String[] args) throws IOException,
+        public static void main(final String[] args) throws IOException,
                         InterruptedException {
 
                 double s = 0;
@@ -17,7 +17,7 @@ public class SerializationTests {
                 for (int k = 0; k < 10; k++) {
 
                         // Creating the test array....
-                        int[] testArray = new int[(int) Math.pow(2, 27)];
+                        final int[] testArray = new int[(int) Math.pow(2, 27)];
 
                         for (int i = 0; i < testArray.length; i++) {
                                 if (i % 2 == 0) {
@@ -25,7 +25,7 @@ public class SerializationTests {
                                 }
                         }
 
-                        DataOutputStream dataOut = new DataOutputStream(
+                        final DataOutputStream dataOut = new DataOutputStream(
                                         new BufferedOutputStream(
                                                         new FileOutputStream(
                                                                         "d:\\test"
@@ -52,7 +52,7 @@ public class SerializationTests {
                         dataOut.flush();
                         dataOut.close();
 
-                        DataInputStream stream = new DataInputStream(
+                        final DataInputStream stream = new DataInputStream(
                                         new BufferedInputStream(
                                                         new FileInputStream(
                                                                         "d:\\test"
@@ -61,7 +61,7 @@ public class SerializationTests {
                                                                                         + 27
                                                                                         + ".dat")));
 
-                        int[] testArrayIn = new int[(int) Math.pow(2, 27)];
+                        final int[] testArrayIn = new int[(int) Math.pow(2, 27)];
 
                         start = System.nanoTime();
 

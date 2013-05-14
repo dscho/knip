@@ -37,12 +37,13 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
         }
 
         @Override
-        protected String updateMouseLabel(StringBuffer buffer,
-                        Interval interval, CalibratedSpace axes,
-                        RandomAccess<LabelingType<L>> rndAccess, long[] coords) {
+        protected String updateMouseLabel(final StringBuffer buffer,
+                        final Interval interval, final CalibratedSpace axes,
+                        final RandomAccess<LabelingType<L>> rndAccess, final long[] coords) {
 
-                if (interval == null || m_imgRA == null)
+                if (interval == null || m_imgRA == null) {
                         return "";
+                }
 
                 buffer.setLength(0);
 
@@ -73,7 +74,7 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
 
                         val += " Labeling: [";
                         if (m_rndAccess.get().getLabeling().size() > 0) {
-                                for (L label : m_rndAccess.get().getLabeling()) {
+                                for (final L label : m_rndAccess.get().getLabeling()) {
                                         val += label.toString() + ";";
                                 }
                                 val = val.substring(0, val.length() - 1);
@@ -93,9 +94,9 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
         }
 
         @Override
-        protected String updateImageLabel(StringBuffer buffer,
-                        Interval interval,
-                        RandomAccess<LabelingType<L>> rndAccess, String imgName) {
+        protected String updateImageLabel(final StringBuffer buffer,
+                        final Interval interval,
+                        final RandomAccess<LabelingType<L>> rndAccess, final String imgName) {
 
                 buffer.setLength(0);
                 if (imgName != null && imgName.length() > 0) {
@@ -117,7 +118,7 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
          * @param name
          */
         @EventListener
-        public void onImgChanged(ImgAndLabelingChgEvent<T, L> e) {
+        public void onImgChanged(final ImgAndLabelingChgEvent<T, L> e) {
                 m_imgRA = Views.extendValue(e.getRandomAccessibleInterval(),
                                 e.getIterableInterval().firstElement())
                                 .randomAccess();
@@ -127,20 +128,20 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
 
         @Override
         @EventListener
-        public void onClose(ViewClosedEvent ev) {
+        public void onClose(final ViewClosedEvent ev) {
                 super.onClose(ev);
                 m_imgRA = null;
         }
 
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // Nothing to do here
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 // Nothing to do here
         }

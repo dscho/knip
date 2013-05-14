@@ -103,7 +103,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
                 @Override
                 public int hashCode() {
-                        int hash = p0.hashCode();
+                        final int hash = p0.hashCode();
                         return hash * 31 + p1.hashCode();
                 }
 
@@ -112,7 +112,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                         if (!(o instanceof LineSegment)) {
                                 return false;
                         } else {
-                                LineSegment l = (LineSegment) o;
+                                final LineSegment l = (LineSegment) o;
                                 boolean eq = true;
 
                                 eq = p0.equals(l.p0) ? eq & true : eq & false;
@@ -169,10 +169,12 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
         public PolylineTransferFunctionPainter(
                         final PolylineTransferFunction func, final Color color) {
-                if (func == null)
+                if (func == null) {
                         throw new NullPointerException();
-                if (color == null)
+                }
+                if (color == null) {
                         throw new NullPointerException();
+                }
 
                 m_func = func;
                 m_color = color;
@@ -191,7 +193,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         private void paint(final Graphics2D g2, final boolean backBufSel) {
                 assert g2 != null;
 
-                Rectangle area = g2.getClipBounds();
+                final Rectangle area = g2.getClipBounds();
 
                 if (area == null) {
                         return;
@@ -210,7 +212,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         }
 
         @Override
-        public void mouseClicked(MouseEvent event) {
+        public void mouseClicked(final MouseEvent event) {
 
                 if (m_selected instanceof PolylineTransferFunction.Point
                                 && event.getButton() == MouseEvent.BUTTON3) {
@@ -228,10 +230,10 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
                 if (m_selected instanceof LineSegment
                                 && event.getModifiersEx() == ADD_POINT) {
-                        double x = getXPointCoordinate(event.getX());
-                        double y = getYPointCoordinate(event.getY());
+                        final double x = getXPointCoordinate(event.getX());
+                        final double y = getYPointCoordinate(event.getY());
 
-                        PolylineTransferFunction.Point p = m_func
+                        final PolylineTransferFunction.Point p = m_func
                                         .addPoint(x, y);
                         m_selected = p;
 
@@ -244,10 +246,10 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         private boolean moveLineSegmentHorizontal(final LineSegment line,
                         final MouseEvent event) {
 
-                int x0 = (event.getX() - m_oldX)
+                final int x0 = (event.getX() - m_oldX)
                                 + getXPanelCoordinate(line.p0.getX());
 
-                int x1 = (event.getX() - m_oldX)
+                final int x1 = (event.getX() - m_oldX)
                                 + getXPanelCoordinate(line.p1.getX());
 
                 // make sure the ramp cannot be changed when hitting the borders
@@ -266,10 +268,10 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         private boolean moveLineSegmentVertical(final LineSegment line,
                         final MouseEvent event) {
 
-                int y0 = (event.getY() - m_oldY)
+                final int y0 = (event.getY() - m_oldY)
                                 + getYPanelCoordinate(line.p0.getY());
 
-                int y1 = (event.getY() - m_oldY)
+                final int y1 = (event.getY() - m_oldY)
                                 + getYPanelCoordinate(line.p1.getY());
 
                 // make sure the ramp cannot be changed when hitting the borders
@@ -291,7 +293,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
                 if (m_selected instanceof LineSegment) {
 
-                        LineSegment line = (LineSegment) m_selected;
+                        final LineSegment line = (LineSegment) m_selected;
 
                         if (event.getModifiersEx() == MOVE_HORIZONTAL) {
                                 emitEvent = moveLineSegmentHorizontal(line,
@@ -324,9 +326,10 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         }
 
         @Override
-        public boolean checkForHilite(Color color) {
-                if (color == null)
+        public boolean checkForHilite(final Color color) {
+                if (color == null) {
                         throw new NullPointerException();
+                }
 
                 if (m_colorToObject.containsKey(color)) {
                         m_selected = m_colorToObject.get(color);
@@ -358,7 +361,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                 assert m_func != null;
                 assert m_selected != null;
 
-                List<PolylineTransferFunction.Point> list = m_func.getPoints();
+                final List<PolylineTransferFunction.Point> list = m_func.getPoints();
 
                 PolylineTransferFunction.Point p0 = null;
                 PolylineTransferFunction.Point p1 = list.get(0);
@@ -367,13 +370,13 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                         p0 = p1;
                         p1 = list.get(i);
 
-                        int x0 = getXPanelCoordinate(p0.getX());
-                        int y0 = getYPanelCoordinate(p0.getY());
+                        final int x0 = getXPanelCoordinate(p0.getX());
+                        final int y0 = getYPanelCoordinate(p0.getY());
 
-                        int x1 = getXPanelCoordinate(p1.getX());
-                        int y1 = getYPanelCoordinate(p1.getY());
+                        final int x1 = getXPanelCoordinate(p1.getX());
+                        final int y1 = getYPanelCoordinate(p1.getY());
 
-                        LineSegment line = new LineSegment(p0, p1);
+                        final LineSegment line = new LineSegment(p0, p1);
                         Color c;
 
                         if (backBufSel) {
@@ -412,7 +415,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                 assert m_selected != null;
 
                 // paint the points
-                for (PolylineTransferFunction.Point p : m_func.getPoints()) {
+                for (final PolylineTransferFunction.Point p : m_func.getPoints()) {
 
                         Color outer;
                         Color inner;
@@ -448,10 +451,10 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
                 // correct the frac to fit into the coordinate space of the
                 // panel
-                int x = getXPanelCoordinate(p.getX());
-                int y = getYPanelCoordinate(p.getY());
+                final int x = getXPanelCoordinate(p.getX());
+                final int y = getYPanelCoordinate(p.getY());
 
-                int half = m_pointSIZE / 2;
+                final int half = m_pointSIZE / 2;
 
                 Shape shape;
 
@@ -548,8 +551,8 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         private void moveControlPoint(
                         final PolylineTransferFunction.Point point,
                         final int x, final int y) {
-                double xp = getXPointCoordinate(x);
-                double yp = getYPointCoordinate(y);
+                final double xp = getXPointCoordinate(x);
+                final double yp = getYPointCoordinate(y);
                 m_func.movePoint(point, xp, yp);
         }
 
@@ -563,8 +566,8 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
          */
         private void moveControlPointX(
                         final PolylineTransferFunction.Point point, final int x) {
-                double xp = getXPointCoordinate(x);
-                double yp = point.getY();
+                final double xp = getXPointCoordinate(x);
+                final double yp = point.getY();
                 m_func.movePoint(point, xp, yp);
         }
 
@@ -578,8 +581,8 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
          */
         private void moveControlPointY(
                         final PolylineTransferFunction.Point point, final int y) {
-                double xp = point.getX();
-                double yp = getYPointCoordinate(y);
+                final double xp = point.getX();
+                final double yp = getYPointCoordinate(y);
                 m_func.movePoint(point, xp, yp);
         }
 
@@ -610,7 +613,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         }
 
         private void fireTransferFunctionChgEvent(final boolean adjusting) {
-                for (TransferFunctionChgListener l : m_listener
+                for (final TransferFunctionChgListener l : m_listener
                                 .getListeners(TransferFunctionChgListener.class)) {
                         l.transferFunctionChg(new TransferFunctionChgEvent(
                                         this, m_func, adjusting));
@@ -618,22 +621,22 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
+        public void mouseEntered(final MouseEvent e) {
                 // just ignore
         }
 
         @Override
-        public void mouseExited(MouseEvent e) {
+        public void mouseExited(final MouseEvent e) {
                 // just ignore
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
+        public void mouseReleased(final MouseEvent e) {
                 // just ignore
         }
 
         @Override
-        public void mouseMoved(MouseEvent arg0) {
+        public void mouseMoved(final MouseEvent arg0) {
                 // just ignore
         }
 }

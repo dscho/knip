@@ -99,12 +99,13 @@ public class WaveletFilter< T extends RealType< T >, K extends IterableInterval<
 			if ( dimSrcCur[ i ] = ( src.dimension( i ) > 1 ) )
 			{
 				int n = 2;
-				while ( d > n )
-					n <<= 1;
+				while ( d > n ) {
+                                        n <<= 1;
+                                }
 				dims[ i ] = n;
-			}
-			else
-				dims[ i ] = d;
+			} else {
+                                dims[ i ] = d;
+                        }
 		}
 		Img< T > temp;
 		try
@@ -112,7 +113,7 @@ public class WaveletFilter< T extends RealType< T >, K extends IterableInterval<
 			temp = new ArrayImgFactory().imgFactory( src.firstElement().createVariable() ).create( dims, src.firstElement().createVariable() );
 			m_tempRandomAccess = temp.randomAccess();
 		}
-		catch ( IncompatibleTypeException e1 )
+		catch ( final IncompatibleTypeException e1 )
 		{
 			throw new IllegalArgumentException( "Cannot create temp img." );
 		}
@@ -210,12 +211,13 @@ public class WaveletFilter< T extends RealType< T >, K extends IterableInterval<
 						catch ( final ExecutionException e )
 						{
 							final Throwable th = e.getCause();
-							if ( th == null )
-								throw new IllegalArgumentException( "Unknow Error during execution." );
-							else if ( th instanceof InterruptedException )
-								throw new IllegalArgumentException( "Canceled" );
-							else
-								throw new IllegalArgumentException( "Error:" + th );
+							if ( th == null ) {
+                                                                throw new IllegalArgumentException( "Unknow Error during execution." );
+                                                        } else if ( th instanceof InterruptedException ) {
+                                                                throw new IllegalArgumentException( "Canceled" );
+                                                        } else {
+                                                                throw new IllegalArgumentException( "Error:" + th );
+                                                        }
 						}
 						catch ( final InterruptedException e )
 						{
@@ -334,12 +336,13 @@ public class WaveletFilter< T extends RealType< T >, K extends IterableInterval<
 						catch ( final ExecutionException e )
 						{
 							final Throwable th = e.getCause();
-							if ( th == null )
-								throw new IllegalArgumentException( "Unknow Error during execution." );
-							else if ( th instanceof InterruptedException )
-								throw new IllegalArgumentException( "Canceled" );
-							else
-								throw new IllegalArgumentException( "Error:" + th );
+							if ( th == null ) {
+                                                                throw new IllegalArgumentException( "Unknow Error during execution." );
+                                                        } else if ( th instanceof InterruptedException ) {
+                                                                throw new IllegalArgumentException( "Canceled" );
+                                                        } else {
+                                                                throw new IllegalArgumentException( "Error:" + th );
+                                                        }
 						}
 						catch ( final InterruptedException e )
 						{
@@ -376,8 +379,9 @@ public class WaveletFilter< T extends RealType< T >, K extends IterableInterval<
 			waveOut = new double[ in.length ];
 			waveIn = in;
 			this.pos = new long[ pos.length ];
-			for ( int d = 0; d < pos.length; ++d )
-				this.pos[ d ] = ( long ) pos[ d ];
+			for ( int d = 0; d < pos.length; ++d ) {
+                                this.pos[ d ] = ( long ) pos[ d ];
+                        }
 		}
 
 		public long[] getPos()
@@ -425,8 +429,9 @@ public class WaveletFilter< T extends RealType< T >, K extends IterableInterval<
 			waveOut = new double[ in.length ];
 			waveIn = in;
 			this.pos = new long[ pos.length ];
-			for ( int d = 0; d < pos.length; ++d )
-				this.pos[ d ] = ( long ) pos[ d ];
+			for ( int d = 0; d < pos.length; ++d ) {
+                                this.pos[ d ] = ( long ) pos[ d ];
+                        }
 		}
 
 		public long[] getPos()

@@ -39,31 +39,31 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
         }
 
         @Override
-        public void setOperator(Operator operator) {
+        public void setOperator(final Operator operator) {
                 m_operator = operator;
                 m_rebuildRequired = true;
         }
 
         @Override
-        public void setActiveLabels(Set<String> activeLabels) {
+        public void setActiveLabels(final Set<String> activeLabels) {
                 m_activeLabels = activeLabels;
                 m_rebuildRequired = true;
         }
 
         @Override
-        public void setLabelMapping(LabelingMapping<L> labelMapping) {
+        public void setLabelMapping(final LabelingMapping<L> labelMapping) {
                 m_labelMapping = labelMapping;
                 m_rebuildRequired = true;
         }
 
         @Override
-        public void setHilitedLabels(Set<String> hilitedLabels) {
+        public void setHilitedLabels(final Set<String> hilitedLabels) {
                 m_hilitedLabels = hilitedLabels;
                 m_rebuildRequired = true;
         }
 
         @Override
-        public void setHiliteMode(boolean isHiliteMode) {
+        public void setHiliteMode(final boolean isHiliteMode) {
                 m_isHiliteMode = isHiliteMode;
                 m_rebuildRequired = true;
         }
@@ -75,9 +75,9 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
 
         @Override
         protected Abstract2DProjector<LabelingType<L>, ARGBType> getProjector(
-                        int dimX, int dimY,
-                        RandomAccessibleInterval<LabelingType<L>> source,
-                        ARGBScreenImage target) {
+                        final int dimX, final int dimY,
+                        final RandomAccessibleInterval<LabelingType<L>> source,
+                        final ARGBScreenImage target) {
 
                 if (m_rebuildRequired) {
                         m_rebuildRequired = false;
@@ -92,12 +92,12 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
 
         private void rebuildLabelConverter() {
                 m_rebuildRequired = false;
-                int labelListIndexSize = m_labelMapping.numLists();
-                HashMap<Integer, Integer> colorTable = new HashMap<Integer, Integer>();
+                final int labelListIndexSize = m_labelMapping.numLists();
+                final HashMap<Integer, Integer> colorTable = new HashMap<Integer, Integer>();
 
                 for (int i = 0; i < labelListIndexSize; i++) {
 
-                        int color = getColorForLabeling(m_activeLabels,
+                        final int color = getColorForLabeling(m_activeLabels,
                                         m_operator, m_hilitedLabels,
                                         m_isHiliteMode,
                                         m_labelMapping.listAtIndex(i));
@@ -107,9 +107,9 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
                 m_converter = new LabelingTypeARGBConverter<L>(colorTable);
         }
 
-        private int getColorForLabeling(Set<String> activeLabels, Operator op,
-                        Set<String> hilitedLabels, boolean isHiliteMode,
-                        List<L> labeling) {
+        private int getColorForLabeling(final Set<String> activeLabels, final Operator op,
+                        final Set<String> hilitedLabels, final boolean isHiliteMode,
+                        final List<L> labeling) {
 
                 if (labeling.size() == 0) {
                         return WHITE_RGB;
@@ -143,7 +143,7 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
                 }
         }
 
-        private boolean checkHilite(List<L> labeling, Set<String> hilitedLabels) {
+        private boolean checkHilite(final List<L> labeling, final Set<String> hilitedLabels) {
                 if (hilitedLabels != null && hilitedLabels.size() > 0) {
                         for (int i = 0; i < labeling.size(); i++) {
                                 if (hilitedLabels.contains(labeling.get(i)
@@ -155,10 +155,10 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
                 return false;
         }
 
-        private List<L> intersection(Set<String> activeLabels, Operator op,
-                        List<L> labeling) {
+        private List<L> intersection(final Set<String> activeLabels, final Operator op,
+                        final List<L> labeling) {
 
-                List<L> intersected = new ArrayList<L>(4);
+                final List<L> intersected = new ArrayList<L>(4);
 
                 if (op == Operator.OR) {
                         for (int i = 0; i < labeling.size(); i++) {
@@ -196,7 +196,7 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
         }
 
         @Override
-        public void setRenderingWithLabelStrings(boolean withNumbers) {
+        public void setRenderingWithLabelStrings(final boolean withNumbers) {
                 // nothing to do here
         }
 

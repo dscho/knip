@@ -116,7 +116,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         /**
          * @param target
          */
-        public SegmentFeatureSet(AxisType[] defaultAxes) {
+        public SegmentFeatureSet(final AxisType[] defaultAxes) {
                 super();
                 m_calculatePerimeter = new CalculatePerimeter();
                 m_outlineOp = new ExtractOutlineImg(false);
@@ -126,11 +126,11 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                 FEATURES = getFeatures(defaultAxes);
         }
 
-        public static String[] getFeatures(AxisType[] defaultAxes) {
+        public static String[] getFeatures(final AxisType[] defaultAxes) {
 
-                ArrayList<String> features = new ArrayList<String>();
+                final ArrayList<String> features = new ArrayList<String>();
 
-                for (AxisType type : defaultAxes) {
+                for (final AxisType type : defaultAxes) {
                         features.add("Centroid " + type.getLabel());
                 }
 
@@ -141,7 +141,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                 features.add("Extend");
                 features.add("Diameter");
 
-                for (AxisType type : defaultAxes) {
+                for (final AxisType type : defaultAxes) {
                         features.add("Dimension " + type.getLabel());
                 }
 
@@ -149,12 +149,12 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         }
 
         @FeatureTargetListener
-        public void calibratedSpaceUpdated(CalibratedSpace cs) {
+        public void calibratedSpaceUpdated(final CalibratedSpace cs) {
                 m_cs = cs;
         }
 
         @FeatureTargetListener
-        public void iiUpdated(IterableInterval<BitType> interval) {
+        public void iiUpdated(final IterableInterval<BitType> interval) {
                 m_interval = interval;
                 m_centroid = null;
 
@@ -254,7 +254,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         public double value(int id) {
 
                 if (id < m_defaultAxis.length) {
-                        int idx = m_cs.getAxisIndex(m_defaultAxis[id]);
+                        final int idx = m_cs.getAxisIndex(m_defaultAxis[id]);
                         if (idx != -1) {
                                 m_centroid = m_ocac.centroid(m_interval);
                                 return m_centroid[idx];
@@ -264,7 +264,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                 }
 
                 if (id > m_defaultAxis.length + 5) {
-                        int idx = m_cs.getAxisIndex(m_defaultAxis[id
+                        final int idx = m_cs.getAxisIndex(m_defaultAxis[id
                                         - m_defaultAxis.length - 6]);
                         if (idx != -1) {
                                 return m_interval.dimension(idx);
@@ -301,7 +301,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return FEATURES[id];
         }
 
@@ -309,7 +309,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 m_enabled.set(id);
 
         }
@@ -342,7 +342,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public void setSharedObjectInstances(Object[] instances) {
+        public void setSharedObjectInstances(final Object[] instances) {
                 m_ocac = (ObjectCalcAndCache) instances[0];
 
         }

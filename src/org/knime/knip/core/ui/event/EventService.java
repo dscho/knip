@@ -79,7 +79,7 @@ public class EventService {
         private boolean m_openQueue = true;
 
         public EventService() {
-                Comparator<KNIPEvent> comparator = new KNIPEventComparator();
+                final Comparator<KNIPEvent> comparator = new KNIPEventComparator();
                 m_eventQueue = new PriorityBlockingQueue<KNIPEvent>(20,
                                 comparator);
                 m_typeToSubscriber = new HashMap<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>>();
@@ -92,7 +92,7 @@ public class EventService {
          * each one with @{@link EventListener}.
          */
 
-        public void subscribe(Object obj) {
+        public void subscribe(final Object obj) {
                 subscribeRecursively(obj.getClass(), obj);
         }
 
@@ -100,13 +100,13 @@ public class EventService {
          * @param <E>
          * @param event
          */
-        public <E extends KNIPEvent> void publish(E event) {
+        public <E extends KNIPEvent> void publish(final E event) {
 
                 // test for redundant events i.e. events that have the
                 // same effect than already inserted event. (E.g. ImgRedrawEvent
                 // should only occur once)
                 boolean redundant = false;
-                for (KNIPEvent eve : m_eventQueue) {
+                for (final KNIPEvent eve : m_eventQueue) {
                         if (event.isRedundant(eve)) {
                                 redundant = true;
                                 break;
@@ -133,13 +133,16 @@ public class EventService {
          * subscribes them to the event service.
          */
         private void subscribeRecursively(final Class<?> type, final Object o) {
-                if (type == null || type == Object.class)
+                if (type == null || type == Object.class) {
                         return;
+                }
                 for (final Method m : type.getDeclaredMethods()) {
                         final EventListener ann = m
                                         .getAnnotation(EventListener.class);
                         if (ann == null)
+                         {
                                 continue; // not an event handler method
+                        }
 
                         final Class<? extends KNIPEvent> eventClass = getEventClass(m);
                         if (eventClass == null) {
@@ -156,9 +159,13 @@ public class EventService {
         private Class<? extends KNIPEvent> getEventClass(final Method m) {
                 final Class<?>[] c = m.getParameterTypes();
                 if (c == null || c.length != 1)
+                 {
                         return null; // wrong number of args
+                }
                 if (!KNIPEvent.class.isAssignableFrom(c[0]))
+                 {
                         return null; // wrong class
+                }
 
                 @SuppressWarnings("unchecked")
                 final Class<? extends KNIPEvent> eventClass = (Class<? extends KNIPEvent>) c[0];
@@ -184,15 +191,15 @@ public class EventService {
         private void processQueue() {
                 while (!m_eventQueue.isEmpty()) {
                         // priority queue => higher priority events first
-                        KNIPEvent event = m_eventQueue.poll();
+                        final KNIPEvent event = m_eventQueue.poll();
                         Class<?> clazz = event.getClass();
 
                         while (KNIPEvent.class.isAssignableFrom(clazz)) {
-                                List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber
+                                final List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber
                                                 .get(clazz);
 
                                 if (suscribers != null) {
-                                        for (ProxyEventSubscriber l : suscribers) {
+                                        for (final ProxyEventSubscriber l : suscribers) {
                                                 l.onEvent(event);
                                         }
                                         LOGGER.debug("Event " + event
@@ -214,16 +221,16 @@ public class EventService {
 
                 private final Object m_subscriber;
 
-                public ProxyEventSubscriber(Object subscriber, Method method) {
+                public ProxyEventSubscriber(final Object subscriber, final Method method) {
                         m_method = method;
                         m_subscriber = subscriber;
                 }
 
-                public void onEvent(E event) {
+                public void onEvent(final E event) {
 
                         try {
                                 m_method.invoke(m_subscriber, event);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                                 throw new RuntimeException(
                                                 "InvocationTargetException when invoking annotated method from EventService publication. Eata: "
                                                                 + event
@@ -236,7 +243,7 @@ public class EventService {
 
         private class KNIPEventComparator implements Comparator<KNIPEvent> {
                 @Override
-                public int compare(KNIPEvent a, KNIPEvent b) {
+                public int compare(final KNIPEvent a, final KNIPEvent b) {
                         if (a.getExecutionOrder().ordinal() == b
                                         .getExecutionOrder().ordinal()) {
                                 return 0;

@@ -134,16 +134,16 @@ public final class ExternalizerManager {
                 registerExtensionPoints();
 
                 LOGGER.debug("Available externalizers used to write objects:");
-                for (Class<?> type : CLASS_EXT_MAP.keySet()) {
-                        Externalizer ext = CLASS_EXT_MAP.get(type);
+                for (final Class<?> type : CLASS_EXT_MAP.keySet()) {
+                        final Externalizer ext = CLASS_EXT_MAP.get(type);
                         LOGGER.debug("--- type=" + type.getSimpleName()
                                         + ";id=" + ext.getId() + ";extClass="
                                         + ext.getClass().getSimpleName());
                 }
 
                 LOGGER.debug("Available externalizers used to read objects:");
-                for (String id : ID_EXT_MAP.keySet()) {
-                        Externalizer ext = ID_EXT_MAP.get(id);
+                for (final String id : ID_EXT_MAP.keySet()) {
+                        final Externalizer ext = ID_EXT_MAP.get(id);
                         LOGGER.debug("--- type="
                                         + ext.getType().getSimpleName()
                                         + ";id=" + id + ";extClass="
@@ -170,10 +170,10 @@ public final class ExternalizerManager {
          * @return
          * @throws Exception
          */
-        public static synchronized <T> T read(BufferedDataInputStream in)
+        public static synchronized <T> T read(final BufferedDataInputStream in)
                         throws Exception {
-                String key = readString(in);
-                Externalizer<T> ext = ID_EXT_MAP.get(key);
+                final String key = readString(in);
+                final Externalizer<T> ext = ID_EXT_MAP.get(key);
                 if (ext == null) {
                         throw new IOException(
                                         "No externalizer available with id "
@@ -191,8 +191,8 @@ public final class ExternalizerManager {
          * @param obj
          * @throws Exception
          */
-        public static synchronized <T> void write(BufferedDataOutputStream out,
-                        T obj) throws Exception {
+        public static synchronized <T> void write(final BufferedDataOutputStream out,
+                        final T obj) throws Exception {
                 write(out, obj, (Class<T>) obj.getClass());
         }
 
@@ -205,8 +205,8 @@ public final class ExternalizerManager {
          * @param type
          * @throws Exception
          */
-        public static synchronized <T> void write(BufferedDataOutputStream out,
-                        T obj, Class<T> type) throws Exception {
+        public static synchronized <T> void write(final BufferedDataOutputStream out,
+                        final T obj, final Class<T> type) throws Exception {
                 Externalizer<T> ext;
                 if ((ext = CLASS_EXT_MAP.get(type)) == null) {
                         write(out, obj, type.getSuperclass());
@@ -226,8 +226,8 @@ public final class ExternalizerManager {
          * @param ext
          * @throws Exception
          */
-        public static synchronized <T> void write(BufferedDataOutputStream out,
-                        T obj, Externalizer<T> ext) throws Exception {
+        public static synchronized <T> void write(final BufferedDataOutputStream out,
+                        final T obj, final Externalizer<T> ext) throws Exception {
                 writeString(out, ext.getId());
                 ext.write(out, obj);
         }
@@ -243,7 +243,7 @@ public final class ExternalizerManager {
          *                another class
          */
         public static synchronized <T> void registerExternalizer(
-                        Externalizer<T> ext) {
+                        final Externalizer<T> ext) {
                 Externalizer<T> tmpExt;
                 if ((tmpExt = CLASS_EXT_MAP.get(ext.getType())) == null
                                 || tmpExt.getPriority() < ext.getPriority()) {
@@ -258,16 +258,16 @@ public final class ExternalizerManager {
 
         }
 
-        private static void writeString(BufferedDataOutputStream out, String s)
+        private static void writeString(final BufferedDataOutputStream out, final String s)
                         throws IOException {
-                char[] c = s.toCharArray();
+                final char[] c = s.toCharArray();
                 out.writeInt(c.length);
                 out.write(c);
         }
 
-        private static String readString(BufferedDataInputStream in)
+        private static String readString(final BufferedDataInputStream in)
                         throws IOException {
-                char[] s = new char[in.readInt()];
+                final char[] s = new char[in.readInt()];
                 in.read(s);
                 return new String(s);
         }

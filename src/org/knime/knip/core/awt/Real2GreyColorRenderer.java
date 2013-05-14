@@ -69,7 +69,7 @@ public class Real2GreyColorRenderer<R extends RealType<R>> extends
         private final Real2ColorRenderer<R> m_colorRenderer;
         private final Real2GreyRenderer<R> m_greyRenderer;
 
-        public Real2GreyColorRenderer(int colorDim) {
+        public Real2GreyColorRenderer(final int colorDim) {
                 m_colorDim = colorDim;
                 m_colorRenderer = new Real2ColorRenderer<R>(colorDim);
                 m_greyRenderer = new Real2GreyRenderer<R>();
@@ -79,7 +79,7 @@ public class Real2GreyColorRenderer<R extends RealType<R>> extends
          * {@inheritDoc}
          */
         @Override
-        public void setNormalizationParameters(double factor, double min) {
+        public void setNormalizationParameters(final double factor, final double min) {
                 m_colorRenderer.setNormalizationParameters(factor, min);
                 m_greyRenderer.setNormalizationParameters(factor, min);
 
@@ -89,9 +89,9 @@ public class Real2GreyColorRenderer<R extends RealType<R>> extends
          * {@inheritDoc}
          */
         @Override
-        protected Abstract2DProjector<R, ARGBType> getProjector(int dimX,
-                        int dimY, RandomAccessibleInterval<R> source,
-                        ARGBScreenImage target) { // only 2 and 3 dim are valid
+        protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
+                        final int dimY, final RandomAccessibleInterval<R> source,
+                        final ARGBScreenImage target) { // only 2 and 3 dim are valid
                                                   // for color rendering
                 if (m_colorDim == -1 || source.numDimensions() <= m_colorDim
                                 || source.dimension(m_colorDim) <= 1

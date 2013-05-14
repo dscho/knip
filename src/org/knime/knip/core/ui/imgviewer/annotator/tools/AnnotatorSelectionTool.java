@@ -25,14 +25,14 @@ public class AnnotatorSelectionTool extends
         }
 
         private void clearSelectedElements() {
-                for (OverlayElement2D<String> element : m_elements) {
+                for (final OverlayElement2D<String> element : m_elements) {
                         element.setStatus(OverlayElementStatus.IDLE);
                 }
                 m_elements.clear();
         }
 
         @Override
-        public void fireFocusLost(Overlay<String> overlay) {
+        public void fireFocusLost(final Overlay<String> overlay) {
                 m_selectedIndex = -1;
                 if (setCurrentOverlayElement(null, null)) {
                         fireStateChanged();
@@ -42,10 +42,10 @@ public class AnnotatorSelectionTool extends
         }
 
         @Override
-        public void setLabelsCurrentElements(Overlay<String> overlay,
-                        String[] selectedLabels) {
+        public void setLabelsCurrentElements(final Overlay<String> overlay,
+                        final String[] selectedLabels) {
                 if (!m_elements.isEmpty()) {
-                        for (OverlayElement2D<String> element : m_elements) {
+                        for (final OverlayElement2D<String> element : m_elements) {
                                 element.setLabels(selectedLabels);
                         }
                         overlay.fireOverlayChanged();
@@ -53,20 +53,20 @@ public class AnnotatorSelectionTool extends
         }
 
         @Override
-        public void onMouseDoubleClickLeft(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClickLeft(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
 
         }
 
         @Override
-        public void onMousePressedLeft(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
-                List<OverlayElement2D<String>> elements = overlay
+        public void onMousePressedLeft(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
+                final List<OverlayElement2D<String>> elements = overlay
                                 .getElementsByPosition(
                                                 selection.getPlanePos(
                                                                 e.getPosX(),
@@ -112,21 +112,21 @@ public class AnnotatorSelectionTool extends
         }
 
         @Override
-        public void onMouseReleasedLeft(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseReleasedLeft(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 
         @Override
-        public void onMouseDraggedLeft(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDraggedLeft(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
                 if (!m_elements.isEmpty()) {
-                        long[] pos = selection.getPlanePos(e.getPosX(),
+                        final long[] pos = selection.getPlanePos(e.getPosX(),
                                         e.getPosY()).clone();
 
                         for (int d = 0; d < pos.length; d++) {
@@ -148,71 +148,72 @@ public class AnnotatorSelectionTool extends
         }
 
         @Override
-        public void onMouseDoubleClickRight(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClickRight(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 m_selectedIndex = -1;
         }
 
         @Override
-        public void onMousePressedRight(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMousePressedRight(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 m_selectedIndex = -1;
 
         }
 
         @Override
-        public void onMouseReleasedRight(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseReleasedRight(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 m_selectedIndex = -1;
                 overlay.removeAll(m_elements);
-                if (setCurrentOverlayElement(OverlayElementStatus.IDLE, null))
+                if (setCurrentOverlayElement(OverlayElementStatus.IDLE, null)) {
                         fireStateChanged();
+                }
 
         }
 
         @Override
-        public void onMouseDraggedRight(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDraggedRight(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 m_selectedIndex = -1;
         }
 
         @Override
-        public void onMouseDoubleClickMid(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClickMid(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 
         @Override
-        public void onMousePressedMid(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMousePressedMid(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 
         @Override
-        public void onMouseReleasedMid(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseReleasedMid(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
         }
 
         @Override
-        public void onMouseDraggedMid(ImgViewerMouseEvent e,
-                        OverlayElement2D<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDraggedMid(final ImgViewerMouseEvent e,
+                        final OverlayElement2D<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 }

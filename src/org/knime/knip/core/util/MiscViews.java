@@ -52,8 +52,8 @@ public class MiscViews {
         }
 
         public static <T extends Type<T>> ImgView<T> imgView(
-                        RandomAccessibleInterval<T> randAccessible,
-                        ImgFactory<T> fac) {
+                        final RandomAccessibleInterval<T> randAccessible,
+                        final ImgFactory<T> fac) {
                 if (randAccessible instanceof ImgView) {
                         return (ImgView<T>) randAccessible;
                 } else {
@@ -62,8 +62,8 @@ public class MiscViews {
         }
 
         public static <L extends Comparable<L>> LabelingView<L> labelingView(
-                        RandomAccessibleInterval<LabelingType<L>> randAccessible,
-                        LabelingFactory<L> fac) {
+                        final RandomAccessibleInterval<LabelingType<L>> randAccessible,
+                        final LabelingFactory<L> fac) {
                 if (randAccessible instanceof LabelingView) {
                         return (LabelingView<L>) randAccessible;
                 } else {
@@ -82,8 +82,8 @@ public class MiscViews {
          */
         public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(
                         RandomAccessibleInterval<T> src,
-                        CalibratedSpace srcSpace, final Interval target,
-                        CalibratedSpace targetSpace) {
+                        final CalibratedSpace srcSpace, final Interval target,
+                        final CalibratedSpace targetSpace) {
 
                 // must hold, if not: most likely an implementation error
                 assert (srcSpace.numDimensions() == src.numDimensions() && target
@@ -91,29 +91,30 @@ public class MiscViews {
 
                 // Check direction of conversion
                 if (Intervals.equals(src, target)
-                                && spaceEquals(srcSpace, targetSpace))
+                                && spaceEquals(srcSpace, targetSpace)) {
                         return src;
+                }
 
                 // Extend
                 src = Views.interval(Views.extendBorder(src), src);
 
                 // Init result vars
                 RandomAccessibleInterval<T> res = src;
-                CalibratedSpace resSpace = new CalibratedSpaceImpl(
+                final CalibratedSpace resSpace = new CalibratedSpaceImpl(
                                 target.numDimensions());
 
                 // 1. Step remove axis from source which can't be found in
                 // target
-                AxisType[] dispensable = getDeltaAxisTypes(targetSpace,
+                final AxisType[] dispensable = getDeltaAxisTypes(targetSpace,
                                 srcSpace);
                 for (int d = dispensable.length - 1; d >= 0; --d) {
-                        int idx = srcSpace.getAxisIndex(dispensable[d]);
+                        final int idx = srcSpace.getAxisIndex(dispensable[d]);
                         res = Views.hyperSlice(res, idx, 0);
                 }
 
                 int i = 0;
                 outer: for (int d = 0; d < srcSpace.numDimensions(); d++) {
-                        for (AxisType type : dispensable) {
+                        for (final AxisType type : dispensable) {
                                 if (d == srcSpace.getAxisIndex(type)) {
                                         continue outer;
                                 }
@@ -123,7 +124,7 @@ public class MiscViews {
                 }
 
                 // 2. Add Axis which are available in target but not in source
-                AxisType[] missing = getDeltaAxisTypes(srcSpace, targetSpace);
+                final AxisType[] missing = getDeltaAxisTypes(srcSpace, targetSpace);
 
                 // Dimensions are added and resSpace is synchronized with res
                 i = srcSpace.numDimensions() - dispensable.length;
@@ -140,14 +141,14 @@ public class MiscViews {
                 // 3. Permutate axis if necessary
                 RandomAccessible<T> resRndAccessible = res;
                 for (int d = 0; d < res.numDimensions(); d++) {
-                        int srcIdx = resSpace.getAxisIndex(targetSpace.axis(d));
+                        final int srcIdx = resSpace.getAxisIndex(targetSpace.axis(d));
 
                         if (srcIdx != d) {
                                 resRndAccessible = Views.permute(
                                                 resRndAccessible, srcIdx, d);
 
                                 // also permutate calibrated space
-                                AxisType tmp = resSpace.axis(d);
+                                final AxisType tmp = resSpace.axis(d);
                                 resSpace.setAxis(targetSpace.axis(d), d);
                                 resSpace.setAxis(tmp, srcIdx);
                         }
@@ -166,13 +167,14 @@ public class MiscViews {
          * @return Adjusted {@link RandomAccessibleInterval}
          */
         public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(
-                        RandomAccessibleInterval<T> src, final Interval target) {
+                        final RandomAccessibleInterval<T> src, final Interval target) {
                 IntervalView<T> res = Views.interval(Views.extendBorder(src),
                                 src);
 
                 // Check direction of conversion
-                if (Intervals.equals(src, target))
+                if (Intervals.equals(src, target)) {
                         return res;
+                }
 
                 // adjust dimensions
                 if (res.numDimensions() < target.numDimensions()) {
@@ -183,26 +185,29 @@ public class MiscViews {
                         }
                 } else {
                         for (int d = res.numDimensions() - 1; d >= target
-                                        .numDimensions(); --d)
+                                        .numDimensions(); --d) {
                                 res = Views.hyperSlice(res, d, 0);
+                        }
                 }
 
-                long[] resDims = new long[res.numDimensions()];
+                final long[] resDims = new long[res.numDimensions()];
                 res.dimensions(resDims);
 
                 return Views.interval(res, target);
 
         }
 
-        private static boolean spaceEquals(CalibratedSpace srcSpace,
-                        CalibratedSpace targetSpace) {
+        private static boolean spaceEquals(final CalibratedSpace srcSpace,
+                        final CalibratedSpace targetSpace) {
 
-                if (srcSpace.numDimensions() != targetSpace.numDimensions())
+                if (srcSpace.numDimensions() != targetSpace.numDimensions()) {
                         return false;
+                }
 
                 for (int d = 0; d < srcSpace.numDimensions(); d++) {
-                        if (!srcSpace.axis(d).equals(targetSpace.axis(d)))
+                        if (!srcSpace.axis(d).equals(targetSpace.axis(d))) {
                                 return false;
+                        }
                 }
                 return true;
         }
@@ -212,11 +217,11 @@ public class MiscViews {
          * From the smallest index of axistype to the biggest
          */
         private synchronized static AxisType[] getDeltaAxisTypes(
-                        CalibratedSpace sourceSpace, CalibratedSpace targetSpace) {
+                        final CalibratedSpace sourceSpace, final CalibratedSpace targetSpace) {
 
-                List<AxisType> delta = new ArrayList<AxisType>();
+                final List<AxisType> delta = new ArrayList<AxisType>();
                 for (int d = 0; d < targetSpace.numDimensions(); d++) {
-                        AxisType axisType = targetSpace.axis(d);
+                        final AxisType axisType = targetSpace.axis(d);
                         if (sourceSpace.getAxisIndex(axisType) == -1) {
                                 delta.add(axisType);
                         }

@@ -61,7 +61,7 @@ public class AnnotatorToolChgEvent implements KNIPEvent {
 
         private final AnnotatorTool m_tool;
 
-        public AnnotatorToolChgEvent(AnnotatorTool tool) {
+        public AnnotatorToolChgEvent(final AnnotatorTool tool) {
                 m_tool = tool;
 
         }
@@ -82,7 +82,7 @@ public class AnnotatorToolChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

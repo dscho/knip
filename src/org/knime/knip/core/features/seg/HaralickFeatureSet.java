@@ -96,8 +96,8 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
          * @param distance
          * @param target
          */
-        public HaralickFeatureSet(int nrGrayLevels, int distance,
-                        MatrixOrientation orientation) {
+        public HaralickFeatureSet(final int nrGrayLevels, final int distance,
+                        final MatrixOrientation orientation) {
                 super();
                 m_nrGrayLevels = nrGrayLevels;
                 m_distance = distance;
@@ -109,12 +109,13 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public double value(int id) {
+        public double value(final int id) {
 
-                if (!m_isValid)
+                if (!m_isValid) {
                         return Double.NaN;
+                }
 
-                CooccurrenceMatrix coocMat = m_ocac.cooccurenceMatrix(
+                final CooccurrenceMatrix coocMat = m_ocac.cooccurenceMatrix(
                                 m_interval, m_dimX, m_dimY, m_distance,
                                 m_nrGrayLevels, m_matrixOrientation,
                                 enabledFeatures);
@@ -126,7 +127,7 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return HaralickFeature.values()[id].toString();
         }
 
@@ -150,12 +151,12 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 enabledFeatures.set(id);
         }
 
         @FeatureTargetListener
-        public final void iiUpdated(IterableInterval<T> interval) {
+        public final void iiUpdated(final IterableInterval<T> interval) {
 
                 m_validDims = getValidDims(interval);
 
@@ -171,22 +172,26 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
         }
 
         private ValuePair<Integer, Integer> getValidDims(
-                        IterableInterval<T> interval) {
+                        final IterableInterval<T> interval) {
 
                 int dimX = -1;
                 int dimY = -1;
 
-                for (int d = 0; d < interval.numDimensions(); d++)
-                        if (interval.dimension(d) > 1)
-                                if (dimX < 0)
+                for (int d = 0; d < interval.numDimensions(); d++) {
+                        if (interval.dimension(d) > 1) {
+                                if (dimX < 0) {
                                         dimX = d;
-                                else if (dimY < 0)
+                                } else if (dimY < 0) {
                                         dimY = d;
-                                else
+                                } else {
                                         return null;
+                                }
+                        }
+                }
 
-                if (dimX < 0 || dimY < 0)
+                if (dimX < 0 || dimY < 0) {
                         return null;
+                }
 
                 return new ValuePair<Integer, Integer>(dimX, dimY);
         }
@@ -203,7 +208,7 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public void setSharedObjectInstances(Object[] instances) {
+        public void setSharedObjectInstances(final Object[] instances) {
                 m_ocac = (ObjectCalcAndCache) instances[0];
 
         }

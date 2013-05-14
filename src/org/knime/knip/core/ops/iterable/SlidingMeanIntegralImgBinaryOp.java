@@ -30,9 +30,9 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
         private final int m_span;
 
         public SlidingMeanIntegralImgBinaryOp(
-                        BinaryOperation<DoubleType, T, V> binaryOp,
-                        RectangleShape shape, int span,
-                        OutOfBoundsFactory<T, IN> outOfBounds) {
+                        final BinaryOperation<DoubleType, T, V> binaryOp,
+                        final RectangleShape shape, final int span,
+                        final OutOfBoundsFactory<T, IN> outOfBounds) {
                 super(shape, outOfBounds);
                 m_binaryOp = binaryOp;
                 m_span = span;
@@ -47,43 +47,43 @@ public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends Rea
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
-        protected OUT compute(IterableInterval<Neighborhood<T>> neighborhoods,
-                        IN input, OUT output) {
+        protected OUT compute(final IterableInterval<Neighborhood<T>> neighborhoods,
+                        final IN input, final OUT output) {
 
-                long[] min = new long[input.numDimensions()];
-                long[] max = new long[input.numDimensions()];
+                final long[] min = new long[input.numDimensions()];
+                final long[] max = new long[input.numDimensions()];
 
                 for (int d = 0; d < input.numDimensions(); d++) {
                         min[d] = -m_span;
                         max[d] = (input.dimension(d) - 1) + m_span;
                 }
 
-                Cursor<T> inCursor = Views.flatIterable(input).cursor();
-                Cursor<V> outCursor = output.cursor();
+                final Cursor<T> inCursor = Views.flatIterable(input).cursor();
+                final Cursor<V> outCursor = output.cursor();
 
                 // extend such that image is 2*span larger in each dimension
                 // with corresponding outofbounds extension
                 // Result: We have a IntegralImage
 
-                IntervalView<T> extended = Views.offset(Views.interval(
+                final IntervalView<T> extended = Views.offset(Views.interval(
                                 Views.extend(input, outofbounds),
                                 new FinalInterval(min, max)), min);
 
-                RandomAccessibleInterval<IntType> ii = Operations.compute(
+                final RandomAccessibleInterval<IntType> ii = Operations.compute(
                                 m_iiOp, extended);
 
-                DoubleType mean = new DoubleType();
-                long[] p1 = new long[input.numDimensions()];
-                long[] p2 = new long[input.numDimensions()];
+                final DoubleType mean = new DoubleType();
+                final long[] p1 = new long[input.numDimensions()];
+                final long[] p2 = new long[input.numDimensions()];
 
-                IntegralImgSumAgent sumAgent = new IntegralImgSumAgent(ii);
+                final IntegralImgSumAgent sumAgent = new IntegralImgSumAgent(ii);
 
                 for (final Neighborhood<T> neighborhood : neighborhoods) {
                         inCursor.fwd();
                         outCursor.fwd();
 
                         for (int d = 0; d < p1.length; d++) {
-                                long p = inCursor.getLongPosition(d);
+                                final long p = inCursor.getLongPosition(d);
                                 p1[d] = p; // -span
                                 p2[d] = p + 2 * m_span; // +span
                         }

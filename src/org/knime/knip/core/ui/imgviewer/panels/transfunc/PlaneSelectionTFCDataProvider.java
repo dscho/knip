@@ -38,7 +38,7 @@ public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends Rand
                 m_indices[1] = event.getPlaneDimIndex2();
 
                 m_pos = event.getPlanePos();
-                Integer key = hash(m_pos, event.getDimIndices(), m_src);
+                final Integer key = hash(m_pos, event.getDimIndices(), m_src);
                 m_histogramInterval = event.getInterval(m_src);
 
                 super.setMementoToTFC(key);
@@ -57,8 +57,8 @@ public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends Rand
                         m_pos = new long[src.numDimensions()];
                         Arrays.fill(m_pos, 0);
 
-                        long[] min = new long[src.numDimensions()];
-                        long[] max = new long[src.numDimensions()];
+                        final long[] min = new long[src.numDimensions()];
+                        final long[] max = new long[src.numDimensions()];
 
                         Arrays.fill(min, 0);
                         Arrays.fill(max, 0);
@@ -84,7 +84,7 @@ public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends Rand
                 // create the hash code
                 int hash = 31;
 
-                for (long i : pos) {
+                for (final long i : pos) {
                         hash = hash * 31 + (int) i;
                 }
 

@@ -97,18 +97,18 @@ public class CellImgExt0 implements Externalizer<CellImg> {
          * {@inheritDoc}
          */
         @Override
-        public CellImg read(BufferedDataInputStream in) throws Exception {
+        public CellImg read(final BufferedDataInputStream in) throws Exception {
 
-                long[] dims = new long[in.readInt()];
+                final long[] dims = new long[in.readInt()];
                 in.read(dims);
 
-                NativeType<?> type = (NativeType<?>) ExternalizerManager
+                final NativeType<?> type = (NativeType<?>) ExternalizerManager
                                 .<Class> read(in).newInstance();
 
-                CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cellImg = new CellImgFactory()
+                final CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cellImg = new CellImgFactory()
                                 .create(dims, type);
 
-                DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursor = new DirectCellCursor(
+                final DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursor = new DirectCellCursor(
                                 cellImg.cursor());
 
                 boolean indicateStop = cursor.isLastCell();
@@ -118,13 +118,15 @@ public class CellImgExt0 implements Externalizer<CellImg> {
                                         .getCell().getData())
                                         .getCurrentStorageArray());
 
-                        if (indicateStop)
+                        if (indicateStop) {
                                 break;
+                        }
 
                         cursor.moveToNextCell();
 
-                        if (cursor.isLastCell())
+                        if (cursor.isLastCell()) {
                                 indicateStop = true;
+                        }
                 }
 
                 return cellImg;
@@ -134,7 +136,7 @@ public class CellImgExt0 implements Externalizer<CellImg> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, CellImg obj)
+        public void write(final BufferedDataOutputStream out, final CellImg obj)
                         throws Exception {
 
                 // write dimensions
@@ -146,7 +148,7 @@ public class CellImgExt0 implements Externalizer<CellImg> {
                 ExternalizerManager.<Class> write(out, obj.firstElement()
                                 .getClass());
 
-                DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursorOnCells = new DirectCellCursor(
+                final DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursorOnCells = new DirectCellCursor(
                                 ((CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) obj)
                                                 .cursor());
 
@@ -157,13 +159,15 @@ public class CellImgExt0 implements Externalizer<CellImg> {
                                         .getCell().getData())
                                         .getCurrentStorageArray());
 
-                        if (indicateStop)
+                        if (indicateStop) {
                                 break;
+                        }
 
                         cursorOnCells.moveToNextCell();
 
-                        if (cursorOnCells.isLastCell())
+                        if (cursorOnCells.isLastCell()) {
                                 indicateStop = true;
+                        }
 
                 }
 
@@ -172,7 +176,7 @@ public class CellImgExt0 implements Externalizer<CellImg> {
         private class DirectCellCursor<T extends NativeType<T>, A extends ArrayDataAccess<A>, C extends AbstractCell<A>>
                         extends CellCursor<T, A, C> {
 
-                protected DirectCellCursor(CellCursor<T, A, C> cursor) {
+                protected DirectCellCursor(final CellCursor<T, A, C> cursor) {
                         super(cursor);
                 }
 

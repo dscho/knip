@@ -66,8 +66,8 @@ public class ImgViewerMouseMovedEvent extends ImgViewerMouseEvent {
          * @param imgWidth
          * @param imgHeight
          */
-        public ImgViewerMouseMovedEvent(MouseEvent e, double[] factors,
-                        int imgWidth, int imgHeight) {
+        public ImgViewerMouseMovedEvent(final MouseEvent e, final double[] factors,
+                        final int imgWidth, final int imgHeight) {
                 super(e, factors, imgWidth, imgHeight);
         }
 
@@ -80,7 +80,7 @@ public class ImgViewerMouseMovedEvent extends ImgViewerMouseEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

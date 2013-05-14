@@ -23,14 +23,14 @@ public class GeneralMetadataImpl implements GeneralMetadata {
         private final Named m_named;
         private final Sourced m_sourced;
 
-        public GeneralMetadataImpl(int numDimensions) {
+        public GeneralMetadataImpl(final int numDimensions) {
                 this.m_cs = new CalibratedSpaceImpl(numDimensions);
                 this.m_named = new NamedImpl();
                 this.m_sourced = new SourcedImpl();
         }
 
-        public GeneralMetadataImpl(CalibratedSpace cs, Named named,
-                        Sourced sourced) {
+        public GeneralMetadataImpl(final CalibratedSpace cs, final Named named,
+                        final Sourced sourced) {
                 this(cs.numDimensions());
 
                 new CopyNamed<Named>().compute(named, m_named);
@@ -38,20 +38,20 @@ public class GeneralMetadataImpl implements GeneralMetadata {
                 new CopyCalibratedSpace<CalibratedSpace>().compute(cs, m_cs);
         }
 
-        public GeneralMetadataImpl(CalibratedSpace cs, Metadata metadata) {
+        public GeneralMetadataImpl(final CalibratedSpace cs, final Metadata metadata) {
                 this(cs, metadata, metadata);
         }
 
-        public GeneralMetadataImpl(CalibratedSpace space,
-                        GeneralMetadata metadata) {
+        public GeneralMetadataImpl(final CalibratedSpace space,
+                        final GeneralMetadata metadata) {
                 this(space, metadata, metadata);
         }
 
-        public GeneralMetadataImpl(GeneralMetadata metadata) {
+        public GeneralMetadataImpl(final GeneralMetadata metadata) {
                 this(metadata, metadata, metadata);
         }
 
-        public GeneralMetadataImpl(Metadata metadata) {
+        public GeneralMetadataImpl(final Metadata metadata) {
                 this(metadata, metadata, metadata);
         }
 
@@ -111,7 +111,7 @@ public class GeneralMetadataImpl implements GeneralMetadata {
         }
 
         @Override
-        public void setName(String name) {
+        public void setName(final String name) {
                 m_named.setName(name);
         }
 
@@ -121,7 +121,7 @@ public class GeneralMetadataImpl implements GeneralMetadata {
         }
 
         @Override
-        public void setSource(String source) {
+        public void setSource(final String source) {
                 this.m_sourced.setSource(source);
         }
 

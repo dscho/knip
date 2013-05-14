@@ -88,7 +88,7 @@ public abstract class ViewInfoPanel<T extends Type<T>>
                         RandomAccess<T> rndAccess, String imgName);
 
         @EventListener
-        public void onClose(ViewClosedEvent ev) {
+        public void onClose(final ViewClosedEvent ev) {
                 m_randomAccessible = null;
                 m_dims = null;
                 m_mouseInfoLabel = null;
@@ -105,7 +105,7 @@ public abstract class ViewInfoPanel<T extends Type<T>>
          * @param name
          */
         @EventListener
-        public void onImgChanged(IntervalWithMetadataChgEvent<T> e) {
+        public void onImgChanged(final IntervalWithMetadataChgEvent<T> e) {
                 m_randomAccessible = e.getRandomAccessibleInterval();
                 m_iterable = Views.iterable(m_randomAccessible);
 
@@ -114,7 +114,7 @@ public abstract class ViewInfoPanel<T extends Type<T>>
                 m_randomAccessible.dimensions(m_dims);
                 m_imgAxes = e.getCalibratedSpace();
 
-                T val = m_iterable.firstElement().createVariable();
+                final T val = m_iterable.firstElement().createVariable();
                 m_rndAccess = Views.extendValue(m_randomAccessible, val)
                                 .randomAccess();
 
@@ -132,7 +132,7 @@ public abstract class ViewInfoPanel<T extends Type<T>>
         }
 
         @EventListener
-        public void onPlaneSelectionChanged(PlaneSelectionEvent e) {
+        public void onPlaneSelectionChanged(final PlaneSelectionEvent e) {
                 m_sel = e;
                 m_pos = m_sel.getPlanePos().clone();
 
@@ -153,7 +153,7 @@ public abstract class ViewInfoPanel<T extends Type<T>>
         }
 
         @EventListener
-        public void onMouseMoved(ImgViewerMouseMovedEvent e) {
+        public void onMouseMoved(final ImgViewerMouseMovedEvent e) {
                 m_currentCoords = e;
                 if (m_currentCoords.isInsideImgView(
                                 m_dims[m_sel.getPlaneDimIndex1()],
@@ -176,7 +176,7 @@ public abstract class ViewInfoPanel<T extends Type<T>>
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 eventService.subscribe(this);
         }
 
@@ -191,7 +191,7 @@ public abstract class ViewInfoPanel<T extends Type<T>>
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 
@@ -203,8 +203,8 @@ public abstract class ViewInfoPanel<T extends Type<T>>
          * @param mouseInfoText
          * @param imageInfoText
          */
-        protected void manualTextUpdate(String mouseInfoText,
-                        String imageInfoText) {
+        protected void manualTextUpdate(final String mouseInfoText,
+                        final String imageInfoText) {
                 m_mouseInfoLabel.setText(mouseInfoText);
                 m_imageInfoLabel.setText(imageInfoText);
         }

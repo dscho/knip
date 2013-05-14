@@ -101,8 +101,8 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
          * @param dimFeat
          *                the dimension containing the features (feature vector)
          */
-        public GraphCut2D(double pottsWeight, int dimX, int dimY, int dimFeat,
-                        double[] srcVal, double[] sinkVal) {
+        public GraphCut2D(final double pottsWeight, final int dimX, final int dimY, final int dimFeat,
+                        final double[] srcVal, final double[] sinkVal) {
                 m_dimX = dimX;
                 m_dimY = dimY;
                 m_dimFeat = dimFeat;
@@ -122,8 +122,8 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
          * @param dimY
          *                the second dimensions
          */
-        public GraphCut2D(double pottsWeight, int dimX, int dimY, int dimFeat,
-                        double srcVal, double sinkVal) {
+        public GraphCut2D(final double pottsWeight, final int dimX, final int dimY, final int dimFeat,
+                        final double srcVal, final double sinkVal) {
                 this(pottsWeight, dimX, dimY, dimFeat, new double[] { srcVal },
                                 new double[] { sinkVal });
         }
@@ -139,8 +139,8 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
          * @param dimY
          *                the second dimensions
          */
-        public GraphCut2D(double pottsWeight, int dimX, int dimY,
-                        double srcVal, double sinkVal) {
+        public GraphCut2D(final double pottsWeight, final int dimX, final int dimY,
+                        final double srcVal, final double sinkVal) {
                 this(pottsWeight, dimX, dimY, -1, new double[] { srcVal },
                                 new double[] { sinkVal });
         }
@@ -151,7 +151,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
          * @return
          */
         @Override
-        public O compute(I src, O res) {
+        public O compute(final I src, final O res) {
 
                 /*
                  * Image has been normalized before. Therefore the lowest and
@@ -159,21 +159,21 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                  * sources and sinks for the graphcut algorithm.
                  */
 
-                int numFeat = m_dimFeat == -1 ? 1 : (int) src
+                final int numFeat = m_dimFeat == -1 ? 1 : (int) src
                                 .dimension(m_dimFeat);
 
                 /*
                  * Calculate the 'camera noise' as the std. deviation of the
                  * image's pixel values.
                  */
-                float[] stdDev = new float[numFeat];
+                final float[] stdDev = new float[numFeat];
 
-                long[] min = new long[src.numDimensions()];
-                long[] max = new long[src.numDimensions()];
+                final long[] min = new long[src.numDimensions()];
+                final long[] max = new long[src.numDimensions()];
                 src.min(min);
                 src.max(max);
 
-                MakeHistogram<T> hist = new MakeHistogram<T>();
+                final MakeHistogram<T> hist = new MakeHistogram<T>();
 
                 for (int i = 0; i < numFeat; i++) {
 
@@ -234,12 +234,12 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                 float K_value = 0;
 
                 // the neighbor position for looking at the adjacent nodes
-                long[] dims = new long[res.numDimensions()];
+                final long[] dims = new long[res.numDimensions()];
                 res.dimensions(dims);
-                long[] cursorPos = new long[resCursor.numDimensions()];
+                final long[] cursorPos = new long[resCursor.numDimensions()];
 
-                double[] nodeValues = new double[numFeat];
-                double[] neighborValues = new double[numFeat];
+                final double[] nodeValues = new double[numFeat];
+                final double[] neighborValues = new double[numFeat];
                 while (resCursor.hasNext()) {
                         resCursor.fwd();
 
@@ -249,7 +249,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                         srcRandomAcess.setPosition(cursorPos[1], m_dimY);
                         final int nodeID = listPosition(cursorPos, dims);
                         getValues(nodeValues, srcRandomAcess);
-                        for (Integer d : new int[] { m_dimX, m_dimY }) {
+                        for (final Integer d : new int[] { m_dimX, m_dimY }) {
 
                                 // if we are not at the lower dimension bounds
                                 if (srcRandomAcess.getIntPosition(d) - 1 >= 0) {
@@ -355,7 +355,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                 resCursor.reset();
 
                 // Set output image
-                long[] resPos = new long[resCursor.numDimensions()];
+                final long[] resPos = new long[resCursor.numDimensions()];
                 while (resCursor.hasNext()) {
                         resCursor.fwd();
                         resCursor.localize(resPos);
@@ -386,7 +386,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                                 dimensions);
         }
 
-        private void getValues(double[] res, RandomAccess<T> ra) {
+        private void getValues(final double[] res, final RandomAccess<T> ra) {
                 for (int i = 0; i < res.length; i++) {
                         if (m_dimFeat != -1) {
                                 ra.setPosition(i, m_dimFeat);
@@ -395,7 +395,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                 }
         }
 
-        public long[] resultDims(Interval src) {
+        public long[] resultDims(final Interval src) {
                 return new long[] { src.dimension(m_dimX),
                                 src.dimension(m_dimY) };
         }
@@ -412,7 +412,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
 
                         @SuppressWarnings("unchecked")
                         @Override
-                        public O instantiate(I in) {
+                        public O instantiate(final I in) {
                                 if (m_dimFeat != -1) {
                                         // check dimensionality
                                         if (m_sinkVal.length != in
@@ -437,7 +437,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                                                         resultDims(in),
                                                         new BitType());
 
-                                } catch (IncompatibleTypeException e) {
+                                } catch (final IncompatibleTypeException e) {
                                         throw new RuntimeException(e);
                                 }
                         }

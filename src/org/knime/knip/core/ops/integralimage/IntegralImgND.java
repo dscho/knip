@@ -86,12 +86,12 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
         private final ImgFactory<T> m_factory;
         private T m_type;
 
-        public IntegralImgND(ImgFactory<T> factory, T type) {
+        public IntegralImgND(final ImgFactory<T> factory, final T type) {
                 m_factory = factory;
                 m_type = type;
         }
 
-        public IntegralImgND(ImgFactory<T> factory) {
+        public IntegralImgND(final ImgFactory<T> factory) {
                 m_factory = factory;
                 m_type = null;
         }
@@ -103,9 +103,9 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
                         @SuppressWarnings("unchecked")
                         @Override
                         public RandomAccessibleInterval<T> instantiate(
-                                        RandomAccessibleInterval<R> input) {
+                                        final RandomAccessibleInterval<R> input) {
 
-                                R probe = input.randomAccess().get()
+                                final R probe = input.randomAccess().get()
                                                 .createVariable();
                                 if (m_type == null) {
                                         if (probe instanceof LongType
@@ -122,8 +122,9 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
                                 final int numDimensions = input.numDimensions();
                                 final long integralSize[] = new long[numDimensions];
 
-                                for (int d = 0; d < numDimensions; ++d)
+                                for (int d = 0; d < numDimensions; ++d) {
                                         integralSize[d] = input.dimension(d) + 1;
+                                }
 
                                 return m_factory.create(integralSize, m_type);
                         }
@@ -137,8 +138,8 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
 
         @Override
         public RandomAccessibleInterval<T> compute(
-                        RandomAccessibleInterval<R> input,
-                        RandomAccessibleInterval<T> output) {
+                        final RandomAccessibleInterval<R> input,
+                        final RandomAccessibleInterval<T> output) {
 
                 // the following methods alter output
                 if (output.numDimensions() == 1) {
@@ -154,7 +155,7 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
                 // are big enough.
                 double errorSum = 0.0d;
 
-                Cursor<R> inputCursor = Views.iterable(input).cursor();
+                final Cursor<R> inputCursor = Views.iterable(input).cursor();
                 while (inputCursor.hasNext()) {
                         errorSum += inputCursor.next().getRealDouble();
                 }
@@ -173,8 +174,8 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
                 return output;
         }
 
-        public void process_1D(RandomAccessibleInterval<R> input,
-                        RandomAccessibleInterval<T> output) {
+        public void process_1D(final RandomAccessibleInterval<R> input,
+                        final RandomAccessibleInterval<T> output) {
                 final T tmpVar = output.randomAccess().get().createVariable();
                 final T sum = output.randomAccess().get().createVariable();
 
@@ -202,10 +203,10 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
         }
 
         private void process_nD_initialDimension(
-                        RandomAccessibleInterval<R> input,
-                        RandomAccessibleInterval<T> output) {
+                        final RandomAccessibleInterval<R> input,
+                        final RandomAccessibleInterval<T> output) {
 
-                int numDimensions = output.numDimensions();
+                final int numDimensions = output.numDimensions();
                 final long[] fakeSize = new long[numDimensions - 1];
 
                 // location for the input location
@@ -217,8 +218,9 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
                 // the size of dimension 0
                 final long size = output.dimension(0);
 
-                for (int d = 1; d < numDimensions; ++d)
+                for (int d = 1; d < numDimensions; ++d) {
                         fakeSize[d - 1] = output.dimension(d);
+                }
 
                 final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
                                 fakeSize);
@@ -248,8 +250,9 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
                                 tmpOut[d] = fakeSize[d - 1];
 
                                 // all entries of position 0 are 0
-                                if (tmpOut[d] == 0)
+                                if (tmpOut[d] == 0) {
                                         continue main;
+                                }
                         }
 
                         // set the cursor to the beginning of the correct line
@@ -266,10 +269,10 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
         }
 
         private void process_nD_remainingDimensions(
-                        RandomAccessibleInterval<R> input,
-                        RandomAccessibleInterval<T> output) {
+                        final RandomAccessibleInterval<R> input,
+                        final RandomAccessibleInterval<T> output) {
 
-                int numDimensions = output.numDimensions();
+                final int numDimensions = output.numDimensions();
 
                 for (int d = 1; d < numDimensions; ++d) {
                         final long[] fakeSize = new long[numDimensions - 1];
@@ -282,10 +285,12 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
                         // doing the
                         // integral on
                         int countDim = 0;
-                        for (int e = 0; e < numDimensions; ++e)
-                                if (e != d)
+                        for (int e = 0; e < numDimensions; ++e) {
+                                if (e != d) {
                                         fakeSize[countDim++] = output
                                                         .dimension(e);
+                                }
+                        }
 
                         final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
                                         fakeSize);
@@ -304,9 +309,11 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
 
                                 tmp[d] = 1;
                                 countDim = 0;
-                                for (int e = 0; e < numDimensions; ++e)
-                                        if (e != d)
+                                for (int e = 0; e < numDimensions; ++e) {
+                                        if (e != d) {
                                                 tmp[e] = fakeSize[countDim++];
+                                        }
+                                }
 
                                 // update the cursor in the input image to the
                                 // current dimension
@@ -357,7 +364,7 @@ public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & Native
          *         provided integral image.
          */
         public final static <T extends RealType<T>> IntegralImgSumAgent<T> getSumAgent(
-                        RandomAccessibleInterval<T> integralImage) {
+                        final RandomAccessibleInterval<T> integralImage) {
                 return new IntegralImgSumAgent<T>(integralImage);
         }
 

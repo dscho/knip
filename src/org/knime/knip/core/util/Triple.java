@@ -112,7 +112,7 @@ public final class Triple<F, S, T> {
                         return false;
                 }
 
-                Triple<?, ?, ?> p = (Triple<?, ?, ?>) o;
+                final Triple<?, ?, ?> p = (Triple<?, ?, ?>) o;
                 if (!areEqual(m_first, p.m_first)) {
                         return false;
                 }

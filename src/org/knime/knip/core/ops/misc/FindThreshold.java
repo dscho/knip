@@ -68,7 +68,7 @@ public class FindThreshold<T extends RealType<T>> implements
 
         private final ThresholdingType m_ttype;
 
-        public FindThreshold(ThresholdingType ttype) {
+        public FindThreshold(final ThresholdingType ttype) {
                 m_ttype = ttype;
         }
 
@@ -76,7 +76,7 @@ public class FindThreshold<T extends RealType<T>> implements
          * {@inheritDoc}
          */
         @Override
-        public DoubleType compute(OpsHistogram hist, DoubleType r) {
+        public DoubleType compute(final OpsHistogram hist, final DoubleType r) {
                 MAXVALUE = hist.numBins() - 1;
                 int bin = 0;
                 if (m_ttype == ThresholdingType.HUANG) {
@@ -162,7 +162,7 @@ public class FindThreshold<T extends RealType<T>> implements
                         }
                 }
                 term = 1.0 / (last_bin - first_bin);
-                double[] mu_0 = new double[MAXVALUE + 1];
+                final double[] mu_0 = new double[MAXVALUE + 1];
                 sum_pix = num_pix = 0;
                 for (ih = first_bin; ih < MAXVALUE + 1; ih++) {
                         sum_pix += ih * data[ih];
@@ -171,7 +171,7 @@ public class FindThreshold<T extends RealType<T>> implements
                         mu_0[ih] = sum_pix / (double) num_pix;
                 }
 
-                double[] mu_1 = new double[MAXVALUE + 1];
+                final double[] mu_1 = new double[MAXVALUE + 1];
                 sum_pix = num_pix = 0;
                 for (ih = last_bin; ih > 0; ih--) {
                         sum_pix += ih * data[ih];
@@ -220,7 +220,7 @@ public class FindThreshold<T extends RealType<T>> implements
         }
 
         private static boolean bimodalTest(final double[] y) {
-                int len = y.length;
+                final int len = y.length;
                 boolean b = false;
                 int modes = 0;
 
@@ -271,7 +271,7 @@ public class FindThreshold<T extends RealType<T>> implements
                         iHisto[i] = data[i];
                 }
 
-                double[] tHisto = iHisto;
+                final double[] tHisto = iHisto;
 
                 while (!bimodalTest(iHisto)) {
                         // smooth with a 3 point running mean filter
@@ -524,15 +524,15 @@ public class FindThreshold<T extends RealType<T>> implements
                                 * entropy of the object pixels at a given
                                 * threshold
                                 */
-                double[] norm_histo = new double[MAXVALUE + 1]; /*
+                final double[] norm_histo = new double[MAXVALUE + 1]; /*
                                                                  * normalized
                                                                  * histogram
                                                                  */
-                double[] P1 = new double[MAXVALUE + 1]; /*
+                final double[] P1 = new double[MAXVALUE + 1]; /*
                                                          * cumulative normalized
                                                          * histogram
                                                          */
-                double[] P2 = new double[MAXVALUE + 1];
+                final double[] P2 = new double[MAXVALUE + 1];
 
                 int total = 0;
                 for (ih = 0; ih < MAXVALUE + 1; ih++) {
@@ -753,7 +753,7 @@ public class FindThreshold<T extends RealType<T>> implements
                         iHisto[i] = data[i];
                 }
 
-                double[] tHisto = iHisto;
+                final double[] tHisto = iHisto;
 
                 while (!bimodalTest(iHisto)) {
                         // smooth with a 3 point running mean filter
@@ -796,11 +796,12 @@ public class FindThreshold<T extends RealType<T>> implements
                 // http://sourceforge.net/projects/fourier-ipal
                 // http://www.lsus.edu/faculty/~ecelebi/fourier.htm
                 double total = 0;
-                double m0 = 1.0, m1 = 0.0, m2 = 0.0, m3 = 0.0, sum = 0.0, p0 = 0.0;
+                final double m0 = 1.0;
+                double m1 = 0.0, m2 = 0.0, m3 = 0.0, sum = 0.0, p0 = 0.0;
                 double cd, c0, c1, z0, z1; /* auxiliary variables */
                 int threshold = -1;
 
-                double[] histo = new double[MAXVALUE + 1];
+                final double[] histo = new double[MAXVALUE + 1];
 
                 for (int i = 0; i < MAXVALUE + 1; i++) {
                         total += data[i];
@@ -859,7 +860,8 @@ public class FindThreshold<T extends RealType<T>> implements
                 // BCV
                 double num, denom; // temporary bookeeping
                 int sk; // The total intensity for all histogram points <=k
-                int s, L = MAXVALUE + 1; // The total intensity of the image
+                int s; // The total intensity of the image
+                final int L = MAXVALUE + 1;
 
                 // Initialize values:
                 s = 0;
@@ -934,14 +936,14 @@ public class FindThreshold<T extends RealType<T>> implements
                 // and the original Matlab code.
 
                 int threshold = -1;
-                double ptile = 0.5; // default fraction of foreground pixels
-                double[] avec = new double[MAXVALUE + 1];
+                final double ptile = 0.5; // default fraction of foreground pixels
+                final double[] avec = new double[MAXVALUE + 1];
 
                 for (int i = 0; i < MAXVALUE + 1; i++) {
                         avec[i] = 0.0;
                 }
 
-                double total = partialSum(data, MAXVALUE);
+                final double total = partialSum(data, MAXVALUE);
                 double temp = 1.0;
                 for (int i = 0; i < MAXVALUE + 1; i++) {
                         avec[i] = Math.abs((partialSum(data, i) / total)
@@ -997,15 +999,15 @@ public class FindThreshold<T extends RealType<T>> implements
                                 * threshold
                                 */
                 double omega;
-                double[] normHisto = new double[MAXVALUE + 1]; /*
+                final double[] normHisto = new double[MAXVALUE + 1]; /*
                                                                 * normalized
                                                                 * histogram
                                                                 */
-                double[] P1 = new double[MAXVALUE + 1]; /*
+                final double[] P1 = new double[MAXVALUE + 1]; /*
                                                          * cumulative normalized
                                                          * histogram
                                                          */
-                double[] P2 = new double[MAXVALUE + 1];
+                final double[] P2 = new double[MAXVALUE + 1];
 
                 int total = 0;
                 for (ih = 0; ih < MAXVALUE + 1; ih++) {
@@ -1229,15 +1231,15 @@ public class FindThreshold<T extends RealType<T>> implements
                                  * entropy of the object pixels at a given
                                  * threshold
                                  */
-                double[] norm_histo = new double[MAXVALUE + 1]; /*
+                final double[] norm_histo = new double[MAXVALUE + 1]; /*
                                                                  * normalized
                                                                  * histogram
                                                                  */
-                double[] P1 = new double[MAXVALUE + 1]; /*
+                final double[] P1 = new double[MAXVALUE + 1]; /*
                                                          * cumulative normalized
                                                          * histogram
                                                          */
-                double[] P2 = new double[MAXVALUE + 1];
+                final double[] P2 = new double[MAXVALUE + 1];
 
                 int total = 0;
                 for (ih = 0; ih < MAXVALUE + 1; ih++) {
@@ -1367,7 +1369,7 @@ public class FindThreshold<T extends RealType<T>> implements
                         int right = MAXVALUE; // index of rightmost element
                         while (left < right) {
                                 // exchange the left and right elements
-                                int temp = data[left];
+                                final int temp = data[left];
                                 data[left] = data[right];
                                 data[right] = temp;
                                 // move the bounds toward the center
@@ -1400,7 +1402,7 @@ public class FindThreshold<T extends RealType<T>> implements
                 int split = min;
                 double splitDistance = 0;
                 for (int i = min + 1; i <= max; i++) {
-                        double newDistance = nx * i + ny * data[i] - d;
+                        final double newDistance = nx * i + ny * data[i] - d;
                         if (newDistance > splitDistance) {
                                 split = i;
                                 splitDistance = newDistance;
@@ -1415,7 +1417,7 @@ public class FindThreshold<T extends RealType<T>> implements
                         int left = 0;
                         int right = MAXVALUE;
                         while (left < right) {
-                                int temp = data[left];
+                                final int temp = data[left];
                                 data[left] = data[right];
                                 data[right] = temp;
                                 left++;
@@ -1447,16 +1449,16 @@ public class FindThreshold<T extends RealType<T>> implements
                 int ih, it;
                 double crit;
                 double maxCrit;
-                double[] normHisto = new double[MAXVALUE + 1]; /*
+                final double[] normHisto = new double[MAXVALUE + 1]; /*
                                                                 * normalized
                                                                 * histogram
                                                                 */
-                double[] p1 = new double[MAXVALUE + 1]; /*
+                final double[] p1 = new double[MAXVALUE + 1]; /*
                                                          * cumulative normalized
                                                          * histogram
                                                          */
-                double[] p1Sq = new double[MAXVALUE + 1];
-                double[] p2Sq = new double[MAXVALUE + 1];
+                final double[] p1Sq = new double[MAXVALUE + 1];
+                final double[] p2Sq = new double[MAXVALUE + 1];
 
                 int total = 0;
                 for (ih = 0; ih < MAXVALUE + 1; ih++) {

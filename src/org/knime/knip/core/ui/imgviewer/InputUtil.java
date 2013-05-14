@@ -70,7 +70,7 @@ public final class InputUtil {
         public static final int CTRL_DOWN_MASK;
 
         static {
-                int ctrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+                final int ctrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
                 CTRL_DOWN_MASK = ctrl == InputEvent.CTRL_MASK ? InputEvent.CTRL_DOWN_MASK
                                 : InputEvent.META_DOWN_MASK;
         }

@@ -284,9 +284,9 @@ public class PolylineTransferFunction implements TransferFunction,
                 m_points = new LinkedList<Point>();
 
                 // copy all the points
-                for (Point p : tf.m_points) {
+                for (final Point p : tf.m_points) {
 
-                        Point cp = new Point(p);
+                        final Point cp = new Point(p);
                         m_points.add(cp);
 
                         if (tf.m_lower == p) {
@@ -308,7 +308,7 @@ public class PolylineTransferFunction implements TransferFunction,
         }
 
         private Point checkForPointAtPos(final double pos) {
-                for (Point p : m_points) {
+                for (final Point p : m_points) {
                         if (Math.abs(p.m_x - pos) < EPSILON) {
                                 return p;
                         }
@@ -320,9 +320,10 @@ public class PolylineTransferFunction implements TransferFunction,
         @Override
         public final void zoom(final double min, final double max) {
 
-                if (min > max)
+                if (min > max) {
                         throw new IllegalArgumentException(
                                         "Min must be smaller than max value");
+                }
 
                 if (min == max) {
                         return;
@@ -350,9 +351,9 @@ public class PolylineTransferFunction implements TransferFunction,
                 // 1.0
                 m_minsf = m_lower.m_x;
                 m_maxsf = m_upper.m_x;
-                double fac = m_maxsf - m_minsf;
+                final double fac = m_maxsf - m_minsf;
 
-                for (Point p : m_points) {
+                for (final Point p : m_points) {
                         p.m_x = (p.m_x - m_minsf) / fac;
                 }
         }
@@ -377,9 +378,9 @@ public class PolylineTransferFunction implements TransferFunction,
                 assert (m_points.size() >= 2);
 
                 // undo the stretching of all points
-                double fac = m_maxsf - m_minsf;
+                final double fac = m_maxsf - m_minsf;
 
-                for (Point p : m_points) {
+                for (final Point p : m_points) {
                         p.m_x = (p.m_x * fac) + m_minsf;
                 }
 
@@ -410,7 +411,7 @@ public class PolylineTransferFunction implements TransferFunction,
          * @return the added Point
          */
         public final Point addPoint(final double x, final double y) {
-                Point p = new Point(x, y);
+                final Point p = new Point(x, y);
                 m_points.add(p);
                 sortPoints();
 
@@ -441,11 +442,11 @@ public class PolylineTransferFunction implements TransferFunction,
          */
         public final List<Point> getPoints() {
 
-                List<Point> result = new ArrayList<Point>();
+                final List<Point> result = new ArrayList<Point>();
 
                 int i = m_points.indexOf(m_lower) == -1 ? 0 : m_points
                                 .indexOf(m_lower);
-                int limit = m_points.indexOf(m_upper) == -1 ? m_points.size() - 1
+                final int limit = m_points.indexOf(m_upper) == -1 ? m_points.size() - 1
                                 : m_points.indexOf(m_upper);
 
                 for (; i <= limit; i++) {
@@ -504,7 +505,7 @@ public class PolylineTransferFunction implements TransferFunction,
                 }
 
                 // check if this one of the points
-                for (Point p : m_points) {
+                for (final Point p : m_points) {
                         if (pos == p.getX()) {
                                 return p.getY();
                         }
@@ -514,7 +515,7 @@ public class PolylineTransferFunction implements TransferFunction,
                 Point left = m_points.get(0);
                 Point right = m_points.get(m_points.size() - 1);
 
-                for (Point p : m_points) {
+                for (final Point p : m_points) {
                         if (p.getX() < pos) {
                                 left = p;
                         } else { // fisrt value larger will be right
@@ -523,7 +524,7 @@ public class PolylineTransferFunction implements TransferFunction,
                         }
                 }
 
-                double m = (right.getY() - left.getY())
+                final double m = (right.getY() - left.getY())
                                 / (right.getX() - left.getX());
 
                 return ((pos - left.getX()) * m) + left.getY();

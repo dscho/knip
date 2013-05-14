@@ -9,7 +9,7 @@ import net.imglib2.type.numeric.IntegerType;
 public class ConstantLabelingType<T extends Comparable<T>> extends
                 LabelingType<T> {
 
-        public ConstantLabelingType(List<T> labeling) {
+        public ConstantLabelingType(final List<T> labeling) {
                 super(labeling);
         }
 

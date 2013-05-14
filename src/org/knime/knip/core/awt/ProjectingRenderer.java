@@ -11,21 +11,21 @@ public abstract class ProjectingRenderer<T extends Type<T>> implements
                 ImageRenderer<T> {
 
         @Override
-        public ScreenImage render(RandomAccessibleInterval<T> source,
-                        int dimX, int dimY, long[] planePos) {
+        public ScreenImage render(final RandomAccessibleInterval<T> source,
+                        final int dimX, final int dimY, final long[] planePos) {
 
                 return project2D(source, dimX, dimY, planePos);
         }
 
         private ScreenImage project2D(
-                        final RandomAccessibleInterval<T> source, int dimX,
-                        int dimY, long[] planePos) {
+                        final RandomAccessibleInterval<T> source, final int dimX,
+                        final int dimY, final long[] planePos) {
 
-                int width = (int) source.dimension(dimX);
-                int height = (int) source.dimension(dimY);
+                final int width = (int) source.dimension(dimX);
+                final int height = (int) source.dimension(dimY);
 
-                ARGBScreenImage target = new ARGBScreenImage(width, height);
-                Abstract2DProjector<T, ARGBType> projector = getProjector(dimX,
+                final ARGBScreenImage target = new ARGBScreenImage(width, height);
+                final Abstract2DProjector<T, ARGBType> projector = getProjector(dimX,
                                 dimY, source, target);
 
                 projector.setPosition(planePos);

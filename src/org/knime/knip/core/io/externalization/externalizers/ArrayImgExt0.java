@@ -97,14 +97,14 @@ public class ArrayImgExt0 implements Externalizer<ArrayImg> {
          */
         @Override
         public ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> read(
-                        BufferedDataInputStream in) throws Exception {
-                long[] dims = new long[in.readInt()];
+                        final BufferedDataInputStream in) throws Exception {
+                final long[] dims = new long[in.readInt()];
                 in.read(dims);
 
-                NativeType<?> type = (NativeType<?>) ExternalizerManager
+                final NativeType<?> type = (NativeType<?>) ExternalizerManager
                                 .<Class> read(in).newInstance();
 
-                ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new ArrayImgFactory()
+                final ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new ArrayImgFactory()
                                 .create(dims, type);
                 in.readLArray(((ArrayDataAccess<?>) img.update(null))
                                 .getCurrentStorageArray());
@@ -118,7 +118,7 @@ public class ArrayImgExt0 implements Externalizer<ArrayImg> {
          * @throws Exception
          */
         @Override
-        public void write(BufferedDataOutputStream out, ArrayImg obj)
+        public void write(final BufferedDataOutputStream out, final ArrayImg obj)
                         throws Exception {
 
                 // write dimensions

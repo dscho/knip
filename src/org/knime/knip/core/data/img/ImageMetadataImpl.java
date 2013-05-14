@@ -36,42 +36,48 @@ public class ImageMetadataImpl implements ImageMetadata {
 
         @Override
         public double getChannelMinimum(final int c) {
-                if (c < 0 || c >= channelMin.size())
+                if (c < 0 || c >= channelMin.size()) {
                         return Double.NaN;
+                }
                 final Double d = channelMin.get(c);
                 return d == null ? Double.NaN : d;
         }
 
         @Override
         public void setChannelMinimum(final int c, final double min) {
-                if (c < 0)
+                if (c < 0) {
                         throw new IllegalArgumentException("Invalid channel: "
                                         + c);
+                }
                 if (c >= channelMin.size()) {
                         channelMin.ensureCapacity(c + 1);
-                        for (int i = channelMin.size(); i <= c; i++)
+                        for (int i = channelMin.size(); i <= c; i++) {
                                 channelMin.add(null);
+                        }
                 }
                 channelMin.set(c, min);
         }
 
         @Override
         public double getChannelMaximum(final int c) {
-                if (c < 0 || c >= channelMax.size())
+                if (c < 0 || c >= channelMax.size()) {
                         return Double.NaN;
+                }
                 final Double d = channelMax.get(c);
                 return d == null ? Double.NaN : d;
         }
 
         @Override
         public void setChannelMaximum(final int c, final double max) {
-                if (c < 0)
+                if (c < 0) {
                         throw new IllegalArgumentException("Invalid channel: "
                                         + c);
+                }
                 if (c >= channelMax.size()) {
                         channelMax.ensureCapacity(c + 1);
-                        for (int i = channelMax.size(); i <= c; i++)
+                        for (int i = channelMax.size(); i <= c; i++) {
                                 channelMax.add(null);
+                        }
                 }
                 channelMax.set(c, max);
         }
@@ -101,12 +107,12 @@ public class ImageMetadataImpl implements ImageMetadata {
         }
 
         @Override
-        public ColorTable getColorTable(int no) {
+        public ColorTable getColorTable(final int no) {
                 return lut.get(no);
         }
 
         @Override
-        public void setColorTable(ColorTable colorTable, int no) {
+        public void setColorTable(final ColorTable colorTable, final int no) {
                 lut.set(no, colorTable);
         }
 

@@ -71,6 +71,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
 import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccessibleInterval;
@@ -101,9 +102,9 @@ public final class AWTImageTools {
         }
 
         /** Creates an image with the given DataBuffer. */
-        public static BufferedImage constructImage(int c, int type, int w,
-                        int h, boolean interleaved, boolean banded,
-                        DataBuffer buffer) {
+        public static BufferedImage constructImage(final int c, final int type, final int w,
+                        final int h, final boolean interleaved, final boolean banded,
+                        final DataBuffer buffer) {
                 if (c > 4) {
                         throw new IllegalArgumentException(
                                         "Cannot construct image with " + c
@@ -113,29 +114,31 @@ public final class AWTImageTools {
                 SampleModel model;
                 if (c > 2 && type == DataBuffer.TYPE_INT
                                 && buffer.getNumBanks() == 1) {
-                        int[] bitMasks = new int[c];
+                        final int[] bitMasks = new int[c];
                         for (int i = 0; i < c; i++) {
                                 bitMasks[i] = 0xff << ((c - i - 1) * 8);
                         }
                         model = new SinglePixelPackedSampleModel(
                                         DataBuffer.TYPE_INT, w, h, bitMasks);
-                } else if (banded)
+                } else if (banded) {
                         model = new BandedSampleModel(type, w, h, c);
-                else if (interleaved) {
-                        int[] bandOffsets = new int[c];
-                        for (int i = 0; i < c; i++)
+                } else if (interleaved) {
+                        final int[] bandOffsets = new int[c];
+                        for (int i = 0; i < c; i++) {
                                 bandOffsets[i] = i;
+                        }
                         model = new PixelInterleavedSampleModel(type, w, h, c,
                                         c * w, bandOffsets);
                 } else {
-                        int[] bandOffsets = new int[c];
-                        for (int i = 0; i < c; i++)
+                        final int[] bandOffsets = new int[c];
+                        for (int i = 0; i < c; i++) {
                                 bandOffsets[i] = i * w * h;
+                        }
                         model = new ComponentSampleModel(type, w, h, 1, w,
                                         bandOffsets);
                 }
 
-                WritableRaster raster = Raster.createWritableRaster(model,
+                final WritableRaster raster = Raster.createWritableRaster(model,
                                 buffer, null);
 
                 BufferedImage b = null;
@@ -152,10 +155,10 @@ public final class AWTImageTools {
                 } else if (c > 2 && type == DataBuffer.TYPE_INT
                                 && buffer.getNumBanks() == 1) {
 
-                        GraphicsEnvironment env = GraphicsEnvironment
+                        final GraphicsEnvironment env = GraphicsEnvironment
                                         .getLocalGraphicsEnvironment();
-                        GraphicsDevice device = env.getDefaultScreenDevice();
-                        GraphicsConfiguration config = device
+                        final GraphicsDevice device = env.getDefaultScreenDevice();
+                        final GraphicsConfiguration config = device
                                         .getDefaultConfiguration();
                         b = config.createCompatibleImage(w, h);
                         b.setData(raster);
@@ -206,20 +209,20 @@ public final class AWTImageTools {
          *                the height of the image containing the histogram
          * @return a java-image with the histogram painted on it
          */
-        public static BufferedImage drawHistogram(final int[] hist, int width,
-                        final int height, int max, boolean log) {
+        public static BufferedImage drawHistogram(final int[] hist, final int width,
+                        final int height, final int max, final boolean log) {
                 // int width = hist.length;
-                int margin = 20;
+                final int margin = 20;
 
-                BufferedImage histImg = new BufferedImage(width, height
+                final BufferedImage histImg = new BufferedImage(width, height
                                 + margin, BufferedImage.TYPE_BYTE_GRAY);
-                Graphics g = histImg.getGraphics();
+                final Graphics g = histImg.getGraphics();
                 g.setColor(Color.white);
                 g.fillRect(0, 0, width, height + margin);
                 g.setColor(Color.black);
-                int binWidth = width / hist.length;
-                double heightScale = (double) height / max;
-                double heightScaleLog = height / Math.log(max);
+                final int binWidth = width / hist.length;
+                final double heightScale = (double) height / max;
+                final double heightScaleLog = height / Math.log(max);
                 for (int i = 0; i < hist.length; i++) {
                         // g.drawLine(i, (int) Math.round(height - (hist[i] *
                         // heightScale)),
@@ -257,14 +260,14 @@ public final class AWTImageTools {
          * loading or error message), matching the given size.
          */
         public static BufferedImage makeTextBufferedImage(final String text,
-                        final int width, final int height, String lineDelimiter) {
+                        final int width, final int height, final String lineDelimiter) {
 
-                BufferedImage image = new BufferedImage(width, height,
+                final BufferedImage image = new BufferedImage(width, height,
                                 BufferedImage.TYPE_BYTE_GRAY);
-                String[] tokens = text.split(lineDelimiter);
-                Graphics2D g = image.createGraphics();
+                final String[] tokens = text.split(lineDelimiter);
+                final Graphics2D g = image.createGraphics();
                 g.fillRect(0, 0, width, height);
-                Rectangle2D.Float r = (Rectangle2D.Float) g.getFont()
+                final Rectangle2D.Float r = (Rectangle2D.Float) g.getFont()
                                 .getStringBounds(tokens[0],
                                                 g.getFontRenderContext());
                 g.setColor(Color.black);
@@ -286,8 +289,8 @@ public final class AWTImageTools {
         public static BufferedImage makeSubtitledBufferedImage(
                         final BufferedImage source, final String txt) {
 
-                Graphics g = source.getGraphics();
-                int w = SwingUtilities.computeStringWidth(g.getFontMetrics(),
+                final Graphics g = source.getGraphics();
+                final int w = SwingUtilities.computeStringWidth(g.getFontMetrics(),
                                 txt) + 5;
                 g.setColor(Color.WHITE);
                 g.fillRect(source.getWidth() - w, source.getHeight() - 16,
@@ -323,7 +326,7 @@ public final class AWTImageTools {
          *                the scaling factor
          */
         public static <T extends RealType<T>> JFrame showInFrame(
-                        final Img<T> img, String title, final double factor) {
+                        final Img<T> img, final String title, final double factor) {
                 return showInFrame(img, 0, 1, new long[img.numDimensions()],
                                 title, factor);
         }
@@ -337,23 +340,23 @@ public final class AWTImageTools {
          *                the scaling factor
          */
         public static <T extends RealType<T>, I extends Img<T>> JFrame showInFrame(
-                        final I img, int dimX, int dimY, long[] pos,
+                        final I img, final int dimX, final int dimY, final long[] pos,
                         String title, final double factor) {
 
-                int w = (int) img.dimension(dimX);
-                int h = (int) img.dimension(dimY);
+                final int w = (int) img.dimension(dimX);
+                final int h = (int) img.dimension(dimY);
                 title = title + " (" + w + "x" + h + ")";
 
-                JLabel label = new JLabel();
+                final JLabel label = new JLabel();
 
-                JFrame frame = new JFrame(title);
-                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                final JFrame frame = new JFrame(title);
+                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 frame.setSize(w, h);
                 frame.getContentPane().add(label);
 
-                Real2GreyRenderer<T> renderer = new Real2GreyRenderer<T>();
+                final Real2GreyRenderer<T> renderer = new Real2GreyRenderer<T>();
 
-                java.awt.Image awtImage = renderer.render(img, dimX, dimY, pos)
+                final java.awt.Image awtImage = renderer.render(img, dimX, dimY, pos)
                                 .image();
                 label.setIcon(new ImageIcon(awtImage.getScaledInstance(
                                 (int) Math.round(w * factor),
@@ -378,16 +381,16 @@ public final class AWTImageTools {
         }
 
         public static void showInFrame(final java.awt.Image img, String title,
-                        double factor) {
+                        final double factor) {
 
-                int w = img.getWidth(null);
-                int h = img.getHeight(null);
+                final int w = img.getWidth(null);
+                final int h = img.getHeight(null);
                 title = title + " (" + w + "x" + h + ")";
 
-                JLabel label = new JLabel();
+                final JLabel label = new JLabel();
 
-                JFrame frame = new JFrame(title);
-                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                final JFrame frame = new JFrame(title);
+                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 frame.setSize(w, h);
                 frame.getContentPane().add(label);
 
@@ -403,8 +406,8 @@ public final class AWTImageTools {
 
         public static <T extends Type<T>> BufferedImage renderScaledStandardColorImg(
                         RandomAccessibleInterval<T> img,
-                        ImageRenderer<T> renderer,
-                        double factor, long[] startPos) {
+                        final ImageRenderer<T> renderer,
+                        final double factor, final long[] startPos) {
 
                 int width;
                 int height;

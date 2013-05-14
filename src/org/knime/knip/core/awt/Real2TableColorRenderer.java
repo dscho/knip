@@ -37,17 +37,17 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
         private final int m_colorDim;
         private ColorTable[] m_colorTables;
 
-        public Real2TableColorRenderer(int colorDim) {
+        public Real2TableColorRenderer(final int colorDim) {
                 m_colorDim = colorDim;
                 m_converter = new RealTableColorARGBConverter<R>(1.0, 0.0);
         }
 
         @Override
-        public ScreenImage render(RandomAccessibleInterval<R> source, int dimX,
-                        int dimY, long[] planePos) {
+        public ScreenImage render(final RandomAccessibleInterval<R> source, final int dimX,
+                        final int dimY, final long[] planePos) {
 
                 // default implementation
-                ColorTable ct = m_colorTables[(int) planePos[m_colorDim]];
+                final ColorTable ct = m_colorTables[(int) planePos[m_colorDim]];
 
                 if (ct instanceof ColorTable8) {
                         m_converter.setColorTable((ColorTable8) ct);
@@ -63,7 +63,7 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
         }
 
         @Override
-        public void setNormalizationParameters(double factor, double min) {
+        public void setNormalizationParameters(final double factor, final double min) {
                 m_converter = new RealTableColorARGBConverter<R>(factor, min);
         }
 
@@ -74,16 +74,16 @@ public class Real2TableColorRenderer<R extends RealType<R>> extends
         }
 
         @Override
-        protected Abstract2DProjector<R, ARGBType> getProjector(int dimX,
-                        int dimY, RandomAccessibleInterval<R> source,
-                        ARGBScreenImage target) {
+        protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
+                        final int dimY, final RandomAccessibleInterval<R> source,
+                        final ARGBScreenImage target) {
 
                 return new Projector2D<R, ARGBType>(dimX, dimY, source, target,
                                 m_converter);
         }
 
         @Override
-        public void setColorTables(ColorTable[] tables) {
+        public void setColorTables(final ColorTable[] tables) {
                 m_colorTables = tables;
         }
 

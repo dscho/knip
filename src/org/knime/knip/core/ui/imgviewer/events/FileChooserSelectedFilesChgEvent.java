@@ -61,7 +61,7 @@ public class FileChooserSelectedFilesChgEvent implements KNIPEvent {
 
         private final String[] m_selectedFiles;
 
-        public FileChooserSelectedFilesChgEvent(String[] selectedFiles) {
+        public FileChooserSelectedFilesChgEvent(final String[] selectedFiles) {
                 m_selectedFiles = selectedFiles;
 
         }
@@ -82,7 +82,7 @@ public class FileChooserSelectedFilesChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

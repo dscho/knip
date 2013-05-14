@@ -68,7 +68,7 @@ public enum ImgFactoryTypes {
          */
         @SuppressWarnings("rawtypes")
         public static final <T extends NativeType<T>> ImgFactory getImgFactory(
-                        ImgFactoryTypes facType, Img img) {
+                        final ImgFactoryTypes facType, final Img img) {
 
                 if (facType == SOURCE_FACTORY) {
                         return img.factory();
@@ -79,7 +79,7 @@ public enum ImgFactoryTypes {
         }
 
         public static final <T extends Type<T>> ImgFactoryTypes getImgFactoryType(
-                        ImgFactory<T> factory) {
+                        final ImgFactory<T> factory) {
                 if (factory instanceof ArrayImgFactory) {
                         return ARRAY_IMG_FACTORY;
                 } else if (factory instanceof PlanarImgFactory) {
@@ -98,7 +98,7 @@ public enum ImgFactoryTypes {
          * @return
          */
         public static final <T extends NativeType<T>> ImgFactory<T> getImgFactory(
-                        ImgFactoryTypes facType) {
+                        final ImgFactoryTypes facType) {
 
                 switch (facType) {
                 case ARRAY_IMG_FACTORY:
@@ -121,8 +121,8 @@ public enum ImgFactoryTypes {
          * @return
          */
         @SuppressWarnings("rawtypes")
-        public static final ImgFactory getImgFactory(String facTypeAsString,
-                        Img img) {
+        public static final ImgFactory getImgFactory(final String facTypeAsString,
+                        final Img img) {
 
                 return getImgFactory(valueOf(facTypeAsString), img);
 

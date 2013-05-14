@@ -35,12 +35,13 @@ public abstract class ViewerComponent extends JPanel implements
          * @param isBorderHidden
          *                if true, a border is drawn arround the component
          */
-        public ViewerComponent(String title, boolean isBorderHidden) {
+        public ViewerComponent(final String title, final boolean isBorderHidden) {
 
-                if (!isBorderHidden)
+                if (!isBorderHidden) {
                         setTitle(title);
-                else
+                } else {
                         setBorder(BorderFactory.createEmptyBorder());
+                }
         }
 
         /**

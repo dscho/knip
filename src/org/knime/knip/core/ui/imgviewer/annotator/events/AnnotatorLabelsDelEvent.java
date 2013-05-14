@@ -59,7 +59,7 @@ public class AnnotatorLabelsDelEvent extends AnnotatorLabelsEvent {
         /**
          * @param labels
          */
-        public AnnotatorLabelsDelEvent(String[] labels) {
+        public AnnotatorLabelsDelEvent(final String[] labels) {
                 super(labels);
         }
 

@@ -14,7 +14,7 @@ public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessib
         private final RandomAccess<T> m_rndAccess;
         private final IN m_in;
 
-        public ImgBasedRealMatrix(IN in) {
+        public ImgBasedRealMatrix(final IN in) {
                 if (in.numDimensions() != 2) {
                         throw new IllegalArgumentException(
                                         "In must have exact two dimensions to be handled as a matrix");
@@ -24,7 +24,7 @@ public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessib
         }
 
         @Override
-        public RealMatrix createMatrix(int rowDimension, int columnDimension) {
+        public RealMatrix createMatrix(final int rowDimension, final int columnDimension) {
                 return new Array2DRowRealMatrix(rowDimension, columnDimension);
         }
 
@@ -34,7 +34,7 @@ public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessib
         }
 
         @Override
-        public double getEntry(int row, int column) {
+        public double getEntry(final int row, final int column) {
                 m_rndAccess.setPosition(row, 1);
                 m_rndAccess.setPosition(column, 0);
 
@@ -42,7 +42,7 @@ public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessib
         }
 
         @Override
-        public void setEntry(int row, int column, double value) {
+        public void setEntry(final int row, final int column, final double value) {
                 m_rndAccess.setPosition(row, 1);
                 m_rndAccess.setPosition(column, 0);
                 m_rndAccess.get().setReal(value);

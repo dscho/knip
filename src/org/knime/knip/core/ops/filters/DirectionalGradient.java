@@ -26,7 +26,7 @@ public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessib
          *                difference is calculated as left-right, else
          *                right-left
          */
-        public DirectionalGradient(GradientDirection direction, boolean invert) {
+        public DirectionalGradient(final GradientDirection direction, final boolean invert) {
                 m_invert = invert;
 
                 m_dims = new int[2];
@@ -47,19 +47,20 @@ public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessib
         }
 
         @Override
-        public K compute(K op, K r) {
-                if (op.numDimensions() != 2)
+        public K compute(final K op, final K r) {
+                if (op.numDimensions() != 2) {
                         throw new IllegalArgumentException(
                                         "Operation can only be performed on 2 dimensional images");
+                }
 
-                double max = op.firstElement().getMaxValue();
-                double min = op.firstElement().getMinValue();
+                final double max = op.firstElement().getMaxValue();
+                final double min = op.firstElement().getMinValue();
 
-                RandomAccess<T> opLeftRndAccess = Views.extendMirrorDouble(op)
+                final RandomAccess<T> opLeftRndAccess = Views.extendMirrorDouble(op)
                                 .randomAccess();
-                RandomAccess<T> opRightRndAccess = Views.extendMirrorDouble(op)
+                final RandomAccess<T> opRightRndAccess = Views.extendMirrorDouble(op)
                                 .randomAccess();
-                RandomAccess<T> resAccess = r.randomAccess();
+                final RandomAccess<T> resAccess = r.randomAccess();
 
                 double diff;
                 for (int y = 0; y < op.dimension(m_dims[0]); y++) {

@@ -30,8 +30,8 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
 
         private final RulebasedLabelFilter<L> m_filter;
 
-        public Centralize(RulebasedLabelFilter<L> filter, int radius,
-                        int numAngles, int maxIterations) {
+        public Centralize(final RulebasedLabelFilter<L> filter, final int radius,
+                        final int numAngles, final int maxIterations) {
                 m_radius = radius;
                 m_numAngles = numAngles;
                 m_maxIterations = maxIterations;
@@ -39,32 +39,33 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
         }
 
         @Override
-        public Labeling<L> compute(Img<T> img, Labeling<L> labeling,
-                        Labeling<L> r) {
+        public Labeling<L> compute(final Img<T> img, final Labeling<L> labeling,
+                        final Labeling<L> r) {
                 if (img.numDimensions() != 2) {
                         throw new IllegalArgumentException(
                                         "Only labelings / images with dimensionality = 2  are allowed");
                 }
 
-                T val = img.firstElement().createVariable();
+                final T val = img.firstElement().createVariable();
                 val.setReal(val.getMinValue());
 
                 final Centroid centroidOp = new Centroid();
-                CentralizeOnePoint<T> centralizeOnePointOp = new CentralizeOnePoint<T>(
+                final CentralizeOnePoint<T> centralizeOnePointOp = new CentralizeOnePoint<T>(
                                 new PolarImageFactory<T>(
                                                 Views.extendMirrorDouble(img)),
                                 m_maxIterations, m_radius, m_numAngles);
 
-                RandomAccess<LabelingType<L>> resAccess = r.randomAccess();
-                RandomAccess<LabelingType<L>> srcAccess = labeling
+                final RandomAccess<LabelingType<L>> resAccess = r.randomAccess();
+                final RandomAccess<LabelingType<L>> srcAccess = labeling
                                 .randomAccess();
 
-                long[] posBuffer = new long[resAccess.numDimensions()];
+                final long[] posBuffer = new long[resAccess.numDimensions()];
 
-                Collection<L> labels = labeling.getLabels();
-                for (L label : labels) {
-                        if (!m_filter.isValid(label))
+                final Collection<L> labels = labeling.getLabels();
+                for (final L label : labels) {
+                        if (!m_filter.isValid(label)) {
                                 continue;
+                        }
 
                         final IterableInterval<T> labelRoi = labeling
                                         .getIterableRegionOfInterest(label)
@@ -88,13 +89,13 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
                 return r;
         }
 
-        public Labeling<L> createType(Img<T> src, Labeling<L> src2, long[] dims) {
+        public Labeling<L> createType(final Img<T> src, final Labeling<L> src2, final long[] dims) {
 
                 return src2.<L> factory().create(dims);
         }
 
-        public long[] resultDims(Interval srcOp1, Interval srcOp2) {
-                long[] dims = new long[srcOp1.numDimensions()];
+        public long[] resultDims(final Interval srcOp1, final Interval srcOp2) {
+                final long[] dims = new long[srcOp1.numDimensions()];
                 srcOp1.dimensions(dims);
 
                 return dims;
@@ -111,8 +112,8 @@ public class Centralize<T extends RealType<T>, L extends Comparable<L>>
                 return new BinaryObjectFactory<Img<T>, Labeling<L>, Labeling<L>>() {
 
                         @Override
-                        public Labeling<L> instantiate(Img<T> op0,
-                                        Labeling<L> op1) {
+                        public Labeling<L> instantiate(final Img<T> op0,
+                                        final Labeling<L> op1) {
                                 return createType(op0, op1,
                                                 resultDims(op0, op1));
                         }

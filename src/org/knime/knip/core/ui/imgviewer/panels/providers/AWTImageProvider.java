@@ -151,7 +151,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          *                using the {@link LRUCache}. A cache size < 2
          *                indicates, that caching is inactive
          */
-        public AWTImageProvider(int cacheSize) {
+        public AWTImageProvider(final int cacheSize) {
 
                 if (cacheSize > 1) {
                         m_awtImageCache = new LRUCache<Integer, SoftReference<Image>>(
@@ -184,7 +184,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          *                {@link PlaneSelectionEvent}
          */
         @EventListener
-        public void onPlaneSelectionUpdate(PlaneSelectionEvent sel) {
+        public void onPlaneSelectionUpdate(final PlaneSelectionEvent sel) {
                 m_sel = sel;
         }
 
@@ -198,7 +198,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          *
          */
         @EventListener
-        public void onRendererUpdate(RendererSelectionChgEvent e) {
+        public void onRendererUpdate(final RendererSelectionChgEvent e) {
                 m_renderer = e.getRenderer();
         }
 
@@ -222,10 +222,10 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          *                The name of the img
          */
         @EventListener
-        public void onUpdated(IntervalWithMetadataChgEvent<T> e) {
+        public void onUpdated(final IntervalWithMetadataChgEvent<T> e) {
                 m_src = e.getRandomAccessibleInterval();
 
-                long[] dims = new long[e.getRandomAccessibleInterval()
+                final long[] dims = new long[e.getRandomAccessibleInterval()
                                 .numDimensions()];
                 e.getRandomAccessibleInterval().dimensions(dims);
 
@@ -235,11 +235,11 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
                                         .numDimensions()]);
                 }
 
-                ImageRenderer[] renderers = RendererFactory
+                final ImageRenderer[] renderers = RendererFactory
                                 .createSuitableRenderer(m_src);
                 if (m_renderer != null) {
                         boolean contained = false;
-                        for (ImageRenderer renderer : renderers) {
+                        for (final ImageRenderer renderer : renderers) {
                                 if (m_renderer.toString().equals(
                                                 renderer.toString())) {
                                         m_renderer = renderer;
@@ -261,7 +261,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          * @param e
          */
         @EventListener
-        public void onResetCache(ResetCacheEvent e) {
+        public void onResetCache(final ResetCacheEvent e) {
                 if (m_isCachingActive) {
                         m_awtImageCache.clear();
                         LOGGER.debug("Image cache cleared.");
@@ -290,17 +290,19 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          * @param e
          */
         @EventListener
-        public void onRedrawImage(ImgRedrawEvent e) {
+        public void onRedrawImage(final ImgRedrawEvent e) {
                 renderAndCacheImg();
         }
 
-        private boolean isInsideDims(long[] planePos, long[] dims) {
-                if (planePos.length != dims.length)
+        private boolean isInsideDims(final long[] planePos, final long[] dims) {
+                if (planePos.length != dims.length) {
                         return false;
+                }
 
                 for (int d = 0; d < planePos.length; d++) {
-                        if (planePos[d] >= dims[d])
+                        if (planePos[d] >= dims[d]) {
                                 return false;
+                        }
                 }
 
                 return true;
@@ -330,13 +332,14 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          */
         private void renderAndCacheImg() {
 
-                if (m_src == null)
+                if (m_src == null) {
                         return;
+                }
                 Image awtImage = null;
                 if (m_isCachingActive) {
 
-                        int hash = generateHashCode();
-                        SoftReference<Image> ref = m_awtImageCache.get(hash);
+                        final int hash = generateHashCode();
+                        final SoftReference<Image> ref = m_awtImageCache.get(hash);
                         if (ref != null) {
                                 awtImage = ref.get();
                         }
@@ -367,13 +370,13 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 out.writeBoolean(m_isCachingActive);
                 out.writeInt(m_cache);
@@ -382,7 +385,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
 
         @SuppressWarnings("unchecked")
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 m_isCachingActive = in.readBoolean();
                 m_cache = in.readInt();
@@ -390,9 +393,9 @@ public abstract class AWTImageProvider<T extends Type<T>> extends
                 try {
                         m_renderer = (ImageRenderer) Class
                                         .forName(in.readUTF()).newInstance();
-                } catch (InstantiationException e) {
+                } catch (final InstantiationException e) {
                         e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                         e.printStackTrace();
                 }
 

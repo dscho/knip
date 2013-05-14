@@ -49,12 +49,12 @@ public class MeanLocalThreshold<T extends RealType<T>> implements
 
         private final double m_c;
 
-        public MeanLocalThreshold(double c) {
+        public MeanLocalThreshold(final double c) {
                 m_c = c;
         }
 
         @Override
-        public BitType compute(DoubleType input, T px, BitType output) {
+        public BitType compute(final DoubleType input, final T px, final BitType output) {
 
                 output.set(px.getRealDouble() > input.getRealDouble() - m_c);
                 return output;

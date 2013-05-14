@@ -18,13 +18,14 @@ public final class LabelingCleaner<L extends Comparable<L>> implements
         @Override
         public final Labeling<L> compute(final Labeling<L> op,
                         final Labeling<L> res) {
-                for (L l : op.getLabels()) {
-                        Cursor<LabelingType<L>> c = op
+                for (final L l : op.getLabels()) {
+                        final Cursor<LabelingType<L>> c = op
                                         .getIterableRegionOfInterest(l)
                                         .getIterableIntervalOverROI(res)
                                         .cursor();
-                        while (c.hasNext())
+                        while (c.hasNext()) {
                                 c.next().setLabel(l);
+                        }
                 }
 
                 return res;

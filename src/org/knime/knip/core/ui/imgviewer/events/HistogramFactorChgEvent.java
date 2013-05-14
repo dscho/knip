@@ -60,7 +60,7 @@ public class HistogramFactorChgEvent implements KNIPEvent {
 
         private final double m_factor;
 
-        public HistogramFactorChgEvent(double factor) {
+        public HistogramFactorChgEvent(final double factor) {
                 m_factor = factor;
 
         }
@@ -81,7 +81,7 @@ public class HistogramFactorChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

@@ -60,6 +60,7 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 import net.imglib2.img.Img;
 import net.imglib2.sampler.special.OrthoSliceCursor;
@@ -100,15 +101,15 @@ public class ShowInSameFrame {
 
                         m_planeProd = null;
                 }
-                JFrame frame = new JFrame();
-                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                JLabel label = new JLabel();
+                final JFrame frame = new JFrame();
+                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                final JLabel label = new JLabel();
                 frame.getContentPane().add(label);
                 m_planeProd = new ImagePlaneProducer(img);
-                String title = " (" + img.dimension(0) + "x" + img.dimension(1)
+                final String title = " (" + img.dimension(0) + "x" + img.dimension(1)
                                 + ")";
                 frame.setTitle(title);
-                java.awt.Image awtImage = Toolkit.getDefaultToolkit()
+                final java.awt.Image awtImage = Toolkit.getDefaultToolkit()
                                 .createImage(m_planeProd);
                 label.setIcon(new ImageIcon(
                                 awtImage.getScaledInstance((int) Math.round(img
@@ -200,7 +201,7 @@ public class ShowInSameFrame {
                         m_img = ip;
                         m_plane = new byte[(int) m_img.dimension(0)
                                         * (int) m_img.dimension(1)];
-                        for (ImageConsumer ic : m_consumers) {
+                        for (final ImageConsumer ic : m_consumers) {
                                 updateConsumer(ic);
                         }
                 }
@@ -210,7 +211,7 @@ public class ShowInSameFrame {
                         ic.setDimensions((int) m_img.dimension(0),
                                         (int) m_img.dimension(1));
                         ic.setColorModel(m_cmodel);
-                        int hints = ImageConsumer.RANDOMPIXELORDER;
+                        final int hints = ImageConsumer.RANDOMPIXELORDER;
                         ic.setHints(hints);
                 }
 
@@ -221,7 +222,7 @@ public class ShowInSameFrame {
 
                         try {
                                 // we send the first plane of the picture
-                                OrthoSliceCursor<T> c = new OrthoSliceCursor<T>(
+                                final OrthoSliceCursor<T> c = new OrthoSliceCursor<T>(
                                                 m_img, 0, 1,
                                                 new long[m_img.numDimensions()]);
                                 while (c.hasNext()) {
@@ -240,7 +241,7 @@ public class ShowInSameFrame {
                                 if (isConsumer(ic)) {
                                         ic.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
                                 }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                                 if (isConsumer(ic)) {
                                         ic.imageComplete(ImageConsumer.IMAGEERROR);
                                 }
@@ -255,16 +256,17 @@ public class ShowInSameFrame {
                         return m_img;
                 }
 
-                private <T extends RealType<T>> double normRealType(T type) {
+                private <T extends RealType<T>> double normRealType(final T type) {
                         double value = (type.getRealDouble() - type
                                         .getMinValue())
                                         / (type.getMaxValue() - type
                                                         .getMinValue());
 
-                        if (value < 0)
+                        if (value < 0) {
                                 value = 0;
-                        else if (value > 1)
+                        } else if (value > 1) {
                                 value = 1;
+                        }
 
                         return value;
                 }

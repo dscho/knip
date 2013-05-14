@@ -54,7 +54,7 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 
@@ -67,8 +67,8 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
          * @param isNormalized
          *                Weather the image shall be normalized or not
          */
-        public NormalizationParametersChgEvent(double saturation,
-                        boolean isNormalized) {
+        public NormalizationParametersChgEvent(final double saturation,
+                        final boolean isNormalized) {
                 m_saturation = saturation;
                 m_isNormalized = isNormalized;
 
@@ -80,7 +80,7 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
         @Override
         public int hashCode() {
                 int hash = 31 + (m_isNormalized ? 1 : 2);
-                long bits = Double.doubleToLongBits(m_saturation);
+                final long bits = Double.doubleToLongBits(m_saturation);
                 hash = hash * 31 + (int) (bits ^ (bits >>> 32));
                 return hash;
         }
@@ -115,15 +115,15 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
          * @return [0]: the normalization factor, [1]: the local minimum
          */
         public double[] getNormalizationParameters(
-                        RandomAccessibleInterval<T> src, PlaneSelectionEvent sel) {
-                if (!m_isNormalized)
+                        final RandomAccessibleInterval<T> src, final PlaneSelectionEvent sel) {
+                if (!m_isNormalized) {
                         return new double[] {
                                         1.0,
                                         Views.iterable(src).firstElement()
                                                         .getMinValue() };
-                else {
-                        T element = src.randomAccess().get().createVariable();
-                        ValuePair<T, T> oldMinMax = Operations
+                } else {
+                        final T element = src.randomAccess().get().createVariable();
+                        final ValuePair<T, T> oldMinMax = Operations
                                         .compute(new MinMax<T>(m_saturation,
                                                         element),
                                                         Views.iterable(SubsetOperations
@@ -141,14 +141,14 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 m_saturation = in.readDouble();
                 m_isNormalized = in.readBoolean();
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 out.writeDouble(m_saturation);
                 out.writeBoolean(m_isNormalized);
         }

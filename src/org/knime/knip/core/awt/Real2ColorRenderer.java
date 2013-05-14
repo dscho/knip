@@ -16,7 +16,7 @@ public class Real2ColorRenderer<R extends RealType<R>> extends
         private RealColorARGBConverter<R> m_converter;
         private final int m_projectedDimension;
 
-        public Real2ColorRenderer(int projectedDimension) {
+        public Real2ColorRenderer(final int projectedDimension) {
                 m_projectedDimension = projectedDimension;
                 m_converter = new RealColorARGBConverter<R>(1.0, 0.0);
         }
@@ -28,14 +28,14 @@ public class Real2ColorRenderer<R extends RealType<R>> extends
         }
 
         @Override
-        public void setNormalizationParameters(double factor, double min) {
+        public void setNormalizationParameters(final double factor, final double min) {
                 m_converter = new RealColorARGBConverter<R>(factor, min);
         }
 
         @Override
-        protected Abstract2DProjector<R, ARGBType> getProjector(int dimX,
-                        int dimY, RandomAccessibleInterval<R> source,
-                        ARGBScreenImage target) {
+        protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
+                        final int dimY, final RandomAccessibleInterval<R> source,
+                        final ARGBScreenImage target) {
 
                 return new DimProjector2D<R, ARGBType>(dimX, dimY, source,
                                 target, m_converter, m_projectedDimension);

@@ -64,8 +64,8 @@ public class LabelPanelVisibleLabelsChgEvent implements KNIPEvent {
         private final Set<String> m_labels;
         private final Operator m_operator;
 
-        public LabelPanelVisibleLabelsChgEvent(Set<String> labels,
-                        Operator operator) {
+        public LabelPanelVisibleLabelsChgEvent(final Set<String> labels,
+                        final Operator operator) {
                 m_labels = labels;
                 m_operator = operator;
 
@@ -80,7 +80,7 @@ public class LabelPanelVisibleLabelsChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

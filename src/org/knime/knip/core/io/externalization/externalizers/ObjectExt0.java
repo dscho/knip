@@ -91,8 +91,8 @@ public class ObjectExt0 implements Externalizer<Object> {
          * {@inheritDoc}
          */
         @Override
-        public Object read(BufferedDataInputStream in) throws Exception {
-                ObjectInputStream ois = new ObjectInputStream(in);
+        public Object read(final BufferedDataInputStream in) throws Exception {
+                final ObjectInputStream ois = new ObjectInputStream(in);
                 return ois.readObject();
         }
 
@@ -100,9 +100,9 @@ public class ObjectExt0 implements Externalizer<Object> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, Object obj)
+        public void write(final BufferedDataOutputStream out, final Object obj)
                         throws Exception {
-                ObjectOutputStream oos = new ObjectOutputStream(out);
+                final ObjectOutputStream oos = new ObjectOutputStream(out);
                 oos.writeObject(obj);
 
         }

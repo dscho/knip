@@ -113,7 +113,9 @@ public class HistogramWithNormalization implements Histogram {
          * @param max the maximum value this histogram ends at
          */
         public HistogramWithNormalization(final int[] data, final double min, final double max) {
-                if (data == null) throw new NullPointerException();
+                if (data == null) {
+                        throw new NullPointerException();
+                }
 
                 m_data = Arrays.copyOf(data, data.length);
                 m_minValue = min;
@@ -128,7 +130,7 @@ public class HistogramWithNormalization implements Histogram {
                 assert data != null;
                 assert pos != null;
 
-                double[] frac = new double[2];
+                final double[] frac = new double[2];
 
                 frac[0] = (double) pos[0] / (double) data.length;
                 frac[1] = (double) pos[1] / (double) data.length;
@@ -158,9 +160,9 @@ public class HistogramWithNormalization implements Histogram {
          * Get a histogram of only the normalized data.
          */
         public Histogram getNormalizedHistogram() {
-                double step = Math.abs(m_maxValue - m_minValue) / m_data.length;
-                double min = m_pos[0] * step;
-                double max = (m_pos[1] + 1) * step;
+                final double step = Math.abs(m_maxValue - m_minValue) / m_data.length;
+                final double min = m_pos[0] * step;
+                final double max = (m_pos[1] + 1) * step;
 
                 return new HistogramWithNormalization(getNormalizedData(), min, max);
         }
@@ -169,7 +171,7 @@ public class HistogramWithNormalization implements Histogram {
 
                 assert (data != null);
 
-                int[] res = new int[2];
+                final int[] res = new int[2];
 
                 // find the min Position
                 for (int i = 0; i < data.length; i++) {
@@ -281,9 +283,9 @@ public class HistogramWithNormalization implements Histogram {
         public double[] values(int bin) {
                 bin = checkBinIndex(bin);
 
-                double step = Math.abs(m_maxValue - m_minValue) / (double) m_data.length;
+                final double step = Math.abs(m_maxValue - m_minValue) / m_data.length;
 
-                double[] result = new double[2];
+                final double[] result = new double[2];
 
                 result[0] = bin * step;
                 result[1] = (bin + 1) * step;

@@ -66,7 +66,7 @@ public class Transparency {
         @SuppressWarnings("static-access")
         public static Image makeColorTransparent(final Image im,
                         final Color color) {
-                ImageFilter filter = new RGBImageFilter() {
+                final ImageFilter filter = new RGBImageFilter() {
                         // the color we are looking for... Alpha bits are set to
                         // opaque
                         public int markerRGB = color.getRGB() | 0xFF000000;
@@ -84,7 +84,7 @@ public class Transparency {
                         }
                 };
 
-                ImageProducer ip = new FilteredImageSource(im.getSource(),
+                final ImageProducer ip = new FilteredImageSource(im.getSource(),
                                 filter);
                 return Toolkit.getDefaultToolkit().getDefaultToolkit()
                                 .createImage(ip);
@@ -93,7 +93,7 @@ public class Transparency {
         @SuppressWarnings("static-access")
         public static Image makeColorTransparent(final Image im,
                         final Color color, final int rest) {
-                ImageFilter filter = new RGBImageFilter() {
+                final ImageFilter filter = new RGBImageFilter() {
 
                         // the color we are looking for... Alpha bits are set to
                         // opaque
@@ -113,7 +113,7 @@ public class Transparency {
                         }
                 };
 
-                ImageProducer ip = new FilteredImageSource(im.getSource(),
+                final ImageProducer ip = new FilteredImageSource(im.getSource(),
                                 filter);
                 return Toolkit.getDefaultToolkit().getDefaultToolkit()
                                 .createImage(ip);

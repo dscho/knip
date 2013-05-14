@@ -61,7 +61,7 @@ public class OverlayChgEvent implements KNIPEvent {
 
         private final Overlay m_overlay;
 
-        public OverlayChgEvent(Overlay overlay) {
+        public OverlayChgEvent(final Overlay overlay) {
                 m_overlay = overlay;
         }
 
@@ -74,7 +74,7 @@ public class OverlayChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

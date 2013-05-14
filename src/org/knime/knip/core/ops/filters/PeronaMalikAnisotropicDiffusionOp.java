@@ -38,8 +38,8 @@ public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T> & NativeTyp
          * @param threads
          *                The number of the threads to be used. Usually 1.
          */
-        public PeronaMalikAnisotropicDiffusionOp(double deltat, int n,
-                        DiffusionFunction fun, int threads) {
+        public PeronaMalikAnisotropicDiffusionOp(final double deltat, final int n,
+                        final DiffusionFunction fun, final int threads) {
                 this.m_deltat = deltat;
                 this.m_n = n;
                 this.m_fun = fun;
@@ -47,19 +47,19 @@ public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T> & NativeTyp
         }
 
         @Override
-        public I compute(I input, I output) {
+        public I compute(final I input, final I output) {
 
                 // this is ugly and a hack but needed as the implementation of
                 // this
                 // algorithms doesn't accept the input img
-                ImgView<T> out = new ImgView<T>(output,
+                final ImgView<T> out = new ImgView<T>(output,
                                 new ArrayImgFactory<T>());
 
                 new IterableIntervalCopy<T>().compute(Views.iterable(input),
                                 out);
 
                 // build a new diffusion scheme
-                PeronaMalikAnisotropicDiffusion<T> diff = new PeronaMalikAnisotropicDiffusion<T>(
+                final PeronaMalikAnisotropicDiffusion<T> diff = new PeronaMalikAnisotropicDiffusion<T>(
                                 out, this.m_deltat, this.m_fun);
 
                 // set threads //TODO: noch ne "auto"-funktion einbauen, das das

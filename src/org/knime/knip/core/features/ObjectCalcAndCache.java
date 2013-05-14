@@ -83,15 +83,15 @@ public class ObjectCalcAndCache {
         private Img<BitType> binaryMask;
         private IterableInterval<BitType> bmIterableInterval;
 
-        public Img<BitType> binaryMask(IterableInterval<BitType> ii) {
+        public Img<BitType> binaryMask(final IterableInterval<BitType> ii) {
                 if (bmIterableInterval != ii) {
                         bmIterableInterval = ii;
                         binaryMask = new ArrayImgFactory<BitType>().create(ii,
                                         new BitType());
-                        RandomAccess<BitType> maskRA = binaryMask
+                        final RandomAccess<BitType> maskRA = binaryMask
                                         .randomAccess();
 
-                        Cursor<BitType> cur = ii.localizingCursor();
+                        final Cursor<BitType> cur = ii.localizingCursor();
                         while (cur.hasNext()) {
                                 cur.fwd();
                                 for (int d = 0; d < cur.numDimensions(); d++) {
@@ -146,12 +146,12 @@ public class ObjectCalcAndCache {
         private IterableInterval<? extends RealType<?>> dsIterableInterval;
 
         public <T extends RealType<T>> DescriptiveStatistics descriptiveStatistics(
-                        IterableInterval<T> ii) {
+                        final IterableInterval<T> ii) {
 
                 if (dsIterableInterval != ii) {
                         dsIterableInterval = ii;
                         descriptiveStatistics.clear();
-                        Cursor<T> c = ii.cursor();
+                        final Cursor<T> c = ii.cursor();
 
                         while (c.hasNext()) {
                                 c.fwd();
@@ -167,7 +167,7 @@ public class ObjectCalcAndCache {
         private double[] centroid;
         private IterableInterval<? extends RealType<?>> cIterableInterval;
 
-        public <T extends RealType<T>> double[] centroid(IterableInterval<T> ii) {
+        public <T extends RealType<T>> double[] centroid(final IterableInterval<T> ii) {
                 if (cIterableInterval != ii) {
                         cIterableInterval = ii;
                         final Cursor<T> c = ii.cursor();
@@ -193,22 +193,22 @@ public class ObjectCalcAndCache {
         private IterableInterval<? extends RealType<?>> wcIterableInterval;
 
         public <T extends RealType<T>> double[] weightedCentroid(
-                        IterableInterval<T> ii, DescriptiveStatistics ds,
+                        final IterableInterval<T> ii, final DescriptiveStatistics ds,
                         int massDisplacement) {
 
                 if (wcIterableInterval != ii) {
                         wcIterableInterval = ii;
                         weightedCentroid = new double[ii.numDimensions()];
-                        double[] centroid = new double[ii.numDimensions()];
+                        final double[] centroid = new double[ii.numDimensions()];
 
-                        Cursor<T> c = ii.localizingCursor();
+                        final Cursor<T> c = ii.localizingCursor();
 
-                        long[] pos = new long[c.numDimensions()];
+                        final long[] pos = new long[c.numDimensions()];
                         while (c.hasNext()) {
                                 c.fwd();
                                 c.localize(pos);
 
-                                double val = c.get().getRealDouble();
+                                final double val = c.get().getRealDouble();
 
                                 for (int d = 0; d < ii.numDimensions(); d++) {
                                         weightedCentroid[d] += pos[d]
@@ -235,14 +235,14 @@ public class ObjectCalcAndCache {
         private IterableInterval<BitType> sIterableInterval;
         private Signature signature;
 
-        public Signature signature(IterableInterval<BitType> ii,
-                        int samplingRate) {
+        public Signature signature(final IterableInterval<BitType> ii,
+                        final int samplingRate) {
 
                 if (sIterableInterval != ii) {
                         sIterableInterval = ii;
 
-                        double[] centroid = centroid(ii);
-                        long[] pos = new long[centroid.length];
+                        final double[] centroid = centroid(ii);
+                        final long[] pos = new long[centroid.length];
                         for (int i = 0; i < pos.length; i++) {
                                 pos[i] = Math.round(centroid[i]);
                         }
@@ -263,14 +263,14 @@ public class ObjectCalcAndCache {
         private BitSet coocBitSet;
 
         public <T extends RealType<T>> CooccurrenceMatrix cooccurenceMatrix(
-                        IterableInterval<T> ii, int dimX, int dimY,
-                        int distance, int nrGrayLevels,
-                        MatrixOrientation matrixOrientation, BitSet features) {
+                        final IterableInterval<T> ii, final int dimX, final int dimY,
+                        final int distance, final int nrGrayLevels,
+                        final MatrixOrientation matrixOrientation, final BitSet features) {
                 if (coocII != ii || coocDist != distance
                                 || coocGrayLevels != nrGrayLevels
                                 || coocOrientation != matrixOrientation
                                 || !features.equals(coocBitSet)) {
-                        MakeCooccurrenceMatrix<T> matrixOp = new MakeCooccurrenceMatrix<T>(
+                        final MakeCooccurrenceMatrix<T> matrixOp = new MakeCooccurrenceMatrix<T>(
                                         dimX, dimY, distance, nrGrayLevels,
                                         matrixOrientation, features);
                         if (coocMatrix == null

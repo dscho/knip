@@ -95,11 +95,11 @@ public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
          * {@inheritDoc}
          */
         @Override
-        public GeneralMetadata read(BufferedDataInputStream in) throws Exception {
-                CalibratedSpace cs = ExternalizerManager
+        public GeneralMetadata read(final BufferedDataInputStream in) throws Exception {
+                final CalibratedSpace cs = ExternalizerManager
                                 .<CalibratedSpace> read(in);
-                Named name = ExternalizerManager.<Named> read(in);
-                Sourced source = ExternalizerManager.<Sourced> read(in);
+                final Named name = ExternalizerManager.<Named> read(in);
+                final Sourced source = ExternalizerManager.<Sourced> read(in);
 
                 return new GeneralMetadataImpl(cs, name, source);
         }
@@ -108,7 +108,7 @@ public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, GeneralMetadata obj)
+        public void write(final BufferedDataOutputStream out, final GeneralMetadata obj)
                         throws Exception {
                 ExternalizerManager.write(out, obj, CalibratedSpace.class);
                 ExternalizerManager.write(out, obj, Named.class);

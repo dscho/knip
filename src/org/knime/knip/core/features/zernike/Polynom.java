@@ -23,10 +23,10 @@ package org.knime.knip.core.features.zernike;
  */
 public class Polynom {
         /** the array of polynom coefficients. */
-        private int[] m_coefficients;
+        private final int[] m_coefficients;
 
         /** the degree of the polynom. */
-        private int m_degree;
+        private final int m_degree;
 
         /**
          * default constructor.
@@ -88,6 +88,7 @@ public class Polynom {
          * 
          * @return the String representation
          */
+        @Override
         public String toString() {
                 String result = "";
                 for (int i = 0; i <= m_degree; ++i) {

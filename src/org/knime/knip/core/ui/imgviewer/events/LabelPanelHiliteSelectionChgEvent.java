@@ -63,8 +63,8 @@ public class LabelPanelHiliteSelectionChgEvent implements KNIPEvent {
         private final Set<String> m_labels;
         private final boolean m_hilite;
 
-        public LabelPanelHiliteSelectionChgEvent(Set<String> labels,
-                        boolean hilite) {
+        public LabelPanelHiliteSelectionChgEvent(final Set<String> labels,
+                        final boolean hilite) {
                 m_labels = labels;
                 m_hilite = hilite;
 
@@ -79,7 +79,7 @@ public class LabelPanelHiliteSelectionChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

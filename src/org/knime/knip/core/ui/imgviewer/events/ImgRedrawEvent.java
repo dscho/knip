@@ -25,7 +25,7 @@ public class ImgRedrawEvent implements KNIPEvent {
          * implements class equality (one redraw is enough)
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return (thatEvent instanceof ImgRedrawEvent);
         }
 }

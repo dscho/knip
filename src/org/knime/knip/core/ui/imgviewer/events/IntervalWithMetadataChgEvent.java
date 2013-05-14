@@ -75,9 +75,9 @@ public class IntervalWithMetadataChgEvent<T extends Type<T>>
         private final Sourced m_source;
 
         public IntervalWithMetadataChgEvent(
-                        RandomAccessibleInterval<T> interval,
-                        Named name,
-                        Sourced source, CalibratedSpace cspace) {
+                        final RandomAccessibleInterval<T> interval,
+                        final Named name,
+                        final Sourced source, final CalibratedSpace cspace) {
                 m_interval = interval;
                 m_name = name;
                 m_source = source;
@@ -94,7 +94,7 @@ public class IntervalWithMetadataChgEvent<T extends Type<T>>
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

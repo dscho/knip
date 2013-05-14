@@ -26,8 +26,9 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
         }
 
         protected void initialize(final InstancesTmp dataset, int capacity) {
-                if (capacity < 0)
+                if (capacity < 0) {
                         capacity = 0;
+                }
 
                 // Strings only have to be "shallow" copied because
                 // they can't be modified.

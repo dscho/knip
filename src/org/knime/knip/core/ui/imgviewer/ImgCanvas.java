@@ -12,6 +12,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -129,10 +130,11 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         private static final long serialVersionUID = 1L;
 
                         @Override
-                        public void paint(Graphics g) {
+                        public void paint(final Graphics g) {
                                 super.paint(g);
-                                if (m_image == null)
+                                if (m_image == null) {
                                         return;
+                                }
                                 g.drawImage(m_image,
                                                 0,
                                                 0,
@@ -164,23 +166,23 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
                 m_imageCanvas.addMouseListener(new MouseAdapter() {
                         @Override
-                        public void mousePressed(MouseEvent e) {
+                        public void mousePressed(final MouseEvent e) {
                                 m_dragPoint = e.getLocationOnScreen();
                                 m_dragRect = m_imageCanvas.getVisibleRect();
                                 fireImageCoordMousePressed(e);
                         }
 
                         @Override
-                        public void mouseReleased(MouseEvent e) {
+                        public void mouseReleased(final MouseEvent e) {
                                 fireImageCoordMouseReleased(e);
                         }
 
                 });
                 m_imageCanvas.addMouseMotionListener(new MouseMotionAdapter() {
                         @Override
-                        public void mouseDragged(MouseEvent e) {
+                        public void mouseDragged(final MouseEvent e) {
                                 if (m_keyDraggingEnabled
-                                                || ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 1024)) {
+                                                || ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) == 1024)) {
                                         if (!m_blockPanning) {
                                                 m_currentRectangle
                                                                 .setBounds(m_dragRect);
@@ -196,23 +198,23 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                         }
 
                         @Override
-                        public void mouseMoved(MouseEvent e) {
+                        public void mouseMoved(final MouseEvent e) {
                                 fireImageCoordMouseMoved(e);
                         }
                 });
                 m_imageCanvas.addMouseWheelListener(new MouseWheelListener() {
 
                         @Override
-                        public void mouseWheelMoved(MouseWheelEvent e) {
+                        public void mouseWheelMoved(final MouseWheelEvent e) {
                                 if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
                                         int direction = -1;
                                         if (e.getWheelRotation() < 0) {
                                                 direction = 1;
                                         }
 
-                                        int oldValue = (int) (m_zoomFactor * 100.0);
+                                        final int oldValue = (int) (m_zoomFactor * 100.0);
 
-                                        int change = (int) Math.sqrt(oldValue)
+                                        final int change = (int) Math.sqrt(oldValue)
                                                         * direction;
                                         int newValue = oldValue + change;
 
@@ -236,7 +238,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                                 new AdjustmentListener() {
                                                         @Override
                                                         public void adjustmentValueChanged(
-                                                                        AdjustmentEvent e) {
+                                                                        final AdjustmentEvent e) {
                                                                 if (verScrollbarMoved) {
                                                                         verScrollbarMoved = false;
                                                                         return;
@@ -250,7 +252,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                 new AdjustmentListener() {
                                         @Override
                                         public void adjustmentValueChanged(
-                                                        AdjustmentEvent e) {
+                                                        final AdjustmentEvent e) {
                                                 if (horScrollbarMoved) {
                                                         horScrollbarMoved = false;
                                                         return;
@@ -261,7 +263,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                                 });
 
                 setLayout(new GridBagLayout());
-                GridBagConstraints gc = new GridBagConstraints();
+                final GridBagConstraints gc = new GridBagConstraints();
                 gc.fill = GridBagConstraints.BOTH;
                 gc.weightx = 1.0;
                 gc.weighty = 1.0;
@@ -273,7 +275,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         }
 
-        protected void blockPanning(boolean block) {
+        protected void blockPanning(final boolean block) {
                 m_blockPanning = block;
         }
 
@@ -305,7 +307,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
                 return m_currentRectangle;
         }
 
-        private void fireImageCoordMousePressed(MouseEvent e) {
+        private void fireImageCoordMousePressed(final MouseEvent e) {
                 if (!isMouseEventBlocked()) {
                         m_eventService.publish(new ImgViewerMousePressedEvent(
                                         e, m_factors, m_image.getWidth(),
@@ -314,7 +316,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         }
 
-        private void fireImageCoordMouseReleased(MouseEvent e) {
+        private void fireImageCoordMouseReleased(final MouseEvent e) {
                 if (!isMouseEventBlocked()) {
                         m_eventService.publish(
                         // TODO CHANGE HERE TO FACTORS
@@ -324,7 +326,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         }
 
-        private void fireImageCoordMouseDragged(MouseEvent e) {
+        private void fireImageCoordMouseDragged(final MouseEvent e) {
                 if (!isMouseEventBlocked()) {
                         m_eventService.publish(
                         // TODO CHANGE HERE TO FACTORS
@@ -334,7 +336,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         }
 
-        private void fireImageCoordMouseMoved(MouseEvent e) {
+        private void fireImageCoordMouseMoved(final MouseEvent e) {
                 if (!isMouseEventBlocked()) {
                         // TODO CHANGE HERE TO FACTORS
                         m_eventService.publish(new ImgViewerMouseMovedEvent(e,
@@ -345,13 +347,13 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         }
 
         @EventListener
-        public void onZoomFactorChanged(ViewZoomfactorChgEvent zoomEvent) {
+        public void onZoomFactorChanged(final ViewZoomfactorChgEvent zoomEvent) {
                 m_zoomFactor = zoomEvent.getZoomFactor();
                 updateImageCanvas(false);
         }
 
         @EventListener
-        public void onCalibrationUpdateEvent(CalibrationUpdateEvent e) {
+        public void onCalibrationUpdateEvent(final CalibrationUpdateEvent e) {
                 m_scaleFactors = new double[] {
                                 e.getScaleFactors()[e.getSelectedDims()[0]],
                                 e.getScaleFactors()[e.getSelectedDims()[1]], };
@@ -364,7 +366,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
          * @param rect
          */
         @EventListener
-        public void onMinimapOffsetChanged(MinimapOffsetChgEvent e) {
+        public void onMinimapOffsetChanged(final MinimapOffsetChgEvent e) {
                 m_currentRectangle = m_imageCanvas.getVisibleRect();
                 m_currentRectangle.x = (int) (e.getOffest()[0] * m_factors[0]);
                 m_currentRectangle.y = (int) (e.getOffest()[1] * m_factors[1]);
@@ -373,7 +375,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         }
 
         @EventListener
-        public void onBufferedImageChanged(AWTImageChgEvent e) {
+        public void onBufferedImageChanged(final AWTImageChgEvent e) {
                 m_image = (BufferedImage) e.getImage();
                 m_blockMouseEvents = false;
 
@@ -381,9 +383,10 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         }
 
 
-        public void updateImageCanvas(boolean enforceRecalculation) {
-                if (m_image == null)
+        public void updateImageCanvas(final boolean enforceRecalculation) {
+                if (m_image == null) {
                         return;
+                }
 
                 // calculate the new combined factor
                 m_factors[0] = m_scaleFactors[0] * m_zoomFactor;
@@ -394,19 +397,19 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
                         // get old center of the image
 
-                        Rectangle rect = m_imageCanvas.getVisibleRect();
-                        double imgCenterX = rect.getCenterX() / m_oldFactors[0];
-                        double imgCenterY = rect.getCenterY() / m_oldFactors[1];
+                        final Rectangle rect = m_imageCanvas.getVisibleRect();
+                        final double imgCenterX = rect.getCenterX() / m_oldFactors[0];
+                        final double imgCenterY = rect.getCenterY() / m_oldFactors[1];
 
                         // enlarge canvas
-                        Dimension d = new Dimension(
+                        final Dimension d = new Dimension(
                                         (int) (m_image.getWidth(null) * m_factors[0]),
                                         (int) (m_image.getHeight(null) * m_factors[1]));
                         m_imageCanvas.setSize(d);
                         m_imageCanvas.setPreferredSize(d);
 
-                        double xCorrect = getVisibleImageRect().width / 2.0;
-                        double yCorrect = getVisibleImageRect().height / 2.0;
+                        final double xCorrect = getVisibleImageRect().width / 2.0;
+                        final double yCorrect = getVisibleImageRect().height / 2.0;
 
                         // apply old center
                         m_imageScrollPane
@@ -429,18 +432,18 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
          * @param message
          */
         @EventListener
-        public void onTextMessageChanged(ImgViewerTextMessageChgEvent e) {
+        public void onTextMessageChanged(final ImgViewerTextMessageChgEvent e) {
 
-                Graphics2D g = (Graphics2D) m_imageCanvas.getGraphics();
+                final Graphics2D g = (Graphics2D) m_imageCanvas.getGraphics();
                 if (g != null) {
                         g.setBackground(Color.GRAY.darker());
                         g.clearRect(0, 0, m_imageCanvas.getWidth(),
                                         m_imageCanvas.getHeight());
                         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-                        int h = g.getFont().getSize();
+                        final int h = g.getFont().getSize();
                         int y = h;
                         g.setColor(Color.YELLOW);
-                        for (String s : e.getMessage().split("\n")) {
+                        for (final String s : e.getMessage().split("\n")) {
                                 g.drawString(s, h, y);
                                 y += h;
                         }
@@ -463,18 +466,18 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
         }
 
@@ -492,7 +495,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 

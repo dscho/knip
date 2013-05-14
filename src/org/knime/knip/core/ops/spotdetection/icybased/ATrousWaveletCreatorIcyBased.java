@@ -25,7 +25,7 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
                 implements
                 UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>> {
 
-        private Integer[] m_skipLevels;
+        private final Integer[] m_skipLevels;
 
         public ATrousWaveletCreatorIcyBased() {
                 m_skipLevels = new Integer[] {};
@@ -38,7 +38,7 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
          *                be used to speed up the computations if not all
          *                wavelet planes are required.
          */
-        public ATrousWaveletCreatorIcyBased(Integer... skipLevels) {
+        public ATrousWaveletCreatorIcyBased(final Integer... skipLevels) {
                 m_skipLevels = skipLevels;
         }
 
@@ -53,14 +53,14 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
          * {@link #m_skipLevels} parameter some of the planes may contain only
          * temporary results.<br>
          * <br>
-         * The image can be recomputed as follows A_z + W_i | i € (0..z-1) <br>
+         * The image can be recomputed as follows A_z + W_i | i ï¿½ (0..z-1) <br>
          * sum(output_0 .. output_z-1) + output_z<br>
          * This works only if no skip levels are specified.
          */
         @Override
         public RandomAccessibleInterval<FloatType> compute(
-                        RandomAccessibleInterval<T> input,
-                        RandomAccessibleInterval<FloatType> output) {
+                        final RandomAccessibleInterval<T> input,
+                        final RandomAccessibleInterval<FloatType> output) {
 
                 if (input.numDimensions() != 2 || output.numDimensions() != 3) {
                         throw new RuntimeException(
@@ -75,7 +75,7 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
                                                         "output requires at least 2 XY planes i.e.  {[0..sizeX], [0..sizeY], [0..a] | a >= 1}"));
                 }
 
-                long shortSize = Math.min(input.dimension(0),
+                final long shortSize = Math.min(input.dimension(0),
                                 input.dimension(1));
                 if (shortSize < getMinSize(output.dimension(2) - 1)) {
                         throw new RuntimeException(
@@ -95,15 +95,15 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
          *         coefficients and the residual level.
          */
         private RandomAccessibleInterval<FloatType> createCoefficients(
-                        RandomAccessibleInterval<T> input2D,
-                        RandomAccessibleInterval<FloatType> outputStack) {
+                        final RandomAccessibleInterval<T> input2D,
+                        final RandomAccessibleInterval<FloatType> outputStack) {
 
                 // make it 1D
-                int sizeX = (int) input2D.dimension(0);
-                int sizeY = (int) input2D.dimension(1);
+                final int sizeX = (int) input2D.dimension(0);
+                final int sizeY = (int) input2D.dimension(1);
 
-                float dataIn[] = new float[sizeX * sizeY];
-                Cursor<T> curso = Views.flatIterable(input2D).cursor();
+                final float dataIn[] = new float[sizeX * sizeY];
+                final Cursor<T> curso = Views.flatIterable(input2D).cursor();
 
                 int k = 0;
                 while (curso.hasNext()) {
@@ -112,19 +112,19 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
                 }
 
                 // decompose the image
-                B3SplineUDWT waveletTransform = new B3SplineUDWT();
+                final B3SplineUDWT waveletTransform = new B3SplineUDWT();
 
                 float[][] scales = null;
                 try {
                         scales = waveletTransform.b3WaveletScales2D(dataIn,
                                         sizeX, sizeY,
                                         (int) (outputStack.dimension(2) - 1));
-                } catch (WaveletConfigException e1) {
+                } catch (final WaveletConfigException e1) {
                         e1.printStackTrace();
                 }
 
                 // calculate coefficients (wavelet scaleX - wavelet scaleY)
-                float[][] coefficients = waveletTransform
+                final float[][] coefficients = waveletTransform
                                 .b3WaveletCoefficients2D(
                                                 scales,
                                                 dataIn,
@@ -132,13 +132,13 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
                                                 sizeX * sizeY);
 
                 // write it back into an image
-                RandomAccess<FloatType> ra = outputStack.randomAccess();
+                final RandomAccess<FloatType> ra = outputStack.randomAccess();
 
                 for (int i = 0; i < coefficients.length; i++) {
                         for (int j = 0; j < coefficients[0].length; j++) {
 
-                                int x = j % sizeX;
-                                int y = j / sizeX;
+                                final int x = j % sizeX;
+                                final int y = j / sizeX;
 
                                 ra.setPosition(new int[] { x, y, i });
                                 ra.get().setReal(coefficients[i][j]);
@@ -148,7 +148,7 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>>
                 return outputStack;
         }
 
-        private long getMinSize(long levels) {
+        private long getMinSize(final long levels) {
                 return 5 + (long) (Math.pow(2, levels - 1)) * 4;
         }
 }

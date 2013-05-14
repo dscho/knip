@@ -28,26 +28,26 @@ public final class ImgMetadataImpl extends GeneralMetadataImpl implements
 
         }
 
-        public ImgMetadataImpl(int numDims) {
+        public ImgMetadataImpl(final int numDims) {
                 super(numDims);
                 m_imgMetadata = new ImageMetadataImpl();
         }
 
-        public ImgMetadataImpl(Metadata metadata) {
+        public ImgMetadataImpl(final Metadata metadata) {
                 this(metadata, metadata, metadata, metadata);
         }
 
-        public ImgMetadataImpl(CalibratedSpace cSpace, Metadata img) {
+        public ImgMetadataImpl(final CalibratedSpace cSpace, final Metadata img) {
                 this(cSpace, img, img, img);
         }
 
-        public ImgMetadataImpl(GeneralMetadata generalMetadata,
-                        ImageMetadata imageMetadata) {
+        public ImgMetadataImpl(final GeneralMetadata generalMetadata,
+                        final ImageMetadata imageMetadata) {
                 this(generalMetadata, generalMetadata, generalMetadata,
                                 imageMetadata);
         }
 
-        public ImgMetadataImpl(GeneralMetadata metadata) {
+        public ImgMetadataImpl(final GeneralMetadata metadata) {
                 this(metadata, metadata, metadata, new ImageMetadataImpl());
         }
 
@@ -61,7 +61,7 @@ public final class ImgMetadataImpl extends GeneralMetadataImpl implements
          * @param axes
          *                the axes
          */
-        public ImgMetadataImpl(String name, String source, String... axes) {
+        public ImgMetadataImpl(final String name, final String source, final String... axes) {
                 super(new CalibratedSpaceImpl(axes), new NamedImpl(name),
                                 new SourcedImpl(source));
                 m_imgMetadata = new ImageMetadataImpl();
@@ -118,12 +118,12 @@ public final class ImgMetadataImpl extends GeneralMetadataImpl implements
         }
 
         @Override
-        public ColorTable getColorTable(int no) {
+        public ColorTable getColorTable(final int no) {
                 return m_imgMetadata.getColorTable(no);
         }
 
         @Override
-        public void setColorTable(ColorTable colorTable, int no) {
+        public void setColorTable(final ColorTable colorTable, final int no) {
                 m_imgMetadata.setColorTable(colorTable, no);
         }
 }

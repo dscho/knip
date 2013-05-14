@@ -128,11 +128,11 @@ public class ContourDetector<T extends RealType<T>> {
          * @param smooth
          */
         public ContourDetector(final PolarImageFactory<T>[] pif,
-                        UnaryOperation<Img<T>, Img<T>> preProc,
+                        final UnaryOperation<Img<T>, Img<T>> preProc,
                         final int radius, final int numAng,
                         final Vector[] seedingPoints,
                         final int maxLineVariance, final double maxOverlap,
-                        final double minScore, final int minArea, boolean smooth) {
+                        final double minScore, final int minArea, final boolean smooth) {
 
                 m_preProc = preProc;
                 m_radius = radius;
@@ -160,15 +160,15 @@ public class ContourDetector<T extends RealType<T>> {
                 m_models = new ArrayList<Integer>(m_seedingPoints.length);
 
                 Img<T> polImg = null;
-                Signature[] signs = new Signature[m_seedingPoints.length
+                final Signature[] signs = new Signature[m_seedingPoints.length
                                 * m_polFacs.length];
                 int i = 0;
 
-                long[] pos = new long[2];
+                final long[] pos = new long[2];
                 Img<T> tmpImg = null;
                 for (int j = 0; j < m_polFacs.length; j++) {
 
-                        for (Vector p : m_seedingPoints) {
+                        for (final Vector p : m_seedingPoints) {
                                 pos[0] = p.getLongPosition(0);
                                 pos[1] = p.getLongPosition(1);
                                 if (polImg == null) {
@@ -212,7 +212,7 @@ public class ContourDetector<T extends RealType<T>> {
                         }
                 }
 
-                int[] perm = PermutationSort.sort(signs,
+                final int[] perm = PermutationSort.sort(signs,
                                 new SignatureComparator());
 
                 ExtendedPolygon poly;
@@ -236,7 +236,7 @@ public class ContourDetector<T extends RealType<T>> {
 
                         // test overlap
                         overlap = false;
-                        for (ExtendedPolygon ctest : m_contours) {
+                        for (final ExtendedPolygon ctest : m_contours) {
                                 if (poly.overlap(ctest) > m_maxOverlap) {
                                         overlap = true;
                                         break;
@@ -264,7 +264,7 @@ public class ContourDetector<T extends RealType<T>> {
          * @param idx
          * @return the contour at the specified index
          */
-        public ExtendedPolygon getContour(int idx) {
+        public ExtendedPolygon getContour(final int idx) {
                 contoursDetected();
                 return m_contours.get(idx);
         }
@@ -273,7 +273,7 @@ public class ContourDetector<T extends RealType<T>> {
          * @param contourIdx
          * @return the score of the contour at the specified index
          */
-        public double getContourScore(int contourIdx) {
+        public double getContourScore(final int contourIdx) {
                 contoursDetected();
                 return m_scores.get(contourIdx);
         }
@@ -282,7 +282,7 @@ public class ContourDetector<T extends RealType<T>> {
          * @param contourIdx
          * @return the model index of the contour at the specified index
          */
-        public int getContourModel(int contourIdx) {
+        public int getContourModel(final int contourIdx) {
                 return m_models.get(contourIdx);
         }
 
@@ -297,7 +297,7 @@ public class ContourDetector<T extends RealType<T>> {
          */
         public static Vector[] createLattice(final int gaps, final int width,
                         final int height) {
-                ArrayList<Vector> res = new ArrayList<Vector>();
+                final ArrayList<Vector> res = new ArrayList<Vector>();
                 for (int i = gaps; i < width - gaps + 1; i += gaps) {
                         for (int j = gaps; j < height - gaps + 1; j += gaps) {
                                 res.add(new Vector(new long[] { i, j }));

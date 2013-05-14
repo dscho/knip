@@ -23,12 +23,13 @@ import org.knime.knip.core.types.NativeTypes;
 public class FastNormalizingGreyRendering {
 
         public static <R extends RealType<R>> ScreenImage tryRendering(
-                        RandomAccessibleInterval<R> source, int dimX, int dimY,
-                        long[] planePos, double normalizationFactor, double min) {
+                        RandomAccessibleInterval<R> source, final int dimX, final int dimY,
+                        final long[] planePos, final double normalizationFactor, final double min) {
 
                 // unwrap img plus if necessary
-                while (source instanceof ImgPlus)
+                while (source instanceof ImgPlus) {
                         source = ((ImgPlus) source).getImg();
+                }
 
                 RenderTripel match = new RenderTripel();
 
@@ -55,17 +56,17 @@ public class FastNormalizingGreyRendering {
         }
 
         private static <R extends RealType<R>> RenderTripel tryArrayImage(
-                        RandomAccessibleInterval<R> source, int dimX, int dimY,
-                        long[] planePos, double normalizationFactor, double min) {
+                        final RandomAccessibleInterval<R> source, final int dimX, final int dimY,
+                        final long[] planePos, final double normalizationFactor, final double min) {
 
                 if (dimX == 0 && dimY == 1 && source instanceof ArrayImg) {
                         Abstract2DProjector<?, ?> projector;
                         ScreenImage target;
-                        NativeTypes type = NativeTypes.getPixelType(source
+                        final NativeTypes type = NativeTypes.getPixelType(source
                                         .randomAccess().get());
 
-                        long w = source.dimension(dimX);
-                        long h = source.dimension(dimY);
+                        final long w = source.dimension(dimX);
+                        final long h = source.dimension(dimY);
 
                         if (type == NativeTypes.BYTETYPE
                                         || type == NativeTypes.UNSIGNEDBYTETYPE) {
@@ -98,17 +99,17 @@ public class FastNormalizingGreyRendering {
         }
 
         private static <R extends RealType<R>> RenderTripel tryPlanarImage(
-                        RandomAccessibleInterval<R> source, int dimX, int dimY,
-                        long[] planePos, double normalizationFactor, double min) {
+                        final RandomAccessibleInterval<R> source, final int dimX, final int dimY,
+                        final long[] planePos, final double normalizationFactor, final double min) {
 
                 if (dimX == 0 && dimY == 1 && source instanceof PlanarImg) {
                         Abstract2DProjector<?, ?> projector;
                         ScreenImage target;
-                        NativeTypes type = NativeTypes.getPixelType(source
+                        final NativeTypes type = NativeTypes.getPixelType(source
                                         .randomAccess().get());
 
-                        long w = source.dimension(dimX);
-                        long h = source.dimension(dimY);
+                        final long w = source.dimension(dimX);
+                        final long h = source.dimension(dimY);
 
                         if (type == NativeTypes.BYTETYPE
                                         || type == NativeTypes.UNSIGNEDBYTETYPE) {

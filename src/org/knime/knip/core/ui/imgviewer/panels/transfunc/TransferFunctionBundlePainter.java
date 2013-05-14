@@ -111,7 +111,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
         }
 
         private void repaintBackBuffer() {
-                Graphics2D g2 = (Graphics2D) m_backBuffer.getGraphics();
+                final Graphics2D g2 = (Graphics2D) m_backBuffer.getGraphics();
 
                 // paint the background
                 g2.setColor(ColorDispenser.BACKGROUND_COLOR);
@@ -127,7 +127,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
 
                 // check if the size of the painting area changed, and if yes
                 // create a new fitting backbuffer and paint it
-                Dimension d = new Dimension(
+                final Dimension d = new Dimension(
                                 (int) g2.getClipBounds().getWidth(), (int) g2
                                                 .getClipBounds().getHeight());
 
@@ -144,7 +144,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
         }
 
         private final void paint(final Graphics2D g2, final boolean backBufSel) {
-                for (TransferFunctionPainter p : m_painters) {
+                for (final TransferFunctionPainter p : m_painters) {
                         if (backBufSel) {
                                 p.paintForSelection(g2);
                         } else {
@@ -160,7 +160,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
          *                the name of the function to draw
          */
         public final void setTransferFocus(final TransferFunctionColor color) {
-                TransferFunctionPainter p = m_color2Painter.get(color);
+                final TransferFunctionPainter p = m_color2Painter.get(color);
 
                 m_painters.remove(p);
                 m_painters.add(p);
@@ -182,7 +182,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
                         return;
                 }
 
-                for (TransferFunction tf : m_bundle) {
+                for (final TransferFunction tf : m_bundle) {
                         addPainter(tf);
                 }
         }
@@ -190,7 +190,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
         private void addPainter(final TransferFunction func) {
                 assert m_bundle != null;
 
-                TransferFunctionPainter p = TransferFunctionPainterFactory
+                final TransferFunctionPainter p = TransferFunctionPainterFactory
                                 .create(func, m_bundle.getColorOfFunction(func)
                                                 .getColor());
 
@@ -206,7 +206,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
         }
 
         private void clearBundle() {
-                for (TransferFunctionPainter p : m_painters) {
+                for (final TransferFunctionPainter p : m_painters) {
                         m_listener.remove(MouseListener.class, p);
                         m_listener.remove(MouseMotionListener.class, p);
 
@@ -238,7 +238,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
 
         private void fireTransferFunctionChgEvent(
                         final TransferFunctionChgEvent event) {
-                for (TransferFunctionChgListener l : m_listener
+                for (final TransferFunctionChgListener l : m_listener
                                 .getListeners(TransferFunctionChgListener.class)) {
                         l.transferFunctionChg(event);
                 }
@@ -253,27 +253,27 @@ public class TransferFunctionBundlePainter implements MouseListener,
         }
 
         private void fireChangeEvent() {
-                for (ChangeListener l : m_listener
+                for (final ChangeListener l : m_listener
                                 .getListeners(ChangeListener.class)) {
                         l.stateChanged(new ChangeEvent(this));
                 }
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
-                for (MouseMotionListener l : m_listener
+        public void mouseDragged(final MouseEvent e) {
+                for (final MouseMotionListener l : m_listener
                                 .getListeners(MouseMotionListener.class)) {
                         l.mouseDragged(e);
                 }
         }
 
         @Override
-        public void mouseMoved(MouseEvent e) {
-                Color color = new Color(m_backBuffer.getRGB(e.getX(), e.getY()));
+        public void mouseMoved(final MouseEvent e) {
+                final Color color = new Color(m_backBuffer.getRGB(e.getX(), e.getY()));
 
                 Cursor cur = null;
 
-                for (TransferFunctionPainter p : m_painters) {
+                for (final TransferFunctionPainter p : m_painters) {
 
                         p.clearHilite();
                         if (p.checkForHilite(color)) {
@@ -288,7 +288,7 @@ public class TransferFunctionBundlePainter implements MouseListener,
 
                 m_cursor = cur;
 
-                for (MouseMotionListener l : m_listener
+                for (final MouseMotionListener l : m_listener
                                 .getListeners(MouseMotionListener.class)) {
                         l.mouseMoved(e);
                 }
@@ -297,40 +297,40 @@ public class TransferFunctionBundlePainter implements MouseListener,
         }
 
         @Override
-        public void mouseClicked(MouseEvent e) {
-                for (MouseListener l : m_listener
+        public void mouseClicked(final MouseEvent e) {
+                for (final MouseListener l : m_listener
                                 .getListeners(MouseListener.class)) {
                         l.mouseClicked(e);
                 }
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
-                for (MouseListener l : m_listener
+        public void mouseEntered(final MouseEvent e) {
+                for (final MouseListener l : m_listener
                                 .getListeners(MouseListener.class)) {
                         l.mouseEntered(e);
                 }
         }
 
         @Override
-        public void mouseExited(MouseEvent e) {
-                for (MouseListener l : m_listener
+        public void mouseExited(final MouseEvent e) {
+                for (final MouseListener l : m_listener
                                 .getListeners(MouseListener.class)) {
                         l.mouseExited(e);
                 }
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-                for (MouseListener l : m_listener
+        public void mousePressed(final MouseEvent e) {
+                for (final MouseListener l : m_listener
                                 .getListeners(MouseListener.class)) {
                         l.mousePressed(e);
                 }
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
-                for (MouseListener l : m_listener
+        public void mouseReleased(final MouseEvent e) {
+                for (final MouseListener l : m_listener
                                 .getListeners(MouseListener.class)) {
                         l.mouseReleased(e);
                 }

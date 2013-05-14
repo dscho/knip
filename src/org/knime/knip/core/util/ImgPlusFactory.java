@@ -10,22 +10,22 @@ public class ImgPlusFactory<T extends RealType<T>, V extends RealType<V>>
 
         private final V outType;
 
-        public ImgPlusFactory(V outType) {
+        public ImgPlusFactory(final V outType) {
                 this.outType = outType;
         }
 
         @Override
-        public ImgPlus<V> instantiate(ImgPlus<T> a) {
+        public ImgPlus<V> instantiate(final ImgPlus<T> a) {
                 return new ImgPlus<V>(ImgUtils.createEmptyCopy(a, outType), a);
         }
 
         public static <T extends RealType<T>, V extends RealType<V>> ImgPlusFactory<T, V> get(
-                        V outType) {
+                        final V outType) {
                 return new ImgPlusFactory<T, V>(outType);
         }
 
         public static <T extends RealType<T>, V extends RealType<V>> ImgPlusFactory<T, V> get(
-                        IterableInterval<V> interval) {
+                        final IterableInterval<V> interval) {
                 return new ImgPlusFactory<T, V>(interval.firstElement());
         }
 

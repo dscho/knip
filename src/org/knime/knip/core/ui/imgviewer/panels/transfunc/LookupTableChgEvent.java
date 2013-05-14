@@ -72,7 +72,7 @@ public class LookupTableChgEvent<T, U> implements KNIPEvent {
         }
 
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return false;
         }
 

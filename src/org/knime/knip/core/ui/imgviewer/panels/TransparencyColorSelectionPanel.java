@@ -30,7 +30,7 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
                 m_colorSelectionPanel = new LabelOptionPanel(true);
 
                 setLayout(new GridBagLayout());
-                GridBagConstraints gc = new GridBagConstraints();
+                final GridBagConstraints gc = new GridBagConstraints();
 
                 gc.fill = GridBagConstraints.HORIZONTAL;
                 gc.gridx = 0;
@@ -48,14 +48,14 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
         }
 
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_transparencyPanel.setEventService(eventService);
                 m_colorSelectionPanel.setEventService(eventService);
                 eventService.subscribe(this);
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
 
         }
@@ -71,14 +71,14 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 m_transparencyPanel.saveComponentConfiguration(out);
                 m_colorSelectionPanel.saveComponentConfiguration(out);
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 m_transparencyPanel.loadComponentConfiguration(in);
                 m_colorSelectionPanel.loadComponentConfiguration(in);

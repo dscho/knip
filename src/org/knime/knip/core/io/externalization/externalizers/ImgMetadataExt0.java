@@ -94,12 +94,12 @@ public class ImgMetadataExt0 implements Externalizer<ImgMetadata> {
          * {@inheritDoc}
          */
         @Override
-        public ImgMetadata read(BufferedDataInputStream in) throws Exception {
+        public ImgMetadata read(final BufferedDataInputStream in) throws Exception {
 
-                GeneralMetadata metadata = ExternalizerManager
+                final GeneralMetadata metadata = ExternalizerManager
                                 .<GeneralMetadata> read(in);
 
-                ImageMetadata imgMetadata = ExternalizerManager
+                final ImageMetadata imgMetadata = ExternalizerManager
                                 .<ImageMetadata> read(in);
 
                 return new ImgMetadataImpl(metadata, imgMetadata);
@@ -109,7 +109,7 @@ public class ImgMetadataExt0 implements Externalizer<ImgMetadata> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, ImgMetadata obj)
+        public void write(final BufferedDataOutputStream out, final ImgMetadata obj)
                         throws Exception {
                 ExternalizerManager.write(out, obj, GeneralMetadata.class);
                 ExternalizerManager.write(out, obj, ImageMetadata.class);

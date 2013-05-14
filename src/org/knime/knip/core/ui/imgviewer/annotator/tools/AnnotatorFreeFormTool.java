@@ -14,22 +14,22 @@ public class AnnotatorFreeFormTool extends
         }
 
         @Override
-        public void onMouseDoubleClickLeft(ImgViewerMouseEvent e,
-                        FreeFormOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClickLeft(final ImgViewerMouseEvent e,
+                        final FreeFormOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
 
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onMousePressedLeft(ImgViewerMouseEvent e,
-                        FreeFormOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMousePressedLeft(final ImgViewerMouseEvent e,
+                        final FreeFormOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
-                FreeFormOverlayElement<String> element = new FreeFormOverlayElement<String>(
+                final FreeFormOverlayElement<String> element = new FreeFormOverlayElement<String>(
                                 selection.getPlanePos(e.getPosX(), e.getPosY()),
                                 selection.getDimIndices(), true, labels);
 
@@ -43,10 +43,10 @@ public class AnnotatorFreeFormTool extends
         }
 
         @Override
-        public void onMouseReleasedLeft(ImgViewerMouseEvent e,
-                        FreeFormOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseReleasedLeft(final ImgViewerMouseEvent e,
+                        final FreeFormOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
                 currentOverlayElement.close();
                 currentOverlayElement.setStatus(OverlayElementStatus.ACTIVE);
@@ -55,10 +55,10 @@ public class AnnotatorFreeFormTool extends
         }
 
         @Override
-        public void onMouseDraggedLeft(ImgViewerMouseEvent e,
-                        FreeFormOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDraggedLeft(final ImgViewerMouseEvent e,
+                        final FreeFormOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
                 if (currentOverlayElement.getStatus() == OverlayElementStatus.DRAWING) {
                         currentOverlayElement.add(e.getPosX(), e.getPosY());

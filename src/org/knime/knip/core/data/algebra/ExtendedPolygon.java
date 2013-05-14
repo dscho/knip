@@ -64,7 +64,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
          * @param poly
          *                polygon to wrap
          */
-        public ExtendedPolygon(Polygon poly) {
+        public ExtendedPolygon(final Polygon poly) {
                 super(poly.xpoints, poly.ypoints, poly.npoints);
         }
 
@@ -73,7 +73,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
          * @return the center of the polygons bounding box
          */
         public long[] getBoundingBoxCenter() {
-                Rectangle r = getBounds();
+                final Rectangle r = getBounds();
 
                 return new long[] { r.x + r.width / 2, r.y + r.height / 2 };
 
@@ -113,12 +113,12 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
                 if (m_mask != null) {
                         return m_mask;
                 }
-                Rectangle r = getBounds();
-                int w = r.width;
-                int h = r.height;
+                final Rectangle r = getBounds();
+                final int w = r.width;
+                final int h = r.height;
                 m_mask = new ArrayImgFactory<BitType>().create(
                                 new int[] { w, h }, new BitType());
-                Cursor<BitType> c = m_mask.localizingCursor();
+                final Cursor<BitType> c = m_mask.localizingCursor();
 
                 while (c.hasNext()) {
                         c.fwd();
@@ -164,7 +164,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
          * @return
          */
         public float[] getNormalVecAtPoint(final int index) {
-                int i = index + length();
+                final int i = index + length();
                 Vector n;
 
                 n = new Vector(getPointAt((i - 3) % length())).mapMultiply(-1);
@@ -177,7 +177,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
                 n = n.add(new Vector(getPointAt((i + 3) % length())));
                 n = new Vector(new int[] { -n.getIntPosition(1),
                                 n.getIntPosition(0) });
-                float[] res = new float[n.numDimensions()];
+                final float[] res = new float[n.numDimensions()];
                 n.localize(res);
                 return res;
         }
@@ -194,7 +194,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
                 float[] n = getNormalVecAtPoint(index);
                 // orthogonal
                 n = new float[] { -n[1], n[0] };
-                double ang = Math.atan2(n[0], n[1]);
+                final double ang = Math.atan2(n[0], n[1]);
                 return (Math.abs(ang) != ang ? 2 * Math.PI + ang : ang);
         }
 
@@ -209,29 +209,29 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         public ExtendedPolygon resamplePolygon(final int maxNumPoints) {
 
                 // collect all possible points
-                List<int[]> allPoints = new java.util.Vector<int[]>();
+                final List<int[]> allPoints = new java.util.Vector<int[]>();
                 for (int i = 1; i < npoints; i++) {
-                        int[] p1 = getPointAt(i - 1);
-                        int[] p2 = getPointAt(i);
-                        int[][] tmp = BresenhamAlgorithm.rasterizeLine(p1, p2);
-                        for (int[] p : tmp) {
+                        final int[] p1 = getPointAt(i - 1);
+                        final int[] p2 = getPointAt(i);
+                        final int[][] tmp = BresenhamAlgorithm.rasterizeLine(p1, p2);
+                        for (final int[] p : tmp) {
                                 allPoints.add(p);
                         }
                 }
 
-                int[] p1 = getPointAt(length() - 1);
-                int[] p2 = getPointAt(0);
-                int[][] tmp = BresenhamAlgorithm.rasterizeLine(p1, p2);
-                for (int[] p : tmp) {
+                final int[] p1 = getPointAt(length() - 1);
+                final int[] p2 = getPointAt(0);
+                final int[][] tmp = BresenhamAlgorithm.rasterizeLine(p1, p2);
+                for (final int[] p : tmp) {
                         allPoints.add(p);
                 }
 
-                double stepsize = (Math.max(1.0, (double) allPoints.size()
+                final double stepsize = (Math.max(1.0, (double) allPoints.size()
                                 / (double) (maxNumPoints + 1)));
-                ExtendedPolygon res = new ExtendedPolygon();
+                final ExtendedPolygon res = new ExtendedPolygon();
 
                 for (double i = 0; i < allPoints.size() - 2 * stepsize; i += stepsize) {
-                        int[] p = allPoints.get((int) Math.round(i));
+                        final int[] p = allPoints.get((int) Math.round(i));
                         res.addPoint(p[0], p[1]);
                 }
 
@@ -243,23 +243,23 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
          * Calculate the overlap of two signatures. 0 - no overlap, 1- identical
          */
         public double overlap(final ExtendedPolygon p2) {
-                Rectangle r1 = getBounds();
-                Rectangle r2 = p2.getBounds();
+                final Rectangle r1 = getBounds();
+                final Rectangle r2 = p2.getBounds();
 
                 if (r1.intersects(r2)) {
 
                         int overlapPix = 0;
                         int mask1Pix = 0;
                         int mask2Pix = 0;
-                        Img<BitType> mask1 = createBitmask();
-                        Img<BitType> mask2 = p2.createBitmask();
+                        final Img<BitType> mask1 = createBitmask();
+                        final Img<BitType> mask2 = p2.createBitmask();
 
-                        Cursor<BitType> mask1Cur = mask1.localizingCursor();
-                        RandomAccess<BitType> mask2RA = Views.extendValue(
+                        final Cursor<BitType> mask1Cur = mask1.localizingCursor();
+                        final RandomAccess<BitType> mask2RA = Views.extendValue(
                                         mask2, new BitType(false))
                                         .randomAccess();
 
-                        int[] pos = new int[2];
+                        final int[] pos = new int[2];
                         while (mask1Cur.hasNext()) {
                                 mask1Cur.fwd();
                                 if (mask1Cur.get().get()) {
@@ -277,7 +277,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
                                 }
                         }
 
-                        Cursor<BitType> c = mask2.cursor();
+                        final Cursor<BitType> c = mask2.cursor();
                         while (c.hasNext()) {
                                 c.fwd();
                                 if (c.get().get()) {
@@ -332,8 +332,9 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
                 @Override
                 public int[] next() {
-                        if (!hasNext())
+                        if (!hasNext()) {
                                 throw new NoSuchElementException();
+                        }
                         i++;
                         return new int[] { xpoints[i], ypoints[i] };
                 }
@@ -346,29 +347,29 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
          *
          * @param srcImg
          */
-        public <T extends RealType<T>> void showDebugImage(Img<T> srcImg) {
+        public <T extends RealType<T>> void showDebugImage(final Img<T> srcImg) {
 
-                Img<ByteType> res = new ArrayImgFactory<ByteType>().create(
+                final Img<ByteType> res = new ArrayImgFactory<ByteType>().create(
                                 srcImg, new ByteType());
 
-                RandomAccess<ByteType> resRA = res.randomAccess();
+                final RandomAccess<ByteType> resRA = res.randomAccess();
 
-                RandomAccess<T> srcCur = srcImg.randomAccess();
+                final RandomAccess<T> srcCur = srcImg.randomAccess();
 
-                int samplePoints = 100;
-                int radius = 20;
-                Img<T> cImg = srcImg.factory().create(
+                final int samplePoints = 100;
+                final int radius = 20;
+                final Img<T> cImg = srcImg.factory().create(
                                 new int[] { radius * 2, samplePoints },
                                 srcImg.firstElement().createVariable());
-                RandomAccess<T> cImgRA = cImg.randomAccess();
+                final RandomAccess<T> cImgRA = cImg.randomAccess();
 
                 int[][] line;
-                ExtendedPolygon tmp = resamplePolygon(samplePoints);
+                final ExtendedPolygon tmp = resamplePolygon(samplePoints);
                 for (int i = 0; i < tmp.length(); i++) {
                         line = PolygonTools.getLineAt(tmp.getPointAt(i),
                                         tmp.getNormalVecAtPoint(i), radius);
                         int j = 0;
-                        for (int[] p : line) {
+                        for (final int[] p : line) {
                                 resRA.setPosition(p[0], 0);
                                 resRA.setPosition(p[1], 1);
                                 resRA.get().set((byte) 50);
@@ -397,13 +398,13 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         /**
          * @return
          */
-        public void getCenterOfGravityAndUpdate(int[] currentPos) {
+        public void getCenterOfGravityAndUpdate(final int[] currentPos) {
 
                 int x = 0;
                 int y = 0;
 
                 double total = 0;
-                for (int[] p : this) {
+                for (final int[] p : this) {
                         x += p[0];
                         y += p[1];
 

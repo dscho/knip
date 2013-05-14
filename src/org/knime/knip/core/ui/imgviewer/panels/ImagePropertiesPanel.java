@@ -102,7 +102,7 @@ public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<
          * @param name
          */
         @EventListener
-        public void onImgUpdated(IntervalWithMetadataChgEvent<T> e) {
+        public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
                 final String[][] properties = new String[2 + e.getRandomAccessibleInterval()
                                 .numDimensions()][2];
                 properties[0][0] = "Type";
@@ -175,19 +175,19 @@ public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 eventService.subscribe(this);
 
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // Nothing to do here
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 // Nothing to do here
         }
@@ -198,7 +198,7 @@ public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 

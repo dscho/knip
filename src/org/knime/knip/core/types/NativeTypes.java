@@ -122,7 +122,7 @@ public enum NativeTypes {
                 return NativeTypes.getTypeInstance(this);
         }
 
-        private NativeTypes(boolean isSigned) {
+        private NativeTypes(final boolean isSigned) {
                 m_isSigned = isSigned;
         }
 
@@ -155,7 +155,7 @@ public enum NativeTypes {
                 }
         }
 
-        public static final NativeTypes getPixelType(Object val) {
+        public static final NativeTypes getPixelType(final Object val) {
                 if (val instanceof BitType) {
                         return BITTYPE;
                 } else if (val instanceof ByteType) {
@@ -178,8 +178,9 @@ public enum NativeTypes {
                         return UNSIGNEDSHORTTYPE;
                 } else if (val instanceof Unsigned12BitType) {
                         return NativeTypes.UNSIGNED12BITTYPE;
-                } else
+                } else {
                         return null;
+                }
         }
 
         public boolean isSigned() {

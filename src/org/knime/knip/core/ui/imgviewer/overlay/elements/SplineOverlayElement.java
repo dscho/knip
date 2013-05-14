@@ -24,14 +24,14 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
                 m_tmpPoly = new Polygon();
         }
 
-        public SplineOverlayElement(long[] planePos, int[] orientation,
+        public SplineOverlayElement(final long[] planePos, final int[] orientation,
                         final String... overlayLabels) {
                 super(planePos, orientation, overlayLabels);
                 m_tmpPoly = new Polygon();
         }
 
         @Override
-        public boolean add(long x, long y) {
+        public boolean add(final long x, final long y) {
                 if (m_isClosed) {
                         return false;
                 } else {
@@ -82,7 +82,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
                         int idx = 1;
                         for (int i = 0; i < X.length; i++) {
                                 for (int j = 1; j <= SPLINE_STEPS; j++) {
-                                        float u = j / (float) SPLINE_STEPS;
+                                        final float u = j / (float) SPLINE_STEPS;
                                         m_poly.addPoint(Math
                                                         .round(X[i].eval(u)),
                                                         Math.round(Y[i].eval(u)));
@@ -99,9 +99,10 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void translate(int selectedIndex, long x, long y) {
-                if (selectedIndex < 0)
+        public void translate(final int selectedIndex, final long x, final long y) {
+                if (selectedIndex < 0) {
                         return;
+                }
 
                 m_tmpPoly.xpoints[selectedIndex] += x;
                 m_tmpPoly.ypoints[selectedIndex] += y;
@@ -112,7 +113,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void translate(long x, long y) {
+        public void translate(final long x, final long y) {
 
                 for (int i = 0; i < m_tmpPoly.npoints; i++) {
                         m_tmpPoly.xpoints[i] += x;
@@ -124,7 +125,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        protected void renderPointInterior(Graphics2D g) {
+        protected void renderPointInterior(final Graphics2D g) {
                 for (int i = 0; i < m_tmpPoly.npoints; i++) {
                         g.fillOval(m_tmpPoly.xpoints[i] - DRAWING_RADIUS,
                                         m_tmpPoly.ypoints[i] - DRAWING_RADIUS,
@@ -134,7 +135,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        protected void renderPointOutline(Graphics2D g) {
+        protected void renderPointOutline(final Graphics2D g) {
                 for (int i = 0; i < m_tmpPoly.npoints; i++) {
                         g.drawOval(m_tmpPoly.xpoints[i] - DRAWING_RADIUS,
                                         m_tmpPoly.ypoints[i] - DRAWING_RADIUS,
@@ -143,7 +144,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 super.readExternal(in);
                 m_tmpPoly = (Polygon) in.readObject();
@@ -151,7 +152,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 super.writeExternal(out);
 
                 out.writeObject(m_tmpPoly);
@@ -172,9 +173,9 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
          */
 
         private Cubic[] calcNaturalCubic(final int n, final int[] x) {
-                float[] gamma = new float[n + 1];
-                float[] delta = new float[n + 1];
-                float[] D = new float[n + 1];
+                final float[] gamma = new float[n + 1];
+                final float[] delta = new float[n + 1];
+                final float[] D = new float[n + 1];
                 int i;
                 /*
                  * We solve the equation [2 1 ] [D[0]] [3(x[1] - x[0]) ] |1 4 1
@@ -206,7 +207,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
                 }
 
                 /* now compute the coefficients of the cubics */
-                Cubic[] C = new Cubic[n];
+                final Cubic[] C = new Cubic[n];
                 for (i = 0; i < n; i++) {
                         C[i] = new Cubic(x[i], D[i], 3 * (x[i + 1] - x[i]) - 2
                                         * D[i] - D[i + 1], 2
@@ -225,10 +226,10 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
          */
 
         private Cubic[] calcClosedNaturalCubic(final int n, final int[] x) {
-                float[] w = new float[n + 1];
-                float[] v = new float[n + 1];
-                float[] y = new float[n + 1];
-                float[] D = new float[n + 1];
+                final float[] w = new float[n + 1];
+                final float[] v = new float[n + 1];
+                final float[] y = new float[n + 1];
+                final float[] D = new float[n + 1];
                 float z, F, G, H;
                 int k;
                 /*
@@ -269,7 +270,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
                 }
 
                 /* now compute the coefficients of the cubics */
-                Cubic[] C = new Cubic[n + 1];
+                final Cubic[] C = new Cubic[n + 1];
                 for (k = 0; k < n; k++) {
                         C[k] = new Cubic(x[k], D[k], 3 * (x[k + 1] - x[k]) - 2
                                         * D[k] - D[k + 1], 2
@@ -308,7 +309,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public boolean containsPoint(long x, long y) {
+        public boolean containsPoint(final long x, final long y) {
                 return m_poly.contains(x, y);
         }
 

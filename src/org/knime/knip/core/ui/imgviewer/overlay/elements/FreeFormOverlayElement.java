@@ -71,41 +71,42 @@ public class FreeFormOverlayElement<L extends Comparable<L>> extends
         /**
 	 * 
 	 */
-        public FreeFormOverlayElement(long[] pos, int[] orientation,
-                        boolean renderInterior, String... labels) {
+        public FreeFormOverlayElement(final long[] pos, final int[] orientation,
+                        final boolean renderInterior, final String... labels) {
                 super(pos, orientation, labels);
                 m_renderInterior = renderInterior;
         }
 
         @Override
-        public void renderInterior(Graphics2D g) {
-                if (m_renderInterior)
+        public void renderInterior(final Graphics2D g) {
+                if (m_renderInterior) {
                         super.renderInterior(g);
+                }
         }
 
         @Override
-        public void translate(int m_selectedIndex, long x, long y) {
+        public void translate(final int m_selectedIndex, final long x, final long y) {
                 //
         }
 
         @Override
-        protected void renderPointInterior(Graphics2D g) {
+        protected void renderPointInterior(final Graphics2D g) {
                 // no points are rendered
         }
 
         @Override
-        protected void renderPointOutline(Graphics2D g) {
+        protected void renderPointOutline(final Graphics2D g) {
                 // Nothing to do here
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 super.writeExternal(out);
                 out.writeBoolean(m_renderInterior);
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 super.readExternal(in);
 
@@ -113,15 +114,17 @@ public class FreeFormOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public boolean containsPoint(long x, long y) {
+        public boolean containsPoint(final long x, final long y) {
 
                 if (m_renderInterior) {
                         return super.containsPoint(x, y);
                 } else {
-                        for (int n = 0; n < m_poly.xpoints.length; n++)
+                        for (int n = 0; n < m_poly.xpoints.length; n++) {
                                 if (x == m_poly.xpoints[n]
-                                                && y == m_poly.ypoints[n])
+                                                && y == m_poly.ypoints[n]) {
                                         return true;
+                                }
+                        }
                 }
 
                 return false;

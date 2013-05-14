@@ -66,8 +66,8 @@ public class AnnotatorImgAndOverlayChgEvent<T extends Type<T>> implements
         private final Overlay m_overlay;
 
         public AnnotatorImgAndOverlayChgEvent(
-                        RandomAccessibleInterval<T> randInterval,
-                        Overlay overlay) {
+                        final RandomAccessibleInterval<T> randInterval,
+                        final Overlay overlay) {
                 m_randomAccessibleInterval = randInterval;
                 m_overlay = overlay;
 
@@ -96,7 +96,7 @@ public class AnnotatorImgAndOverlayChgEvent<T extends Type<T>> implements
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

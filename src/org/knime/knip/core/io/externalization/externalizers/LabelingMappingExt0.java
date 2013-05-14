@@ -95,17 +95,17 @@ public class LabelingMappingExt0 implements Externalizer<LabelingMapping> {
          * {@inheritDoc}
          */
         @Override
-        public LabelingMapping read(BufferedDataInputStream in)
+        public LabelingMapping read(final BufferedDataInputStream in)
                         throws Exception {
 
-                int numLabelComb = in.readInt();
+                final int numLabelComb = in.readInt();
 
-                LabelingMapping map = new LabelingMapping(new IntType());
+                final LabelingMapping map = new LabelingMapping(new IntType());
 
                 for (int i = 0; i < numLabelComb; i++) {
-                        int size = in.readInt();
+                        final int size = in.readInt();
                         if (size != 0) {
-                                List list = new ArrayList(size);
+                                final List list = new ArrayList(size);
                                 for (int j = 0; j < size; j++) {
                                         list.add(ExternalizerManager.read(in));
                                 }
@@ -120,15 +120,15 @@ public class LabelingMappingExt0 implements Externalizer<LabelingMapping> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, LabelingMapping obj)
+        public void write(final BufferedDataOutputStream out, final LabelingMapping obj)
                         throws Exception {
 
                 out.writeInt(obj.numLists());
 
                 for (int i = 0; i < obj.numLists(); i++) {
-                        List list = obj.listAtIndex(i);
+                        final List list = obj.listAtIndex(i);
                         out.writeInt(list.size());
-                        for (Object type : list) {
+                        for (final Object type : list) {
                                 ExternalizerManager.write(out, type);
                         }
                 }

@@ -131,7 +131,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
         /**
          * @param nodeModel
          */
-        public ImgViewer(EventService eventService) {
+        public ImgViewer(final EventService eventService) {
 
                 m_eventService = eventService;
                 m_viewerComponents = new ArrayList<ViewerComponent>();
@@ -169,7 +169,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
          * Adds the panel
          */
         @Override
-        public void addViewerComponent(ViewerComponent panel) {
+        public void addViewerComponent(final ViewerComponent panel) {
                 addViewerComponent(panel, true);
 
         }
@@ -186,8 +186,8 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
          *                {@link ViewerComponent}
          *
          */
-        public void addViewerComponent(ViewerComponent panel,
-                        boolean setEventService) {
+        public void addViewerComponent(final ViewerComponent panel,
+                        final boolean setEventService) {
 
                 if (setEventService) {
                         panel.setEventService(m_eventService);
@@ -238,8 +238,8 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
          *                {@link ImageMetadata} might be null if no metadata
          *                exists
          */
-        public void setImg(I img, CalibratedSpace axes, Named name,
-                        Sourced source, ImageMetadata imageMetaData) {
+        public void setImg(final I img, final CalibratedSpace axes, final Named name,
+                        final Sourced source, final ImageMetadata imageMetaData) {
 
                 // make sure that at least two dimensions exist
                 CalibratedSpace axes2d;
@@ -254,10 +254,10 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
                                                         2));
                 }
 
-                IterableInterval<T> iterable = Views.iterable(img2d);
+                final IterableInterval<T> iterable = Views.iterable(img2d);
 
                 if (iterable.firstElement() instanceof DoubleType) {
-                        Convert<DoubleType, FloatType> convertOp = new Convert<DoubleType, FloatType>(
+                        final Convert<DoubleType, FloatType> convertOp = new Convert<DoubleType, FloatType>(
                                         new DoubleType(), new FloatType(),
                                         TypeConversionTypes.DIRECT);
 
@@ -305,15 +305,15 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
         public String getComponentConfiguration() throws IOException {
                 String res = "";
                 try {
-                        ByteArrayOutputStream totalBytes = new ByteArrayOutputStream();
-                        ObjectOutputStream totalOut = new ObjectOutputStream(
+                        final ByteArrayOutputStream totalBytes = new ByteArrayOutputStream();
+                        final ObjectOutputStream totalOut = new ObjectOutputStream(
                                         totalBytes);
 
                         totalOut.writeInt(m_viewerComponents.size());
 
                         ByteArrayOutputStream componentBytes;
                         ObjectOutput componentOutput;
-                        for (ViewerComponent c : m_viewerComponents) {
+                        for (final ViewerComponent c : m_viewerComponents) {
 
                                 componentBytes = new ByteArrayOutputStream();
                                 componentOutput = new ObjectOutputStream(
@@ -331,7 +331,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
                         res = new String(Base64.encodeBase64(totalBytes
                                         .toByteArray()));
 
-                } catch (IOException e) {
+                } catch (final IOException e) {
                         e.printStackTrace();
                 }
 
@@ -348,27 +348,27 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
          * @throws IOException
          * @throws ClassNotFoundException
          */
-        public void setComponentConfiguration(String base64coded)
+        public void setComponentConfiguration(final String base64coded)
                         throws IOException, ClassNotFoundException {
-                Map<String, ObjectInput> configMap = new HashMap<String, ObjectInput>();
+                final Map<String, ObjectInput> configMap = new HashMap<String, ObjectInput>();
 
                 if (base64coded.equals("")) {
                         return;
                 }
 
                 try {
-                        byte[] bytes = Base64.decodeBase64(base64coded
+                        final byte[] bytes = Base64.decodeBase64(base64coded
                                         .getBytes());
-                        ObjectInputStream totalIn = new ObjectInputStream(
+                        final ObjectInputStream totalIn = new ObjectInputStream(
                                         new ByteArrayInputStream(bytes));
 
-                        int num = totalIn.readInt();
+                        final int num = totalIn.readInt();
 
                         String title = null;
                         byte[] buf;
                         for (int i = 0; i < num; i++) {
                                 title = totalIn.readUTF();
-                                int len = totalIn.readInt();
+                                final int len = totalIn.readInt();
                                 buf = new byte[len];
 
                                 for (int b = 0; b < len; b++) {
@@ -379,14 +379,14 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
                         }
 
                         totalIn.close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                         LoggerFactory.getLogger(ImgViewer.class).error("error",
                                         e);
                         return;
                 }
 
-                for (ViewerComponent c : m_viewerComponents) {
-                        ObjectInput oi = configMap.get(c.getClass()
+                for (final ViewerComponent c : m_viewerComponents) {
+                        final ObjectInput oi = configMap.get(c.getClass()
                                         .getSimpleName());
                         if (oi != null) {
                                 c.loadComponentConfiguration(oi);
@@ -395,13 +395,13 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
         }
 
         public void reset() {
-                for (ViewerComponent c : m_viewerComponents) {
+                for (final ViewerComponent c : m_viewerComponents) {
                         c.reset();
                 }
         }
 
-        public void setParent(Component parent) {
-                for (ViewerComponent c : m_viewerComponents) {
+        public void setParent(final Component parent) {
+                for (final ViewerComponent c : m_viewerComponents) {
                         c.setParent(parent);
                 }
         }

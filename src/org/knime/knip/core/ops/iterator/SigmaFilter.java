@@ -16,14 +16,14 @@ import net.imglib2.type.numeric.RealType;
 public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE extends Iterator<T>>
 		implements BinaryOperation<TYPE, T, V> {
 
-	private double sigma;
-	private double sigmaFactor;
-	private double m_sigmaMultiplied;
-	private double pixelFraction;
-	private boolean outlierDetection;
+	private final double sigma;
+	private final double sigmaFactor;
+	private final double m_sigmaMultiplied;
+	private final double pixelFraction;
+	private final boolean outlierDetection;
 
-	public SigmaFilter(double sigma, double sigmaFactor, double pixelFraction,
-			boolean outlierDetection) {
+	public SigmaFilter(final double sigma, final double sigmaFactor, final double pixelFraction,
+			final boolean outlierDetection) {
 		this.sigma = sigma;
 		this.sigmaFactor = sigmaFactor;
 		m_sigmaMultiplied = sigmaFactor * sigma;
@@ -34,16 +34,16 @@ public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE exte
 	// Input nicht veraendern
 	// Output alles reinschreiben
 	@Override
-	public V compute(TYPE input, T val, V output) {
+	public V compute(final TYPE input, final T val, final V output) {
 
-		double center = val.getRealDouble();
+		final double center = val.getRealDouble();
 		double sumAll = 0;
 		int ctrAll = 0;
 		double sumInRange = 0;
 		int ctrInRange = 0;
 
 		while (input.hasNext()) {
-			double pixel = input.next().getRealDouble();
+			final double pixel = input.next().getRealDouble();
 			sumAll += pixel;
 			if ((center - m_sigmaMultiplied) < pixel
 					&& pixel < (center + m_sigmaMultiplied)) {
@@ -53,7 +53,7 @@ public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE exte
 			ctrAll++;
 		}
 
-		int minPixels = (int) Math.floor(ctrAll * pixelFraction);
+		final int minPixels = (int) Math.floor(ctrAll * pixelFraction);
 
 		if (ctrInRange >= minPixels) {
 			output.setReal(sumInRange / ctrInRange);

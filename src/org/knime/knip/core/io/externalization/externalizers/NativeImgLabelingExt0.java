@@ -94,13 +94,13 @@ public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
          * {@inheritDoc}
          */
         @Override
-        public NativeImgLabeling read(BufferedDataInputStream in)
+        public NativeImgLabeling read(final BufferedDataInputStream in)
                         throws Exception {
                 // Create Labeling
-                Img img = ExternalizerManager.<Img> read(in);
-                LabelingMapping mapping = ExternalizerManager
+                final Img img = ExternalizerManager.<Img> read(in);
+                final LabelingMapping mapping = ExternalizerManager
                                 .<LabelingMapping> read(in);
-                NativeImgLabeling<? extends Comparable<?>, ? extends IntegerType<?>> res = new ExtNativeImgLabeling(
+                final NativeImgLabeling<? extends Comparable<?>, ? extends IntegerType<?>> res = new ExtNativeImgLabeling(
                                 img, mapping);
                 return res;
         }
@@ -109,7 +109,7 @@ public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, NativeImgLabeling obj)
+        public void write(final BufferedDataOutputStream out, final NativeImgLabeling obj)
                         throws Exception {
 
                 // write the backed image
@@ -125,7 +125,7 @@ public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
                 /**
                  * @param img
                  */
-                public ExtNativeImgLabeling(Img<I> img, LabelingMapping mapping) {
+                public ExtNativeImgLabeling(final Img<I> img, final LabelingMapping mapping) {
                         super(img);
                         super.mapping = mapping;
                 }

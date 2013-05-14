@@ -14,17 +14,17 @@ public class AnnotatorSplineTool extends
         }
 
         @Override
-        public void fireFocusLost(Overlay<String> overlay) {
+        public void fireFocusLost(final Overlay<String> overlay) {
                 if (setCurrentOverlayElement(null, null)) {
                         fireStateChanged();
                 }
         }
 
         @Override
-        public void onMouseDoubleClickLeft(ImgViewerMouseEvent e,
-                        SplineOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClickLeft(final ImgViewerMouseEvent e,
+                        final SplineOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
                 currentOverlayElement.close();
                 currentOverlayElement.setStatus(OverlayElementStatus.ACTIVE);
@@ -34,10 +34,10 @@ public class AnnotatorSplineTool extends
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onMousePressedLeft(ImgViewerMouseEvent e,
+        public void onMousePressedLeft(final ImgViewerMouseEvent e,
                         SplineOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 if (currentOverlayElement == null
                                 || (currentOverlayElement.getStatus() != OverlayElementStatus.DRAWING)) {
                         currentOverlayElement = new SplineOverlayElement<String>(
@@ -54,18 +54,18 @@ public class AnnotatorSplineTool extends
         }
 
         @Override
-        public void onMouseReleasedLeft(ImgViewerMouseEvent e,
-                        SplineOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseReleasedLeft(final ImgViewerMouseEvent e,
+                        final SplineOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 
         @Override
-        public void onMouseDraggedLeft(ImgViewerMouseEvent e,
-                        SplineOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDraggedLeft(final ImgViewerMouseEvent e,
+                        final SplineOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 

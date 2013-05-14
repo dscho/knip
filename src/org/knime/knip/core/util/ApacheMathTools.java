@@ -31,16 +31,16 @@ public final class ApacheMathTools {
          * @return
          */
         public static <R extends RealType<R>> Img<R> vectorToImage(
-                        final RealVector ar, final R type, int numDims,
-                        ImgFactory<R> fac) {
-                long[] dims = new long[numDims];
+                        final RealVector ar, final R type, final int numDims,
+                        final ImgFactory<R> fac) {
+                final long[] dims = new long[numDims];
 
                 for (int i = 0; i < dims.length - 1; i++) {
                         dims[i] = 1;
                 }
                 dims[dims.length - 1] = ar.getDimension();
-                Img<R> res = fac.create(dims, type);
-                Cursor<R> c = res.cursor();
+                final Img<R> res = fac.create(dims, type);
+                final Cursor<R> c = res.cursor();
                 while (c.hasNext()) {
                         c.fwd();
                         c.get().setReal(ar.getEntry(c
@@ -61,9 +61,9 @@ public final class ApacheMathTools {
                         final Img<R> img) {
 
                 assert img.numDimensions() == 2;
-                RealMatrix ret = new BlockRealMatrix((int) img.dimension(0),
+                final RealMatrix ret = new BlockRealMatrix((int) img.dimension(0),
                                 (int) img.dimension(1));
-                Cursor<R> c = img.cursor();
+                final Cursor<R> c = img.cursor();
                 while (c.hasNext()) {
                         c.fwd();
                         ret.setEntry(c.getIntPosition(0), c.getIntPosition(1),

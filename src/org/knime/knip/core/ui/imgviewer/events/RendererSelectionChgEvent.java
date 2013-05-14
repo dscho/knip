@@ -61,7 +61,7 @@ public class RendererSelectionChgEvent implements KNIPEvent {
 
         private final ImageRenderer m_renderer;
 
-        public RendererSelectionChgEvent(ImageRenderer renderer) {
+        public RendererSelectionChgEvent(final ImageRenderer renderer) {
                 m_renderer = renderer;
 
         }
@@ -75,7 +75,7 @@ public class RendererSelectionChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

@@ -66,8 +66,9 @@ public class Vector extends Point implements Cloneable {
         public long length() {
                 long l = 0;
                 // TODO overflows???
-                for (int i = 0; i < numDimensions(); i++)
+                for (int i = 0; i < numDimensions(); i++) {
                         l += getLongPosition(i) * getLongPosition(i);
+                }
                 return (long) Math.sqrt(l);
         }
 
@@ -96,18 +97,20 @@ public class Vector extends Point implements Cloneable {
          * @return the resulting point
          */
         public Vector add(final Vector p) {
-                Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final Vector res = new Vector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getLongPosition(i)
                                         + p.getLongPosition(i), i);
+                }
                 return res;
         }
 
         public Vector subtract(final Vector p) {
-                Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final Vector res = new Vector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getLongPosition(i)
                                         - p.getLongPosition(i), i);
+                }
                 return res;
         }
 
@@ -118,16 +121,18 @@ public class Vector extends Point implements Cloneable {
          * @return the resulting point
          */
         public Vector mapMultiply(final long scalar) {
-                Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final Vector res = new Vector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getLongPosition(i) * scalar, i);
+                }
                 return res;
         }
 
         public Vector mapMultiply(final int scalar) {
-                Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final Vector res = new Vector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getLongPosition(i) * scalar, i);
+                }
                 return res;
         }
 
@@ -157,15 +162,18 @@ public class Vector extends Point implements Cloneable {
          * {@inheritDoc}
          */
         @Override
-        public boolean equals(Object obj) {
-                if (!(obj instanceof Vector))
+        public boolean equals(final Object obj) {
+                if (!(obj instanceof Vector)) {
                         return false;
-                Vector other = (Vector) obj;
-                if (numDimensions() != other.numDimensions())
+                }
+                final Vector other = (Vector) obj;
+                if (numDimensions() != other.numDimensions()) {
                         return false;
+                }
                 for (int i = 0; i < numDimensions(); i++) {
-                        if (getLongPosition(i) != other.getLongPosition(i))
+                        if (getLongPosition(i) != other.getLongPosition(i)) {
                                 return false;
+                        }
                 }
                 return true;
         }

@@ -34,8 +34,8 @@ public class LabelOptionPanel extends ViewerComponent {
 
         private class OKAdapter implements ActionListener {
                 @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        Color newColor = LabelOptionPanel.this.m_colorChooser
+                public void actionPerformed(final java.awt.event.ActionEvent evt) {
+                        final Color newColor = LabelOptionPanel.this.m_colorChooser
                                         .getColor();
                         SegmentColorTable.setBoundingBoxColor(newColor);
 
@@ -62,7 +62,7 @@ public class LabelOptionPanel extends ViewerComponent {
 
         private final OKAdapter m_adapter;
 
-        public LabelOptionPanel(boolean isBorderHidden) {
+        public LabelOptionPanel(final boolean isBorderHidden) {
                 super("Color Options", isBorderHidden);
                 this.m_adapter = new OKAdapter();
 
@@ -90,8 +90,8 @@ public class LabelOptionPanel extends ViewerComponent {
                                 .addActionListener(new java.awt.event.ActionListener() {
                                         @Override
                                         public void actionPerformed(
-                                                        java.awt.event.ActionEvent evt) {
-                                                if (m_colorDialog == null)
+                                                        final java.awt.event.ActionEvent evt) {
+                                                if (m_colorDialog == null) {
                                                         m_colorDialog = JColorChooser
                                                                         .createDialog(LabelOptionPanel.this,
                                                                                         "Choose Bounding Box Color",
@@ -99,6 +99,7 @@ public class LabelOptionPanel extends ViewerComponent {
                                                                                         m_colorChooser,
                                                                                         m_adapter,
                                                                                         null);
+                                                }
                                                 m_colorDialog.setVisible(true);
                                         }
                                 });
@@ -106,7 +107,7 @@ public class LabelOptionPanel extends ViewerComponent {
                 m_resetColor.addActionListener(new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(
-                                        java.awt.event.ActionEvent evt) {
+                                        final java.awt.event.ActionEvent evt) {
                                 SegmentColorTable.resetColorMap();
                                 m_eventService.publish(new LabelColoringChangeEvent(
                                                 SegmentColorTable
@@ -121,7 +122,7 @@ public class LabelOptionPanel extends ViewerComponent {
                 m_renderLabelString.addActionListener(new ActionListener() {
 
                         @Override
-                        public void actionPerformed(ActionEvent e) {
+                        public void actionPerformed(final ActionEvent e) {
                                 m_eventService.publish(new LabelOptionsChangeEvent(
                                                 m_renderLabelString
                                                                 .isSelected()));
@@ -133,10 +134,10 @@ public class LabelOptionPanel extends ViewerComponent {
         }
 
         private JPanel createComponentPanel() {
-                JPanel ret = new JPanel();
+                final JPanel ret = new JPanel();
                 ret.setLayout(new GridBagLayout());
 
-                GridBagConstraints gc = new GridBagConstraints();
+                final GridBagConstraints gc = new GridBagConstraints();
                 int x = 0;
                 int y = 0;
 
@@ -196,20 +197,20 @@ public class LabelOptionPanel extends ViewerComponent {
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // color codings cannot be saved
 
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 // color codings cannot be saved
         }
@@ -223,12 +224,12 @@ public class LabelOptionPanel extends ViewerComponent {
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 
         @EventListener
-        public void onClose(ViewClosedEvent e) {
+        public void onClose(final ViewClosedEvent e) {
                 if (m_colorDialog != null) {
                         m_colorDialog.dispose();
                         m_colorDialog = null;

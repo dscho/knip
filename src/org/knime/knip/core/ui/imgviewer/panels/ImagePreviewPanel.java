@@ -50,6 +50,7 @@
  */
 package org.knime.knip.core.ui.imgviewer.panels;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -116,7 +117,7 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
                 setFont(new Font(getFont().getName(), Font.PLAIN, 20));
 
                 m_iconLabel = new JLabel();
-                m_iconLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+                m_iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 image.add("Image", m_iconLabel);
                 m_metadata = new String[][] { { "", "" } };
@@ -175,7 +176,7 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
                         return;
                 }
                 m_openedFile = filename;
-                Thread loader = new Thread(this);
+                final Thread loader = new Thread(this);
                 loader.start();
 
         }
@@ -189,14 +190,14 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
                         try {
 
                                 m_reader.setId(m_openedFile);
-                                ImageIcon ico = new ImageIcon();
+                                final ImageIcon ico = new ImageIcon();
 
                                 // get image Size
-                                int x = m_reader.getSizeX();
-                                int y = m_reader.getSizeY();
+                                final int x = m_reader.getSizeX();
+                                final int y = m_reader.getSizeY();
                                 // Calculate the Size of the Preview
-                                int scx = (int) (x * (290.0 / new Double(x)));
-                                int scy = (int) (y * (240 / new Double(y)));
+                                final int scx = (int) (x * (290.0 / new Double(x)));
+                                final int scy = (int) (y * (240 / new Double(y)));
                                 // Workaround for bigger ImageIcon
                                 ico.setImage(m_reader
                                                 .openThumbImage(0)
@@ -206,7 +207,7 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
 
                                 m_iconLabel.setIcon(ico);
                                 m_metadata = new String[][] { { "", "" } };
-                                Hashtable<String, Object> gm = m_reader
+                                final Hashtable<String, Object> gm = m_reader
                                                 .getGlobalMetadata();
                                 m_metadata = new String[CORE_METADATA.length
                                                 + gm.size()][2];
@@ -229,15 +230,15 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
                                 m_metadata[9][1] = ""
                                                 + m_reader.isInterleaved();
 
-                                Set<String> keys = gm.keySet();
+                                final Set<String> keys = gm.keySet();
                                 int i = 0;
-                                for (Object o : keys) {
+                                for (final Object o : keys) {
                                         m_metadata[CORE_METADATA.length + (i++)
                                                         - 1][0] = o.toString();
                                 }
-                                Collection<Object> values = gm.values();
+                                final Collection<Object> values = gm.values();
                                 i = 0;
-                                for (Object o : values) {
+                                for (final Object o : values) {
                                         m_metadata[CORE_METADATA.length + (i++)
                                                         - 1][1] = o.toString();
                                 }
@@ -245,17 +246,17 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
                                 m_metadataTable.tableChanged(new TableModelEvent(
                                                 m_metadataTable.getModel()));
 
-                        } catch (FormatException e) {
+                        } catch (final FormatException e) {
                                 m_iconLabel.setIcon(new ImageIcon(
                                                 makeImage("unsupported format")));
 
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                                 m_iconLabel.setIcon(new ImageIcon(
                                                 makeImage("failed")));
                                 m_metadata = null;
                         }
 
-                } catch (Exception exc) {
+                } catch (final Exception exc) {
                         m_iconLabel.setIcon(new ImageIcon(makeImage("error")));
                 }
 
@@ -268,14 +269,16 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
          */
         private BufferedImage makeImage(final String message) {
                 int w = getSize().width, h = getSize().height;
-                if (w < 128)
+                if (w < 128) {
                         w = 128;
-                if (h < 32)
+                }
+                if (h < 32) {
                         h = 32;
-                BufferedImage image = new BufferedImage(w, h,
+                }
+                final BufferedImage image = new BufferedImage(w, h,
                                 BufferedImage.TYPE_INT_RGB);
-                Graphics2D g = image.createGraphics();
-                Rectangle2D.Float r = (Rectangle2D.Float) g.getFont()
+                final Graphics2D g = image.createGraphics();
+                final Rectangle2D.Float r = (Rectangle2D.Float) g.getFont()
                                 .getStringBounds(message,
                                                 g.getFontRenderContext());
                 g.drawString(message, (w - r.width) / 2, (h - r.height) / 2

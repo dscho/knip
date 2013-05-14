@@ -21,18 +21,18 @@ public class MAD<T extends RealType<T>, V extends RealType<V>> implements
                 UnaryOperation<IterableInterval<T>, V> {
 
         @Override
-        public V compute(IterableInterval<T> input, V output) {
+        public V compute(final IterableInterval<T> input, V output) {
                 // median
-                double median = new MedianOp<T, DoubleType>().compute(
+                final double median = new MedianOp<T, DoubleType>().compute(
                                 input.cursor(), new DoubleType())
                                 .getRealDouble();
 
                 // abs deviation from median
-                LinkedList<DoubleType> absDeviations = new LinkedList<DoubleType>();
-                Cursor<T> c = input.cursor();
+                final LinkedList<DoubleType> absDeviations = new LinkedList<DoubleType>();
+                final Cursor<T> c = input.cursor();
 
                 while (c.hasNext()) {
-                        double absDeviation = Math.abs(c.next().getRealDouble()
+                        final double absDeviation = Math.abs(c.next().getRealDouble()
                                         - median);
                         absDeviations.add(new DoubleType(absDeviation));
                 }

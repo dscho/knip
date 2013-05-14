@@ -119,10 +119,10 @@ public class ImgWriter {
 
                 if (m_mapWriters == null) {
                         loci.formats.ImageWriter writer;
-                        ClassList<IFormatWriter> defaultClasses = ImageWriter
+                        final ClassList<IFormatWriter> defaultClasses = ImageWriter
                                         .getDefaultWriterClasses();
                         writer = new loci.formats.ImageWriter(defaultClasses);
-                        IFormatWriter[] writers = writer.getWriters();
+                        final IFormatWriter[] writers = writer.getWriters();
                         WRITERS = new String[writers.length];
                         m_mapWriters = new HashMap<String, IFormatWriter>();
                         for (int i = 0; i < writers.length; i++) {
@@ -156,7 +156,7 @@ public class ImgWriter {
 
         public String[] getCompressionTypes(final String writer) {
                 retrieveSupportedWriters();
-                IFormatWriter w = m_mapWriters.get(writer);
+                final IFormatWriter w = m_mapWriters.get(writer);
                 if (w == null) {
                         return null;
                 }
@@ -181,7 +181,7 @@ public class ImgWriter {
          */
         public String getSuffix(final String writer) {
                 retrieveSupportedWriters();
-                IFormatWriter w = m_mapWriters.get(writer);
+                final IFormatWriter w = m_mapWriters.get(writer);
                 if (w == null) {
                         return null;
                 }
@@ -218,7 +218,7 @@ public class ImgWriter {
          */
         public <T extends RealType<T>> void writeImage(final Img<T> img,
                         final String outfile, final String writer,
-                        final String compressionType, int[] dimMapping)
+                        final String compressionType, final int[] dimMapping)
                         throws FormatException, IOException,
                         MissingLibraryException, ServiceException,
                         DependencyException {
@@ -258,22 +258,22 @@ public class ImgWriter {
          */
         public <T extends RealType<T>> void writeImage(final Img<T> img,
                         final String outfile, final IFormatWriter writer,
-                        final String compressionType, int[] dimMapping)
+                        final String compressionType, final int[] dimMapping)
                         throws FormatException, IOException,
                         MissingLibraryException, ServiceException,
                         DependencyException {
 
                 // create metadata object with minimum required metadata
                 // fields
-                ServiceFactory factory = new ServiceFactory();
-                OMEXMLService service = factory
+                final ServiceFactory factory = new ServiceFactory();
+                final OMEXMLService service = factory
                                 .getInstance(OMEXMLService.class);
-                IMetadata store = service.createOMEXMLMetadata();
+                final IMetadata store = service.createOMEXMLMetadata();
 
                 // retrieve the pixeltype
                 PixelType ptype = null;
                 int ftptype;
-                T val = img.firstElement().createVariable();
+                final T val = img.firstElement().createVariable();
                 if (val instanceof BitType) {
                         ptype = PixelType.INT8;
                         ftptype = FormatTools.INT8;
@@ -319,10 +319,10 @@ public class ImgWriter {
                         map = dimMapping.clone();
                 }
 
-                int numDim = img.numDimensions();
-                int sizeX = (int) img.dimension(0);
-                int sizeY = (int) img.dimension(1);
-                int sizeZ = (img.numDimensions() > map[0] && map[0] != -1) ? (int) img
+                final int numDim = img.numDimensions();
+                final int sizeX = (int) img.dimension(0);
+                final int sizeY = (int) img.dimension(1);
+                final int sizeZ = (img.numDimensions() > map[0] && map[0] != -1) ? (int) img
                                 .dimension(2 + map[0]) : 1;
                 int sizeC = img.numDimensions() > map[1] && map[1] != -1 ? (int) img
                                 .dimension(2 + map[1]) : 1;
@@ -330,7 +330,7 @@ public class ImgWriter {
                         LOGGER.warn("Image has more than 3 channels. These channels will be ignored.");
                         sizeC = 3;
                 }
-                int sizeT = img.numDimensions() > map[2] && map[2] != -1 ? (int) img
+                final int sizeT = img.numDimensions() > map[2] && map[2] != -1 ? (int) img
                                 .dimension(2 + map[2]) : 1;
 
                 MetadataTools.populateMetadata(store, 0, outfile, false,
@@ -359,7 +359,7 @@ public class ImgWriter {
                 }
 
                 if (!writer.isSupportedType(ftptype)) {
-                        int[] supportedPTypes = writer.getPixelTypes();
+                        final int[] supportedPTypes = writer.getPixelTypes();
                         String types = "";
                         for (int i = 0; i < supportedPTypes.length; i++) {
                                 types += FormatTools
@@ -374,7 +374,7 @@ public class ImgWriter {
                 }
 
                 // convert and save slices
-                boolean doStack = writer.canDoStacks();
+                final boolean doStack = writer.canDoStacks();
 
                 if (!doStack && (sizeT > 1 || sizeZ > 1)) {
                         throw new FormatException(
@@ -383,24 +383,24 @@ public class ImgWriter {
 
                 writer.setInterleaved(false);
 
-                boolean littleEndian = !writer.getMetadataRetrieve()
+                final boolean littleEndian = !writer.getMetadataRetrieve()
                                 .getPixelsBinDataBigEndian(0, 0).booleanValue();
 
-                IntervalIterator fakeCursor = new IntervalIterator(new int[] {
+                final IntervalIterator fakeCursor = new IntervalIterator(new int[] {
                                 sizeZ, sizeT });
 
                 OrthoSliceCursor<T> c;
 
-                byte[][] planes = new byte[sizeC][];
+                final byte[][] planes = new byte[sizeC][];
                 long[] pos;
-                int numSteps = sizeT * sizeZ;
+                final int numSteps = sizeT * sizeZ;
                 while (fakeCursor.hasNext()) {
                         fakeCursor.fwd();
 
                         // iterate through the channels
                         for (int i = 0; i < sizeC; i++) {
 
-                                long[] zctPos = new long[] {
+                                final long[] zctPos = new long[] {
                                                 fakeCursor.getLongPosition(0),
                                                 i,
                                                 fakeCursor.getLongPosition(1) };
@@ -475,7 +475,7 @@ public class ImgWriter {
                                         planes[i] = DataTools
                                                         .makeSigned(planes[i]);
                                 } else if (val instanceof ShortType) {
-                                        short[] tmp = new short[(int) (img
+                                        final short[] tmp = new short[(int) (img
                                                         .dimension(0) * img
                                                         .dimension(1))];
                                         while (c.hasNext()) {
@@ -489,7 +489,7 @@ public class ImgWriter {
                                                         tmp, littleEndian);
 
                                 } else if (val instanceof FloatType) {
-                                        float[] tmp = new float[(int) (img
+                                        final float[] tmp = new float[(int) (img
                                                         .dimension(0) * img
                                                         .dimension(1))];
                                         while (c.hasNext()) {
@@ -508,7 +508,7 @@ public class ImgWriter {
                                 }
 
                         }
-                        int index = FormatTools.getIndex(
+                        final int index = FormatTools.getIndex(
                                         DimensionOrder.XYZCT.toString(), sizeZ,
                                         1, sizeT, numSteps,
                                         fakeCursor.getIntPosition(0), 0,
@@ -517,7 +517,7 @@ public class ImgWriter {
                         // merge channel planes
                         if (sizeC > 1
                                         && (val instanceof ByteType || val instanceof UnsignedByteType)) {
-                                byte[] rgb = new byte[planes[0].length * sizeC];
+                                final byte[] rgb = new byte[planes[0].length * sizeC];
 
                                 for (int j = 0; j < sizeC; j++) {
                                         System.arraycopy(planes[j], 0, rgb,
@@ -536,7 +536,7 @@ public class ImgWriter {
 
         }
 
-        public void setFramesPerSecond(int fps) {
+        public void setFramesPerSecond(final int fps) {
                 m_fps = fps;
         }
 

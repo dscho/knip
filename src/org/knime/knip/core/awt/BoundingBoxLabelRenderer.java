@@ -41,16 +41,16 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
 
         @Override
         public ScreenImage render(
-                        RandomAccessibleInterval<LabelingType<L>> source,
-                        int dimX, int dimY, long[] planePos) {
+                        final RandomAccessibleInterval<LabelingType<L>> source,
+                        final int dimX, final int dimY, final long[] planePos) {
                 return render(dimX, dimY, planePos, source, m_activeLabels,
                                 m_scale, m_withLabelStrings);
         }
 
-        private ScreenImage render(int dimX, int dimY, long[] planePos,
-                        RandomAccessibleInterval<LabelingType<L>> labeling,
-                        Set<String> activeLabels, double scale,
-                        boolean withLabelString) {
+        private ScreenImage render(final int dimX, final int dimY, final long[] planePos,
+                        final RandomAccessibleInterval<LabelingType<L>> labeling,
+                        final Set<String> activeLabels, final double scale,
+                        final boolean withLabelString) {
                 Labeling<L> subLab = null;
                 if (labeling instanceof Labeling) {
                         subLab = (Labeling<L>) labeling;
@@ -59,8 +59,8 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                 }
 
                 if (subLab.numDimensions() > 2) {
-                        long[] min = planePos.clone();
-                        long[] max = planePos.clone();
+                        final long[] min = planePos.clone();
+                        final long[] max = planePos.clone();
 
                         min[dimX] = 0;
                         min[dimY] = 0;
@@ -75,16 +75,16 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                                         subLab.<L> factory());
                 }
 
-                long[] dims = new long[subLab.numDimensions()];
+                final long[] dims = new long[subLab.numDimensions()];
                 subLab.dimensions(dims);
-                int width = (int) Math.round(dims[dimX] * scale) + 1;
-                int height = (int) Math.round(dims[dimY] * scale) + 1;
+                final int width = (int) Math.round(dims[dimX] * scale) + 1;
+                final int height = (int) Math.round(dims[dimY] * scale) + 1;
 
-                ScreenImage res = createCanvas(width, height);
-                Graphics g = res.image().getGraphics();
+                final ScreenImage res = createCanvas(width, height);
+                final Graphics g = res.image().getGraphics();
                 g.setColor(Color.black);
 
-                for (L label : subLab.getLabels()) {
+                for (final L label : subLab.getLabels()) {
 
                         // test hilite
                         if (m_hilitedLabels != null
@@ -105,9 +105,9 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                         if (activeLabels == null
                                         || activeLabels.contains(label)) {
 
-                                IterableRegionOfInterest roi = subLab
+                                final IterableRegionOfInterest roi = subLab
                                                 .getIterableRegionOfInterest(label);
-                                Interval ii = roi
+                                final Interval ii = roi
                                                 .getIterableIntervalOverROI(subLab);
                                 g.drawRect((int) (ii.min(X) * scale),
                                                 (int) (ii.min(Y) * scale),
@@ -128,9 +128,9 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                 return res;
         }
 
-        protected ScreenImage createCanvas(int width, int height) {
-                ScreenImage ret = new ARGBScreenImage(width, height);
-                Graphics g = ret.image().getGraphics();
+        protected ScreenImage createCanvas(final int width, final int height) {
+                final ScreenImage ret = new ARGBScreenImage(width, height);
+                final Graphics g = ret.image().getGraphics();
                 g.setColor(Color.WHITE);
                 g.fillRect(0, 0, width, height);
 
@@ -142,37 +142,37 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
                 return "Bounding Box Renderer";
         }
 
-        public void setScale(double scale) {
+        public void setScale(final double scale) {
                 m_scale = scale;
         }
 
         @Override
-        public void setRenderingWithLabelStrings(boolean withNumbers) {
+        public void setRenderingWithLabelStrings(final boolean withNumbers) {
                 m_withLabelStrings = withNumbers;
         }
 
         @Override
-        public void setHilitedLabels(Set<String> hilitedLabels) {
+        public void setHilitedLabels(final Set<String> hilitedLabels) {
                 m_hilitedLabels = hilitedLabels;
         }
 
         @Override
-        public void setActiveLabels(Set<String> activeLabels) {
+        public void setActiveLabels(final Set<String> activeLabels) {
                 m_activeLabels = activeLabels;
         }
 
         @Override
-        public void setHiliteMode(boolean isHiliteMode) {
+        public void setHiliteMode(final boolean isHiliteMode) {
                 // TODO: Nothing going on here
         }
 
         @Override
-        public void setLabelMapping(LabelingMapping<L> labelMapping) {
+        public void setLabelMapping(final LabelingMapping<L> labelMapping) {
                 // do nothing
         }
 
         @Override
-        public void setOperator(Operator operator) {
+        public void setOperator(final Operator operator) {
                 // do nothing
         }
 }

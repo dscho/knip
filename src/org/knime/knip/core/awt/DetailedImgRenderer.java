@@ -86,21 +86,21 @@ public class DetailedImgRenderer<T extends Type<T>> implements
 
         private int m_height;
 
-        public DetailedImgRenderer(ProjectingRenderer<T> projectingRenderer) {
+        public DetailedImgRenderer(final ProjectingRenderer<T> projectingRenderer) {
                 m_projectingRenderer = projectingRenderer;
         }
 
-        public void setHeight(int height) {
+        public void setHeight(final int height) {
                 m_height = height;
         }
 
-        public void setMetaData(Metadata meta) {
+        public void setMetaData(final Metadata meta) {
                 m_imgSource = meta;
                 m_imgName = meta;
                 m_axes = meta;
         }
 
-        public void setMetaData(GeneralMetadataImpl meta) {
+        public void setMetaData(final GeneralMetadataImpl meta) {
                 m_imgSource = meta;
                 m_imgName = meta;
                 m_axes = meta;
@@ -111,14 +111,14 @@ public class DetailedImgRenderer<T extends Type<T>> implements
         }
 
         @Override
-        public ScreenImage render(RandomAccessibleInterval<T> source, int dimX,
-                        int dimY, long[] planePos) {
+        public ScreenImage render(final RandomAccessibleInterval<T> source, final int dimX,
+                        final int dimY, final long[] planePos) {
 
-                long[] orgDims = new long[planePos.length];
+                final long[] orgDims = new long[planePos.length];
                 source.dimensions(orgDims);
 
                 // create information string
-                StringBuffer sb = new StringBuffer();
+                final StringBuffer sb = new StringBuffer();
 
                 for (int i = 0; i < planePos.length; i++) {
                         if (m_axes != null) {
@@ -143,29 +143,29 @@ public class DetailedImgRenderer<T extends Type<T>> implements
                 if (m_imgSource != null) {
                         sb.append("Image Source=" + m_imgSource.getSource());
                 }
-                int lineHeight = 15;
-                int posX = 10;
-                String[] tmp = sb.toString().split("\n");
+                final int lineHeight = 15;
+                final int posX = 10;
+                final String[] tmp = sb.toString().split("\n");
 
                 // render image and created information string
-                ScreenImage res = m_projectingRenderer.render(source, dimX,
+                final ScreenImage res = m_projectingRenderer.render(source, dimX,
                                 dimY, planePos);
 
-                int width = (int) (orgDims[dimX] * ((double) m_height / orgDims[dimY]));
+                final int width = (int) (orgDims[dimX] * ((double) m_height / orgDims[dimY]));
 
                 if (width < MIN_SIZE.width || m_height < MIN_SIZE.height) {
                         // scale render without text
-                        ScreenImage scaledRes = new ARGBScreenImage(width,
+                        final ScreenImage scaledRes = new ARGBScreenImage(width,
                                         m_height);
-                        Graphics g = scaledRes.image().getGraphics();
+                        final Graphics g = scaledRes.image().getGraphics();
                         g.drawImage(res.image(), 0, 0, width, m_height, null);
 
                         return scaledRes;
                 } else {
                         // scale render with text
-                        ScreenImage composedRes = new ARGBScreenImage(width,
+                        final ScreenImage composedRes = new ARGBScreenImage(width,
                                         m_height);
-                        Graphics g = composedRes.image().getGraphics();
+                        final Graphics g = composedRes.image().getGraphics();
                         g.drawImage(res.image(), 0, 0, width, m_height, null);
                         g.setXORMode(Color.black);
 

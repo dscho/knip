@@ -89,8 +89,8 @@ public class ClassExt0 implements Externalizer<Class> {
          * {@inheritDoc}
          */
         @Override
-        public Class read(BufferedDataInputStream in) throws Exception {
-                char[] chars = new char[in.readInt()];
+        public Class read(final BufferedDataInputStream in) throws Exception {
+                final char[] chars = new char[in.readInt()];
                 in.read(chars);
                 return Class.forName(new String(chars));
         }
@@ -99,9 +99,9 @@ public class ClassExt0 implements Externalizer<Class> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, Class obj)
+        public void write(final BufferedDataOutputStream out, final Class obj)
                         throws Exception {
-                String className = obj.getCanonicalName();
+                final String className = obj.getCanonicalName();
                 out.writeInt(className.length());
                 out.writeChars(className);
 

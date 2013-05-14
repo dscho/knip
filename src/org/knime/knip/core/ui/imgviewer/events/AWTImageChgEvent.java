@@ -62,7 +62,7 @@ public class AWTImageChgEvent implements KNIPEvent {
 
         private final Image m_image;
 
-        public AWTImageChgEvent(Image image) {
+        public AWTImageChgEvent(final Image image) {
                 m_image = image;
 
         }
@@ -84,7 +84,7 @@ public class AWTImageChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

@@ -92,7 +92,7 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
         private ObjectCalcAndCache m_ocac;
 
         @FeatureTargetListener
-        public final void iiUpdated(IterableInterval<T> interval) {
+        public final void iiUpdated(final IterableInterval<T> interval) {
                 m_interval = interval;
         }
 
@@ -100,7 +100,7 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
          * {@inheritDoc}
          */
         @Override
-        public final double value(int id) {
+        public final double value(final int id) {
 
                 m_statistics = m_ocac.descriptiveStatistics(m_interval);
 
@@ -139,8 +139,8 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
                 case 12:
                         return m_statistics.getPercentile(75);
                 case 13:
-                        double median = m_statistics.getPercentile(50);
-                        DescriptiveStatistics stats = new DescriptiveStatistics();
+                        final double median = m_statistics.getPercentile(50);
+                        final DescriptiveStatistics stats = new DescriptiveStatistics();
                         for (int i = 0; i < m_statistics.getN(); i++) {
                                 stats.addValue(Math.abs(median
                                                 - m_statistics.getElement(i)));
@@ -163,7 +163,7 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
                                         : 0;
                 case 19:
                         m_massDisplacement = 0;
-                        double[] centroid = new Centroid().compute(m_interval,
+                        final double[] centroid = new Centroid().compute(m_interval,
                                         new double[m_interval.numDimensions()]);
                         for (int d = 0; d < m_interval.numDimensions(); d++) {
                                 m_weightedCentroid[d] /= m_statistics.getSum();
@@ -187,7 +187,7 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return FEATURES[id];
         }
 
@@ -195,7 +195,7 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 // nothing to do
 
         }
@@ -228,7 +228,7 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
          * {@inheritDoc}
          */
         @Override
-        public void setSharedObjectInstances(Object[] instances) {
+        public void setSharedObjectInstances(final Object[] instances) {
                 m_ocac = (ObjectCalcAndCache) instances[0];
 
         }

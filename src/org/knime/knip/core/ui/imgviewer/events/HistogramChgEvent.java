@@ -60,7 +60,7 @@ public class HistogramChgEvent implements KNIPEvent {
 
         private final int[] m_histogram;
 
-        public HistogramChgEvent(int[] histogram) {
+        public HistogramChgEvent(final int[] histogram) {
                 m_histogram = histogram;
 
         }
@@ -81,7 +81,7 @@ public class HistogramChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

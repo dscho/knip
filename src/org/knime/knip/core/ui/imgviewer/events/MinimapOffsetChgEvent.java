@@ -60,7 +60,7 @@ public class MinimapOffsetChgEvent implements KNIPEvent {
 
         private final int[] m_offest;
 
-        public MinimapOffsetChgEvent(int[] offest) {
+        public MinimapOffsetChgEvent(final int[] offest) {
                 m_offest = offest;
 
         }
@@ -74,7 +74,7 @@ public class MinimapOffsetChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

@@ -14,29 +14,29 @@ public class AnnotatorPolygonTool extends
         }
 
         @Override
-        public void onMouseDoubleClickLeft(ImgViewerMouseEvent e,
-                        PolygonOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClickLeft(final ImgViewerMouseEvent e,
+                        final PolygonOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 currentOverlayElement.close();
                 currentOverlayElement.setStatus(OverlayElementStatus.ACTIVE);
                 overlay.fireOverlayChanged();
         }
 
         @Override
-        public void onMousePressedLeft(ImgViewerMouseEvent e,
-                        PolygonOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMousePressedLeft(final ImgViewerMouseEvent e,
+                        final PolygonOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onMouseReleasedLeft(ImgViewerMouseEvent e,
+        public void onMouseReleasedLeft(final ImgViewerMouseEvent e,
                         PolygonOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 if (currentOverlayElement == null
                                 || (currentOverlayElement.getStatus() != OverlayElementStatus.DRAWING)) {
                         currentOverlayElement = new PolygonOverlayElement<String>(
@@ -52,10 +52,10 @@ public class AnnotatorPolygonTool extends
         }
 
         @Override
-        public void onMouseDraggedLeft(ImgViewerMouseEvent e,
-                        PolygonOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDraggedLeft(final ImgViewerMouseEvent e,
+                        final PolygonOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 }

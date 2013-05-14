@@ -27,7 +27,7 @@ public class PlaneSelectionEvent implements Externalizable, KNIPEvent {
                 m_buffer = new StringBuffer();
         }
 
-        public PlaneSelectionEvent(int dimIndex1, int dimIndex2, long[] pos) {
+        public PlaneSelectionEvent(final int dimIndex1, final int dimIndex2, final long[] pos) {
                 m_indices = new int[] { dimIndex1, dimIndex2 };
                 m_pos = pos;
                 m_buffer = new StringBuffer();
@@ -43,7 +43,7 @@ public class PlaneSelectionEvent implements Externalizable, KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 
@@ -69,14 +69,14 @@ public class PlaneSelectionEvent implements Externalizable, KNIPEvent {
          * @return the plane position, whereas the dimensions of the planes are
          *         replaced by <code>pos1</code> and <code>pos2</code>
          */
-        public long[] getPlanePos(long pos1, long pos2) {
-                long[] res = m_pos.clone();
+        public long[] getPlanePos(final long pos1, final long pos2) {
+                final long[] res = m_pos.clone();
                 res[m_indices[0]] = pos1;
                 res[m_indices[1]] = pos2;
                 return res;
         }
 
-        public long getPlanePosAt(int dim) {
+        public long getPlanePosAt(final int dim) {
                 return m_pos[dim];
         }
 
@@ -84,12 +84,12 @@ public class PlaneSelectionEvent implements Externalizable, KNIPEvent {
                 return m_indices;
         }
 
-        public FinalInterval getInterval(Interval i) {
-                long[] dims = new long[i.numDimensions()];
+        public FinalInterval getInterval(final Interval i) {
+                final long[] dims = new long[i.numDimensions()];
                 i.dimensions(dims);
 
-                long[] min = m_pos.clone();
-                long[] max = m_pos.clone();
+                final long[] min = m_pos.clone();
+                final long[] max = m_pos.clone();
 
                 min[m_indices[0]] = 0;
                 min[m_indices[1]] = 0;
@@ -116,7 +116,7 @@ public class PlaneSelectionEvent implements Externalizable, KNIPEvent {
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 int num = in.readInt();
                 m_indices = new int[num];
@@ -133,7 +133,7 @@ public class PlaneSelectionEvent implements Externalizable, KNIPEvent {
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 out.writeInt(m_indices.length);
                 for (int i = 0; i < m_indices.length; i++) {
                         out.writeInt(m_indices[i]);

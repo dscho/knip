@@ -83,8 +83,8 @@ public class FileTree extends JTree {
          * @param args
          */
         public static void main(final String[] args) {
-                JFrame f = new JFrame("test");
-                FileTree ft = new FileTree();
+                final JFrame f = new JFrame("test");
+                final FileTree ft = new FileTree();
                 ft.expandPath("/home/hornm/cell_images");
                 f.setContentPane(ft);
                 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,7 +97,7 @@ public class FileTree extends JTree {
         /*
          * The model for the JTree.
          */
-        private DefaultTreeModel m_model;
+        private final DefaultTreeModel m_model;
 
         /**
          * Creates a new file tree.
@@ -106,10 +106,10 @@ public class FileTree extends JTree {
         public FileTree() {
                 super();
 
-                DefaultMutableTreeNode top = new DefaultMutableTreeNode(
+                final DefaultMutableTreeNode top = new DefaultMutableTreeNode(
                                 new FileNode(new File("Computer")));
 
-                File[] childs = File.listRoots();
+                final File[] childs = File.listRoots();
 
                 addNodes(top, childs);
 
@@ -119,11 +119,11 @@ public class FileTree extends JTree {
 
                 putClientProperty("JTree.lineStyle", "Angled");
 
-                DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+                final DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
                 renderer.setLeafIcon(renderer.getOpenIcon());
                 setCellRenderer(renderer);
 
-                DirExpansionListener del = new DirExpansionListener();
+                final DirExpansionListener del = new DirExpansionListener();
                 addTreeExpansionListener(del);
 
                 addTreeSelectionListener(new DirSelectionListener());
@@ -144,8 +144,9 @@ public class FileTree extends JTree {
          *                the path as a String
          */
         public void expandPath(final String path) {
-                if (path == null)
+                if (path == null) {
                         return;
+                }
 
                 String s = path;
                 DefaultMutableTreeNode node = null;
@@ -165,7 +166,7 @@ public class FileTree extends JTree {
 
                 while (st != null && st.hasMoreTokens()) {
                         int i;
-                        int num = parent.getChildCount();
+                        final int num = parent.getChildCount();
                         token = st.nextToken();
                         for (i = 0; i < num; i++) {
                                 node = (DefaultMutableTreeNode) parent
@@ -227,13 +228,15 @@ public class FileTree extends JTree {
          * @return node
          */
         FileNode getFileNode(final DefaultMutableTreeNode node) {
-                if (node == null)
+                if (node == null) {
                         return null;
-                Object obj = node.getUserObject();
+                }
+                final Object obj = node.getUserObject();
                 // if (obj instanceof IconData)
                 // obj = ((IconData) obj).getObject();
-                if (obj instanceof FileNode)
+                if (obj instanceof FileNode) {
                         return (FileNode) obj;
+                }
 
                 return null;
         }
@@ -253,11 +256,11 @@ public class FileTree extends JTree {
                                         .getPath());
                         final FileNode fnode = getFileNode(node);
 
-                        Thread runner = new Thread() {
+                        final Thread runner = new Thread() {
                                 @Override
                                 public void run() {
                                         if (fnode != null && fnode.expand(node)) {
-                                                Runnable runnable = new Runnable() {
+                                                final Runnable runnable = new Runnable() {
                                                         @Override
                                                         public void run() {
                                                                 m_model.reload(node);
@@ -447,57 +450,63 @@ class FileNode {
                 DefaultMutableTreeNode flag = null;
                 try {
                         flag = (DefaultMutableTreeNode) parent.getFirstChild();
-                } catch (NoSuchElementException e) {
+                } catch (final NoSuchElementException e) {
                         return false;
                 }
                 // if (flag == null) // No flag
                 // return false;
-                Object obj = flag.getUserObject();
+                final Object obj = flag.getUserObject();
                 if (!(obj instanceof String))
+                 {
                         return false; // Already expanded
+                }
 
                 parent.removeAllChildren(); // Remove Flag
 
-                File[] files = listFiles();
-                if (files == null)
+                final File[] files = listFiles();
+                if (files == null) {
                         return true;
+                }
 
-                Vector<FileNode> v = new Vector<FileNode>();
+                final Vector<FileNode> v = new Vector<FileNode>();
 
                 for (int k = 0; k < files.length; k++) {
-                        File f = files[k];
-                        if (!(f.isDirectory()))
+                        final File f = files[k];
+                        if (!(f.isDirectory())) {
                                 continue;
+                        }
 
-                        FileNode newNode = new FileNode(f);
+                        final FileNode newNode = new FileNode(f);
 
                         boolean isAdded = false;
                         for (int i = 0; i < v.size(); i++) {
-                                FileNode nd = v.elementAt(i);
+                                final FileNode nd = v.elementAt(i);
                                 if (newNode.compareTo(nd) < 0) {
                                         v.insertElementAt(newNode, i);
                                         isAdded = true;
                                         break;
                                 }
                         }
-                        if (!isAdded)
+                        if (!isAdded) {
                                 v.addElement(newNode);
+                        }
                 }
 
                 for (int i = 0; i < v.size(); i++) {
-                        FileNode nd = v.elementAt(i);
+                        final FileNode nd = v.elementAt(i);
                         // IconData idata = new IconData(FileTree.ICON_FOLDER,
                         // FileTree.ICON_EXPANDEDFOLDER, nd);
-                        DefaultMutableTreeNode node = new DefaultMutableTreeNode(
+                        final DefaultMutableTreeNode node = new DefaultMutableTreeNode(
                                         nd);
                         parent.add(node);
 
                         // if (nd.hasSubDirs())
                         // node.add(new DefaultMutableTreeNode(new
                         // Boolean(true)));
-                        if (nd.hasSubDirs())
+                        if (nd.hasSubDirs()) {
                                 node.add(new DefaultMutableTreeNode(new String(
                                                 "Retrieving data ...")));
+                        }
                 }
 
                 return true;
@@ -509,12 +518,14 @@ class FileNode {
          */
 
         public boolean hasSubDirs() {
-                File[] files = listFiles();
-                if (files == null)
+                final File[] files = listFiles();
+                if (files == null) {
                         return false;
+                }
                 for (int k = 0; k < files.length; k++) {
-                        if (files[k].isDirectory())
+                        if (files[k].isDirectory()) {
                                 return true;
+                        }
                 }
                 return false;
         }
@@ -538,11 +549,12 @@ class FileNode {
          *         <code>null</code>
          */
         protected File[] listFiles() {
-                if (!m_file.isDirectory())
+                if (!m_file.isDirectory()) {
                         return null;
+                }
                 try {
                         return m_file.listFiles();
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                         JOptionPane.showMessageDialog(
                                         null,
                                         "Error reading directory "

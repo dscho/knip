@@ -21,7 +21,7 @@ public abstract class HiddenViewerComponent extends ViewerComponent {
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 }

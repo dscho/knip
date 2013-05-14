@@ -12,8 +12,8 @@ public class RealColorARGBConverter<R extends RealType<R>> implements
         private final double m_localMin;
         private final double m_normalizationFactor;
 
-        public RealColorARGBConverter(double normalizationFactor,
-                        double localMin) {
+        public RealColorARGBConverter(final double normalizationFactor,
+                        final double localMin) {
 
                 m_localMin = localMin;
                 m_normalizationFactor = normalizationFactor;
@@ -25,11 +25,11 @@ public class RealColorARGBConverter<R extends RealType<R>> implements
                         final ARGBType output) {
 
                 int i = 0;
-                int[] rgb = new int[3];
+                final int[] rgb = new int[3];
 
                 while (input.hasNext() && i < 3) {
 
-                        double val = input.get().getRealDouble();
+                        final double val = input.get().getRealDouble();
                         double value = ((val - m_localMin) * m_normalizationFactor);
 
                         // normalize to be between 0 and 1
@@ -37,10 +37,11 @@ public class RealColorARGBConverter<R extends RealType<R>> implements
                                         / (input.get().getMaxValue() - input
                                                         .get().getMinValue());
 
-                        if (value < 0)
+                        if (value < 0) {
                                 value = 0;
-                        else if (value > 1)
+                        } else if (value > 1) {
                                 value = 1;
+                        }
 
                         rgb[i] = (int) Math.round(value * 255);
                         i++;

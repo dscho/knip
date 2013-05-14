@@ -60,7 +60,7 @@ public class AnnotatorLabelsEvent implements KNIPEvent {
 
         private final String[] m_labels;
 
-        public AnnotatorLabelsEvent(String... labels) {
+        public AnnotatorLabelsEvent(final String... labels) {
                 m_labels = labels;
 
         }
@@ -81,7 +81,7 @@ public class AnnotatorLabelsEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

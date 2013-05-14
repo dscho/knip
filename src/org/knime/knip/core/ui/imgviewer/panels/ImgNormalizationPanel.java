@@ -146,7 +146,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
                                 m_eventService.publish(new ImgRedrawEvent());
                         }
                 });
-                JLabel saturation = new JLabel("Saturation (%):");
+                final JLabel saturation = new JLabel("Saturation (%):");
                 m_sat = new JLabel("             " + sat + "%");
                 m_sat.setEnabled(false);
                 add(m_normalize);
@@ -164,7 +164,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
                                                                 / SATURATION_SLIDER_FACTOR,
                                                 m_normalize.isSelected()));
                                 m_eventService.publish(new ImgRedrawEvent());
-                                float percent = ((float) m_saturationSlider
+                                final float percent = ((float) m_saturationSlider
                                                 .getValue())
                                                 / SATURATION_SLIDER_FACTOR;
                                 m_sat.setText("             " + percent + "%");
@@ -188,7 +188,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
                 // inform everybody about our settings.
@@ -198,14 +198,14 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 out.writeInt(m_saturationSlider.getValue());
                 out.writeBoolean(m_normalize.isSelected());
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 m_saturationSlider.setValue(in.readInt());
                 m_normalize.setSelected(in.readBoolean());
@@ -218,7 +218,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 }

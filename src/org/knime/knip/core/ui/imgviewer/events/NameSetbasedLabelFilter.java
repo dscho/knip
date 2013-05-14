@@ -17,23 +17,23 @@ public class NameSetbasedLabelFilter<L extends Comparable<L>> implements
         private HashSet<String> m_filterSet;
         private boolean m_includeMatches;
 
-        public NameSetbasedLabelFilter(boolean includeMatches) {
+        public NameSetbasedLabelFilter(final boolean includeMatches) {
                 m_filterSet = new HashSet<String>();
                 m_includeMatches = includeMatches;
         }
 
-        public NameSetbasedLabelFilter(HashSet<String> filterSet,
-                        boolean includeMatches) {
+        public NameSetbasedLabelFilter(final HashSet<String> filterSet,
+                        final boolean includeMatches) {
                 m_filterSet = filterSet;
                 m_includeMatches = includeMatches;
         }
 
 
-        public void addFilter(String filter) {
+        public void addFilter(final String filter) {
                 m_filterSet.add(filter);
         }
 
-        public void setFilterSet(HashSet<String> filterSet) {
+        public void setFilterSet(final HashSet<String> filterSet) {
                 m_filterSet = filterSet;
         }
 
@@ -48,35 +48,35 @@ public class NameSetbasedLabelFilter<L extends Comparable<L>> implements
 
 
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 out.writeObject(m_filterSet);
                 out.writeBoolean(m_includeMatches);
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 m_filterSet = (HashSet<String>) in.readObject();
                 m_includeMatches = in.readBoolean();
         }
 
         @Override
-        public Collection<L> filterLabeling(Collection<L> labels) {
-                Collection<L> ret = new LinkedList<L>();
+        public Collection<L> filterLabeling(final Collection<L> labels) {
+                final Collection<L> ret = new LinkedList<L>();
 
                 if (m_includeMatches) {
-                        for (L label : labels) {
+                        for (final L label : labels) {
                                 if (m_filterSet.contains(labels.toString())) {
                                         ret.add(label);
                                 }
                         }
                 } else {
-                        for (L label : labels) {
+                        for (final L label : labels) {
                                 if (!m_filterSet.contains(label.toString())) {
                                         ret.add(label);
                                 }

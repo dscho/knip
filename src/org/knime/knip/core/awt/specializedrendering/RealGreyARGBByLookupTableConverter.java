@@ -41,8 +41,9 @@ public class RealGreyARGBByLookupTableConverter<T extends RealType<T>>
          *                 if table == null
          */
         public void setLookupTable(final LookupTable<T, ARGBType> table) {
-                if (table == null)
+                if (table == null) {
                         throw new NullPointerException();
+                }
                 m_table = table;
         }
 

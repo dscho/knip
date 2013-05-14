@@ -30,8 +30,8 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
 
         private T m_threshold;
 
-        public HoughLine(S outType, T threshold, int numBinsRho,
-                        int numBinsTheta) {
+        public HoughLine(final S outType, final T threshold, final int numBinsRho,
+                        final int numBinsTheta) {
                 m_outType = outType;
                 m_numBinsRho = numBinsRho;
                 m_numBinsTheta = numBinsTheta;
@@ -39,7 +39,7 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
         }
 
         @Override
-        public Img<S> compute(K op, Img<S> res) {
+        public Img<S> compute(final K op, final Img<S> res) {
 
                 init(op);
                 final long[] dims = new long[res.numDimensions()];
@@ -62,7 +62,7 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
                 while (cursor.hasNext()) {
                         double fRho;
                         int r;
-                        int[] voteLoc = new int[2];
+                        final int[] voteLoc = new int[2];
 
                         cursor.fwd();
                         cursor.localize(position);
@@ -79,7 +79,7 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
                                         voteLoc[1] = t;
                                         try {
                                                 placeVote(voteLoc, resAccess);
-                                        } catch (Exception e) {
+                                        } catch (final Exception e) {
                                                 // System.out.println(fRho);
                                                 // System.err.println("Tried to place vote at "
                                                 // + r +
@@ -95,7 +95,7 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
 
         }
 
-        private void init(K op) {
+        private void init(final K op) {
                 m_dRho = 2 * Util.computeLength(Util.intervalDimensions(op))
                                 / (double) m_numBinsRho;
                 m_threshold = op.firstElement().createVariable();
@@ -114,13 +114,13 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
          * @return whether the vote was successful. This here particular method
          *         should always return true.
          */
-        protected void placeVote(final int[] loc, RandomAccess<S> ra) {
+        protected void placeVote(final int[] loc, final RandomAccess<S> ra) {
                 ra.setPosition(loc);
                 m_outType.setOne();
                 ra.get().add(m_outType);
         }
 
-        public double[] getTranslatedPos(int[] pos) {
+        public double[] getTranslatedPos(final int[] pos) {
                 return new double[] { m_rho[pos[0]], m_theta[pos[1]] };
 
         }
@@ -136,7 +136,7 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
                 return new UnaryObjectFactory<K, Img<S>>() {
 
                         @Override
-                        public Img<S> instantiate(K a) {
+                        public Img<S> instantiate(final K a) {
                                 return new ArrayImgFactory<S>()
                                                 .create(new long[] {
                                                                 m_numBinsRho,

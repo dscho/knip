@@ -70,8 +70,8 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
                 m_tmpLabelList = new ArrayList<String>();
         }
 
-        public OverlayElement(long[] planePos, int[] orientation,
-                        String... labels) {
+        public OverlayElement(final long[] planePos, final int[] orientation,
+                        final String... labels) {
                 this();
 
                 m_planePos = planePos;
@@ -108,7 +108,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
          * @param status
          *                the new status
          */
-        public void setStatus(OverlayElementStatus status) {
+        public void setStatus(final OverlayElementStatus status) {
                 m_status = status;
         }
 
@@ -139,9 +139,10 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
          * @param labels
          *                labels to remove
          */
-        public void removeLabel(String... labels) {
-                for (String label : labels)
+        public void removeLabel(final String... labels) {
+                for (final String label : labels) {
                         m_labels.remove(label);
+                }
         }
 
         /**
@@ -150,9 +151,10 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
          * @param labels
          *                labels to add
          */
-        public void addLabels(String... labels) {
-                for (String label : labels)
+        public void addLabels(final String... labels) {
+                for (final String label : labels) {
                         m_labels.add(label);
+                }
         }
 
         /**
@@ -163,7 +165,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
          *                the new labels of this {@link OverlayElement}
          * @return
          */
-        public boolean setLabels(String... selectedLabels) {
+        public boolean setLabels(final String... selectedLabels) {
                 m_labels.clear();
                 boolean changed = false;
                 for (int i = 0; i < selectedLabels.length; i++) {
@@ -184,18 +186,18 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
          *                the labels as InternedList representation (given by
          *                the {@link LabelingMapping})
          */
-        public void renderOnSegmentationImage(Labeling<String> labeling,
-                        List<String> internedList) {
+        public void renderOnSegmentationImage(final Labeling<String> labeling,
+                        final List<String> internedList) {
 
                 if (labeling.numDimensions() != getNumDimensions()) {
                         throw new IllegalArgumentException(
                                         "(Sub)Labeling must have the same number of dimensions as the OverlayElement");
                 }
 
-                Cursor<LabelingType<String>> c = getRegionOfInterest()
+                final Cursor<LabelingType<String>> c = getRegionOfInterest()
                                 .getIterableIntervalOverROI(labeling).cursor();
 
-                long[] pos = new long[c.numDimensions()];
+                final long[] pos = new long[c.numDimensions()];
                 while (c.hasNext()) {
                         c.fwd();
                         c.localize(pos);
@@ -208,11 +210,12 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
 
                                         m_tmpLabelList.addAll(internedList);
 
-                                        for (String label : c.get()
+                                        for (final String label : c.get()
                                                         .getLabeling()) {
                                                 if (!m_tmpLabelList
-                                                                .contains(label))
+                                                                .contains(label)) {
                                                         m_tmpLabelList.add(label);
+                                                }
                                         }
 
                                         c.get().setLabeling(m_tmpLabelList);
@@ -240,17 +243,18 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
          * 
          * @return true if overlayelement lies in one dimension
          */
-        public final boolean isOrientation(int dim) {
+        public final boolean isOrientation(final int dim) {
                 for (int i = 0; i < m_orientation.length; i++) {
-                        if (dim == i)
+                        if (dim == i) {
                                 return true;
+                        }
                 }
 
                 return false;
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 out.writeInt(m_planePos.length);
                 for (int i = 0; i < m_planePos.length; i++) {
                         out.writeLong(m_planePos[i]);
@@ -269,7 +273,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 m_labels.clear();
 

@@ -75,7 +75,7 @@ public class RandomSeeds<L extends Comparable<L>> implements
         private final int m_avgDistance;
         private final LabelGenerator<L> m_seedGen;
 
-        public RandomSeeds(LabelGenerator<L> seedGen, int avgDistance) {
+        public RandomSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
                 m_seedGen = seedGen;
                 m_avgDistance = avgDistance;
         }
@@ -84,10 +84,10 @@ public class RandomSeeds<L extends Comparable<L>> implements
          * {@inheritDoc}
          */
         @Override
-        public Labeling<L> compute(Interval input, Labeling<L> output) {
+        public Labeling<L> compute(final Interval input, final Labeling<L> output) {
                 m_seedGen.reset();
-                Random rand = new Random();
-                long[] currentGridPos = new long[output.numDimensions()];
+                final Random rand = new Random();
+                final long[] currentGridPos = new long[output.numDimensions()];
                 final RandomAccess<LabelingType<L>> out = Views.extendValue(
                                 output, output.firstElement().createVariable())
                                 .randomAccess();

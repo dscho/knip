@@ -70,9 +70,9 @@ public class BresenhamAlgorithm {
         public static int[][] rasterizeLine(final int[] point1,
                         final int[] point2) {
 
-                int l = Math.max(Math.abs(point1[0] - point2[0]),
+                final int l = Math.max(Math.abs(point1[0] - point2[0]),
                                 Math.abs(point1[1] - point2[1]));
-                int[][] res = new int[l][2];
+                final int[][] res = new int[l][2];
                 int count = 0;
 
                 int xtmp, ytmp, error, delta, step, dx, dy, incx, incy;

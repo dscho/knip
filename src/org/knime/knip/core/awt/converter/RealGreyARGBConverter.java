@@ -10,7 +10,7 @@ public class RealGreyARGBConverter<R extends RealType<R>> implements
         private final double m_localMin;
         private final double m_normalizationFactor;
 
-        public RealGreyARGBConverter(double normalizationFactor, double localMin) {
+        public RealGreyARGBConverter(final double normalizationFactor, final double localMin) {
                 m_localMin = localMin;
                 m_normalizationFactor = normalizationFactor;
         }
@@ -34,10 +34,11 @@ public class RealGreyARGBConverter<R extends RealType<R>> implements
 
                 b = (int) Math.round(val * 255.0);
 
-                if (b < 0)
+                if (b < 0) {
                         b = 0;
-                else if (b > 255)
+                } else if (b > 255) {
                         b = 255;
+                }
 
                 output.set(0xff000000 | (((b << 8) | b) << 8) | b);
         }

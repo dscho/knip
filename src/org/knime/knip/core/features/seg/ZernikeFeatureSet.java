@@ -78,7 +78,7 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
         /**
          * @param order
          */
-        public ZernikeFeatureSet(int order, boolean calcMagnitude) {
+        public ZernikeFeatureSet(final int order, final boolean calcMagnitude) {
                 super();
                 m_order = order;
                 m_calcMagnitude = calcMagnitude;
@@ -89,9 +89,9 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
                 }
                 m_names = new String[countFeatures];
                 for (int j = 0; j < countFeatures; ++j) {
-                        int newOrder = ZernikeFeatureComputer.giveZernikeOrder(
+                        final int newOrder = ZernikeFeatureComputer.giveZernikeOrder(
                                         order, j);
-                        int rep = ZernikeFeatureComputer.giveZernikeRepetition(
+                        final int rep = ZernikeFeatureComputer.giveZernikeRepetition(
                                         order, j);
 
                         if (!calcMagnitude) {
@@ -110,7 +110,7 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
         }
 
         @FeatureTargetListener
-        public final void iiUpdated(IterableInterval<T> interval) {
+        public final void iiUpdated(final IterableInterval<T> interval) {
                 m_interval = interval;
                 m_comp = null;
         }
@@ -119,17 +119,17 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
          * {@inheritDoc}
          */
         @Override
-        public double value(int id) {
+        public double value(final int id) {
 
                 if (m_calcMagnitude) {
                         // gives the magnitued of the result
-                        ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id);
+                        final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id);
                         return Math.sqrt(res.getImaginary()
                                         * res.getImaginary() + res.getReal()
                                         * res.getReal());
                 } else {
                         // TODO: cache the complex result!!
-                        ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id / 2);
+                        final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id / 2);
                         if (id % 2 == 0) {
                                 return res.getReal();
                         } else {
@@ -141,11 +141,11 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
         /**
          * @return the complex feature value
          */
-        public ZernikeFeatureComputer.Complex getComplexFeatureValue(int id) {
+        public ZernikeFeatureComputer.Complex getComplexFeatureValue(final int id) {
                 if (m_comp == null) {
                         m_comp = new ZernikeFeatureComputer<T>(m_interval);
                 }
-                ZernikeFeatureComputer.Complex result = m_comp
+                final ZernikeFeatureComputer.Complex result = m_comp
                                 .computeZernikeMoment(
                                                 ZernikeFeatureComputer
                                                                 .giveZernikeOrder(
@@ -162,7 +162,7 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return m_names[id];
         }
 
@@ -170,7 +170,7 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 // nothing to do here
         }
 

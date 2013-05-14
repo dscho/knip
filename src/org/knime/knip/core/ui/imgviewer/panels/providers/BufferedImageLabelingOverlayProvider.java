@@ -75,7 +75,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         private boolean m_isHiliteMode = false;
 
-        public BufferedImageLabelingOverlayProvider(int cacheSize) {
+        public BufferedImageLabelingOverlayProvider(final int cacheSize) {
                 super(cacheSize);
 
                 m_greyRenderer = new Real2GreyRenderer<T>();
@@ -94,8 +94,9 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
                 hash = hash * 31 + m_transparency;
                 hash = hash * 31 + m_normalizationParameters.hashCode();
 
-                if (m_isHiliteMode)
+                if (m_isHiliteMode) {
                         hash = hash * 31 + 1;
+                }
 
                 if (m_rowKey != null && m_hilitedLabels != null) {
                         hash = hash * 31 + m_rowKey.hashCode();
@@ -106,14 +107,14 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         @Override
         @EventListener
-        public void onUpdate(LabelPanelVisibleLabelsChgEvent e) {
+        public void onUpdate(final LabelPanelVisibleLabelsChgEvent e) {
                 m_labChanged = true;
                 super.onUpdate(e);
         }
 
         @Override
         @EventListener
-        public void onPlaneSelectionUpdate(PlaneSelectionEvent sel) {
+        public void onPlaneSelectionUpdate(final PlaneSelectionEvent sel) {
                 m_sel = sel;
                 m_imgChanged = true;
                 m_labChanged = true;
@@ -122,7 +123,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         @Override
         @EventListener
-        public void onRendererUpdate(RendererSelectionChgEvent e) {
+        public void onRendererUpdate(final RendererSelectionChgEvent e) {
                 m_labChanged = true;
                 super.onRendererUpdate(e);
         }
@@ -144,20 +145,20 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         @Override
         @EventListener
-        public void onLabelColoringChangeEvent(LabelColoringChangeEvent e) {
+        public void onLabelColoringChangeEvent(final LabelColoringChangeEvent e) {
                 super.onLabelColoringChangeEvent(e);
                 m_labChanged = true;
         }
 
         @Override
         @EventListener
-        public void onLabelOptionsChangeEvent(LabelOptionsChangeEvent e) {
+        public void onLabelOptionsChangeEvent(final LabelOptionsChangeEvent e) {
                 super.onLabelOptionsChangeEvent(e);
                 m_labChanged = true;
         }
 
         private BufferedImage renderImage() {
-                double[] normParams = m_normalizationParameters
+                final double[] normParams = m_normalizationParameters
                                 .getNormalizationParameters(m_img, m_sel);
 
                 if (m_greyRenderer instanceof RendererWithNormalization) {
@@ -167,15 +168,15 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
                                                         normParams[1]);
                 }
 
-                ScreenImage ret = m_greyRenderer.render(m_img,
+                final ScreenImage ret = m_greyRenderer.render(m_img,
                                 m_sel.getPlaneDimIndex1(),
                                 m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
                 return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
         }
 
-        private BufferedImage renderTogether(BufferedImage img,
-                        BufferedImage labeling) {
+        private BufferedImage renderTogether(final BufferedImage img,
+                        final BufferedImage labeling) {
                 m_rgb = m_config.createCompatibleImage(img.getWidth(),
                                 img.getHeight(),
                                 java.awt.Transparency.TRANSLUCENT);
@@ -191,7 +192,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         private BufferedImage renderLabeling() {
                 if (m_renderer instanceof RendererWithLabels) {
-                        RendererWithLabels<L> r = (RendererWithLabels<L>) m_renderer;
+                        final RendererWithLabels<L> r = (RendererWithLabels<L>) m_renderer;
                         r.setActiveLabels(m_activeLabels);
                         r.setOperator(m_operator);
                         r.setLabelMapping(m_labelMapping);
@@ -200,12 +201,12 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
                 if (m_renderer instanceof RendererWithHilite
                                 && m_hilitedLabels != null) {
-                        RendererWithHilite r = (RendererWithHilite) m_renderer;
+                        final RendererWithHilite r = (RendererWithHilite) m_renderer;
                         r.setHilitedLabels(m_hilitedLabels);
                         r.setHiliteMode(m_isHiliteMode);
                 }
 
-                ScreenImage ret = m_renderer.render(m_src,
+                final ScreenImage ret = m_renderer.render(m_src,
                                 m_sel.getPlaneDimIndex1(),
                                 m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
@@ -213,7 +214,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
         }
 
         @EventListener
-        public void onUpdate(TransparencyPanelValueChgEvent e) {
+        public void onUpdate(final TransparencyPanelValueChgEvent e) {
                 m_transparency = e.getTransparency();
                 m_labChanged = true;
         }
@@ -230,7 +231,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
 
         @EventListener
-        public void onClose(ViewClosedEvent event) {
+        public void onClose(final ViewClosedEvent event) {
                 m_img = null;
                 m_greyRenderer = null;
                 m_src = null;
@@ -255,25 +256,25 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
          */
         @EventListener
         public void onUpdated(
-                        NormalizationParametersChgEvent<T> normalizationParameters) {
+                        final NormalizationParametersChgEvent<T> normalizationParameters) {
                 m_normalizationParameters = normalizationParameters;
                 m_imgChanged = true;
         }
 
         @EventListener
-        public void onUpdated(HilitedLabelsChgEvent e) {
+        public void onUpdated(final HilitedLabelsChgEvent e) {
                 m_hilitedLabels = e.getHilitedLabels();
                 m_labChanged = true;
         }
 
         @EventListener
-        public void onUpdated(LabelPanelIsHiliteModeEvent e) {
+        public void onUpdated(final LabelPanelIsHiliteModeEvent e) {
                 m_isHiliteMode = e.isHiliteMode();
                 m_labChanged = true;
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 super.saveComponentConfiguration(out);
                 out.writeInt(m_transparency);
@@ -281,7 +282,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 super.loadComponentConfiguration(in);
                 m_transparency = in.readInt();

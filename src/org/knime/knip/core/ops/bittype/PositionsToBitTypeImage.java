@@ -11,8 +11,8 @@ public class PositionsToBitTypeImage implements
                 UnaryOperation<Collection<long[]>, ImgPlus<BitType>> {
 
         @Override
-        public ImgPlus<BitType> compute(Collection<long[]> op1,
-                        ImgPlus<BitType> res) {
+        public ImgPlus<BitType> compute(final Collection<long[]> op1,
+                        final ImgPlus<BitType> res) {
                 final RandomAccess<BitType> resAccess = res.randomAccess();
                 for (final long[] lm : op1) {
                         resAccess.setPosition(lm);

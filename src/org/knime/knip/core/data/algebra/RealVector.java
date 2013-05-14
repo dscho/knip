@@ -46,18 +46,20 @@ public class RealVector extends RealPoint implements Cloneable {
          * @return
          */
         public RealVector add(final RealVector p) {
-                RealVector res = new RealVector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final RealVector res = new RealVector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getDoublePosition(i)
                                         + p.getDoublePosition(i), i);
+                }
                 return res;
         }
 
         public RealVector subtract(final RealVector p) {
-                RealVector res = new RealVector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final RealVector res = new RealVector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getDoublePosition(i)
                                         - p.getDoublePosition(i), i);
+                }
                 return res;
         }
 
@@ -68,16 +70,18 @@ public class RealVector extends RealPoint implements Cloneable {
          * @return
          */
         public RealVector mapMultiply(final double scalar) {
-                RealVector res = new RealVector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final RealVector res = new RealVector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getDoublePosition(i) * scalar, i);
+                }
                 return res;
         }
 
         public RealVector mapMultiply(final float scalar) {
-                RealVector res = new RealVector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++)
+                final RealVector res = new RealVector(numDimensions());
+                for (int i = 0; i < numDimensions(); i++) {
                         res.setPosition(getDoublePosition(i) * scalar, i);
+                }
                 return res;
         }
 
@@ -86,8 +90,9 @@ public class RealVector extends RealPoint implements Cloneable {
          */
         public double length() {
                 double l = 0;
-                for (int i = 0; i < numDimensions(); i++)
+                for (int i = 0; i < numDimensions(); i++) {
                         l += getDoublePosition(i) * getDoublePosition(i);
+                }
                 return Math.sqrt(l);
         }
 
@@ -134,15 +139,18 @@ public class RealVector extends RealPoint implements Cloneable {
          * {@inheritDoc}
          */
         @Override
-        public boolean equals(Object obj) {
-                if (!(obj instanceof RealVector))
+        public boolean equals(final Object obj) {
+                if (!(obj instanceof RealVector)) {
                         return false;
-                RealVector other = (RealVector) obj;
-                if (numDimensions() != other.numDimensions())
+                }
+                final RealVector other = (RealVector) obj;
+                if (numDimensions() != other.numDimensions()) {
                         return false;
+                }
                 for (int i = 0; i < numDimensions(); i++) {
-                        if (getDoublePosition(i) != other.getDoublePosition(i))
+                        if (getDoublePosition(i) != other.getDoublePosition(i)) {
                                 return false;
+                        }
                 }
                 return true;
         }

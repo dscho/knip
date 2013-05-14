@@ -19,16 +19,16 @@ public final class AutoThreshold<T extends RealType<T>, I extends IterableInterv
 
         private final ThresholdingType m_thresholdType;
 
-        public AutoThreshold(ThresholdingType thresholdType) {
+        public AutoThreshold(final ThresholdingType thresholdType) {
                 m_thresholdType = thresholdType;
         }
 
         @Override
-        public K compute(I op, K r) {
+        public K compute(final I op, final K r) {
 
-                OpsHistogram hist = Operations.compute(new MakeHistogram<T>(),
+                final OpsHistogram hist = Operations.compute(new MakeHistogram<T>(),
                                 op);
-                T thresh = op.firstElement().createVariable();
+                final T thresh = op.firstElement().createVariable();
                 thresh.setReal(new FindThreshold<T>(m_thresholdType).compute(
                                 hist, new DoubleType()).getRealDouble());
                 new UnaryRelationAssigment<T>(new RealGreaterThanConstant<T>(

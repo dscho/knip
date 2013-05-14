@@ -67,9 +67,9 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
 
         private int m_minPixOverlap;
 
-        public Aligner(int[] selectedDims, int alignDim, Interval iv,
-                        SIZEMODES sizemode, ALIGNMODES alignmode, int stepsize,
-                        int minPixOverlap) {
+        public Aligner(final int[] selectedDims, final int alignDim, final Interval iv,
+                        final SIZEMODES sizemode, final ALIGNMODES alignmode, final int stepsize,
+                        final int minPixOverlap) {
                 m_selectedDims = selectedDims.clone();
                 m_alignDim = alignDim;
                 m_sizemode = sizemode;
@@ -79,7 +79,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                 m_minPixOverlap = minPixOverlap;
         }
 
-        public Aligner(int[] selectedDims, int alignDim, Interval iv) {
+        public Aligner(final int[] selectedDims, final int alignDim, final Interval iv) {
                 this(selectedDims, alignDim, iv, SIZEMODES.CROP,
                                 ALIGNMODES.FIRST, 1, 1);
         }
@@ -87,41 +87,41 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
         /**
          * {@inheritDoc}
          */
-        private Img<T> createType(Img<T> src, Img<V> srcFiltered) {
+        private Img<T> createType(final Img<T> src, final Img<V> srcFiltered) {
                 computeShifts(srcFiltered);
                 if (m_sizemode != SIZEMODES.NOTHING) {
                         return createType(src, srcFiltered, m_size);
                 } else {
-                        long dims[] = new long[srcFiltered.numDimensions()];
+                        final long dims[] = new long[srcFiltered.numDimensions()];
                         srcFiltered.dimensions(dims);
                         return createType(src, srcFiltered, dims);
                 }
         }
 
-        private void computeShifts(Img<V> src) {
-                Img<V> imgPlus = src;
-                int[] selectedDims1 = m_selectedDims;
-                int[] selectedDims2 = new int[1];
+        private void computeShifts(final Img<V> src) {
+                final Img<V> imgPlus = src;
+                final int[] selectedDims1 = m_selectedDims;
+                final int[] selectedDims2 = new int[1];
                 selectedDims2[0] = m_alignDim;
-                int selectedDim2 = selectedDims2[0];
+                final int selectedDim2 = selectedDims2[0];
 
-                long tmin = imgPlus.min(selectedDim2);
-                long tmax = imgPlus.max(selectedDim2);
+                final long tmin = imgPlus.min(selectedDim2);
+                final long tmax = imgPlus.max(selectedDim2);
 
-                long[] ipmin = new long[imgPlus.numDimensions()];
-                long[] ipmax = new long[imgPlus.numDimensions()];
+                final long[] ipmin = new long[imgPlus.numDimensions()];
+                final long[] ipmax = new long[imgPlus.numDimensions()];
                 imgPlus.min(ipmin);
                 imgPlus.max(ipmax);
-                long[] spmin = new long[imgPlus.numDimensions()];
-                long[] spmax = new long[imgPlus.numDimensions()];
+                final long[] spmin = new long[imgPlus.numDimensions()];
+                final long[] spmax = new long[imgPlus.numDimensions()];
                 imgPlus.min(spmin);
                 imgPlus.max(spmax);
 
-                int[] allDims = new int[imgPlus.numDimensions()];
+                final int[] allDims = new int[imgPlus.numDimensions()];
                 for (int i = 0; i < imgPlus.numDimensions(); i++) {
                         allDims[i] = i;
                 }
-                int[] remainingDims = new int[imgPlus.numDimensions()
+                final int[] remainingDims = new int[imgPlus.numDimensions()
                                 - selectedDims1.length - selectedDims2.length];
                 for (int i = 0; i < selectedDims1.length; i++) {
                         allDims[selectedDims1[i]] = -1;
@@ -140,6 +140,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
 
                 // collect the subimages along the alignment axis
                 @SuppressWarnings("unchecked")
+                final
                 Img<V>[] sis = new ImgView[(int) (ipmax[selectedDim2]
                                 - ipmin[selectedDim2] + 1)];
 
@@ -162,8 +163,8 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                         tmpsis = new ImgView<V>(SubsetOperations.subsetview(
                                         src, i),
                                         imgPlus.factory());
-                        long[] tmpmin = new long[tmpsis.numDimensions()];
-                        long[] tmpmax = new long[tmpsis.numDimensions()];
+                        final long[] tmpmin = new long[tmpsis.numDimensions()];
+                        final long[] tmpmax = new long[tmpsis.numDimensions()];
                         tmpsis.min(tmpmin);
                         tmpsis.max(tmpmax);
                         i = new FinalInterval(tmpmin, tmpmax);
@@ -179,7 +180,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                 // Crop data
                 m_offset = new long[imgPlus.numDimensions()];
                 m_size = new long[imgPlus.numDimensions()];
-                long[] origsize = new long[imgPlus.numDimensions()];
+                final long[] origsize = new long[imgPlus.numDimensions()];
 
                 src.dimensions(m_size);
                 src.dimensions(origsize);
@@ -210,7 +211,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
 
                 PhaseCorrelation<V, V> p;
                 long ref;
-                long[][] cache = new long[(int) tend + 1][(int) (spmax[selectedDim2]
+                final long[][] cache = new long[(int) tend + 1][(int) (spmax[selectedDim2]
                                 - spmin[selectedDim2] + 1)];
 
                 for (long t = tstart; t <= tend; t++) {
@@ -224,8 +225,9 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                         } else { // if (m_alignmode == ALIGNMODES.STEPWISE)
                                 ref = (long) Math.ceil(t / (double) m_stepsize)
                                                 * m_stepsize - m_stepsize;
-                                if (ref < tstart)
+                                if (ref < tstart) {
                                         ref = tstart;
+                                }
                         }
 
                         p = new PhaseCorrelation<V, V>(sis[(int) ref],
@@ -256,8 +258,8 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                                 // pos = poss[k];
                                 // }
                                 // }
-                                PhaseCorrelationPeak pe = p.getShift();
-                                long[] pos = pe.getPosition();
+                                final PhaseCorrelationPeak pe = p.getShift();
+                                final long[] pos = pe.getPosition();
                                 if (m_alignmode == ALIGNMODES.STEPWISE) {
                                         cache[(int) t] = pos;
 
@@ -376,10 +378,10 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
          * {@inheritDoc}
          */
         @Override
-        public Img<T> compute(Img<T> srcIn, Img<V> srcFiltered, Img<T> res) {
-                Img<T> imgPlus = srcIn;
-                int[] selectedDims1 = m_selectedDims;
-                int[] selectedDims2 = new int[1];
+        public Img<T> compute(final Img<T> srcIn, final Img<V> srcFiltered, final Img<T> res) {
+                final Img<T> imgPlus = srcIn;
+                final int[] selectedDims1 = m_selectedDims;
+                final int[] selectedDims2 = new int[1];
                 selectedDims2[0] = m_alignDim;
 
                 Img<T> res2;
@@ -387,39 +389,39 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                                 || m_sizemode == SIZEMODES.NOTHING) {
                         res2 = srcIn.copy();
                 } else {
-                        long[] pos = new long[srcIn.numDimensions()];
+                        final long[] pos = new long[srcIn.numDimensions()];
                         res2 = res.copy();
-                        Cursor<T> c = srcIn.localizingCursor();
-                        RandomAccess<T> ra = res2.randomAccess();
+                        final Cursor<T> c = srcIn.localizingCursor();
+                        final RandomAccess<T> ra = res2.randomAccess();
                         while (c.hasNext()) {
                                 c.fwd();
                                 c.localize(pos);
                                 ra.setPosition(pos);
-                                double v = c.get().getRealDouble();
+                                final double v = c.get().getRealDouble();
                                 ra.get().setReal(v);
                         }
                 }
 
                 // this is the dimension along which the alignment is done
-                int selectedDim2 = selectedDims2[0];
+                final int selectedDim2 = selectedDims2[0];
 
-                long tmin = imgPlus.min(selectedDim2);
-                long tmax = imgPlus.max(selectedDim2);
+                final long tmin = imgPlus.min(selectedDim2);
+                final long tmax = imgPlus.max(selectedDim2);
 
-                long[] ipmin = new long[imgPlus.numDimensions()];
-                long[] ipmax = new long[imgPlus.numDimensions()];
+                final long[] ipmin = new long[imgPlus.numDimensions()];
+                final long[] ipmax = new long[imgPlus.numDimensions()];
                 res2.min(ipmin);
                 res2.max(ipmax);
-                long[] spmin = new long[imgPlus.numDimensions()];
-                long[] spmax = new long[imgPlus.numDimensions()];
+                final long[] spmin = new long[imgPlus.numDimensions()];
+                final long[] spmax = new long[imgPlus.numDimensions()];
                 res2.min(spmin);
                 res2.max(spmax);
 
-                int[] allDims = new int[imgPlus.numDimensions()];
+                final int[] allDims = new int[imgPlus.numDimensions()];
                 for (int i = 0; i < imgPlus.numDimensions(); i++) {
                         allDims[i] = i;
                 }
-                int[] remainingDims = new int[imgPlus.numDimensions()
+                final int[] remainingDims = new int[imgPlus.numDimensions()
                                 - selectedDims1.length - selectedDims2.length];
                 for (int i = 0; i < selectedDims1.length; i++) {
                         allDims[selectedDims1[i]] = -1;
@@ -480,8 +482,8 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
 
                 if (m_sizemode == SIZEMODES.CROP) {
                         // Crop the resulting image...
-                        ImgPlus<T> iplusres = new ImgPlus<T>(res);
-                        ImgPlus<T> iplus = new ImgPlus<T>(res2);
+                        final ImgPlus<T> iplusres = new ImgPlus<T>(res);
+                        final ImgPlus<T> iplus = new ImgPlus<T>(res2);
                         new ImgPlusCrop<T>(m_offset, m_size).compute(iplus,
                                         iplusres);
                 } else if (m_sizemode == SIZEMODES.NOTHING) {
@@ -492,10 +494,10 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                 return res;
         }
 
-        void alignRemainingDims(int tstart, int tend, Img<T> res2,
-                        int[] selectedDims1, int selectedDim2,
-                        int[] remainingDims, int tmin, int tmax, long[] ipmin,
-                        long[] ipmax, long[] spmin, long[] spmax) {
+        void alignRemainingDims(final int tstart, final int tend, final Img<T> res2,
+                        final int[] selectedDims1, final int selectedDim2,
+                        final int[] remainingDims, final int tmin, final int tmax, final long[] ipmin,
+                        final long[] ipmax, final long[] spmin, final long[] spmax) {
                 if (remainingDims.length == 1) {
                         for (int rdplane = (int) spmin[remainingDims[0]]; rdplane <= spmax[remainingDims[0]]; rdplane++) {
                                 ipmin[remainingDims[0]] = rdplane;
@@ -525,22 +527,22 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                 }
         }
 
-        void alignPlane(int tstart, int tend, Img<T> res2, int[] selectedDims1,
-                        int selectedDim2, int[] remainingDims, int tmin,
-                        int tmax, long[] ipmin, long[] ipmax, long[] spmin,
-                        long[] spmax) {
+        void alignPlane(final int tstart, final int tend, final Img<T> res2, final int[] selectedDims1,
+                        final int selectedDim2, final int[] remainingDims, final int tmin,
+                        final int tmax, final long[] ipmin, final long[] ipmax, final long[] spmin,
+                        final long[] spmax) {
 
                 // now: align the planes
                 for (long t = tstart; t <= tend; t++) {
                         ipmin[selectedDim2] = t;
                         ipmax[selectedDim2] = t;
 
-                        Interval i = new FinalInterval(ipmin, ipmax);
-                        ImgView<T> si = new ImgView<T>(
+                        final Interval i = new FinalInterval(ipmin, ipmax);
+                        final ImgView<T> si = new ImgView<T>(
                                         SubsetOperations.subsetview(res2, i),
                                         res2.factory());
-                        RandomAccess<T> c = si.randomAccess();
-                        int[] pos = new int[2];
+                        final RandomAccess<T> c = si.randomAccess();
+                        final int[] pos = new int[2];
                         pos[0] = (int) spmin[selectedDims1[0]];
                         pos[1] = (int) spmin[selectedDims1[1]];
                         c.setPosition(pos);
@@ -561,7 +563,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                                                         c.setPosition(y
                                                                         - m_yind[(int) (t - tmin)],
                                                                         1);
-                                                        double v = c.get()
+                                                        final double v = c.get()
                                                                         .getRealDouble();
                                                         c.setPosition(x, 0);
                                                         c.setPosition(y, 1);
@@ -591,7 +593,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                                                                 c.setPosition(y
                                                                                 + m_yind[(int) (t - tmin)],
                                                                                 1);
-                                                                double v = c.get()
+                                                                final double v = c.get()
                                                                                 .getRealDouble();
                                                                 c.setPosition(x,
                                                                                 0);
@@ -627,7 +629,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                                                                         c.setPosition(y
                                                                                         + m_yind[(int) (t - tmin)],
                                                                                         1);
-                                                                        double v = c.get()
+                                                                        final double v = c.get()
                                                                                         .getRealDouble();
                                                                         c.setPosition(x,
                                                                                         0);
@@ -663,7 +665,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                                                                                 c.setPosition(y
                                                                                                 + m_yind[(int) (t - tmin)],
                                                                                                 1);
-                                                                                double v = c.get()
+                                                                                final double v = c.get()
                                                                                                 .getRealDouble();
                                                                                 c.setPosition(x,
                                                                                                 0);
@@ -698,7 +700,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                                                                                 c.setPosition(y
                                                                                                 + m_yind[(int) (t - tmin)],
                                                                                                 1);
-                                                                                double v = c.get()
+                                                                                final double v = c.get()
                                                                                                 .getRealDouble();
                                                                                 c.setPosition(x,
                                                                                                 0);
@@ -726,8 +728,8 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
         /**
          * @param dims
          */
-        public Img<T> createType(Img<T> img, Img<V> srcFiltered, long[] dims) {
-                ImgFactory<T> fac = img.factory();
+        public Img<T> createType(final Img<T> img, final Img<V> srcFiltered, final long[] dims) {
+                final ImgFactory<T> fac = img.factory();
                 return fac.create(dims, img.firstElement().createVariable());
         }
 
@@ -743,7 +745,7 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
                 return new BinaryObjectFactory<Img<T>, Img<V>, Img<T>>() {
 
                         @Override
-                        public Img<T> instantiate(Img<T> inputA, Img<V> inputB) {
+                        public Img<T> instantiate(final Img<T> inputA, final Img<V> inputB) {
                                 return createType(inputA, inputB);
                         }
                 };

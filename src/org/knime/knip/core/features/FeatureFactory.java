@@ -105,8 +105,8 @@ public class FeatureFactory {
          *                enabled
          * @param fsets
          */
-        public FeatureFactory(boolean enableAll,
-                        Collection<? extends FeatureSet> fsets) {
+        public FeatureFactory(final boolean enableAll,
+                        final Collection<? extends FeatureSet> fsets) {
                 this(enableAll, fsets.toArray(new FeatureSet[fsets.size()]));
         }
 
@@ -118,9 +118,9 @@ public class FeatureFactory {
          *                enabled
          * @param fsets
          */
-        public FeatureFactory(boolean enableAll, FeatureSet... fsets) {
+        public FeatureFactory(final boolean enableAll, final FeatureSet... fsets) {
                 int currentOffset = 0;
-                for (FeatureSet fset : fsets) {
+                for (final FeatureSet fset : fsets) {
                         // look for FeatureTargetListener annotations and add
                         // them to
                         // the listener map
@@ -128,10 +128,10 @@ public class FeatureFactory {
                                         fset.getClass(), fset);
 
                         if (fset instanceof SharesObjects) {
-                                Class<?>[] clazzes = ((SharesObjects) fset)
+                                final Class<?>[] clazzes = ((SharesObjects) fset)
                                                 .getSharedObjectClasses();
 
-                                Object[] instances = new Object[clazzes.length];
+                                final Object[] instances = new Object[clazzes.length];
 
                                 for (int i = 0; i < clazzes.length; i++) {
                                         Object obj;
@@ -139,7 +139,7 @@ public class FeatureFactory {
                                                         .get(clazzes[i])) == null) {
                                                 try {
                                                         obj = clazzes[i].newInstance();
-                                                } catch (Exception e) {
+                                                } catch (final Exception e) {
                                                         LOG.error("Can not create instance of class "
                                                                         + clazzes[i]
                                                                         + ".",
@@ -169,7 +169,7 @@ public class FeatureFactory {
                 }
         }
 
-        public void initFeatureFactory(BitSet enabledFeatures) {
+        public void initFeatureFactory(final BitSet enabledFeatures) {
                 if (m_enabled != null) {
                         throw new IllegalStateException(
                                         "Feature factory was already initialized!");
@@ -200,26 +200,26 @@ public class FeatureFactory {
          * Looks for FeatureTargetListener annotations and adds them to the
          * listener map
          */
-        protected void collectFeatureTargetListenersRecursively(Class<?> clazz,
-                        Object listener) {
+        protected void collectFeatureTargetListenersRecursively(final Class<?> clazz,
+                        final Object listener) {
                 if (clazz == null) {
                         return;
                 }
 
-                Method[] methods = clazz.getMethods();
+                final Method[] methods = clazz.getMethods();
 
                 LOG.debug("Looking for FeatureTargetListener annotations for class "
                                 + clazz
                                 + ", methods:"
                                 + Arrays.toString(methods));
 
-                for (Method method : methods) {
+                for (final Method method : methods) {
 
-                        FeatureTargetListener targetAnnotation = method
+                        final FeatureTargetListener targetAnnotation = method
                                         .getAnnotation(FeatureTargetListener.class);
                         if (targetAnnotation != null) {
 
-                                Class<?>[] types = method.getParameterTypes();
+                                final Class<?>[] types = method.getParameterTypes();
                                 if (types.length != 1) {
                                         LOG.error("Only methods with exactly one parameter are allowed as feature target listener. Method '"
                                                         + method + "' skipped.");
@@ -245,8 +245,8 @@ public class FeatureFactory {
 
                 collectFeatureTargetListenersRecursively(clazz.getSuperclass(),
                                 listener);
-                Class<?>[] interfaces = clazz.getInterfaces();
-                for (Class<?> interfaze : interfaces) {
+                final Class<?>[] interfaces = clazz.getInterfaces();
+                for (final Class<?> interfaze : interfaces) {
                         collectFeatureTargetListenersRecursively(interfaze,
                                         listener);
                 }
@@ -258,37 +258,38 @@ public class FeatureFactory {
          * @param target
          * @param obj
          */
-        public void updateFeatureTarget(Object obj) {
+        public void updateFeatureTarget(final Object obj) {
                 updateFeatureTargetRecursively(obj, obj.getClass());
         }
 
-        private void updateFeatureTargetRecursively(Object obj, Class<?> clazz) {
+        private void updateFeatureTargetRecursively(final Object obj, final Class<?> clazz) {
                 if (clazz == null) {
                         return;
                 }
 
                 try {
-                        List<FeatureTargetUpdater> ftus = m_targetListeners
+                        final List<FeatureTargetUpdater> ftus = m_targetListeners
                                         .get(clazz);
                         if (ftus != null) {
-                                for (FeatureTargetUpdater ftu : ftus)
+                                for (final FeatureTargetUpdater ftu : ftus) {
                                         ftu.updateFeatureTarget(obj);
+                                }
                                 return;
                         } else {
                                 updateFeatureTargetRecursively(obj,
                                                 clazz.getSuperclass());
-                                Class<?>[] interfaces = clazz.getInterfaces();
-                                for (Class<?> interfaze : interfaces) {
+                                final Class<?>[] interfaces = clazz.getInterfaces();
+                                for (final Class<?> interfaze : interfaces) {
                                         updateFeatureTargetRecursively(obj,
                                                         interfaze);
                                 }
 
                         }
-                } catch (IllegalArgumentException e) {
+                } catch (final IllegalArgumentException e) {
                         LOG.debug("Error thrown: " + e.getMessage()
                                         + ". Class "
                                         + obj.getClass().getSimpleName() + "!");
-                } catch (Exception e) {
+                } catch (final Exception e) {
                         if (e instanceof RuntimeException) {
                                 Throwable t = e.getCause();
 
@@ -355,7 +356,7 @@ public class FeatureFactory {
         /**
          * @return the feature values of all enabled features
          */
-        public double[] getFeatureValues(double[] vec) {
+        public double[] getFeatureValues(final double[] vec) {
                 int i = 0;
                 for (int feat = m_enabled.nextSetBit(0); feat >= 0; feat = m_enabled
                                 .nextSetBit(feat + 1)) {
@@ -382,7 +383,7 @@ public class FeatureFactory {
          */
         public String[] getFeatureNames() {
                 isInitialized();
-                String[] res = new String[getNumFeatures()];
+                final String[] res = new String[getNumFeatures()];
 
                 int i = 0;
                 for (int feat = m_enabled.nextSetBit(0); feat >= 0; feat = m_enabled
@@ -423,7 +424,7 @@ public class FeatureFactory {
          * @param obj
          * @return
          */
-        public boolean isFeatureTargetRequired(Object obj) {
+        public boolean isFeatureTargetRequired(final Object obj) {
                 return m_targetListeners.get(obj.getClass()) != null;
         }
 
@@ -449,15 +450,15 @@ public class FeatureFactory {
 
                 private final Object m_listener;
 
-                public FeatureTargetUpdater(Object listener, Method method) {
+                public FeatureTargetUpdater(final Object listener, final Method method) {
                         m_method = method;
                         m_listener = listener;
                 }
 
-                public void updateFeatureTarget(Object target) {
+                public void updateFeatureTarget(final Object target) {
                         try {
                                 m_method.invoke(m_listener, target);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                                 throw new RuntimeException(
                                                 "InvocationTargetException when invoking annotated method from FeatureTarget Update. Data: "
 

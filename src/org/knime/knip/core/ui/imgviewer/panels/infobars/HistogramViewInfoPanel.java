@@ -49,7 +49,7 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
         }
 
         @EventListener
-        public void onMouseMoved(ImgViewerMouseMovedEvent e) {
+        public void onMouseMoved(final ImgViewerMouseMovedEvent e) {
                 if (e.isInsideImgView(m_dims[0], m_dims[1])) {
                         m_binXPosition = e.getPosX();
                         updateLabel();
@@ -57,19 +57,19 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
         }
 
         @EventListener
-        public void onHistAWTImageChanged(AWTImageChgEvent e) {
+        public void onHistAWTImageChanged(final AWTImageChgEvent e) {
                 m_dims = new long[2];
                 m_dims[0] = e.getImage().getWidth(null);
                 m_dims[1] = e.getImage().getHeight(null);
         }
 
         @EventListener
-        public void onHistogramChanged(HistogramChgEvent e) {
+        public void onHistogramChanged(final HistogramChgEvent e) {
                 m_hist = e.getHistogram();
         }
 
         @EventListener
-        public void onHistogramFactorChanged(HistogramFactorChgEvent e) {
+        public void onHistogramFactorChanged(final HistogramFactorChgEvent e) {
                 m_factor = e.getFactor();
         }
 
@@ -109,19 +109,19 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
         /**
          * {@inheritDoc}
          */
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 eventService.subscribe(this);
 
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // Nothing to do here
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 // Nothing to do here
         }
@@ -135,7 +135,7 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 

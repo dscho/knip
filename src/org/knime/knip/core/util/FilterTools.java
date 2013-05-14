@@ -80,15 +80,15 @@ public final class FilterTools {
          *                the support radius.
          * @return the point support matrix.
          */
-        final public static Img<DoubleType> createPointSupport(int supportRadius) {
+        final public static Img<DoubleType> createPointSupport(final int supportRadius) {
 
-                int support = supportRadius * 2 + 1;
+                final int support = supportRadius * 2 + 1;
 
-                Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
+                final Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
                                 new long[] { 2, support * support },
                                 new DoubleType());
 
-                Cursor<DoubleType> cur = res.localizingCursor();
+                final Cursor<DoubleType> cur = res.localizingCursor();
 
                 while (cur.hasNext()) {
                         cur.fwd();
@@ -114,12 +114,12 @@ public final class FilterTools {
          *                the angle of rotation.
          * @return the rotation matrix.
          */
-        final public static Img<DoubleType> createRotationMatrix(double theta) {
+        final public static Img<DoubleType> createRotationMatrix(final double theta) {
 
-                Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
+                final Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
                                 new long[] { 2, 2 }, new DoubleType());
 
-                RandomAccess2D<DoubleType> ra = new RandomAccess2D<DoubleType>(
+                final RandomAccess2D<DoubleType> ra = new RandomAccess2D<DoubleType>(
                                 res);
 
                 ra.get(0, 0).set((float) -Math.cos(theta));
@@ -131,16 +131,16 @@ public final class FilterTools {
         }
 
         final public static <T extends RealType<T> & NativeType<T>> Img<T> reshapeMatrix(
-                        long stride, Img<T> vector) {
+                        final long stride, final Img<T> vector) {
 
-                long yDim = vector.dimension(0) / stride;
+                final long yDim = vector.dimension(0) / stride;
 
-                Img<T> res = new ArrayImgFactory<T>().create(new long[] {
+                final Img<T> res = new ArrayImgFactory<T>().create(new long[] {
                                 stride, yDim }, vector.firstElement()
                                 .createVariable());
 
-                Cursor<T> vecCur = vector.localizingCursor();
-                RandomAccess<T> resRA = res.randomAccess();
+                final Cursor<T> vecCur = vector.localizingCursor();
+                final RandomAccess<T> resRA = res.randomAccess();
 
                 while (vecCur.hasNext()) {
                         vecCur.fwd();
@@ -153,15 +153,15 @@ public final class FilterTools {
         }
 
         public static <T extends RealType<T> & NativeType<T>> Img<T> getVector(
-                        Img<T> src, int[] pos, int vectorDim) {
+                        final Img<T> src, final int[] pos, final int vectorDim) {
 
-                Img<T> vector = new ArrayImgFactory<T>().create(
+                final Img<T> vector = new ArrayImgFactory<T>().create(
                                 new long[] { src.dimension(vectorDim) }, src
                                                 .firstElement()
                                                 .createVariable());
 
-                Cursor<T> vecCur = vector.localizingCursor();
-                RandomAccess<T> srcRA = src.randomAccess();
+                final Cursor<T> vecCur = vector.localizingCursor();
+                final RandomAccess<T> srcRA = src.randomAccess();
 
                 srcRA.setPosition(pos);
                 while (vecCur.hasNext()) {
@@ -177,11 +177,11 @@ public final class FilterTools {
 
                 private final RandomAccess<T> m_ra;
 
-                public RandomAccess2D(Img<T> img) {
+                public RandomAccess2D(final Img<T> img) {
                         m_ra = img.randomAccess();
                 }
 
-                public T get(int row, int col) {
+                public T get(final int row, final int col) {
                         m_ra.setPosition(col, 1);
                         m_ra.setPosition(row, 0);
                         return m_ra.get();
@@ -189,11 +189,11 @@ public final class FilterTools {
 
         }
 
-        public static <T extends RealType<T>> void print2DMatrix(Img<T> img) {
+        public static <T extends RealType<T>> void print2DMatrix(final Img<T> img) {
                 if (img.numDimensions() < 2) {
                         return;
                 }
-                RandomAccess<T> ra = img.randomAccess();
+                final RandomAccess<T> ra = img.randomAccess();
                 for (int x = 0; x < img.dimension(0); x++) {
                         System.out.println("");
                         ra.setPosition(x, 0);

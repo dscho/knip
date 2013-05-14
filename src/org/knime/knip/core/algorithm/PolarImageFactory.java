@@ -69,7 +69,7 @@ public class PolarImageFactory<T extends RealType<T>> {
          */
 
         public PolarImageFactory(final RandomAccessible<T> interval,
-                        int angularDimension, long numAng) {
+                        final int angularDimension, final long numAng) {
                 m_interval = interval;
                 m_angularDimension = angularDimension;
                 m_numAngles = numAng;
@@ -98,6 +98,7 @@ public class PolarImageFactory<T extends RealType<T>> {
                         final int length) {
 
                 @SuppressWarnings("rawtypes")
+                final
                 Img<T> res = new ArrayImgFactory().create(new int[] { radius,
                                 length }, m_interval.randomAccess().get()
                                 .createVariable());
@@ -126,7 +127,7 @@ public class PolarImageFactory<T extends RealType<T>> {
         public Img<T> createPolarImage(final double[] center, final int radius,
                         final int length) {
 
-                long[] centroid = new long[center.length];
+                final long[] centroid = new long[center.length];
 
                 for (int l = 0; l < center.length; l++) {
                         centroid[l] = (long) center[l];
@@ -154,19 +155,19 @@ public class PolarImageFactory<T extends RealType<T>> {
          *
          */
         public Img<T> createPolarImage(final long[] center, final int length,
-                        Img<T> resImg) {
+                        final Img<T> resImg) {
 
                 if (m_angularDimension != -1) {
                         return createPolarImage(center, length,
                                         m_angularDimension, m_numAngles, resImg);
                 }
 
-                RandomAccess<T> srcRA = m_interval.randomAccess();
+                final RandomAccess<T> srcRA = m_interval.randomAccess();
 
                 CursorTools.setPosition(srcRA, center);
 
                 int tmpx, tmpy;
-                Cursor<T> polarC = resImg.localizingCursor();
+                final Cursor<T> polarC = resImg.localizingCursor();
                 double angle;
                 while (polarC.hasNext()) {
                         polarC.fwd();
@@ -206,12 +207,12 @@ public class PolarImageFactory<T extends RealType<T>> {
          * @return the polar image
          */
         private Img<T> createPolarImage(final long[] center, final int length,
-                        int angularDimension, long numAngles, Img<T> resImg) {
+                        final int angularDimension, final long numAngles, final Img<T> resImg) {
 
-                RandomAccess<T> srcRA = m_interval.randomAccess();
+                final RandomAccess<T> srcRA = m_interval.randomAccess();
 
                 int tmpx, tmpy;
-                Cursor<T> polarC = resImg.localizingCursor();
+                final Cursor<T> polarC = resImg.localizingCursor();
                 double angle;
                 int angID;
 

@@ -75,45 +75,45 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
 
         }
 
-        public Overlay(Interval interval) {
+        public Overlay(final Interval interval) {
                 this();
                 m_dims = new long[interval.numDimensions()];
                 interval.dimensions(m_dims);
         }
 
-        public boolean addElement(OverlayElement2D<L>... elmnts) {
+        public boolean addElement(final OverlayElement2D<L>... elmnts) {
                 boolean changed = false;
-                for (OverlayElement2D<L> e : elmnts) {
+                for (final OverlayElement2D<L> e : elmnts) {
                         changed = m_elements.add(e) || changed;
                 }
 
                 return changed;
         }
 
-        public boolean removeAll(List<OverlayElement2D<L>> m_removeList) {
+        public boolean removeAll(final List<OverlayElement2D<L>> m_removeList) {
                 return m_elements.removeAll(m_removeList);
         }
 
-        public boolean removeElement(OverlayElement2D<L> e) {
+        public boolean removeElement(final OverlayElement2D<L> e) {
                 return m_elements.remove(e);
         }
 
         @SuppressWarnings("unchecked")
         public OverlayElement2D<L>[] getElements() {
-                OverlayElement2D<L>[] ret = new OverlayElement2D[m_elements
+                final OverlayElement2D<L>[] ret = new OverlayElement2D[m_elements
                                 .size()];
                 m_elements.toArray(ret);
                 return ret;
         }
 
         public final List<OverlayElement2D<L>> getElementsByPosition(
-                        final long[] pos, int[] dimIndices) {
+                        final long[] pos, final int[] dimIndices) {
 
-                int tolerance = 10;
-                ArrayList<OverlayElement2D<L>> ret = new ArrayList<OverlayElement2D<L>>();
-                for (OverlayElement2D<L> e : m_elements) {
+                final int tolerance = 10;
+                final ArrayList<OverlayElement2D<L>> ret = new ArrayList<OverlayElement2D<L>>();
+                for (final OverlayElement2D<L> e : m_elements) {
 
-                        Interval interval = e.getInterval();
+                        final Interval interval = e.getInterval();
                         if (isVisible(e, pos, dimIndices)) {
                                 for (int i = 0; i < dimIndices.length; i++) {
                                         if ((pos[dimIndices[i]] + tolerance) < interval
@@ -138,8 +138,8 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
          */
         public final List<OverlayElement2D<L>> getElementsByPosition(
                         final long[] pos) {
-                ArrayList<OverlayElement2D<L>> res = new ArrayList<OverlayElement2D<L>>();
-                for (OverlayElement2D<L> e : m_elements) {
+                final ArrayList<OverlayElement2D<L>> res = new ArrayList<OverlayElement2D<L>>();
+                for (final OverlayElement2D<L> e : m_elements) {
                         if (e.contains(pos)) {
                                 res.add(e);
                         }
@@ -147,19 +147,20 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
                 return res;
         }
 
-        public void renderBufferedImage(Graphics g, int[] dimIndices,
-                        final long[] pos, int alpha) {
+        public void renderBufferedImage(final Graphics g, final int[] dimIndices,
+                        final long[] pos, final int alpha) {
 
-                for (OverlayElement2D<L> e : m_elements) {
+                for (final OverlayElement2D<L> e : m_elements) {
 
-                        if (isVisible(e, pos, dimIndices))
+                        if (isVisible(e, pos, dimIndices)) {
                                 renderOverlayElement(g, e, alpha);
+                        }
                 }
 
         }
 
-        private boolean isVisible(OverlayElement2D<L> e, long[] pos,
-                        int[] dimIndices) {
+        private boolean isVisible(final OverlayElement2D<L> e, final long[] pos,
+                        final int[] dimIndices) {
 
                 for (int d = 0; d < dimIndices.length; d++) {
                         if (!e.isOrientation(dimIndices[d])) {
@@ -177,8 +178,8 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
                 return true;
         }
 
-        private void renderOverlayElement(Graphics g, OverlayElement2D<L> e,
-                        int alpha) {
+        private void renderOverlayElement(final Graphics g, final OverlayElement2D<L> e,
+                        final int alpha) {
                 switch (e.getStatus()) {
                 case ACTIVE:
                         g.setColor(m_activeColor);
@@ -215,7 +216,7 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
          * @return
          */
         public Labeling<String> renderSegmentationImage(
-                        NativeImgFactory<?> factory, NativeTypes type) {
+                        final NativeImgFactory<?> factory, final NativeTypes type) {
                 return renderSegmentationImage(factory, true, type);
         }
 
@@ -227,8 +228,8 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
          * @return
          */
         public NativeImgLabeling<String, ?> renderSegmentationImage(
-                        NativeImgFactory<?> factory, boolean addSegmentID,
-                        NativeTypes type) {
+                        final NativeImgFactory<?> factory, final boolean addSegmentID,
+                        final NativeTypes type) {
 
                 NativeImgLabeling<String, ?> res = null;
                 try {
@@ -283,18 +284,18 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
                                                                 .create(m_dims,
                                                                                 new IntType()));
                         }
-                } catch (IncompatibleTypeException e1) {
+                } catch (final IncompatibleTypeException e1) {
                         res = new NativeImgLabeling<String, IntType>(
                                         new PlanarImgFactory<IntType>().create(
                                                         m_dims, new IntType()));
                         throw new RuntimeException(e1);
                 }
 
-                long[] minExtend = new long[res.numDimensions()];
-                long[] maxExtend = new long[res.numDimensions()];
+                final long[] minExtend = new long[res.numDimensions()];
+                final long[] maxExtend = new long[res.numDimensions()];
 
                 int segId = 0;
-                for (OverlayElement2D<L> e : m_elements) {
+                for (final OverlayElement2D<L> e : m_elements) {
                         List<String> listToSet = new ArrayList<String>(
                                         e.getLabels());
                         if (addSegmentID) {
@@ -334,7 +335,7 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
         public int hashCode() {
 
                 int hashCode = 31;
-                for (OverlayElement2D<L> element : m_elements) {
+                for (final OverlayElement2D<L> element : m_elements) {
                         hashCode *= 31;
                         hashCode += element.hashCode();
                 }
@@ -346,7 +347,7 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
 
@@ -354,7 +355,7 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
 
         @SuppressWarnings("unchecked")
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 m_elements.clear();
 
@@ -363,21 +364,21 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient,
                         m_dims[i] = in.readLong();
                 }
 
-                int num = in.readInt();
+                final int num = in.readInt();
                 for (int d = 0; d < num; d++) {
                         m_elements.add((OverlayElement2D<L>) in.readObject());
                 }
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 out.writeInt(m_dims.length);
-                for (long i : m_dims) {
+                for (final long i : m_dims) {
                         out.writeLong(i);
                 }
 
                 out.writeInt(m_elements.size());
-                for (OverlayElement2D<L> element : m_elements) {
+                for (final OverlayElement2D<L> element : m_elements) {
                         out.writeObject(element);
                 }
         }

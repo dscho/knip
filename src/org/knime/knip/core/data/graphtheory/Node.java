@@ -86,7 +86,7 @@ public class Node {
          * @param firstOutgoing
          *                The firstOutgoing.
          */
-        public void setFirstOutgoing(Edge firstOutgoing) {
+        public void setFirstOutgoing(final Edge firstOutgoing) {
                 this.firstOutgoing = firstOutgoing;
         }
 
@@ -105,7 +105,7 @@ public class Node {
          * @param parent
          *                The new parent.
          */
-        public void setParent(Edge parent) {
+        public void setParent(final Edge parent) {
                 this.parent = parent;
         }
 
@@ -124,7 +124,7 @@ public class Node {
          * @param next
          *                The next node.
          */
-        public void setNext(Node next) {
+        public void setNext(final Node next) {
                 this.next = next;
         }
 
@@ -143,7 +143,7 @@ public class Node {
          * @param timestamp
          *                The timestamp.
          */
-        public void setTimestamp(int timestamp) {
+        public void setTimestamp(final int timestamp) {
                 this.timestamp = timestamp;
         }
 
@@ -162,7 +162,7 @@ public class Node {
          * @param distance
          *                The distance.
          */
-        public void setDistance(int distance) {
+        public void setDistance(final int distance) {
                 this.distance = distance;
         }
 
@@ -181,7 +181,7 @@ public class Node {
          * @param inSink
          *                <tt>true</tt>, if this node is connected to the sink.
          */
-        public void setInSink(boolean inSink) {
+        public void setInSink(final boolean inSink) {
                 this.inSink = inSink;
         }
 
@@ -200,7 +200,7 @@ public class Node {
          * @param marked
          *                <tt>true</tt> to mark this node
          */
-        public void setMarked(boolean marked) {
+        public void setMarked(final boolean marked) {
                 this.marked = marked;
         }
 
@@ -210,7 +210,7 @@ public class Node {
          * @param residualCapacity
          *                The residual capacity.
          */
-        public void setResidualCapacity(float residualCapacity) {
+        public void setResidualCapacity(final float residualCapacity) {
                 this.residualCapacity = residualCapacity;
         }
 
@@ -229,7 +229,7 @@ public class Node {
          * @param inChangedList
          *                <tt>true</tt>, if this node is in changedNodes
          */
-        public void setInChangedList(boolean inChangedList) {
+        public void setInChangedList(final boolean inChangedList) {
                 this.inChangedList = inChangedList;
         }
 

@@ -75,17 +75,17 @@ public class PermutationSort {
          */
         public static <T> int[] sort(final T[] a, final Comparator<? super T> c) {
 
-                Integer[] perm = new Integer[a.length];
+                final Integer[] perm = new Integer[a.length];
                 for (int i = 0; i < perm.length; i++) {
                         perm[i] = i;
                 }
                 Arrays.sort(perm, new Comparator<Integer>() {
                         @Override
-                        public int compare(Integer o1, Integer o2) {
+                        public int compare(final Integer o1, final Integer o2) {
                                 return c.compare(a[o1], a[o2]);
                         }
                 });
-                int[] res = new int[perm.length];
+                final int[] res = new int[perm.length];
                 for (int i = 0; i < res.length; i++) {
                         res[i] = perm[i].intValue();
                 }
@@ -101,17 +101,17 @@ public class PermutationSort {
         public static <T> int[] sort(final List<T> l,
                         final Comparator<? super T> c) {
 
-                Integer[] perm = new Integer[l.size()];
+                final Integer[] perm = new Integer[l.size()];
                 for (int i = 0; i < perm.length; i++) {
                         perm[i] = i;
                 }
                 Arrays.sort(perm, new Comparator<Integer>() {
                         @Override
-                        public int compare(Integer o1, Integer o2) {
+                        public int compare(final Integer o1, final Integer o2) {
                                 return c.compare(l.get(o1), l.get(o2));
                         }
                 });
-                int[] res = new int[perm.length];
+                final int[] res = new int[perm.length];
                 for (int i = 0; i < res.length; i++) {
                         res[i] = perm[i].intValue();
                 }
@@ -125,9 +125,9 @@ public class PermutationSort {
          */
         public static int[] sort(final double[] a) {
 
-                Integer[] perm = new Integer[a.length];
+                final Integer[] perm = new Integer[a.length];
                 sortPermInPlace(a, perm);
-                int[] res = new int[perm.length];
+                final int[] res = new int[perm.length];
                 for (int i = 0; i < res.length; i++) {
                         res[i] = perm[i].intValue();
                 }
@@ -135,13 +135,13 @@ public class PermutationSort {
         }
 
         public static void sortPermInPlace(final double[] a,
-                        Integer[] permutation) {
+                        final Integer[] permutation) {
                 for (int i = 0; i < permutation.length; i++) {
                         permutation[i] = i;
                 }
                 Arrays.sort(permutation, new Comparator<Integer>() {
                         @Override
-                        public int compare(Integer o1, Integer o2) {
+                        public int compare(final Integer o1, final Integer o2) {
                                 return Double.compare(a[o1], a[o2]);
                         }
                 });
@@ -152,20 +152,20 @@ public class PermutationSort {
          * 
          * @return the permutation of the positions
          */
-        public static int[] sort(final double[] a, final int from, int to) {
+        public static int[] sort(final double[] a, final int from, final int to) {
 
-                Integer[] perm = new Integer[to - from];
+                final Integer[] perm = new Integer[to - from];
                 for (int i = 0; i < perm.length; i++) {
                         perm[i] = i;
                 }
                 Arrays.sort(perm, new Comparator<Integer>() {
                         @Override
-                        public int compare(Integer o1, Integer o2) {
+                        public int compare(final Integer o1, final Integer o2) {
                                 return Double.compare(a[from + o1],
                                                 a[from + o2]);
                         }
                 });
-                int[] res = new int[perm.length];
+                final int[] res = new int[perm.length];
                 for (int i = 0; i < res.length; i++) {
                         res[i] = perm[i].intValue();
                 }
@@ -178,17 +178,17 @@ public class PermutationSort {
          * 
          * @return the permutation of the positions
          */
-        public static void sort(List<Integer> perm, final double[] a) {
+        public static void sort(final List<Integer> perm, final double[] a) {
                 Collections.sort(perm, new Comparator<Integer>() {
                         @Override
-                        public int compare(Integer o1, Integer o2) {
+                        public int compare(final Integer o1, final Integer o2) {
                                 return Double.compare(a[o1], a[o2]);
                         }
                 });
         }
 
-        public static <T> T[] reorder(T[] a, int[] permutation) {
-                T[] res = a.clone();
+        public static <T> T[] reorder(final T[] a, final int[] permutation) {
+                final T[] res = a.clone();
                 for (int i = 0; i < res.length; i++) {
                         res[i] = a[permutation[i]];
                 }

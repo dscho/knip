@@ -102,20 +102,20 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
          * {@inheritDoc}
          */
         @Override
-        public NtreeImg read(BufferedDataInputStream in) throws Exception {
+        public NtreeImg read(final BufferedDataInputStream in) throws Exception {
 
-                long[] dims = new long[in.readInt()];
+                final long[] dims = new long[in.readInt()];
                 in.read(dims);
 
-                NativeType<?> type = (NativeType<?>) ExternalizerManager
+                final NativeType<?> type = (NativeType<?>) ExternalizerManager
                                 .<Class> read(in).newInstance();
 
-                int numChildren = in.readInt();
+                final int numChildren = in.readInt();
 
                 @SuppressWarnings({ "rawtypes" })
                 final NtreeImg<? extends Type<?>, ? extends NtreeAccess<? extends Comparable<?>, ?>> img = new NtreeImgFactory()
                                 .create(dims, type);
-                Ntree<? extends Comparable<?>> tree = img.update(
+                final Ntree<? extends Comparable<?>> tree = img.update(
                                 new NtreeImg.PositionProvider() {
 
                                         @Override
@@ -126,7 +126,7 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
 
                                 }).getCurrentStorageNtree();
 
-                NtreeNode<? extends Comparable<?>> root = tree.getRootNode();
+                final NtreeNode<? extends Comparable<?>> root = tree.getRootNode();
 
                 readNtreeNode(new ObjectInputStream(in),
                                 (NtreeNode<Object>) root, numChildren);
@@ -138,7 +138,7 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, final NtreeImg obj)
+        public void write(final BufferedDataOutputStream out, final NtreeImg obj)
                         throws Exception {
                 // write dimensions
                 out.writeInt(obj.numDimensions());
@@ -149,12 +149,12 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
                 ExternalizerManager.<Class> write(out, obj.firstElement()
                                 .getClass());
 
-                int n = obj.numDimensions();
-                int numChildren = 1 << n;
+                final int n = obj.numDimensions();
+                final int numChildren = 1 << n;
 
                 out.writeInt(numChildren);
 
-                Ntree<?> tree = obj.update(new NtreeImg.PositionProvider() {
+                final Ntree<?> tree = obj.update(new NtreeImg.PositionProvider() {
 
                         @Override
                         public long[] getPosition() {
@@ -168,44 +168,46 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
         }
 
         @SuppressWarnings("unchecked")
-        private void readNtreeNode(ObjectInputStream in,
-                        NtreeNode<Object> current, int numChildren)
+        private void readNtreeNode(final ObjectInputStream in,
+                        NtreeNode<Object> current, final int numChildren)
                         throws IOException {
                 try {
                         current.setValue(in.readObject());
-                        if (!in.readBoolean())
+                        if (!in.readBoolean()) {
                                 return;
+                        }
 
-                        LinkedList<NtreeNode<Object>> queue = new LinkedList<NtreeNode<Object>>();
+                        final LinkedList<NtreeNode<Object>> queue = new LinkedList<NtreeNode<Object>>();
                         queue.add(current);
 
                         while (!queue.isEmpty()) {
                                 current = queue.getFirst();
-                                NtreeNode<Object>[] children = new NtreeNode[numChildren];
+                                final NtreeNode<Object>[] children = new NtreeNode[numChildren];
                                 for (int i = 0; i < numChildren; i++) {
                                         children[i] = new NtreeNode<Object>(
                                                         current,
                                                         in.readObject());
                                         ;
                                         if (((Boolean) in.readObject())
-                                                        .booleanValue())
+                                                        .booleanValue()) {
                                                 queue.add(children[i]);
+                                        }
                                 }
                                 queue.removeFirst().setChildren(children);
                         }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                         throw new RuntimeException(e);
                 }
         }
 
-        private void writeNtreeNode(ObjectOutputStream out,
+        private void writeNtreeNode(final ObjectOutputStream out,
                         NtreeNode<? extends Comparable<?>> current)
                         throws IOException {
 
                 out.writeObject(current.getValue());
                 out.writeBoolean(current.getChildren() != null);
 
-                LinkedList<NtreeNode<? extends Comparable<?>>> queue = new LinkedList<NtreeNode<? extends Comparable<?>>>();
+                final LinkedList<NtreeNode<? extends Comparable<?>>> queue = new LinkedList<NtreeNode<? extends Comparable<?>>>();
                 queue.add(current);
 
                 if (current.getChildren() == null) {
@@ -216,13 +218,14 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
                 while (!queue.isEmpty()) {
 
                         current = queue.removeFirst();
-                        for (NtreeNode<? extends Comparable<?>> child : current
+                        for (final NtreeNode<? extends Comparable<?>> child : current
                                         .getChildren()) {
                                 out.writeObject(child.getValue());
                                 out.writeObject(child.getChildren() != null);
 
-                                if (child.getChildren() != null)
+                                if (child.getChildren() != null) {
                                         queue.add(child);
+                                }
 
                         }
 

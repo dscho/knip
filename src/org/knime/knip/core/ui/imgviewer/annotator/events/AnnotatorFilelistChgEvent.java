@@ -60,7 +60,7 @@ public class AnnotatorFilelistChgEvent implements KNIPEvent {
 
         private final String[] m_fileList;
 
-        public AnnotatorFilelistChgEvent(String[] fileList) {
+        public AnnotatorFilelistChgEvent(final String[] fileList) {
                 m_fileList = fileList;
 
         }
@@ -81,7 +81,7 @@ public class AnnotatorFilelistChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

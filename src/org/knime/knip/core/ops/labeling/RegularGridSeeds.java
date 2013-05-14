@@ -68,7 +68,7 @@ public class RegularGridSeeds<L extends Comparable<L>> implements
         private final int m_avgDistance;
         private final LabelGenerator<L> m_seedGen;
 
-        public RegularGridSeeds(LabelGenerator<L> seedGen, int avgDistance) {
+        public RegularGridSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
                 m_seedGen = seedGen;
                 m_avgDistance = avgDistance;
 
@@ -78,7 +78,7 @@ public class RegularGridSeeds<L extends Comparable<L>> implements
          * {@inheritDoc}
          */
         @Override
-        public Labeling<L> compute(Interval input, Labeling<L> output) {
+        public Labeling<L> compute(final Interval input, final Labeling<L> output) {
                 m_seedGen.reset();
                 final RandomAccess<LabelingType<L>> out = output.randomAccess();
                 while (out.getIntPosition(output.numDimensions() - 1) < input

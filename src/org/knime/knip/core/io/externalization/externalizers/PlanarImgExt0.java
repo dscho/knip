@@ -95,16 +95,16 @@ public class PlanarImgExt0 implements Externalizer<PlanarImg> {
          * {@inheritDoc}
          */
         @Override
-        public PlanarImg read(BufferedDataInputStream in) throws Exception {
-                long[] dims = new long[in.readInt()];
+        public PlanarImg read(final BufferedDataInputStream in) throws Exception {
+                final long[] dims = new long[in.readInt()];
                 in.read(dims);
 
-                NativeType<?> type = (NativeType<?>) ExternalizerManager
+                final NativeType<?> type = (NativeType<?>) ExternalizerManager
                                 .<Class> read(in).newInstance();
 
-                PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
+                final PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
 
-                PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new PlanarImgFactory()
+                final PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new PlanarImgFactory()
                                 .create(dims, type);
 
                 for (int i = 0; i < img.numSlices(); i++) {
@@ -120,7 +120,7 @@ public class PlanarImgExt0 implements Externalizer<PlanarImg> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, PlanarImg obj)
+        public void write(final BufferedDataOutputStream out, final PlanarImg obj)
                         throws Exception {
                 // write dimensions
                 out.writeInt(obj.numDimensions());
@@ -131,9 +131,9 @@ public class PlanarImgExt0 implements Externalizer<PlanarImg> {
                 ExternalizerManager.<Class> write(out, obj.firstElement()
                                 .getClass());
 
-                PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
+                final PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
 
-                PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> planar = obj;
+                final PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> planar = obj;
                 for (int n = 0; n < planar.numSlices(); n++) {
                         sampler.fwd();
                         out.writeArray(((ArrayDataAccess<?>) planar

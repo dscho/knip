@@ -73,12 +73,12 @@ public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * @param numAngles
          * @param target
          */
-        public CentralDistanceFeatureSet(int numAngles) {
+        public CentralDistanceFeatureSet(final int numAngles) {
                 m_numAngles = numAngles;
         }
 
         @FeatureTargetListener
-        public void iiUpdated(IterableInterval<BitType> interval) {
+        public void iiUpdated(final IterableInterval<BitType> interval) {
                 m_signature = m_ocac.signature(interval, m_numAngles);
         }
 
@@ -86,7 +86,7 @@ public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public double value(int id) {
+        public double value(final int id) {
                 return m_signature.getPosAt(id);
         }
 
@@ -94,7 +94,7 @@ public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return "Abs:CentralDistance [" + id + "]";
         }
 
@@ -118,7 +118,7 @@ public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 // nothing to do
 
         }
@@ -135,7 +135,7 @@ public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
          * {@inheritDoc}
          */
         @Override
-        public void setSharedObjectInstances(Object[] instances) {
+        public void setSharedObjectInstances(final Object[] instances) {
                 m_ocac = (ObjectCalcAndCache) instances[0];
 
         }

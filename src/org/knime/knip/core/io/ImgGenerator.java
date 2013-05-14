@@ -214,7 +214,7 @@ public class ImgGenerator {
                         facType = m_factory;
                 }
 
-                ImgFactory<T> imgFac = ImgFactoryTypes.getImgFactory(facType);
+                final ImgFactory<T> imgFac = ImgFactoryTypes.getImgFactory(facType);
 
                 // process all dimensions
                 processDimension(m_sizeX, "X");
@@ -223,7 +223,7 @@ public class ImgGenerator {
                 processDimension(m_sizeChannel, "Channel");
                 processDimension(m_sizeT, "Time");
 
-                long[] dims = new long[m_dimList.size()];
+                final long[] dims = new long[m_dimList.size()];
 
                 for (int d = 0; d < m_dimList.size(); d++) {
                         dims[d] = m_dimList.get(d);
@@ -245,11 +245,11 @@ public class ImgGenerator {
                 }
 
                 // create the actual image
-                T val = (T) NativeTypes.getTypeInstance(type);
-                Img<T> img = imgFac.create(dims, val);
+                final T val = (T) NativeTypes.getTypeInstance(type);
+                final Img<T> img = imgFac.create(dims, val);
 
                 // fill the image
-                Cursor<T> cursor = img.cursor();
+                final Cursor<T> cursor = img.cursor();
                 while (cursor.hasNext()) {
                         cursor.fwd();
 
@@ -265,10 +265,10 @@ public class ImgGenerator {
                                                         : m_value);
                 }
 
-                ImgPlus<T> imgPlus = new ImgPlus<T>(img);
+                final ImgPlus<T> imgPlus = new ImgPlus<T>(img);
 
                 int d = 0;
-                for (AxisType a : m_axisList) {
+                for (final AxisType a : m_axisList) {
                         imgPlus.setAxis(a, d++);
                 }
 

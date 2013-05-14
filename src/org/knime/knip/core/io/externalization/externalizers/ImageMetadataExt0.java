@@ -27,14 +27,14 @@ public class ImageMetadataExt0 implements Externalizer<ImageMetadata> {
         }
 
         @Override
-        public ImageMetadata read(BufferedDataInputStream in) throws Exception {
-                ImageMetadataImpl obj = new ImageMetadataImpl();
+        public ImageMetadata read(final BufferedDataInputStream in) throws Exception {
+                final ImageMetadataImpl obj = new ImageMetadataImpl();
 
                 // Valid bits are deserialized
                 obj.setValidBits(in.readInt());
 
                 // Channel Min/Max are deserialized
-                int numChannels = in.readInt();
+                final int numChannels = in.readInt();
 
                 for (int c = 0; c < numChannels; c++) {
                         obj.setChannelMinimum(c, in.readDouble());
@@ -42,31 +42,35 @@ public class ImageMetadataExt0 implements Externalizer<ImageMetadata> {
                 }
 
                 // Colortables are deserialized
-                int numColorTables = in.readInt();
+                final int numColorTables = in.readInt();
                 obj.initializeColorTables(numColorTables);
 
                 for (int t = 0; t < numColorTables; t++) {
 
                         if (in.readBoolean()) {
-                                int componentCount8 = in.readInt();
-                                int length8 = in.readInt();
-                                byte[][] ct8 = new byte[componentCount8][length8];
+                                final int componentCount8 = in.readInt();
+                                final int length8 = in.readInt();
+                                final byte[][] ct8 = new byte[componentCount8][length8];
 
-                                for (int c = 0; c < componentCount8; c++)
-                                        for (int k = 0; k < length8; k++)
+                                for (int c = 0; c < componentCount8; c++) {
+                                        for (int k = 0; k < length8; k++) {
                                                 ct8[c][k] = in.readByte();
+                                        }
+                                }
 
                                 obj.setColorTable(new ColorTable8(ct8), t);
                         }
 
                         if (in.readBoolean()) {
-                                int componentCount16 = in.readInt();
-                                int length16 = in.readInt();
-                                short[][] ct16 = new short[componentCount16][length16];
+                                final int componentCount16 = in.readInt();
+                                final int length16 = in.readInt();
+                                final short[][] ct16 = new short[componentCount16][length16];
 
-                                for (int c = 0; c < componentCount16; c++)
-                                        for (int k = 0; k < componentCount16; k++)
+                                for (int c = 0; c < componentCount16; c++) {
+                                        for (int k = 0; k < componentCount16; k++) {
                                                 ct16[c][k] = in.readShort();
+                                        }
+                                }
 
                                 obj.setColorTable(new ColorTable16(ct16), t);
                         }
@@ -78,7 +82,7 @@ public class ImageMetadataExt0 implements Externalizer<ImageMetadata> {
         // Invalid: As ImageMetadataExt1
         @Deprecated
         @Override
-        public void write(BufferedDataOutputStream out, ImageMetadata obj)
+        public void write(final BufferedDataOutputStream out, final ImageMetadata obj)
                         throws Exception {
 
                 // // Valid bits

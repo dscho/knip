@@ -74,15 +74,15 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
 
         public abstract void fireFocusLost(Overlay<String> overlay);
 
-        public AnnotatorTool(String name, String iconPath) {
+        public AnnotatorTool(final String name, final String iconPath) {
                 m_name = name;
                 m_iconPath = iconPath;
                 m_stateChanged = false;
         }
 
-        public void onMouseDoubleClick(ImgViewerMouseEvent e,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClick(final ImgViewerMouseEvent e,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 if (!e.isInside()) {
                         setCurrentOverlayElement(null, null);
                         fireStateChanged();
@@ -100,9 +100,9 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
                 tryToFireStateChanged(overlay);
         }
 
-        public void onMousePressed(ImgViewerMouseEvent e,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMousePressed(final ImgViewerMouseEvent e,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 m_dragPoint = selection.getPlanePos(e.getPosX(), e.getPosY());
 
                 if (!e.isInside()) {
@@ -122,9 +122,9 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
                 tryToFireStateChanged(overlay);
         }
 
-        public void onMouseReleased(ImgViewerMouseEvent e,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseReleased(final ImgViewerMouseEvent e,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
                 if (!e.isInside()) {
                         if (m_currentOverlayElement != null
@@ -148,9 +148,9 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
 
         }
 
-        public void onMouseDragged(ImgViewerMouseEvent e,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDragged(final ImgViewerMouseEvent e,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 if (!e.isInside()) {
                         return;
                 }
@@ -171,7 +171,7 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
                 tryToFireStateChanged(overlay);
         }
 
-        protected void tryToFireStateChanged(Overlay<String> overlay) {
+        protected void tryToFireStateChanged(final Overlay<String> overlay) {
                 if (m_stateChanged && overlay != null) {
                         m_stateChanged = false;
                         overlay.fireOverlayChanged();
@@ -188,7 +188,7 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
 
         public final void setButtonIcon(final AbstractButton jb,
                         final String path) {
-                URL icon = getClass().getClassLoader().getResource(
+                final URL icon = getClass().getClassLoader().getResource(
                                 getClass().getPackage().getName()
                                                 .replace('.', '/')
                                                 + "/" + path);
@@ -199,8 +199,8 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
         }
 
         // Helpers
-        protected boolean setCurrentOverlayElement(OverlayElementStatus status,
-                        O os) {
+        protected boolean setCurrentOverlayElement(final OverlayElementStatus status,
+                        final O os) {
                 if ((m_currentOverlayElement == null && os == null || (m_currentOverlayElement == os && m_currentOverlayElement
                                 .getStatus() == status))) {
                         return false;
@@ -232,12 +232,12 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
                 return m_dragPoint;
         }
 
-        protected final void setDragPoint(long[] dragPoint) {
+        protected final void setDragPoint(final long[] dragPoint) {
                 m_dragPoint = dragPoint;
         }
 
-        public void setLabelsCurrentElements(Overlay<String> overlay,
-                        String[] selectedLabels) {
+        public void setLabelsCurrentElements(final Overlay<String> overlay,
+                        final String[] selectedLabels) {
 
                 if (m_currentOverlayElement != null) {
                         m_currentOverlayElement.setLabels(selectedLabels);

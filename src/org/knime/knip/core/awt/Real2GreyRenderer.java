@@ -29,11 +29,11 @@ public class Real2GreyRenderer<R extends RealType<R>> extends
         }
 
         @Override
-        public ScreenImage render(RandomAccessibleInterval<R> source, int dimX,
-                        int dimY, long[] planePos) {
+        public ScreenImage render(final RandomAccessibleInterval<R> source, final int dimX,
+                        final int dimY, final long[] planePos) {
 
                 // speed up standard cases e.g. array image...
-                ScreenImage fastResult = FastNormalizingGreyRendering
+                final ScreenImage fastResult = FastNormalizingGreyRendering
                                 .tryRendering(source, dimX, dimY, planePos,
                                                 m_normalizationFactor, m_min);
 
@@ -46,7 +46,7 @@ public class Real2GreyRenderer<R extends RealType<R>> extends
         }
 
         @Override
-        public void setNormalizationParameters(double factor, double min) {
+        public void setNormalizationParameters(final double factor, final double min) {
                 m_converter = new RealGreyARGBConverter<R>(factor, min);
                 m_normalizationFactor = factor;
                 m_min = min;
@@ -58,9 +58,9 @@ public class Real2GreyRenderer<R extends RealType<R>> extends
         }
 
         @Override
-        protected Abstract2DProjector<R, ARGBType> getProjector(int dimX,
-                        int dimY, RandomAccessibleInterval<R> source,
-                        ARGBScreenImage target) {
+        protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
+                        final int dimY, final RandomAccessibleInterval<R> source,
+                        final ARGBScreenImage target) {
 
                 return new Projector2D<R, ARGBType>(dimX, dimY, source, target,
                                 m_converter);

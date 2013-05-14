@@ -19,9 +19,9 @@ public class SlidingShapeOpBinaryInside<T extends Type<T>, V extends Type<V>, IN
 
         private BinaryOperation<Iterator<T>, T, V> op;
 
-        public SlidingShapeOpBinaryInside(Shape neighborhood,
-                        BinaryOperation<Iterator<T>, T, V> op,
-                        OutOfBoundsFactory<T, IN> outofbounds) {
+        public SlidingShapeOpBinaryInside(final Shape neighborhood,
+                        final BinaryOperation<Iterator<T>, T, V> op,
+                        final OutOfBoundsFactory<T, IN> outofbounds) {
                 super(neighborhood, outofbounds);
                 this.op = op;
         }
@@ -33,13 +33,13 @@ public class SlidingShapeOpBinaryInside<T extends Type<T>, V extends Type<V>, IN
         }
 
         @Override
-        protected OUT compute(IterableInterval<Neighborhood<T>> neighborhoods,
-                        IN input, OUT output) {
+        protected OUT compute(final IterableInterval<Neighborhood<T>> neighborhoods,
+                        final IN input, final OUT output) {
 
-                Cursor<T> inCursor = Views.iterable(
+                final Cursor<T> inCursor = Views.iterable(
                                 SubsetOperations.subsetview(input, input))
                                 .cursor();
-                Cursor<V> outCursor = output.cursor();
+                final Cursor<V> outCursor = output.cursor();
                 for (final Neighborhood<T> neighborhood : neighborhoods) {
                         op.compute(neighborhood.cursor(), inCursor.next(),
                                         outCursor.next());
@@ -49,7 +49,7 @@ public class SlidingShapeOpBinaryInside<T extends Type<T>, V extends Type<V>, IN
 
         }
 
-        public void updateOperation(BinaryOperation<Iterator<T>, T, V> op) {
+        public void updateOperation(final BinaryOperation<Iterator<T>, T, V> op) {
                 this.op = op;
         }
 

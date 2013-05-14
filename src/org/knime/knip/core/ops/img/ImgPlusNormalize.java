@@ -64,20 +64,20 @@ public class ImgPlusNormalize<T extends RealType<T>> implements
         private final ImgNormalize<T> m_op;
         private final T m_val;
 
-        public ImgPlusNormalize(double saturation, T val,
-                        ValuePair<T, T> minmax,
-                        boolean isTarget) {
+        public ImgPlusNormalize(final double saturation, final T val,
+                        final ValuePair<T, T> minmax,
+                        final boolean isTarget) {
                 m_val = val;
                 m_op = new ImgNormalize<T>(saturation, val, minmax, isTarget);
         }
 
-        protected ImgPlusNormalize(ImgNormalize<T> op, T val) {
+        protected ImgPlusNormalize(final ImgNormalize<T> op, final T val) {
                 m_op = op;
                 m_val = val;
         }
 
         @Override
-        public ImgPlus<T> compute(ImgPlus<T> input, ImgPlus<T> output) {
+        public ImgPlus<T> compute(final ImgPlus<T> input, final ImgPlus<T> output) {
                 m_op.compute(input, output);
                 return output;
         }

@@ -9,7 +9,7 @@ public class LabelColoringChangeEvent implements KNIPEvent {
         private final Color m_boundingBoxColor;
         private final int m_colorMapNr;
 
-        public LabelColoringChangeEvent(Color boundingBoxColor, int colorMapNr) {
+        public LabelColoringChangeEvent(final Color boundingBoxColor, final int colorMapNr) {
                 m_boundingBoxColor = boundingBoxColor;
                 m_colorMapNr = colorMapNr;
 
@@ -29,7 +29,7 @@ public class LabelColoringChangeEvent implements KNIPEvent {
         }
 
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

@@ -67,13 +67,14 @@ public class NeighborhoodUtils {
          * @param dimensions
          * @return the structuring element.
          */
-        public static long[][] get8ConStructuringElement(int dimensions) {
+        public static long[][] get8ConStructuringElement(final int dimensions) {
                 int nElements = 1;
-                for (int i = 0; i < dimensions; i++)
+                for (int i = 0; i < dimensions; i++) {
                         nElements *= 3;
+                }
                 nElements--;
-                long[][] result = new long[nElements][dimensions];
-                long[] position = new long[dimensions];
+                final long[][] result = new long[nElements][dimensions];
+                final long[] position = new long[dimensions];
                 Arrays.fill(position, -1);
                 for (int i = 0; i < nElements; i++) {
                         System.arraycopy(position, 0, result[i], 0, dimensions);
@@ -104,10 +105,10 @@ public class NeighborhoodUtils {
          * @param dimensions
          * @return the structuring element.
          */
-        public static long[][] get4ConStructuringElement(int dimensions) {
-                int nElements = dimensions * 2;
+        public static long[][] get4ConStructuringElement(final int dimensions) {
+                final int nElements = dimensions * 2;
 
-                long[][] result = new long[nElements][dimensions];
+                final long[][] result = new long[nElements][dimensions];
                 for (int d = 0; d < dimensions; d++) {
                         result[d * 2] = new long[dimensions];
                         result[d * 2 + 1] = new long[dimensions];
@@ -123,21 +124,22 @@ public class NeighborhoodUtils {
          * so we can use Positionable.move to scan the image array.
          */
         public static long[][] reworkStructuringElement(
-                        long[][] structuringElement) {
+                        final long[][] structuringElement) {
 
-                int numDimensions = structuringElement[0].length;
-                long[][] strelMoves = new long[structuringElement.length][];
-                long[] currentOffset = new long[numDimensions];
+                final int numDimensions = structuringElement[0].length;
+                final long[][] strelMoves = new long[structuringElement.length][];
+                final long[] currentOffset = new long[numDimensions];
                 for (int i = 0; i < structuringElement.length; i++) {
                         strelMoves[i] = new long[numDimensions];
                         for (int j = 0; j < numDimensions; j++) {
                                 strelMoves[i][j] = structuringElement[i][j]
                                                 - currentOffset[j];
-                                if (i > 0)
+                                if (i > 0) {
                                         currentOffset[j] += structuringElement[i][j]
                                                         - structuringElement[i - 1][j];
-                                else
+                                } else {
                                         currentOffset[j] += structuringElement[i][j];
+                                }
                         }
                 }
                 return strelMoves;

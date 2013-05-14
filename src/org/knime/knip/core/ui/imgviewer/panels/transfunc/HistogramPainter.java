@@ -94,7 +94,7 @@ public class HistogramPainter implements MouseMotionListener {
                 private final double[] values;
 
                 public Bin(final Rectangle recLog, final Rectangle recLin,
-                                Rectangle recSelection,
+                                final Rectangle recSelection,
                                 final int c, final double[] val, final Color col) {
                         rectangleLog = recLog;
                         rectangleLinear = recLin;
@@ -106,7 +106,7 @@ public class HistogramPainter implements MouseMotionListener {
                 }
 
                 public Bin(final Rectangle recLog, final Rectangle recLin,
-                                Rectangle recSelection,
+                                final Rectangle recSelection,
                                 final int c, final double[] val) {
                         this(recLog, recLin, recSelection, c, val, DEFAULT);
                 }
@@ -223,27 +223,27 @@ public class HistogramPainter implements MouseMotionListener {
                         return;
                 }
 
-                int height = m_paintArea.height;
+                final int height = m_paintArea.height;
 
-                float pixelWidth = calcPixelSize(m_paintArea.width,
+                final float pixelWidth = calcPixelSize(m_paintArea.width,
                                 m_histogram.size());
                 float pos = 0f;
 
                 for (int i = 0; i < m_histogram.size(); i++) {
-                        int left = (int) pos;
+                        final int left = (int) pos;
                         pos += pixelWidth;
-                        int right = (int) pos;
+                        final int right = (int) pos;
 
-                        int[] h = calculateBarDrawHeight(m_histogram.count(i),
+                        final int[] h = calculateBarDrawHeight(m_histogram.count(i),
                                         height);
 
-                        Rectangle log = new Rectangle(left, height - h[0],
+                        final Rectangle log = new Rectangle(left, height - h[0],
                                         right - left, h[0]);
 
-                        Rectangle linear = new Rectangle(left, height - h[1],
+                        final Rectangle linear = new Rectangle(left, height - h[1],
                                         right - left, h[1]);
 
-                        Rectangle selection = new Rectangle(left, 0, right
+                        final Rectangle selection = new Rectangle(left, 0, right
                                         - left, height);
 
                         m_bins.add(new Bin(log, linear, selection, m_histogram
@@ -258,7 +258,7 @@ public class HistogramPainter implements MouseMotionListener {
                 m_max = Integer.MIN_VALUE;
                 m_min = Integer.MAX_VALUE;
 
-                for (Integer v : m_histogram) {
+                for (final Integer v : m_histogram) {
                         m_max = v > m_max ? v : m_max;
                         m_min = v < m_min ? v : m_min;
                 }
@@ -284,7 +284,7 @@ public class HistogramPainter implements MouseMotionListener {
          */
         public final void paint(final Graphics2D g2) {
 
-                Rectangle newArea = g2.getClipBounds();
+                final Rectangle newArea = g2.getClipBounds();
 
                 if (!newArea.equals(m_paintArea)) {
                         m_paintArea = newArea;
@@ -315,7 +315,7 @@ public class HistogramPainter implements MouseMotionListener {
                 assert m_backBuf.getHeight() == m_paintArea.height;
                 assert m_backBuf.getWidth() == m_paintArea.width;
 
-                Graphics2D g2 = m_backBuf.createGraphics();
+                final Graphics2D g2 = m_backBuf.createGraphics();
                 g2.setColor(ColorDispenser.BACKGROUND_COLOR);
                 g2.fill(m_paintArea);
 
@@ -324,13 +324,13 @@ public class HistogramPainter implements MouseMotionListener {
 
         private void paintHistogram(final Graphics2D g2, final boolean selection) {
 
-                for (Bin bin : m_bins) {
+                for (final Bin bin : m_bins) {
                         if (selection) {
                                 g2.setColor(bin.colorSelection);
                                 g2.fill(bin.rectangleSelection);
                         } else {
                                 if (bin.color.equals(HILITE)) {
-                                        GradientPaint gp = new GradientPaint(0,
+                                        final GradientPaint gp = new GradientPaint(0,
                                                         m_paintArea.height,
                                                         HILITE_BACKGROUND, 0,
                                                         0, BACKGROUND);
@@ -360,9 +360,9 @@ public class HistogramPainter implements MouseMotionListener {
          */
         private int[] calculateBarDrawHeight(final double val, final int height) {
 
-                int[] res = new int[2];
+                final int[] res = new int[2];
 
-                double max = m_maxLog - m_minLog;
+                final double max = m_maxLog - m_minLog;
                 double log = Math.log(val);
 
                 if (log == Double.NEGATIVE_INFINITY) {
@@ -370,10 +370,10 @@ public class HistogramPainter implements MouseMotionListener {
                 }
 
                 // Normalize to log scale
-                double l = (log - m_minLog) / max;
+                final double l = (log - m_minLog) / max;
                 res[0] = (int) (l * height);
 
-                double frac = val / m_max;
+                final double frac = val / m_max;
                 res[1] = (int) (frac * height);
 
                 return res;
@@ -393,20 +393,20 @@ public class HistogramPainter implements MouseMotionListener {
         }
 
         @Override
-        public void mouseDragged(MouseEvent arg0) {
+        public void mouseDragged(final MouseEvent arg0) {
                 // ignore
         }
 
         @Override
-        public void mouseMoved(MouseEvent event) {
+        public void mouseMoved(final MouseEvent event) {
 
-                Color c = new Color(
+                final Color c = new Color(
                                 m_backBuf.getRGB(event.getX(), event.getY()));
 
-                StringBuilder sb = new StringBuilder();
-                Formatter formatter = new Formatter(sb);
+                final StringBuilder sb = new StringBuilder();
+                final Formatter formatter = new Formatter(sb);
 
-                for (Bin bin : m_bins) {
+                for (final Bin bin : m_bins) {
                         if (bin.colorSelection.equals(c)) {
                                 formatter.format(
                                                 "Count %10d from %15.5g to %15.5g",
@@ -428,7 +428,7 @@ public class HistogramPainter implements MouseMotionListener {
         }
 
         private void fireChangeEvent() {
-                for (ChangeListener l : m_listener
+                for (final ChangeListener l : m_listener
                                 .getListeners(ChangeListener.class)) {
                         l.stateChanged(new ChangeEvent(this));
                 }

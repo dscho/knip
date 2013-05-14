@@ -11,6 +11,7 @@ import java.io.ObjectOutput;
 
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -35,7 +36,7 @@ public class TransparencyPanel extends ViewerComponent {
                 construct();
         }
 
-        public TransparencyPanel(boolean isBorderHidden) {
+        public TransparencyPanel(final boolean isBorderHidden) {
                 super("Transparency", isBorderHidden);
                 m_showLabel = isBorderHidden;
                 construct();
@@ -46,13 +47,13 @@ public class TransparencyPanel extends ViewerComponent {
                 setPreferredSize(new Dimension(180, 40));
 
                 m_sliderValue = new JLabel("128");
-                m_slider = new JSlider(JSlider.HORIZONTAL, 0, 255, 128);
+                m_slider = new JSlider(SwingConstants.HORIZONTAL, 0, 255, 128);
                 m_slider.setPreferredSize(new Dimension(130, 17));
                 m_slider.setMaximumSize(new Dimension(180, m_slider
                                 .getMaximumSize().height));
                 m_slider.addChangeListener(new ChangeListener() {
                         @Override
-                        public void stateChanged(ChangeEvent e) {
+                        public void stateChanged(final ChangeEvent e) {
                                 m_eventService.publish(new TransparencyPanelValueChgEvent(
                                                 m_slider.getValue()));
                                 m_eventService.publish(new ImgRedrawEvent());
@@ -66,7 +67,7 @@ public class TransparencyPanel extends ViewerComponent {
         private void addComponents() {
                 setLayout(new GridBagLayout());
 
-                GridBagConstraints gc = new GridBagConstraints();
+                final GridBagConstraints gc = new GridBagConstraints();
                 int x = 0;
                 int y = 0;
 
@@ -115,20 +116,20 @@ public class TransparencyPanel extends ViewerComponent {
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
 
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 out.writeInt(m_slider.getValue());
 
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 m_slider.setValue(in.readInt());
         }
@@ -142,7 +143,7 @@ public class TransparencyPanel extends ViewerComponent {
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 }

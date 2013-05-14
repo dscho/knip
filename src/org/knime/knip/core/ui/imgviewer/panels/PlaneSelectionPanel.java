@@ -50,6 +50,7 @@
  */
 package org.knime.knip.core.ui.imgviewer.panels;
 
+import java.awt.Adjustable;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -64,16 +65,17 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.InputMap;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -161,7 +163,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 // empty panel that ensures a minimum width
                 // setting the same thing on this has bad impacts on the
                 // component height
-                JPanel wider = new JPanel();
+                final JPanel wider = new JPanel();
                 wider.setMaximumSize(new Dimension(200,
                                 wider.getMaximumSize().height));
                 wider.setPreferredSize(new Dimension(200, wider
@@ -175,7 +177,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         }
 
         @EventListener
-        public void onClose(ViewClosedEvent e) {
+        public void onClose(final ViewClosedEvent e) {
                 m_axesLabels = null;
                 m_dims = null;
                 m_oldCoordinates = null;
@@ -189,7 +191,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          * @param dimY
          *                the second dimension index
          */
-        private void setPlaneDimensionIndices(int dimX, int dimY) {
+        private void setPlaneDimensionIndices(final int dimX, final int dimY) {
                 m_isAdjusting = true;
 
                 m_scrollBars[m_dim1].setEnabled(true);
@@ -243,8 +245,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 // maximum index
                 int max = 1;
                 for (int i = 0; i < m_dims.length; i++) {
-                        if (i == dimX || i == dimY)
+                        if (i == dimX || i == dimY) {
                                 continue;
+                        }
                         max *= m_dims[i];
                 }
 
@@ -266,8 +269,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         /** Handles slider events. */
         private void onSliderChanged(final int id) {
 
-                if (m_isAdjusting)
+                if (m_isAdjusting) {
                         return;
+                }
 
                 if (id == -1) {
                         updateDimSliders();
@@ -277,7 +281,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 // test if the slider positions changed
                 boolean change = false;
-                long[] imgCoords = getImageCoordinate();
+                final long[] imgCoords = getImageCoordinate();
                 if (m_oldCoordinates != null
                                 && imgCoords.length == m_oldCoordinates.length) {
                         for (int i = 0; i < imgCoords.length; i++) {
@@ -312,12 +316,13 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          * @param e
          * @param id
          */
-        private void onCheckBoxChange(ItemEvent e, int id) {
+        private void onCheckBoxChange(final ItemEvent e, final int id) {
 
-                if (m_isAdjusting)
+                if (m_isAdjusting) {
                         return;
+                }
 
-                int idx = Integer.parseInt(((JCheckBox) e.getSource())
+                final int idx = Integer.parseInt(((JCheckBox) e.getSource())
                                 .getActionCommand());
 
                 if (m_alterDim == 0) {
@@ -339,8 +344,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 // calc index
                 int index = 0;
                 for (int i = 0; i < m_steps.length; i++) {
-                        if (i == m_dim1 || i == m_dim2)
+                        if (i == m_dim1 || i == m_dim2) {
                                 continue;
+                        }
                         index += m_steps[i] * (m_scrollBars[i].getValue());
                 }
                 // update index
@@ -353,19 +359,21 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
         private void updateDimSliders() {
                 // calc logical coordinates
-                int[] coords = new int[m_scrollBars.length];
+                final int[] coords = new int[m_scrollBars.length];
                 int idx = m_totalSlider.getValue();
 
                 for (int i = coords.length - 1; i > -1; i--) {
-                        if (i == m_dim1 || i == m_dim2)
+                        if (i == m_dim1 || i == m_dim2) {
                                 continue;
+                        }
                         coords[i] = idx / m_steps[i];
                         idx = idx % m_steps[i];
                 }
                 // update coordinates
                 for (int i = 0; i < coords.length; i++) {
-                        if (i == m_dim1 || i == m_dim2)
+                        if (i == m_dim1 || i == m_dim2) {
                                 continue;
+                        }
                         m_isAdjusting = true;
                         m_scrollBars[i].setValue(coords[i]);
                         m_isAdjusting = false;
@@ -382,14 +390,14 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
         private void fireCalibrationEvent() {
                 // calculate calibration values
-                double[] scaleFactors = new double[m_dims.length];
+                final double[] scaleFactors = new double[m_dims.length];
                 for (int i = 0; i < scaleFactors.length; i++) {
                         // = don't scale as default
                         scaleFactors[i] = 1.0d;
                 }
 
                 if (m_useCalibration && m_calibratedSpace != null) {
-                        double[] tmpFactors = new double[scaleFactors.length];
+                        final double[] tmpFactors = new double[scaleFactors.length];
                         m_calibratedSpace.calibration(tmpFactors);
 
                         double min = Double.MAX_VALUE;
@@ -412,7 +420,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                         if (foundAFactor) {
                                 // normalize with min and scale
-                                double norm = 1.0d / min;
+                                final double norm = 1.0d / min;
 
                                 for (int i = 0; i < scaleFactors.length; i++) {
                                         scaleFactors[i] = (tmpFactors[i] * norm);
@@ -432,9 +440,10 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          *         generated array)
          */
         protected long[] getImageCoordinate() {
-                if (m_scrollBars == null)
+                if (m_scrollBars == null) {
                         return new long[m_dims.length];
-                long[] res = new long[m_dims.length];
+                }
+                final long[] res = new long[m_dims.length];
                 for (int i = 0; i < res.length; i++) {
                         res[i] = m_scrollBars[i].getValue();
                 }
@@ -445,24 +454,26 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          * @param name
          */
         @EventListener
-        public void onImgUpdated(IntervalWithMetadataChgEvent<T> e) {
+        public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
 
-                if (m_dims == null)
+                if (m_dims == null) {
                         m_dims = new long[e.getCalibratedSpace()
                                         .numDimensions()];
+                }
 
                 if (m_axesLabels == null
                                 || m_axesLabels.length != e
                                                 .getCalibratedSpace()
-                                                .numDimensions())
+                                                .numDimensions()) {
                         m_axesLabels = new AxisType[e.getCalibratedSpace()
                                         .numDimensions()];
+                }
 
 
 
 
-                long[] oldDims = m_dims.clone();
-                AxisType[] oldAxes = m_axesLabels.clone();
+                final long[] oldDims = m_dims.clone();
+                final AxisType[] oldAxes = m_axesLabels.clone();
 
                 // local dims //axes labels
                 e.getCalibratedSpace().axes(m_axesLabels);
@@ -493,14 +504,15 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         }
 
         @EventListener
-        public void onFocusLabel(ForcePlanePosEvent e) {
+        public void onFocusLabel(final ForcePlanePosEvent e) {
                 m_isAdjusting = true;
                 for (int d = 0; d < e.getPosition().length; d++) {
 
-                        if (d == m_dim1 || d == m_dim2)
+                        if (d == m_dim1 || d == m_dim2) {
                                 m_scrollBars[d].setValue(0);
-                        else
+                        } else {
                                 m_scrollBars[d].setValue((int) e.getPosition()[d]);
+                        }
                 }
                 updateTotalSlider();
                 onSliderChanged(0);
@@ -513,11 +525,11 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         m_steps = new int[m_dims.length];
 
                         removeAll();
-                        JPanel nPanel = new JPanel();
+                        final JPanel nPanel = new JPanel();
                         nPanel.setLayout(new BoxLayout(nPanel, BoxLayout.X_AXIS));
                         add(nPanel);
                         add(Box.createVerticalStrut(2));
-                        m_totalSlider = new JScrollBar(JScrollBar.HORIZONTAL);
+                        m_totalSlider = new JScrollBar(Adjustable.HORIZONTAL);
                         Dimension dim = m_totalSlider.getPreferredSize();
                         dim.width = 150;
                         m_totalSlider.setPreferredSize(dim);
@@ -528,9 +540,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         nPanel.add(m_totalSlider);
 
                         // add key bindings to the JTextArea
-                        int condition = JScrollBar.WHEN_IN_FOCUSED_WINDOW;
-                        InputMap inMap = getInputMap(condition);
-                        ActionMap actMap = getActionMap();
+                        final int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+                        final InputMap inMap = getInputMap(condition);
+                        final ActionMap actMap = getActionMap();
 
                         inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
                                         "FORWARD");
@@ -541,7 +553,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                         actMap.put("BACKWARD", new ForwardBackwardAction(
                                         "BACKWARD", m_totalSlider, 1));
 
-                        JPanel dimPanel = new JPanel();
+                        final JPanel dimPanel = new JPanel();
                         dimPanel.setLayout(new BoxLayout(dimPanel,
                                         BoxLayout.Y_AXIS));
                         add(dimPanel);
@@ -557,7 +569,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                 sliderPanel.setLayout(new BoxLayout(
                                                 sliderPanel, BoxLayout.X_AXIS));
                                 m_scrollBars[i] = new JScrollBar(
-                                                JScrollBar.HORIZONTAL);
+                                                Adjustable.HORIZONTAL);
                                 m_planeCheckBoxes[i] = new JCheckBox("", false);
                                 m_planeCheckBoxes[i]
                                                 .addItemListener(new ItemListenerWithId(
@@ -586,9 +598,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                 sliderPanel.add(m_scrollBars[i]);
 
                                 // add coordinate text fields
-                                NumberFormat nf = DecimalFormat.getInstance();
+                                final NumberFormat nf = NumberFormat.getInstance();
                                 nf.setGroupingUsed(false);
-                                JFormattedTextField tmp = new JFormattedTextField(
+                                final JFormattedTextField tmp = new JFormattedTextField(
                                                 nf);
                                 tmp.setMinimumSize(new Dimension(40, tmp
                                                 .getMinimumSize().height));
@@ -602,7 +614,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                                         @Override
                                         public void actionPerformed(
-                                                        ActionEvent e) {
+                                                        final ActionEvent e) {
                                                 textCoordinatesChanged(index);
                                         }
                                 });
@@ -610,12 +622,12 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                                 tmp.addFocusListener(new FocusListener() {
 
                                         @Override
-                                        public void focusLost(FocusEvent arg0) {
+                                        public void focusLost(final FocusEvent arg0) {
                                                 textCoordinatesChanged(index);
                                         }
 
                                         @Override
-                                        public void focusGained(FocusEvent e) {
+                                        public void focusGained(final FocusEvent e) {
                                         }
 
                                 });
@@ -636,7 +648,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                                                 @Override
                                                 public void actionPerformed(
-                                                                ActionEvent e) {
+                                                                final ActionEvent e) {
                                                         onCalibrationBoxChanged();
                                                 }
                                         });
@@ -654,8 +666,8 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
                 updateUI();
         }
 
-        private void textCoordinatesChanged(int fieldIndex) {
-                int value = Integer.valueOf(m_coordinateTextFields[fieldIndex]
+        private void textCoordinatesChanged(final int fieldIndex) {
+                final int value = Integer.valueOf(m_coordinateTextFields[fieldIndex]
                                 .getText());
                 if (value != m_scrollBars[fieldIndex].getValue() + 1) {
                         if (value < m_scrollBars[fieldIndex].getMinimum()) {
@@ -686,19 +698,19 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
          * {@inheritDoc}
          */
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // Nothing to do here
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 // Nothing to do here
         }
@@ -712,7 +724,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // Nothing to do here
         }
 
@@ -720,12 +732,12 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 private final int m_id;
 
-                public ItemListenerWithId(int id) {
+                public ItemListenerWithId(final int id) {
                         m_id = id;
                 }
 
                 @Override
-                public void itemStateChanged(ItemEvent e) {
+                public void itemStateChanged(final ItemEvent e) {
                         onCheckBoxChange(e, m_id);
 
                 }
@@ -736,12 +748,12 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 private final int m_id;
 
-                public ChangeListenerWithId(int id) {
+                public ChangeListenerWithId(final int id) {
                         m_id = id;
                 }
 
                 @Override
-                public void adjustmentValueChanged(AdjustmentEvent e) {
+                public void adjustmentValueChanged(final AdjustmentEvent e) {
                         onSliderChanged(m_id);
                 }
 
@@ -753,33 +765,36 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
 
                 private final int scrollableIncrement;
 
-                public ForwardBackwardAction(String name, JScrollBar slider,
-                                int scrollableIncrement) {
+                public ForwardBackwardAction(final String name, final JScrollBar slider,
+                                final int scrollableIncrement) {
                         super(name);
                         this.slider = slider;
                         this.scrollableIncrement = scrollableIncrement;
                 }
 
                 @Override
-                public void actionPerformed(ActionEvent ae) {
+                public void actionPerformed(final ActionEvent ae) {
 
-                        for (JFormattedTextField field : m_coordinateTextFields) {
-                                if (field.hasFocus())
+                        for (final JFormattedTextField field : m_coordinateTextFields) {
+                                if (field.hasFocus()) {
                                         return;
+                                }
                         }
 
-                        String name = getValue(AbstractAction.NAME).toString();
+                        final String name = getValue(Action.NAME).toString();
                         int value = slider.getValue();
                         if (name.equals("FORWARD")) {
                                 value += scrollableIncrement;
-                                if (value >= m_totalSlider.getMaximum())
+                                if (value >= m_totalSlider.getMaximum()) {
                                         return;
+                                }
 
                                 slider.setValue(value);
                         } else if (name.equals("BACKWARD")) {
                                 value -= scrollableIncrement;
-                                if (value < 0)
+                                if (value < 0) {
                                         return;
+                                }
                                 slider.setValue(value);
                         }
                 }

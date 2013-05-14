@@ -79,9 +79,9 @@ public class ImgAndLabelingChgEvent<T extends Type<T>, L extends Comparable<L>>
          * @param name
          * @param cspace
          */
-        public ImgAndLabelingChgEvent(RandomAccessibleInterval<T> img,
-                        Labeling<L> labeling,
-                        Named name, Sourced source, CalibratedSpace cspace) {
+        public ImgAndLabelingChgEvent(final RandomAccessibleInterval<T> img,
+                        final Labeling<L> labeling,
+                        final Named name, final Sourced source, final CalibratedSpace cspace) {
                 m_img = img;
                 m_name = name;
                 m_source = source;
@@ -99,7 +99,7 @@ public class ImgAndLabelingChgEvent<T extends Type<T>, L extends Comparable<L>>
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

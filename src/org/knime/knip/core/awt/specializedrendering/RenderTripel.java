@@ -9,8 +9,8 @@ class RenderTripel {
         ScreenImage m_image;
         boolean m_successfull;
 
-        RenderTripel(Abstract2DProjector<?, ?> projector,
-                        ScreenImage image) {
+        RenderTripel(final Abstract2DProjector<?, ?> projector,
+                        final ScreenImage image) {
                 m_projector = projector;
                 m_image = image;
                 m_successfull = true;

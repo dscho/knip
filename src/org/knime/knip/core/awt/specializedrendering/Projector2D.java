@@ -39,15 +39,16 @@ public class Projector2D<A extends Type<A>, B extends Type<B>> extends
         @Override
         public void map() {
                 // fix interval for all dimensions
-                for (int d = 0; d < position.length; ++d)
+                for (int d = 0; d < position.length; ++d) {
                         min[d] = max[d] = position[d];
+                }
 
                 min[dimX] = target.min(X);
                 min[dimY] = target.min(Y);
                 max[dimX] = target.max(X);
                 max[dimY] = target.max(Y);
                 final FinalInterval sourceInterval = new FinalInterval(min, max);
-                RandomAccessibleInterval<A> subset = SubsetOperations
+                final RandomAccessibleInterval<A> subset = SubsetOperations
                                 .subsetview(source, sourceInterval);
 
                 final Cursor<B> targetCursor = target.cursor();

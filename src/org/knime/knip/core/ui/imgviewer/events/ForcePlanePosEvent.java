@@ -60,7 +60,7 @@ public class ForcePlanePosEvent implements KNIPEvent {
 
         private final long[] m_position;
 
-        public ForcePlanePosEvent(long[] position) {
+        public ForcePlanePosEvent(final long[] position) {
                 m_position = position;
 
         }
@@ -81,7 +81,7 @@ public class ForcePlanePosEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

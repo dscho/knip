@@ -27,9 +27,9 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
 
         @Override
         public ScreenImage render(
-                        RandomAccessibleInterval<LabelingType<L>> source,
-                        int dimX, int dimY,
-                        long[] planePos) {
+                        final RandomAccessibleInterval<LabelingType<L>> source,
+                        final int dimX, final int dimY,
+                        final long[] planePos) {
                 m_dimX = dimX;
                 m_dimY = dimY;
                 m_planePos = planePos;
@@ -38,13 +38,13 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
         }
 
         @Override
-        protected ScreenImage createCanvas(int width, int height) {
+        protected ScreenImage createCanvas(final int width, final int height) {
 
-                ScreenImage ret = new ARGBScreenImage(width, height);
-                ScreenImage labelRendererResult = m_labelRenderer.render(
+                final ScreenImage ret = new ARGBScreenImage(width, height);
+                final ScreenImage labelRendererResult = m_labelRenderer.render(
                                 m_source,
                                 m_dimX, m_dimY, m_planePos);
-                Graphics g = ret.image().getGraphics();
+                final Graphics g = ret.image().getGraphics();
                 g.drawImage(labelRendererResult.image(), 0, 0, width, height,
                                 null);
 
@@ -57,31 +57,31 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
         }
 
         @Override
-        public void setHilitedLabels(Set<String> hilitedLabels) {
+        public void setHilitedLabels(final Set<String> hilitedLabels) {
                 super.setHilitedLabels(hilitedLabels);
                 m_labelRenderer.setHilitedLabels(hilitedLabels);
         }
 
         @Override
-        public void setActiveLabels(Set<String> activeLabels) {
+        public void setActiveLabels(final Set<String> activeLabels) {
                 super.setActiveLabels(activeLabels);
                 m_labelRenderer.setActiveLabels(activeLabels);
         }
 
         @Override
-        public void setHiliteMode(boolean isHiliteMode) {
+        public void setHiliteMode(final boolean isHiliteMode) {
                 super.setHiliteMode(isHiliteMode);
                 m_labelRenderer.setHiliteMode(isHiliteMode);
         }
 
         @Override
-        public void setLabelMapping(LabelingMapping<L> labelMapping) {
+        public void setLabelMapping(final LabelingMapping<L> labelMapping) {
                 super.setLabelMapping(labelMapping);
                 m_labelRenderer.setLabelMapping(labelMapping);
         }
 
         @Override
-        public void setOperator(Operator operator) {
+        public void setOperator(final Operator operator) {
                 super.setOperator(operator);
                 m_labelRenderer.setOperator(operator);
         }

@@ -59,7 +59,7 @@ public class AnnotatorLabelsColResetEvent extends AnnotatorLabelsEvent {
         /**
          * @param labels
          */
-        public AnnotatorLabelsColResetEvent(String[] labels) {
+        public AnnotatorLabelsColResetEvent(final String[] labels) {
                 super(labels);
         }
 

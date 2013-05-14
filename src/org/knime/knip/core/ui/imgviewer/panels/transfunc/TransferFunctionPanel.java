@@ -194,7 +194,9 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
          *                the bundle of functions to display
          */
         public final void setBundle(final TransferFunctionBundle bundle) {
-                if (bundle == null) throw new NullPointerException();
+                if (bundle == null) {
+                        throw new NullPointerException();
+                }
 
                 m_bundle = bundle;
 
@@ -219,7 +221,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
                 }
 
                 if (m_bundle != null) {
-                        for (TransferFunction tf : m_bundle) {
+                        for (final TransferFunction tf : m_bundle) {
                                 tf.zoom(frac[0], frac[1]);
                         }
                 }
@@ -241,7 +243,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
         @Override
         public void transferFunctionChg(final TransferFunctionChgEvent event) {
-                for (TransferFunctionChgListener l : m_listener.getListeners(TransferFunctionChgListener.class)) {
+                for (final TransferFunctionChgListener l : m_listener.getListeners(TransferFunctionChgListener.class)) {
                         l.transferFunctionChg(event);
                 }
 
@@ -264,10 +266,10 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
         @Override
         public Dimension getPreferredSize() {
-                Dimension h = m_histogramPainter.getPreferredSize();
+                final Dimension h = m_histogramPainter.getPreferredSize();
 
-                int width = Math.max(h.width, PREFERRED_SIZE.width);
-                int height = Math.max(h.height, PREFERRED_SIZE.height);
+                final int width = Math.max(h.width, PREFERRED_SIZE.width);
+                final int height = Math.max(h.height, PREFERRED_SIZE.height);
 
                 return new Dimension(width, height);
         }

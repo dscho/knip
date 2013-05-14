@@ -35,10 +35,10 @@ import net.imglib2.type.numeric.integer.ByteType;
 public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /** height and width of the image. */
-        private int m_width;
+        private final int m_width;
 
         /** height of the image. */
-        private int m_height;
+        private final int m_height;
 
         /** pixels range between 0 and this value. */
         private static final double MAX_PIXEL_VALUE = 255.0;
@@ -53,7 +53,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
          * @param mask
          *                the mask
          */
-        public ZernikeFeatureComputer(IterableInterval<T> interval) {
+        public ZernikeFeatureComputer(final IterableInterval<T> interval) {
                 m_interval = interval;
                 m_width = (int) interval.dimension(0);
                 m_height = (int) interval.dimension(1);
@@ -112,9 +112,9 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
                 assert m - Math.abs(n) >= 0;
                 assert (m - Math.abs(n)) / 2 - s >= 0;
 
-                int absN = Math.abs(n);
+                final int absN = Math.abs(n);
 
-                FactorialComputer fc = new FactorialComputer(m);
+                final FactorialComputer fc = new FactorialComputer(m);
                 fc.multiplyByFactorialOf(m - s);
                 fc.divideByFactorialOf(s);
                 fc.divideByFactorialOf((m + absN) / 2 - s);
@@ -133,10 +133,10 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
          * @return the F polynom
          */
         public static Polynom createR(final int m, final int n) {
-                Polynom result = new Polynom(m);
+                final Polynom result = new Polynom(m);
                 int sign = 1;
                 for (int s = 0; s <= (m - Math.abs(n)) / 2; ++s) {
-                        int pos = m - 2 * s;
+                        final int pos = m - 2 * s;
                         result.setCoefficient(pos, sign * computeF(m, n, s));
                         sign = -sign;
                 }
@@ -162,28 +162,28 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
                                                         + "Zernike moment properties");
                 }
 
-                int centerX = m_width / 2;
-                int centerY = m_height / 2;
-                int max = Math.max(centerX, centerY);
-                double radius = Math.sqrt(2 * max * max);
+                final int centerX = m_width / 2;
+                final int centerY = m_height / 2;
+                final int max = Math.max(centerX, centerY);
+                final double radius = Math.sqrt(2 * max * max);
 
-                Polynom polynomOrthogonalRadial = createR(m, n);
+                final Polynom polynomOrthogonalRadial = createR(m, n);
 
-                IterableInterval<T> ii = m_interval;
+                final IterableInterval<T> ii = m_interval;
 
-                Cursor<T> cur = ii.localizingCursor();
+                final Cursor<T> cur = ii.localizingCursor();
 
                 while (cur.hasNext()) {
                         cur.fwd();
-                        int x = cur.getIntPosition(0) - centerX;
-                        int y = cur.getIntPosition(1) - centerY;
+                        final int x = cur.getIntPosition(0) - centerX;
+                        final int y = cur.getIntPosition(1) - centerY;
 
                         // compute polar coordinates for x and y
-                        double r = Math.sqrt(x * x + y * y) / radius;
-                        double ang = n * Math.atan2(y, x);
+                        final double r = Math.sqrt(x * x + y * y) / radius;
+                        final double ang = n * Math.atan2(y, x);
 
-                        double value = polynomOrthogonalRadial.evaluate(r);
-                        double pixel = cur.get().getRealDouble()
+                        final double value = polynomOrthogonalRadial.evaluate(r);
+                        final double pixel = cur.get().getRealDouble()
                                         / MAX_PIXEL_VALUE;
 
                         real += pixel * value * Math.cos(ang);
@@ -271,42 +271,42 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
          */
         public static Img<ByteType> reconstructImage(final int width,
                         final int height, final ArrayList<Complex> features) {
-                int centerX = width / 2;
-                int centerY = height / 2;
-                int max = Math.max(centerX, centerY);
-                double radius = Math.sqrt(2 * max * max);
+                final int centerX = width / 2;
+                final int centerY = height / 2;
+                final int max = Math.max(centerX, centerY);
+                final double radius = Math.sqrt(2 * max * max);
 
-                double[][] image = new double[width][height];
+                final double[][] image = new double[width][height];
 
                 int indexFeature = 0;
                 for (int order = 0; indexFeature < features.size(); ++order) {
                         for (int rep = -order; rep <= order; rep += 2) {
-                                Complex moment = features.get(indexFeature);
-                                Polynom polynomOrthogonalRadial = createR(
+                                final Complex moment = features.get(indexFeature);
+                                final Polynom polynomOrthogonalRadial = createR(
                                                 order, rep);
 
                                 for (int i = 0; i < width; ++i) {
                                         for (int j = 0; j < height; ++j) {
-                                                int x = i - centerX;
-                                                int y = j - centerY;
+                                                final int x = i - centerX;
+                                                final int y = j - centerY;
 
                                                 // compute polar coordinates for
                                                 // x and y
-                                                double r = Math.sqrt(x * x + y
+                                                final double r = Math.sqrt(x * x + y
                                                                 * y)
                                                                 / radius;
-                                                double ang = rep
+                                                final double ang = rep
                                                                 * Math.atan2(y,
                                                                                 x);
-                                                double valueRnm = polynomOrthogonalRadial
+                                                final double valueRnm = polynomOrthogonalRadial
                                                                 .evaluate(r);
 
-                                                Complex valueVnm = new Complex(
+                                                final Complex valueVnm = new Complex(
                                                                 Math.cos(ang)
                                                                                 * valueRnm,
                                                                 Math.sin(ang)
                                                                                 * valueRnm);
-                                                Complex toAdd = moment
+                                                final Complex toAdd = moment
                                                                 .multiplyTo(valueVnm);
 
                                                 // assert
@@ -329,9 +329,9 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
                         }
                 }
 
-                Img<ByteType> res = new ArrayImgFactory<ByteType>().create(
+                final Img<ByteType> res = new ArrayImgFactory<ByteType>().create(
                                 new int[] { width, height }, new ByteType());
-                Cursor<ByteType> cur = res.localizingCursor();
+                final Cursor<ByteType> cur = res.localizingCursor();
 
                 while (cur.hasNext()) {
                         cur.fwd();

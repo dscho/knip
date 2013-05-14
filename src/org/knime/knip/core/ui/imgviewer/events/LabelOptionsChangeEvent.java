@@ -6,7 +6,7 @@ public class LabelOptionsChangeEvent implements KNIPEvent {
 
         private final boolean m_renderWithNumbers;
 
-        public LabelOptionsChangeEvent(boolean renderWithNumbers) {
+        public LabelOptionsChangeEvent(final boolean renderWithNumbers) {
                 m_renderWithNumbers = renderWithNumbers;
         }
 
@@ -16,7 +16,7 @@ public class LabelOptionsChangeEvent implements KNIPEvent {
         }
 
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

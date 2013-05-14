@@ -35,15 +35,17 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
 
         private Set<L> m_invalidLabels;
 
-        public RulebasedLabelFilter(String[] rules, Operator op) {
+        public RulebasedLabelFilter(final String[] rules, final Operator op) {
 
                 this();
 
-                if (rules != null)
+                if (rules != null) {
                         addRules(rules);
+                }
 
-                if (op != null)
+                if (op != null) {
                         m_op = op;
+                }
         }
 
         @Override
@@ -55,7 +57,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 
@@ -67,9 +69,9 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                 m_invalidLabels = new HashSet<L>();
         }
 
-        public final boolean addRules(String... rules) {
+        public final boolean addRules(final String... rules) {
                 boolean added = false;
-                for (String r : rules) {
+                for (final String r : rules) {
                         added = m_rules.add(r) || added;
                 }
 
@@ -83,7 +85,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
 
                 int hashCode = 1;
 
-                for (String rule : m_rules) {
+                for (final String rule : m_rules) {
                         hashCode *= 31;
                         hashCode += rule.hashCode();
                 }
@@ -94,9 +96,9 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
-                int num = in.readInt();
+                final int num = in.readInt();
                 for (int i = 0; i < num; i++) {
                         m_rules.add(in.readUTF());
                 }
@@ -105,7 +107,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 out.writeInt(m_rules.size());
                 for (int i = 0; i < m_rules.size(); i++) {
                         out.writeUTF(m_rules.get(i));
@@ -114,7 +116,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                 out.writeInt(m_op.ordinal());
         }
 
-        public void setOp(Operator op) {
+        public void setOp(final Operator op) {
                 m_validLabels.clear();
                 m_invalidLabels.clear();
                 m_ruleValidation.clear();
@@ -129,8 +131,8 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                 return m_op;
         }
 
-        public Collection<L> filterLabeling(Collection<L> labels, Operator op,
-                        List<String> rules) {
+        public Collection<L> filterLabeling(final Collection<L> labels, final Operator op,
+                        final List<String> rules) {
 
                 if (rules.size() == 0) {
                         return labels;
@@ -139,7 +141,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                 m_ruleValidation.clear();
                 m_tmpLabeling.clear();
 
-                for (L label : labels) {
+                for (final L label : labels) {
 
                         if (m_invalidLabels.contains(label)) {
                                 continue;
@@ -151,7 +153,7 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                                 if (op == Operator.OR) {
                                         continue;
                                 } else if (op == Operator.AND) {
-                                        for (int i : m_validLabels.get(label)) {
+                                        for (final int i : m_validLabels.get(label)) {
                                                 m_ruleValidation.set(i);
                                         }
                                 } else if (op == Operator.XOR) {
@@ -164,9 +166,9 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                         } else {
 
                                 int r = 0;
-                                String labelString = label.toString();
+                                final String labelString = label.toString();
 
-                                for (String rule : rules) {
+                                for (final String rule : rules) {
 
                                         if (labelString.matches(rule)) {
                                                 m_tmpLabeling.add(label);
@@ -175,8 +177,9 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                                                                 new HashSet<Integer>());
                                                 m_invalidLabels.remove(label);
 
-                                                if (op == Operator.OR)
+                                                if (op == Operator.OR) {
                                                         break;
+                                                }
 
                                                 if (op == Operator.XOR) {
                                                         if (m_tmpLabeling
@@ -211,21 +214,22 @@ public class RulebasedLabelFilter<L extends Comparable<L>> implements
                 return m_tmpLabeling;
         }
 
-        public static <L extends Comparable<L>> boolean isValid(L label,
-                        String rule) {
+        public static <L extends Comparable<L>> boolean isValid(final L label,
+                        final String rule) {
                 return label.toString().matches(rule);
         }
 
-        public boolean isValid(L label) {
-                for (String rule : m_rules) {
-                        if (label.toString().matches(rule))
+        public boolean isValid(final L label) {
+                for (final String rule : m_rules) {
+                        if (label.toString().matches(rule)) {
                                 return true;
+                        }
                 }
                 return m_rules.size() == 0;
         }
 
         @Override
-        public Collection<L> filterLabeling(Collection<L> labels) {
+        public Collection<L> filterLabeling(final Collection<L> labels) {
                 return filterLabeling(labels, m_op, m_rules);
         }
 

@@ -91,8 +91,8 @@ public class SourcedExt0 implements Externalizer<Sourced> {
          * {@inheritDoc}
          */
         @Override
-        public Sourced read(BufferedDataInputStream in) throws Exception {
-                char[] source = new char[in.readInt()];
+        public Sourced read(final BufferedDataInputStream in) throws Exception {
+                final char[] source = new char[in.readInt()];
                 in.read(source);
                 return new SourcedImpl(new String(source));
 
@@ -102,9 +102,9 @@ public class SourcedExt0 implements Externalizer<Sourced> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, Sourced obj)
+        public void write(final BufferedDataOutputStream out, final Sourced obj)
                         throws Exception {
-                char[] source = obj.getSource().toCharArray();
+                final char[] source = obj.getSource().toCharArray();
                 out.writeInt(source.length);
                 out.write(source);
 

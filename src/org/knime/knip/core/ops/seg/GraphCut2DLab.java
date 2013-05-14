@@ -119,8 +119,8 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
          * @param dimFeat
          *                the dimension containing the features (feature vector)
          */
-        public GraphCut2DLab(double lambda, String fgLabel, String bgLabel,
-                        int dimX, int dimY, int dimFeat) {
+        public GraphCut2DLab(final double lambda, final String fgLabel, final String bgLabel,
+                        final int dimX, final int dimY, final int dimFeat) {
                 m_dimX = dimX;
                 m_dimY = dimY;
                 m_dimFeat = dimFeat;
@@ -142,8 +142,8 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
          * @param dimY
          *                the second dimensions
          */
-        public GraphCut2DLab(double lambda, String fgLabel, String bgLabel,
-                        int dimX, int dimY) {
+        public GraphCut2DLab(final double lambda, final String fgLabel, final String bgLabel,
+                        final int dimX, final int dimY) {
                 this(lambda, fgLabel, bgLabel, dimX, dimY, -1);
         }
 
@@ -153,12 +153,12 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
          * @return
          */
         @Override
-        public Img<BitType> compute(Img<T> src, Labeling<L> labeling,
-                        Img<BitType> res) {
+        public Img<BitType> compute(final Img<T> src, final Labeling<L> labeling,
+                        final Img<BitType> res) {
 
                 boolean isBg, isFg;
 
-                int numFeat = m_dimFeat == -1 ? 1 : (int) src
+                final int numFeat = m_dimFeat == -1 ? 1 : (int) src
                                 .dimension(m_dimFeat);
 
                 m_sources = new TreeSet<long[]>(new LongArrayComparator());
@@ -170,14 +170,15 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                 double srcCount = 0;
                 double sinkCount = 0;
 
-                for (L label : labeling.getLabels()) {
+                for (final L label : labeling.getLabels()) {
                         isBg = RulebasedLabelFilter.isValid(label, m_bgLabel);
                         isFg = RulebasedLabelFilter.isValid(label, m_fgLabel);
 
-                        if (!isBg && !isFg)
+                        if (!isBg && !isFg) {
                                 continue;
+                        }
 
-                        Cursor<T> roiCursor = labeling
+                        final Cursor<T> roiCursor = labeling
                                         .getIterableRegionOfInterest(label)
                                         .getIterableIntervalOverROI(
                                                         new ConstantRandomAccessible<T>(
@@ -185,7 +186,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                                                                         labeling.numDimensions()))
                                         .localizingCursor();
 
-                        RandomAccess<T> srcRA = src.randomAccess();
+                        final RandomAccess<T> srcRA = src.randomAccess();
 
                         while (roiCursor.hasNext()) {
                                 roiCursor.fwd();
@@ -237,9 +238,10 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
 
                 }
 
-                if (m_sinks.size() == 0 && m_sources.size() == 0)
+                if (m_sinks.size() == 0 && m_sources.size() == 0) {
                         throw new IllegalStateException(
                                         "GraphCut needs sinks and sources");
+                }
 
                 for (int i = 0; i < m_srcAvg.length; i++) {
                         m_srcAvg[i] /= srcCount;
@@ -258,7 +260,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
          * @return the processed Image with black and white values for sink and
          *         Source
          */
-        private void calculateGraphCut(Img<T> src, Img<BitType> res) {
+        private void calculateGraphCut(final Img<T> src, final Img<BitType> res) {
 
                 /*
                  * Image has been normalized before. Therefore the lowest and
@@ -266,20 +268,20 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                  * sources and sinks for the graphcut algorithm.
                  */
 
-                int numFeat = m_dimFeat == -1 ? 1 : (int) src
+                final int numFeat = m_dimFeat == -1 ? 1 : (int) src
                                 .dimension(m_dimFeat);
 
                 /*
                  * Calculate the 'camera noise' as the std. deviation of the
                  * image's pixel values.
                  */
-                float[] stdDev = new float[numFeat];
+                final float[] stdDev = new float[numFeat];
 
-                long[] min = new long[src.numDimensions()];
-                long[] max = new long[src.numDimensions()];
+                final long[] min = new long[src.numDimensions()];
+                final long[] max = new long[src.numDimensions()];
                 src.min(min);
                 src.max(max);
-                MakeHistogram<T> histOp = new MakeHistogram<T>();
+                final MakeHistogram<T> histOp = new MakeHistogram<T>();
 
                 for (int i = 0; i < numFeat; i++) {
 
@@ -287,7 +289,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                         if (m_dimFeat != -1) {
                                 min[m_dimFeat] = i;
                                 max[m_dimFeat] = i;
-                                ImgView<T> subImg = new ImgView<T>(
+                                final ImgView<T> subImg = new ImgView<T>(
                                                 SubsetOperations.subsetview(
                                                                 src,
                                                                 new FinalInterval(
@@ -340,12 +342,12 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                 float K_value = 0;
 
                 // the neighbor position for looking at the adjacent nodes
-                long[] dims = new long[res.numDimensions()];
+                final long[] dims = new long[res.numDimensions()];
                 res.dimensions(dims);
-                long[] cursorPos = new long[resCursor.numDimensions()];
+                final long[] cursorPos = new long[resCursor.numDimensions()];
 
-                double[] nodeValues = new double[numFeat];
-                double[] neighborValues = new double[numFeat];
+                final double[] nodeValues = new double[numFeat];
+                final double[] neighborValues = new double[numFeat];
                 while (resCursor.hasNext()) {
                         resCursor.fwd();
 
@@ -355,7 +357,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                         srcRandomAcess.setPosition(cursorPos[1], m_dimY);
                         final int nodeID = listPosition(cursorPos, dims);
                         getValues(nodeValues, srcRandomAcess);
-                        for (Integer d : new int[] { m_dimX, m_dimY }) {
+                        for (final Integer d : new int[] { m_dimX, m_dimY }) {
 
                                 // if we are not at the lower dimension bounds
                                 if (srcRandomAcess.getIntPosition(d) - 1 >= 0) {
@@ -476,7 +478,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                 resCursor.reset();
 
                 // Set output image
-                long[] resPos = new long[resCursor.numDimensions()];
+                final long[] resPos = new long[resCursor.numDimensions()];
                 while (resCursor.hasNext()) {
                         resCursor.fwd();
                         resCursor.localize(resPos);
@@ -513,7 +515,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                 // return pos;
         }
 
-        private void getValues(double[] res, RandomAccess<T> ra) {
+        private void getValues(final double[] res, final RandomAccess<T> ra) {
                 for (int i = 0; i < res.length; i++) {
                         if (m_dimFeat != -1) {
                                 ra.setPosition(i, m_dimFeat);
@@ -528,7 +530,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                  * {@inheritDoc}
                  */
                 @Override
-                public int compare(long[] o1, long[] o2) {
+                public int compare(final long[] o1, final long[] o2) {
                         if (o1.length != o2.length) {
                                 return o1.length - o2.length;
                         }
@@ -543,13 +545,13 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
 
         }
 
-        public Img<BitType> createEmptyOutput(Img<T> src, Labeling<L> src2,
-                        long[] dims) throws IncompatibleTypeException {
+        public Img<BitType> createEmptyOutput(final Img<T> src, final Labeling<L> src2,
+                        final long[] dims) throws IncompatibleTypeException {
                 return src.factory().imgFactory(new BitType())
                                 .create(dims, new BitType());
         }
 
-        public long[] resultDims(Interval src, Interval labeling) {
+        public long[] resultDims(final Interval src, final Interval labeling) {
                 if (m_dimFeat != -1) {
 
                         // check dimensionality
@@ -580,8 +582,8 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                 }
 
                 // else: check dimensionality
-                long[] imgDim = new long[src.numDimensions()];
-                long[] labDim = new long[labeling.numDimensions()];
+                final long[] imgDim = new long[src.numDimensions()];
+                final long[] labDim = new long[labeling.numDimensions()];
                 src.dimensions(imgDim);
                 labeling.dimensions(labDim);
                 if (!Arrays.equals(imgDim, labDim)) {
@@ -589,7 +591,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                                         "Labeling and Image must have the same dimensions.");
                 }
 
-                long[] dims = new long[src.numDimensions()];
+                final long[] dims = new long[src.numDimensions()];
                 src.dimensions(dims);
 
                 return dims;
@@ -607,15 +609,15 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>>
                 return new BinaryObjectFactory<Img<T>, Labeling<L>, Img<BitType>>() {
 
                         @Override
-                        public Img<BitType> instantiate(Img<T> src,
-                                        Labeling<L> labeling) {
+                        public Img<BitType> instantiate(final Img<T> src,
+                                        final Labeling<L> labeling) {
                                 try {
                                         return createEmptyOutput(
                                                         src,
                                                         labeling,
                                                         resultDims(src,
                                                                         labeling));
-                                } catch (IncompatibleTypeException e) {
+                                } catch (final IncompatibleTypeException e) {
                                         e.printStackTrace();
                                 }
 

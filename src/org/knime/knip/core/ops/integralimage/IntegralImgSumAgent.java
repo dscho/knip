@@ -26,7 +26,7 @@ public class IntegralImgSumAgent<T extends RealType<T>> {
          *
          * @param ii
          */
-        public IntegralImgSumAgent(RandomAccessibleInterval<T> ii) {
+        public IntegralImgSumAgent(final RandomAccessibleInterval<T> ii) {
                 m_iiRA = ii.randomAccess();
 
                 // initialize the binary representation of the control points
@@ -63,13 +63,13 @@ public class IntegralImgSumAgent<T extends RealType<T>> {
          * @param rightLower
          * @return
          */
-        public double getSum(long[] leftUpper, long[] rightLower) {
+        public double getSum(final long[] leftUpper, final long[] rightLower) {
 
                 // implemented according to
                 // http://en.wikipedia.org/wiki/Summed_area_table high
                 // dimensional variant
 
-                long[] position = new long[m_dims];
+                final long[] position = new long[m_dims];
                 double sum = 0;
 
                 for (int i = 0; i < m_points; i++) {
@@ -94,9 +94,9 @@ public class IntegralImgSumAgent<T extends RealType<T>> {
 
         // gives as {0,1}^d all binary combinations 0,0,..,0 ...
         // 1,1,...,1
-        private boolean[] getBinaryRep(int i, int d) {
-                char[] tmp = Long.toBinaryString(i).toCharArray();
-                boolean[] p = new boolean[d];
+        private boolean[] getBinaryRep(final int i, final int d) {
+                final char[] tmp = Long.toBinaryString(i).toCharArray();
+                final boolean[] p = new boolean[d];
                 for (int pos = 0; pos < tmp.length; pos++) {
                         if (tmp[pos] == '1') {
                                 p[tmp.length - (pos + 1)] = true;

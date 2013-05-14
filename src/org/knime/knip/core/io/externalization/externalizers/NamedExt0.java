@@ -91,8 +91,8 @@ public class NamedExt0 implements Externalizer<Named> {
          * {@inheritDoc}
          */
         @Override
-        public Named read(BufferedDataInputStream in) throws Exception {
-                char[] name = new char[in.readInt()];
+        public Named read(final BufferedDataInputStream in) throws Exception {
+                final char[] name = new char[in.readInt()];
                 in.read(name);
                 return new NamedImpl(new String(name));
         }
@@ -101,9 +101,9 @@ public class NamedExt0 implements Externalizer<Named> {
          * {@inheritDoc}
          */
         @Override
-        public void write(BufferedDataOutputStream out, Named obj)
+        public void write(final BufferedDataOutputStream out, final Named obj)
                         throws Exception {
-                char[] name = obj.getName().toCharArray();
+                final char[] name = obj.getName().toCharArray();
                 out.writeInt(name.length);
                 out.write(name);
 

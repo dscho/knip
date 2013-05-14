@@ -47,8 +47,8 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
          * @param stainVectors
          *                maximal 3, minimal 1 vector
          */
-        public ColorDeconv(int dimX, int dimY, int dimC,
-                        double[]... stainVectors) {
+        public ColorDeconv(final int dimX, final int dimY, final int dimC,
+                        final double[]... stainVectors) {
                 m_dimX = dimX;
                 m_dimY = dimY;
                 m_dimC = dimC;
@@ -57,7 +57,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
 
         }
 
-        public ColorDeconv(int dimX, int dimY, int dimC, PredefinedStain stain) {
+        public ColorDeconv(final int dimX, final int dimY, final int dimC, final PredefinedStain stain) {
                 this(dimX, dimY, dimC, stain.getVectors());
         }
 
@@ -67,28 +67,28 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
          * @return
          */
         @Override
-        public K compute(K in, K out) {
+        public K compute(final K in, final K out) {
 
                 // find the color range in the image
-                T type = in.firstElement().createVariable();
+                final T type = in.firstElement().createVariable();
                 m_min = Math.abs(type.getMinValue());
                 m_max = Math.abs(type.getMaxValue());
                 m_range = m_min + m_max;
 
                 // creating a new image of different type:
 
-                RandomAccess<T> outRA = out.randomAccess();
-                RandomAccess<T> srcRA = in.randomAccess();
+                final RandomAccess<T> outRA = out.randomAccess();
+                final RandomAccess<T> srcRA = in.randomAccess();
 
                 // stores the calculated optical densities of each pixel
-                double fodI[] = new double[3];
+                final double fodI[] = new double[3];
                 // stores the deconcolved optical densities
                 double dcc[] = new double[3];
 
                 // thee destaining matrix
-                double[] Mds1 = computeDestainMatrix(1);
-                double[] Mds2 = computeDestainMatrix(2);
-                double[] Mds3 = computeDestainMatrix(3);
+                final double[] Mds1 = computeDestainMatrix(1);
+                final double[] Mds2 = computeDestainMatrix(2);
+                final double[] Mds3 = computeDestainMatrix(3);
 
                 // iterate through all pixels. note that we overwrite the
                 // input-image
@@ -116,8 +116,9 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
                                 dcc[0] = m_range
                                                 * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
                                 //
-                                if (dcc[0] > m_range)
+                                if (dcc[0] > m_range) {
                                         dcc[0] = m_range;
+                                }
                                 outRA.setPosition(srcRA);
                                 outRA.get().setReal(dcc[0] - m_min);
 
@@ -127,8 +128,9 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
                                 dcc[0] = m_range
                                                 * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
                                 //
-                                if (dcc[0] > m_range)
+                                if (dcc[0] > m_range) {
                                         dcc[0] = m_range;
+                                }
                                 outRA.setPosition(srcRA);
                                 outRA.get().setReal(dcc[0] - m_min);
 
@@ -138,8 +140,9 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
                                 dcc[0] = m_range
                                                 * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
                                 //
-                                if (dcc[0] > m_range)
+                                if (dcc[0] > m_range) {
                                         dcc[0] = m_range;
+                                }
                                 outRA.setPosition(srcRA);
                                 outRA.get().setReal(dcc[0] - m_min);
 
@@ -166,7 +169,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
         }
 
         // converts rgb values to optical densitys according to lambert-beer-law
-        private double rgbToOD(double channel) {
+        private double rgbToOD(final double channel) {
                 // +0.001 is needed because otherwise it can happen that one
                 // color channel is 0 and the log of 0 would be infinity.
                 // the dcc vector would be computed wrong!
@@ -176,11 +179,11 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
         /*
          * stainVectors -> RGB
          */
-        private void calcDeconvolutionVectors(double[]... stainVectors) {
+        private void calcDeconvolutionVectors(final double[]... stainVectors) {
 
                 // the vectors need to be normalized !!
                 for (int i = 0; i < stainVectors.length; i++) {
-                        double len = Math.sqrt(stainVectors[i][0]
+                        final double len = Math.sqrt(stainVectors[i][0]
                                         * stainVectors[i][0]
                                         + stainVectors[i][1]
                                         * stainVectors[i][1]
@@ -191,7 +194,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
                         stainVectors[i][2] = stainVectors[i][2] / len;
                 }
 
-                double[] odR = stainVectors[0];
+                final double[] odR = stainVectors[0];
                 double[] odG;
                 double[] odB;
                 if (stainVectors.length > 1) {
@@ -241,27 +244,28 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
 
         }
 
-        private double[] computeDestainMatrix(int dim) {
+        private double[] computeDestainMatrix(final int dim) {
 
                 // compute the destaining matrix Mds according to the chosen
                 // vector of
                 // the user
                 double[] m = new double[9];
-                if (dim == 1)
+                if (dim == 1) {
                         m = multMatrices(multMatrices(m_Ms, m_M1),
                                         inverseOf(m_Ms));
-                else if (dim == 2)
+                } else if (dim == 2) {
                         m = multMatrices(multMatrices(m_Ms, m_M2),
                                         inverseOf(m_Ms));
-                else
+                } else {
                         m = multMatrices(multMatrices(m_Ms, m_M3),
                                         inverseOf(m_Ms));
+                }
 
                 return m;
         }
 
-        private double[] multMatWithVec(double[] mat, double[] vec) {
-                double[] v = new double[3];
+        private double[] multMatWithVec(final double[] mat, final double[] vec) {
+                final double[] v = new double[3];
                 v[0] = mat[0] * vec[0] + mat[1] * vec[1] + mat[2] * vec[2];
                 v[1] = mat[3] * vec[0] + mat[4] * vec[1] + mat[5] * vec[2];
                 v[2] = mat[6] * vec[0] + mat[7] * vec[1] + mat[8] * vec[2];
@@ -274,8 +278,8 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
          * 7 8 g h i
          *
          */
-        private double[] inverseOf(double[] m) {
-                double[] res = new double[9];
+        private double[] inverseOf(final double[] m) {
+                final double[] res = new double[9];
 
                 // berechne die determinante einer 3x3 matrix
                 // http://www.mathe-online.at/materialien/klaus.berger/files/Matrizen/determinante.pdf
@@ -307,8 +311,8 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
          *                3x3 matrix
          * @return the multiplied matrices
          */
-        private double[] multMatrices(double[] a, double[] b) {
-                double[] res = new double[9];
+        private double[] multMatrices(final double[] a, final double[] b) {
+                final double[] res = new double[9];
                 res[0] = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
                 res[1] = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
                 res[2] = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
@@ -462,12 +466,12 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
 
                 private final String m_name;
 
-                private PredefinedStain(String name) {
+                private PredefinedStain(final String name) {
                         m_name = name;
                 }
 
-                public static PredefinedStain getStainByName(String name) {
-                        for (PredefinedStain s : PredefinedStain.values()) {
+                public static PredefinedStain getStainByName(final String name) {
+                        for (final PredefinedStain s : PredefinedStain.values()) {
                                 if (s.m_name.equals(name)) {
                                         return s;
                                 }

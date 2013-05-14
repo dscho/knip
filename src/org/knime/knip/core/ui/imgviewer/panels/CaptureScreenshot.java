@@ -97,11 +97,11 @@ public class CaptureScreenshot extends ViewerComponent {
                 setUpTextFields();
                 setUpButtons();
 
-                JSeparator separator = new JSeparator();
+                final JSeparator separator = new JSeparator();
 
-                GroupLayout layout = new GroupLayout(this);
+                final GroupLayout layout = new GroupLayout(this);
 
-                GroupLayout.SequentialGroup horizontal0 = layout
+                final GroupLayout.SequentialGroup horizontal0 = layout
                                 .createSequentialGroup()
                                 .addComponent(m_fieldName)
                                 .addPreferredGap(
@@ -112,7 +112,7 @@ public class CaptureScreenshot extends ViewerComponent {
                                 .addGroup(horizontal0).addComponent(separator)
                                 .addComponent(m_captureButton));
 
-                GroupLayout.SequentialGroup vertical0 = layout
+                final GroupLayout.SequentialGroup vertical0 = layout
                                 .createSequentialGroup()
                                 .addComponent(m_fieldName)
                                 .addComponent(separator)
@@ -130,12 +130,12 @@ public class CaptureScreenshot extends ViewerComponent {
                         public void actionPerformed(final ActionEvent e) {
                                 if (m_currentImage != null) {
                                         try {
-                                                RenderedImage ri = (RenderedImage) m_currentImage;
+                                                final RenderedImage ri = (RenderedImage) m_currentImage;
                                                 ImageIO.write(ri, "png",
                                                                 getFile());
-                                        } catch (ClassCastException exception) {
+                                        } catch (final ClassCastException exception) {
                                                 System.err.println("Could not cast image to RenderedImage, not writing image");
-                                        } catch (IOException exception) {
+                                        } catch (final IOException exception) {
                                                 System.err.println("Could not write image");
                                         }
                                 }
@@ -145,14 +145,14 @@ public class CaptureScreenshot extends ViewerComponent {
                 m_dirButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(final ActionEvent e) {
-                                int val = m_chooser
+                                final int val = m_chooser
                                                 .showOpenDialog(CaptureScreenshot.this);
                         }
                 });
         }
 
         private File getFile() {
-                String path = getFileName();
+                final String path = getFileName();
                 File file = new File(path + ".png");
 
                 int counter = 1;
@@ -188,7 +188,7 @@ public class CaptureScreenshot extends ViewerComponent {
         }
 
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 if (eventService == null) {
                         m_eventService = new EventService();
                 } else {
@@ -199,7 +199,7 @@ public class CaptureScreenshot extends ViewerComponent {
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 // not used
         }
 
@@ -214,13 +214,13 @@ public class CaptureScreenshot extends ViewerComponent {
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // not used
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 // not used
         }

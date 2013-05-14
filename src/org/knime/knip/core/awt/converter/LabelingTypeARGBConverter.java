@@ -11,12 +11,12 @@ public class LabelingTypeARGBConverter<L extends Comparable<L>> implements
 
         private final HashMap<Integer, Integer> colorTable;
 
-        public LabelingTypeARGBConverter(HashMap<Integer, Integer> colorTable) {
+        public LabelingTypeARGBConverter(final HashMap<Integer, Integer> colorTable) {
                 this.colorTable = colorTable;
         }
 
         @Override
-        public void convert(LabelingType<L> input, ARGBType output) {
+        public void convert(final LabelingType<L> input, final ARGBType output) {
                 output.set(colorTable.get(input.getIndex().getInteger()));
         }
 

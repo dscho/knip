@@ -22,8 +22,8 @@ public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleIn
         private final double m_lambda;
         private final OutOfBoundsFactory<T, I> m_outofbounds;
 
-        public MaxHomogenityOp(double lambda, long[] span,
-                        OutOfBoundsFactory<T, I> outofbounds) {
+        public MaxHomogenityOp(final double lambda, final long[] span,
+                        final OutOfBoundsFactory<T, I> outofbounds) {
                 m_span = span;
                 m_lambda = lambda;
                 m_outofbounds = outofbounds;
@@ -31,24 +31,24 @@ public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleIn
         }
 
         @Override
-        public I compute(I input, I output) {
+        public I compute(final I input, final I output) {
 
-                IterableInterval<T> inputIterable = Views.iterable(input);
-                PolygonRegionOfInterest[] rois = createROIs(inputIterable
+                final IterableInterval<T> inputIterable = Views.iterable(input);
+                final PolygonRegionOfInterest[] rois = createROIs(inputIterable
                                 .firstElement().createVariable(), m_span);
 
-                double[] displacement = new double[input.numDimensions()];
-                double[] position = new double[input.numDimensions()];
+                final double[] displacement = new double[input.numDimensions()];
+                final double[] position = new double[input.numDimensions()];
 
-                Cursor<T> cursor = inputIterable.cursor();
-                Cursor<T> outCursor = Views.iterable(output).cursor();
+                final Cursor<T> cursor = inputIterable.cursor();
+                final Cursor<T> outCursor = Views.iterable(output).cursor();
                 while (cursor.hasNext()) {
                         cursor.fwd();
                         outCursor.fwd();
                         cursor.localize(position);
 
-                        double[] means = new double[rois.length];
-                        double[] stddevs = new double[rois.length];
+                        final double[] means = new double[rois.length];
+                        final double[] stddevs = new double[rois.length];
                         double minStdDev = Double.MAX_VALUE;
 
                         for (int d = 0; d < displacement.length; d++) {
@@ -57,10 +57,10 @@ public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleIn
 
                         // Can be done more nicely? dont know
                         int r = 0;
-                        for (PolygonRegionOfInterest roi : rois) {
+                        for (final PolygonRegionOfInterest roi : rois) {
                                 roi.move(displacement);
                                 // CODE START
-                                Cursor<T> roiCursor = roi
+                                final Cursor<T> roiCursor = roi
                                                 .getIterableIntervalOverROI(
                                                                 Views.extend(input,
                                                                                 m_outofbounds))
@@ -89,10 +89,11 @@ public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleIn
                         for (int d = 0; d < stddevs.length; d++) {
                                 stddevs[d] = minStdDev / stddevs[d];
 
-                                if (Double.isNaN(stddevs[d]))
+                                if (Double.isNaN(stddevs[d])) {
                                         stddevs[d] = 1;
+                                }
 
-                                double tmp = Math.pow(stddevs[d], m_lambda);
+                                final double tmp = Math.pow(stddevs[d], m_lambda);
                                 sum += tmp;
                                 sum2 += tmp * means[d];
                         }
@@ -108,19 +109,19 @@ public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleIn
                 return output;
         }
 
-        private PolygonRegionOfInterest[] createROIs(T empty, long[] span) {
+        private PolygonRegionOfInterest[] createROIs(final T empty, final long[] span) {
 
                 // TODO: Only 2d case implemented and this is not well done can
                 // be
                 // automatized (either line or bresenham change ... can be
                 // calculated
                 // for n-dimensions) (nd)
-                int numRois = 8;
+                final int numRois = 8;
 
-                PolygonRegionOfInterest[] rois = new PolygonRegionOfInterest[numRois];
+                final PolygonRegionOfInterest[] rois = new PolygonRegionOfInterest[numRois];
                 int t = 0;
 
-                Point origin = new Point(new long[span.length]);
+                final Point origin = new Point(new long[span.length]);
 
                 // T0
                 rois[t] = new PolygonRegionOfInterest();

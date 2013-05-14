@@ -61,7 +61,7 @@ public class TransparencyPanelValueChgEvent implements KNIPEvent {
 
         private final int m_transparency;
 
-        public TransparencyPanelValueChgEvent(int transparency) {
+        public TransparencyPanelValueChgEvent(final int transparency) {
                 m_transparency = transparency;
 
         }
@@ -75,7 +75,7 @@ public class TransparencyPanelValueChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

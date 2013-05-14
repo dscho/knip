@@ -21,7 +21,7 @@ public class RealLookupTable<T extends RealType<T>> implements
         private class Alpha implements TransferFunction {
 
                 @Override
-                public double getValueAt(double pos) {
+                public double getValueAt(final double pos) {
                         return 1.0;
                 }
 
@@ -31,7 +31,7 @@ public class RealLookupTable<T extends RealType<T>> implements
                 }
 
                 @Override
-                public void zoom(double lower, double upper) {
+                public void zoom(final double lower, final double upper) {
                         // just ignore
                 }
         }
@@ -109,7 +109,7 @@ public class RealLookupTable<T extends RealType<T>> implements
                         final ARGBType[] table) {
                 assert (bundle != null && bundle.getType() == TransferFunctionBundle.Type.GREY);
 
-                TransferFunction grey = bundle.get(TransferFunctionColor.GREY);
+                final TransferFunction grey = bundle.get(TransferFunctionColor.GREY);
 
                 return fillTable(table, new Alpha(), grey, grey, grey);
         }
@@ -119,9 +119,9 @@ public class RealLookupTable<T extends RealType<T>> implements
                         final ARGBType[] table) {
                 assert (bundle != null && bundle.getType() == TransferFunctionBundle.Type.GREYA);
 
-                TransferFunction alpha = bundle
+                final TransferFunction alpha = bundle
                                 .get(TransferFunctionColor.ALPHA);
-                TransferFunction grey = bundle.get(TransferFunctionColor.GREY);
+                final TransferFunction grey = bundle.get(TransferFunctionColor.GREY);
 
                 return fillTable(table, alpha, grey, grey, grey);
         }
@@ -131,10 +131,10 @@ public class RealLookupTable<T extends RealType<T>> implements
                         final ARGBType[] table) {
                 assert (bundle != null && bundle.getType() == TransferFunctionBundle.Type.RGB);
 
-                TransferFunction red = bundle.get(TransferFunctionColor.RED);
-                TransferFunction green = bundle
+                final TransferFunction red = bundle.get(TransferFunctionColor.RED);
+                final TransferFunction green = bundle
                                 .get(TransferFunctionColor.GREEN);
-                TransferFunction blue = bundle.get(TransferFunctionColor.BLUE);
+                final TransferFunction blue = bundle.get(TransferFunctionColor.BLUE);
 
                 return fillTable(table, new Alpha(), red, green, blue);
         }
@@ -144,12 +144,12 @@ public class RealLookupTable<T extends RealType<T>> implements
                         final ARGBType[] table) {
                 assert (bundle != null && bundle.getType() == TransferFunctionBundle.Type.RGBA);
 
-                TransferFunction alpha = bundle
+                final TransferFunction alpha = bundle
                                 .get(TransferFunctionColor.ALPHA);
-                TransferFunction red = bundle.get(TransferFunctionColor.RED);
-                TransferFunction green = bundle
+                final TransferFunction red = bundle.get(TransferFunctionColor.RED);
+                final TransferFunction green = bundle
                                 .get(TransferFunctionColor.GREEN);
-                TransferFunction blue = bundle.get(TransferFunctionColor.BLUE);
+                final TransferFunction blue = bundle.get(TransferFunctionColor.BLUE);
 
                 return fillTable(table, alpha, red, green, blue);
         }
@@ -165,14 +165,14 @@ public class RealLookupTable<T extends RealType<T>> implements
                 assert (green != null);
                 assert (blue != null);
 
-                double step = 1.0 / (table.length - 1);
+                final double step = 1.0 / (table.length - 1);
                 double pos = 0.0;
 
                 for (int i = 0; i < table.length; i++) {
-                        int a = ((int) (alpha.getValueAt(pos) * 255.0)) << 24;
-                        int r = ((int) (red.getValueAt(pos) * 255.0)) << 16;
-                        int g = ((int) (green.getValueAt(pos) * 255.0)) << 8;
-                        int b = ((int) (blue.getValueAt(pos) * 255.0));
+                        final int a = ((int) (alpha.getValueAt(pos) * 255.0)) << 24;
+                        final int r = ((int) (red.getValueAt(pos) * 255.0)) << 16;
+                        final int g = ((int) (green.getValueAt(pos) * 255.0)) << 8;
+                        final int b = ((int) (blue.getValueAt(pos) * 255.0));
 
                         table[i] = new ARGBType((a | r | g | b));
                         pos += step;
@@ -189,12 +189,12 @@ public class RealLookupTable<T extends RealType<T>> implements
          * @return the lookup value
          */
         public ARGBType lookup(final double pixel) {
-                int index = (int) ((pixel - m_minValue) * m_scale);
+                final int index = (int) ((pixel - m_minValue) * m_scale);
                 return m_values[index];
         }
 
         @Override
-        public ARGBType lookup(T value) {
+        public ARGBType lookup(final T value) {
                 return lookup(value.getRealDouble());
         }
 }

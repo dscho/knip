@@ -70,7 +70,7 @@ public class CalculatePerimeter implements
                                                                         .imgFactory(new UnsignedShortType())
                                                                         .create(op,
                                                                                         new UnsignedShortType()));
-                } catch (IncompatibleTypeException e) {
+                } catch (final IncompatibleTypeException e) {
                         // If factory not compatible
                         img = new ArrayImgFactory<UnsignedShortType>().create(
                                         op, new UnsignedShortType());
@@ -122,7 +122,7 @@ public class CalculatePerimeter implements
                 return new UnaryObjectFactory<Img<BitType>, DoubleType>() {
 
                         @Override
-                        public DoubleType instantiate(Img<BitType> a) {
+                        public DoubleType instantiate(final Img<BitType> a) {
                                 return new DoubleType();
                         }
                 };

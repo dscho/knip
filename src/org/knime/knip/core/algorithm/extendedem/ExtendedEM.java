@@ -513,8 +513,9 @@ public class ExtendedEM {
                 // throw away numbers to avoid problem of similar initial
                 // numbers
                 // from a similar seed
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 10; i++) {
                         m_rr.nextDouble();
+                }
 
                 // m_num_instances = m_theInstances.numInstances();
                 m_num_attribs = m_theInstances.numAttributes();

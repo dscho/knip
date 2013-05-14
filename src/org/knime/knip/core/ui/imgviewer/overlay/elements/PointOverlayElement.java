@@ -30,8 +30,8 @@ public class PointOverlayElement<L extends Comparable<L>> extends
                 //
         }
 
-        public PointOverlayElement(int x, int y, long[] pos, int[] orientation,
-                        String... labels) {
+        public PointOverlayElement(final int x, final int y, final long[] pos, final int[] orientation,
+                        final String... labels) {
                 super(pos, orientation, labels);
                 m_x = x;
                 m_y = y;
@@ -40,27 +40,27 @@ public class PointOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void translate(long deltaX, long deltaY) {
+        public void translate(final long deltaX, final long deltaY) {
                 m_x += deltaX;
                 m_y += deltaY;
         }
 
         @Override
-        public void renderInterior(Graphics2D g) {
-                g.fillOval((int) m_x - DRAWING_RADIUS, (int) m_y
+        public void renderInterior(final Graphics2D g) {
+                g.fillOval(m_x - DRAWING_RADIUS, m_y
                                 - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
                                 2 * DRAWING_RADIUS);
         }
 
         @Override
-        public void renderOutline(Graphics2D g) {
-                g.drawOval((int) m_x - DRAWING_RADIUS, (int) m_y
+        public void renderOutline(final Graphics2D g) {
+                g.drawOval(m_x - DRAWING_RADIUS, m_y
                                 - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
                                 2 * DRAWING_RADIUS);
         }
 
         @Override
-        public boolean containsPoint(long x, long y) {
+        public boolean containsPoint(final long x, final long y) {
                 return m_x == x && m_y == y;
         }
 
@@ -70,12 +70,12 @@ public class PointOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public boolean add(long x, long y) {
+        public boolean add(final long x, final long y) {
                 return false;
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 super.writeExternal(out);
                 out.writeInt(m_x);
                 out.writeInt(m_y);
@@ -83,7 +83,7 @@ public class PointOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 super.readExternal(in);
                 m_x = in.readInt();

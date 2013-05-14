@@ -62,7 +62,7 @@ public class ImgViewerRectChgEvent implements KNIPEvent {
 
         private final Rectangle m_rectangle;
 
-        public ImgViewerRectChgEvent(Rectangle rectangle) {
+        public ImgViewerRectChgEvent(final Rectangle rectangle) {
                 m_rectangle = rectangle;
 
         }
@@ -83,7 +83,7 @@ public class ImgViewerRectChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

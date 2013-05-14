@@ -32,14 +32,14 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
         }
 
         @Override
-        public ImageMetadata read(BufferedDataInputStream in) throws Exception {
-                ImageMetadataImpl obj = new ImageMetadataImpl();
+        public ImageMetadata read(final BufferedDataInputStream in) throws Exception {
+                final ImageMetadataImpl obj = new ImageMetadataImpl();
 
                 // Valid bits are deserialized
                 obj.setValidBits(in.readInt());
 
                 // Channel Min/Max are deserialized
-                int numChannels = in.readInt();
+                final int numChannels = in.readInt();
 
                 for (int c = 0; c < numChannels; c++) {
                         obj.setChannelMinimum(c, in.readDouble());
@@ -47,32 +47,36 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                 }
 
                 // Colortables are deserialized
-                int numColorTables = in.readInt();
+                final int numColorTables = in.readInt();
                 obj.initializeColorTables(numColorTables);
 
                 for (int t = 0; t < numColorTables; t++) {
 
                         if (in.readBoolean()) {
-                                int componentCount = in.readInt();
-                                int length = in.readInt();
+                                final int componentCount = in.readInt();
+                                final int length = in.readInt();
 
                                 switch (ColorTables.values()[in.readInt()]) {
                                 case ColorTable8:
-                                        byte[][] ct8 = new byte[componentCount][length];
+                                        final byte[][] ct8 = new byte[componentCount][length];
 
-                                        for (int c = 0; c < componentCount; c++)
-                                                for (int k = 0; k < length; k++)
+                                        for (int c = 0; c < componentCount; c++) {
+                                                for (int k = 0; k < length; k++) {
                                                         ct8[c][k] = in.readByte();
+                                                }
+                                        }
 
                                         obj.setColorTable(new ColorTable8(ct8),
                                                         t);
                                         break;
                                 case ColorTable16:
-                                        short[][] ct16 = new short[componentCount][length];
+                                        final short[][] ct16 = new short[componentCount][length];
 
-                                        for (int c = 0; c < componentCount; c++)
-                                                for (int k = 0; k < length; k++)
+                                        for (int c = 0; c < componentCount; c++) {
+                                                for (int k = 0; k < length; k++) {
                                                         ct16[c][k] = in.readShort();
+                                                }
+                                        }
 
                                         obj.setColorTable(
                                                         new ColorTable16(ct16),
@@ -90,14 +94,14 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
         }
 
         @Override
-        public void write(BufferedDataOutputStream out, ImageMetadata obj)
+        public void write(final BufferedDataOutputStream out, final ImageMetadata obj)
                         throws Exception {
 
                 // Valid bits
                 out.writeInt(obj.getValidBits());
 
                 // Channels are serialized
-                int numChannels = obj.getCompositeChannelCount();
+                final int numChannels = obj.getCompositeChannelCount();
                 out.writeInt(numChannels);
 
                 for (int c = 0; c < numChannels; c++) {
@@ -106,13 +110,13 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                 }
 
                 // Color Tables are serialized
-                int numTables = obj.getColorTableCount();
+                final int numTables = obj.getColorTableCount();
 
                 // int numTables = 0;
                 out.writeInt(numTables);
 
                 for (int t = 0; t < numTables; t++) {
-                        ColorTable table = obj.getColorTable(t);
+                        final ColorTable table = obj.getColorTable(t);
                         out.writeBoolean(table != null);
 
                         if (table != null) {
@@ -123,22 +127,26 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                                         out.writeInt(ColorTables.ColorTable8
                                                         .ordinal());
                                         for (int c = 0; c < table
-                                                        .getComponentCount(); c++)
+                                                        .getComponentCount(); c++) {
                                                 for (int k = 0; k < table
-                                                                .getLength(); k++)
+                                                                .getLength(); k++) {
                                                         out.writeByte(((ColorTable8) table)
                                                                         .getNative(c,
                                                                                         k));
+                                                }
+                                        }
                                 } else if (table instanceof ColorTable16) {
                                         out.writeInt(ColorTables.ColorTable16
                                                         .ordinal());
                                         for (int c = 0; c < table
-                                                        .getComponentCount(); c++)
+                                                        .getComponentCount(); c++) {
                                                 for (int k = 0; k < table
-                                                                .getLength(); k++)
+                                                                .getLength(); k++) {
                                                         out.writeShort(((ColorTable16) table)
                                                                         .getNative(c,
                                                                                         k));
+                                                }
+                                        }
                                 }
                         }
                 }

@@ -41,7 +41,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          * @param o
          *                An open output stream.
          */
-        public BufferedDataOutputStream(OutputStream o) {
+        public BufferedDataOutputStream(final OutputStream o) {
                 super(o, 32768);
         }
 
@@ -53,7 +53,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          * @param bufLength
          *                The buffer size.
          */
-        public BufferedDataOutputStream(OutputStream o, int bufLength) {
+        public BufferedDataOutputStream(final OutputStream o, final int bufLength) {
                 super(o, bufLength);
         }
 
@@ -65,7 +65,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          *                represented as a byte of 1 and false as a byte value
          *                of 0.
          */
-        public void writeBoolean(boolean b) throws IOException {
+        public void writeBoolean(final boolean b) throws IOException {
 
                 checkBuf(1);
                 if (b) {
@@ -78,7 +78,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write a byte value.
          */
-        public void writeByte(int b) throws IOException {
+        public void writeByte(final int b) throws IOException {
                 checkBuf(1);
                 buf[count++] = (byte) b;
         }
@@ -86,7 +86,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an integer value.
          */
-        public void writeInt(int i) throws IOException {
+        public void writeInt(final int i) throws IOException {
 
                 checkBuf(4);
                 buf[count++] = (byte) (i >>> 24);
@@ -98,7 +98,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write a short value.
          */
-        public void writeShort(int s) throws IOException {
+        public void writeShort(final int s) throws IOException {
 
                 checkBuf(2);
                 buf[count++] = (byte) (s >>> 8);
@@ -109,7 +109,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write a char value.
          */
-        public void writeChar(int c) throws IOException {
+        public void writeChar(final int c) throws IOException {
 
                 checkBuf(2);
                 buf[count++] = (byte) (c >>> 8);
@@ -119,7 +119,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write a long value.
          */
-        public void writeLong(long l) throws IOException {
+        public void writeLong(final long l) throws IOException {
 
                 checkBuf(8);
 
@@ -136,11 +136,11 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write a float value.
          */
-        public void writeFloat(float f) throws IOException {
+        public void writeFloat(final float f) throws IOException {
 
                 checkBuf(4);
 
-                int i = Float.floatToIntBits(f);
+                final int i = Float.floatToIntBits(f);
 
                 buf[count++] = (byte) (i >>> 24);
                 buf[count++] = (byte) (i >>> 16);
@@ -152,10 +152,10 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write a double value.
          */
-        public void writeDouble(double d) throws IOException {
+        public void writeDouble(final double d) throws IOException {
 
                 checkBuf(8);
-                long l = Double.doubleToLongBits(d);
+                final long l = Double.doubleToLongBits(d);
 
                 buf[count++] = (byte) (l >>> 56);
                 buf[count++] = (byte) (l >>> 48);
@@ -174,7 +174,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          * @param s
          *                The string to be written.
          */
-        public void writeBytes(String s) throws IOException {
+        public void writeBytes(final String s) throws IOException {
 
                 write(s.getBytes(), 0, s.length());
         }
@@ -182,7 +182,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write a string as an array of chars.
          */
-        public void writeChars(String s) throws IOException {
+        public void writeChars(final String s) throws IOException {
 
                 for (int i = 0; i < s.length(); i += 1) {
                         writeChar(s.charAt(i));
@@ -194,10 +194,10 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          * situation efficiently since it creates new DataOutputStream to handle
          * each call.
          */
-        public void writeUTF(String s) throws IOException {
+        public void writeUTF(final String s) throws IOException {
 
                 // Punt on this one and use standard routines.
-                DataOutputStream d = new DataOutputStream(this);
+                final DataOutputStream d = new DataOutputStream(this);
                 d.writeUTF(s);
                 d.flush();
                 d.close();
@@ -218,7 +218,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          *                The object to be written. It must be an array of a
          *                primitive type, Object, or String.
          */
-        public void writePrimitiveArray(Object o) throws IOException {
+        public void writePrimitiveArray(final Object o) throws IOException {
                 writeArray(o);
         }
 
@@ -237,8 +237,8 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          *                The object to be written. It must be an array of a
          *                primitive type, Object, or String.
          */
-        public void writeArray(Object o) throws IOException {
-                String className = o.getClass().getName();
+        public void writeArray(final Object o) throws IOException {
+                final String className = o.getClass().getName();
 
                 if (className.charAt(0) != '[') {
                         throw new IOException(
@@ -310,14 +310,14 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an array of booleans.
          */
-        public void write(boolean[] b) throws IOException {
+        public void write(final boolean[] b) throws IOException {
                 write(b, 0, b.length);
         }
 
         /**
          * Write a segment of an array of booleans.
          */
-        public void write(boolean[] b, int start, int len) throws IOException {
+        public void write(final boolean[] b, final int start, final int len) throws IOException {
 
                 for (int i = start; i < start + len; i += 1) {
 
@@ -335,14 +335,14 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an array of shorts.
          */
-        public void write(short[] s) throws IOException {
+        public void write(final short[] s) throws IOException {
                 write(s, 0, s.length);
         }
 
         /**
          * Write a segment of an array of shorts.
          */
-        public void write(short[] s, int start, int len) throws IOException {
+        public void write(final short[] s, final int start, final int len) throws IOException {
 
                 for (int i = start; i < start + len; i += 1) {
                         if (count + 2 > buf.length) {
@@ -356,14 +356,14 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an array of char's.
          */
-        public void write(char[] c) throws IOException {
+        public void write(final char[] c) throws IOException {
                 write(c, 0, c.length);
         }
 
         /**
          * Write a segment of an array of char's.
          */
-        public void write(char[] c, int start, int len) throws IOException {
+        public void write(final char[] c, final int start, final int len) throws IOException {
 
                 for (int i = start; i < start + len; i += 1) {
                         if (count + 2 > buf.length) {
@@ -377,14 +377,14 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an array of int's.
          */
-        public void write(int[] i) throws IOException {
+        public void write(final int[] i) throws IOException {
                 write(i, 0, i.length);
         }
 
         /**
          * Write a segment of an array of int's.
          */
-        public void write(int[] i, int start, int len) throws IOException {
+        public void write(final int[] i, final int start, final int len) throws IOException {
 
                 for (int ii = start; ii < start + len; ii += 1) {
                         if (count + 4 > buf.length) {
@@ -403,14 +403,14 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an array of longs.
          */
-        public void write(long[] l) throws IOException {
+        public void write(final long[] l) throws IOException {
                 write(l, 0, l.length);
         }
 
         /**
          * Write a segement of an array of longs.
          */
-        public void write(long[] l, int start, int len) throws IOException {
+        public void write(final long[] l, final int start, final int len) throws IOException {
 
                 for (int i = start; i < start + len; i += 1) {
                         if (count + 8 > buf.length) {
@@ -435,18 +435,18 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an array of floats.
          */
-        public void write(float[] f) throws IOException {
+        public void write(final float[] f) throws IOException {
                 write(f, 0, f.length);
         }
 
-        public void write(float[] f, int start, int len) throws IOException {
+        public void write(final float[] f, final int start, final int len) throws IOException {
 
                 for (int i = start; i < start + len; i += 1) {
 
                         if (count + 4 > buf.length) {
                                 checkBuf(4);
                         }
-                        int t = Float.floatToIntBits(f[i]);
+                        final int t = Float.floatToIntBits(f[i]);
                         buf[count++] = (byte) (t >>> 24);
                         buf[count++] = (byte) (t >>> 16);
                         buf[count++] = (byte) (t >>> 8);
@@ -457,17 +457,17 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /**
          * Write an array of doubles.
          */
-        public void write(double[] d) throws IOException {
+        public void write(final double[] d) throws IOException {
                 write(d, 0, d.length);
         }
 
-        public void write(double[] d, int start, int len) throws IOException {
+        public void write(final double[] d, final int start, final int len) throws IOException {
 
                 for (int i = start; i < start + len; i += 1) {
                         if (count + 8 > buf.length) {
                                 checkBuf(8);
                         }
-                        long t = Double.doubleToLongBits(d[i]);
+                        final long t = Double.doubleToLongBits(d[i]);
 
                         int ix = (int) (t >>> 32);
 
@@ -490,7 +490,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
          * Write a segment of an array of Strings. Equivalent to calling
          * writeBytes for the selected elements.
          */
-        public void write(String[] s) throws IOException {
+        public void write(final String[] s) throws IOException {
 
                 // Do not worry about buffering this specially since the
                 // strings may be of differing lengths.
@@ -503,7 +503,7 @@ public class BufferedDataOutputStream extends BufferedOutputStream {
         /*
          * See if there is enough space to add something to the buffer.
          */
-        protected void checkBuf(int need) throws IOException {
+        protected void checkBuf(final int need) throws IOException {
 
                 if (count + need > buf.length) {
                         out.write(buf, 0, count);

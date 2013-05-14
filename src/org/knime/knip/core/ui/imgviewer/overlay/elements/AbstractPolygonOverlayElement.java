@@ -40,13 +40,13 @@ public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>>
                 super();
         }
 
-        public AbstractPolygonOverlayElement(long[] planePos,
-                        int[] orientation, String... labels) {
+        public AbstractPolygonOverlayElement(final long[] planePos,
+                        final int[] orientation, final String... labels) {
                 this(new Polygon(), planePos, orientation, labels);
         }
 
-        public AbstractPolygonOverlayElement(Polygon poly, long[] planePos,
-                        int[] orientation, String... labels) {
+        public AbstractPolygonOverlayElement(final Polygon poly, final long[] planePos,
+                        final int[] orientation, final String... labels) {
                 super(planePos, orientation, labels);
                 m_poly = poly;
                 m_roi = new PolygonRegionOfInterest();
@@ -70,9 +70,10 @@ public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>>
         }
 
         @Override
-        public boolean add(long x, long y) {
-                if (m_isClosed)
+        public boolean add(final long x, final long y) {
+                if (m_isClosed) {
                         return false;
+                }
 
                 m_poly.addPoint((int) x, (int) y);
                 m_roi.addVertex(m_roi.getVertexCount(), new RealPoint(
@@ -87,7 +88,7 @@ public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>>
         }
 
         @Override
-        public void renderInterior(Graphics2D g) {
+        public void renderInterior(final Graphics2D g) {
                 if (m_isClosed) {
                         g.fill(m_poly);
                 }
@@ -99,21 +100,22 @@ public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>>
         }
 
         @Override
-        public void renderOutline(Graphics2D g) {
+        public void renderOutline(final Graphics2D g) {
 
                 if (getStatus() == OverlayElementStatus.ACTIVE
                                 || getStatus() == OverlayElementStatus.DRAWING) {
                         renderPointOutline(g);
                 }
 
-                if (m_isClosed)
+                if (m_isClosed) {
                         g.draw(m_poly);
-                else
+                } else {
                         g.drawPolyline(m_poly.xpoints, m_poly.ypoints,
                                         m_poly.npoints);
+                }
         }
 
-        public int getPointIndexByPosition(int x, int y, int pickingDelta) {
+        public int getPointIndexByPosition(final int x, final int y, final int pickingDelta) {
 
                 for (int i = 0; i < m_poly.npoints; i++) {
                         if (m_poly.xpoints[i] - pickingDelta < x
@@ -127,7 +129,7 @@ public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>>
         }
 
         @Override
-        public void translate(long x, long y) {
+        public void translate(final long x, final long y) {
                 for (int i = 0; i < m_poly.npoints; i++) {
                         m_poly.xpoints[i] += x;
                         m_poly.ypoints[i] += y;
@@ -144,19 +146,19 @@ public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>>
         }
 
         @Override
-        public boolean containsPoint(long x, long y) {
+        public boolean containsPoint(final long x, final long y) {
                 return m_poly.contains((int) x, (int) y);
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 super.writeExternal(out);
                 out.writeObject(m_poly);
                 out.writeBoolean(m_isClosed);
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 super.readExternal(in);
                 m_poly = (Polygon) in.readObject();

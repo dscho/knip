@@ -120,10 +120,11 @@ public class AttributeTmp {
                         String def;
                         if (m_Type == NUMERIC
                                         && orderString.compareTo("modulo") != 0
-                                        && orderString.compareTo("symbolic") != 0)
+                                        && orderString.compareTo("symbolic") != 0) {
                                 def = "true";
-                        else
+                        } else {
                                 def = "false";
+                        }
 
                         // determine boolean states
                         m_IsAveragable = (m_Metadata.getProperty("averageable",
@@ -131,52 +132,60 @@ public class AttributeTmp {
                         m_HasZeropoint = (m_Metadata.getProperty("zeropoint",
                                         def).compareTo("true") == 0);
                         // averagable or zeropoint implies regular
-                        if (m_IsAveragable || m_HasZeropoint)
+                        if (m_IsAveragable || m_HasZeropoint) {
                                 def = "true";
+                        }
                         m_IsRegular = (m_Metadata.getProperty("regular", def)
                                         .compareTo("true") == 0);
 
                         // determine ordering
-                        if (orderString.compareTo("symbolic") == 0)
+                        if (orderString.compareTo("symbolic") == 0) {
                                 m_Ordering = ORDERING_SYMBOLIC;
-                        else if (orderString.compareTo("ordered") == 0)
+                        } else if (orderString.compareTo("ordered") == 0) {
                                 m_Ordering = ORDERING_ORDERED;
-                        else if (orderString.compareTo("modulo") == 0)
+                        } else if (orderString.compareTo("modulo") == 0) {
                                 m_Ordering = ORDERING_MODULO;
-                        else {
+                        } else {
                                 if (m_Type == NUMERIC || m_IsAveragable
-                                                || m_HasZeropoint)
+                                                || m_HasZeropoint) {
                                         m_Ordering = ORDERING_ORDERED;
-                                else
+                                } else {
                                         m_Ordering = ORDERING_SYMBOLIC;
+                                }
                         }
                 }
 
                 // consistency checks
-                if (m_IsAveragable && !m_IsRegular)
+                if (m_IsAveragable && !m_IsRegular) {
                         throw new IllegalArgumentException(
                                         "An averagable attribute must be"
                                                         + " regular");
-                if (m_HasZeropoint && !m_IsRegular)
+                }
+                if (m_HasZeropoint && !m_IsRegular) {
                         throw new IllegalArgumentException(
                                         "A zeropoint attribute must be"
                                                         + " regular");
-                if (m_IsRegular && m_Ordering == ORDERING_SYMBOLIC)
+                }
+                if (m_IsRegular && m_Ordering == ORDERING_SYMBOLIC) {
                         throw new IllegalArgumentException(
                                         "A symbolic attribute cannot be"
                                                         + " regular");
-                if (m_IsAveragable && m_Ordering != ORDERING_ORDERED)
+                }
+                if (m_IsAveragable && m_Ordering != ORDERING_ORDERED) {
                         throw new IllegalArgumentException(
                                         "An averagable attribute must be"
                                                         + " ordered");
-                if (m_HasZeropoint && m_Ordering != ORDERING_ORDERED)
+                }
+                if (m_HasZeropoint && m_Ordering != ORDERING_ORDERED) {
                         throw new IllegalArgumentException(
                                         "A zeropoint attribute must be"
                                                         + " ordered");
+                }
 
                 // determine numeric range
-                if (m_Type == NUMERIC)
+                if (m_Type == NUMERIC) {
                         setNumericRange(m_Metadata.getProperty("range"));
+                }
         }
 
         private double m_UpperBound;
@@ -188,8 +197,9 @@ public class AttributeTmp {
                 m_LowerBound = Double.NEGATIVE_INFINITY;
                 m_UpperBound = Double.POSITIVE_INFINITY;
 
-                if (rangeString == null)
+                if (rangeString == null) {
                         return;
+                }
 
                 // set up a tokenzier to parse the string
                 final StreamTokenizer tokenizer = new StreamTokenizer(
@@ -210,18 +220,19 @@ public class AttributeTmp {
 
                         // get lower bound
                         tokenizer.nextToken();
-                        if (tokenizer.ttype != tokenizer.TT_WORD)
+                        if (tokenizer.ttype != StreamTokenizer.TT_WORD) {
                                 throw new IllegalArgumentException(
                                                 "Expected lower bound in range,"
                                                                 + " found: "
                                                                 + tokenizer.toString());
-                        if (tokenizer.sval.compareToIgnoreCase("-inf") == 0)
+                        }
+                        if (tokenizer.sval.compareToIgnoreCase("-inf") == 0) {
                                 m_LowerBound = Double.NEGATIVE_INFINITY;
-                        else if (tokenizer.sval.compareToIgnoreCase("+inf") == 0)
+                        } else if (tokenizer.sval.compareToIgnoreCase("+inf") == 0) {
                                 m_LowerBound = Double.POSITIVE_INFINITY;
-                        else if (tokenizer.sval.compareToIgnoreCase("inf") == 0)
+                        } else if (tokenizer.sval.compareToIgnoreCase("inf") == 0) {
                                 m_LowerBound = Double.NEGATIVE_INFINITY;
-                        else
+                        } else {
                                 try {
                                         m_LowerBound = Double.valueOf(
                                                         tokenizer.sval)
@@ -233,28 +244,31 @@ public class AttributeTmp {
                                                                         + tokenizer.sval
                                                                         + "'");
                                 }
+                        }
 
                         // get separating comma
-                        if (tokenizer.nextToken() != ',')
+                        if (tokenizer.nextToken() != ',') {
                                 throw new IllegalArgumentException(
                                                 "Expected comma in range,"
                                                                 + " found: "
                                                                 + tokenizer.toString());
+                        }
 
                         // get upper bound
                         tokenizer.nextToken();
-                        if (tokenizer.ttype != tokenizer.TT_WORD)
+                        if (tokenizer.ttype != StreamTokenizer.TT_WORD) {
                                 throw new IllegalArgumentException(
                                                 "Expected upper bound in range,"
                                                                 + " found: "
                                                                 + tokenizer.toString());
-                        if (tokenizer.sval.compareToIgnoreCase("-inf") == 0)
+                        }
+                        if (tokenizer.sval.compareToIgnoreCase("-inf") == 0) {
                                 m_UpperBound = Double.NEGATIVE_INFINITY;
-                        else if (tokenizer.sval.compareToIgnoreCase("+inf") == 0)
+                        } else if (tokenizer.sval.compareToIgnoreCase("+inf") == 0) {
                                 m_UpperBound = Double.POSITIVE_INFINITY;
-                        else if (tokenizer.sval.compareToIgnoreCase("inf") == 0)
+                        } else if (tokenizer.sval.compareToIgnoreCase("inf") == 0) {
                                 m_UpperBound = Double.POSITIVE_INFINITY;
-                        else
+                        } else {
                                 try {
                                         m_UpperBound = Double.valueOf(
                                                         tokenizer.sval)
@@ -266,16 +280,18 @@ public class AttributeTmp {
                                                                         + tokenizer.sval
                                                                         + "'");
                                 }
+                        }
 
                         // get closing brace
                         tokenizer.nextToken();
 
                         // check for rubbish on end
-                        if (tokenizer.nextToken() != tokenizer.TT_EOF)
+                        if (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
                                 throw new IllegalArgumentException(
                                                 "Expected end of range string,"
                                                                 + " found: "
                                                                 + tokenizer.toString());
+                        }
 
                 } catch (final IOException e) {
                         throw new IllegalArgumentException(
@@ -284,12 +300,13 @@ public class AttributeTmp {
                                                         + e.getMessage());
                 }
 
-                if (m_UpperBound < m_LowerBound)
+                if (m_UpperBound < m_LowerBound) {
                         throw new IllegalArgumentException("Upper bound ("
                                         + m_UpperBound
                                         + ") on numeric range is"
                                         + " less than lower bound ("
                                         + m_LowerBound + ")!");
+                }
         }
 }
 

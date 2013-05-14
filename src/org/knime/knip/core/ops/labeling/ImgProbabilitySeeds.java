@@ -82,7 +82,7 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
         private final int m_avgDistance;
         private final LabelGenerator<L> m_seedGen;
 
-        public ImgProbabilitySeeds(LabelGenerator<L> seedGen, int avgDistance) {
+        public ImgProbabilitySeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
                 m_seedGen = seedGen;
                 m_avgDistance = avgDistance;
 
@@ -92,10 +92,10 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
          * {@inheritDoc}
          */
         @Override
-        public Labeling<L> compute(Img<T> input, Labeling<L> output) {
+        public Labeling<L> compute(final Img<T> input, final Labeling<L> output) {
 
                 m_seedGen.reset();
-                Random rand = new Random();
+                final Random rand = new Random();
 
                 if (m_avgDistance == 1) {
                         /*
@@ -116,9 +116,10 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
                                 in.next();
                                 out.setPosition(in);
                                 if (rand.nextFloat() < (min + in.get()
-                                                .getRealDouble()) / range)
+                                                .getRealDouble()) / range) {
                                         out.get().setLabel(
                                                         m_seedGen.nextLabel());
+                                }
                         }
 
                 } else {
@@ -129,7 +130,7 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
                          * here: improve efficiency
                          */
 
-                        long[] currentGridPos = new long[output.numDimensions()];
+                        final long[] currentGridPos = new long[output.numDimensions()];
                         final RandomAccess<LabelingType<L>> outLabRA = Views
                                         .extendValue(output,
                                                         output.firstElement()
@@ -142,11 +143,11 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
 
                         // cumulative distribution function (as
                         // image)
-                        long[] dim = new long[input.numDimensions()];
+                        final long[] dim = new long[input.numDimensions()];
                         Arrays.fill(dim, m_avgDistance * 2 + 1);
-                        Img<DoubleType> cdf = new ArrayImgFactory<DoubleType>()
+                        final Img<DoubleType> cdf = new ArrayImgFactory<DoubleType>()
                                         .create(dim, new DoubleType());
-                        Cursor<DoubleType> cdfCur = cdf.localizingCursor();
+                        final Cursor<DoubleType> cdfCur = cdf.localizingCursor();
 
                         while (currentGridPos[currentGridPos.length - 1] < input
                                         .dimension(currentGridPos.length - 1)) {
@@ -183,8 +184,8 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
                 return output;
         }
 
-        private double calcCdf(Cursor<DoubleType> cdfCur, RandomAccess<T> inRA,
-                        long[] currentGridPos) {
+        private double calcCdf(final Cursor<DoubleType> cdfCur, final RandomAccess<T> inRA,
+                        final long[] currentGridPos) {
 
                 cdfCur.reset();
                 double sum = 0;
@@ -221,9 +222,9 @@ public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
 
         }
 
-        private void retrieveRandPosition(Cursor<DoubleType> cdfCur,
-                        RandomAccess<LabelingType<L>> labRA, double randVal,
-                        long[] currentGridPos) {
+        private void retrieveRandPosition(final Cursor<DoubleType> cdfCur,
+                        final RandomAccess<LabelingType<L>> labRA, final double randVal,
+                        final long[] currentGridPos) {
 
                 cdfCur.reset();
                 while (cdfCur.hasNext()) {

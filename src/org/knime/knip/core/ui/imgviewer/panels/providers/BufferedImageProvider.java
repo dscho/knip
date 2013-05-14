@@ -70,7 +70,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends
          *                The size of the cache beeing used in
          *                {@link AWTImageProvider}
          */
-        public BufferedImageProvider(int cacheSize) {
+        public BufferedImageProvider(final int cacheSize) {
                 super(cacheSize);
                 m_normalizationParameters = new NormalizationParametersChgEvent<T>(
                                 0, false);
@@ -84,7 +84,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends
         @SuppressWarnings("unchecked")
         @Override
         protected Image createImage() {
-                double[] normParams = m_normalizationParameters
+                final double[] normParams = m_normalizationParameters
                                 .getNormalizationParameters(m_src, m_sel);
 
                 if (m_renderer instanceof RendererWithNormalization) {
@@ -104,7 +104,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends
                                         .setColorTables(m_colorTables);
                 }
 
-                ScreenImage ret = m_renderer.render(m_src,
+                final ScreenImage ret = m_renderer.render(m_src,
                                 m_sel.getPlaneDimIndex1(),
                                 m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
@@ -120,7 +120,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends
          */
         @EventListener
         public void onUpdated(
-                        NormalizationParametersChgEvent<T> normalizationParameters) {
+                        final NormalizationParametersChgEvent<T> normalizationParameters) {
                 m_normalizationParameters = normalizationParameters;
         }
 
@@ -139,8 +139,8 @@ public class BufferedImageProvider<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onImageUpdated(ImgWithMetadataChgEvent<T> e) {
-                int size = e.getImgMetaData().getColorTableCount();
+        public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
+                final int size = e.getImgMetaData().getColorTableCount();
                 m_colorTables = new ColorTable[size];
 
                 for (int i = 0; i < size; i++) {
@@ -157,7 +157,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 super.saveComponentConfiguration(out);
                 m_normalizationParameters.writeExternal(out);
@@ -165,7 +165,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 super.loadComponentConfiguration(in);
                 m_normalizationParameters = new NormalizationParametersChgEvent<T>();

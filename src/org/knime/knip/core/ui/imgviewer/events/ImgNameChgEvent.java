@@ -60,7 +60,7 @@ public class ImgNameChgEvent implements KNIPEvent {
 
         private final String m_name;
 
-        public ImgNameChgEvent(String name) {
+        public ImgNameChgEvent(final String name) {
                 m_name = name;
 
         }
@@ -81,7 +81,7 @@ public class ImgNameChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

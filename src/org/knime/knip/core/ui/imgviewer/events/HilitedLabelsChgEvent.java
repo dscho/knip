@@ -62,7 +62,7 @@ public class HilitedLabelsChgEvent implements KNIPEvent {
 
         private final Set<String> m_hilitedLabels;
 
-        public HilitedLabelsChgEvent(Set<String> hilitedLabels) {
+        public HilitedLabelsChgEvent(final Set<String> hilitedLabels) {
                 m_hilitedLabels = hilitedLabels;
 
         }
@@ -83,7 +83,7 @@ public class HilitedLabelsChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 }

@@ -90,9 +90,9 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
         private boolean m_valid;
 
         @FeatureTargetListener
-        public final void iiUpdated(IterableInterval<T> interval) {
+        public final void iiUpdated(final IterableInterval<T> interval) {
 
-                ValuePair<Integer, Integer> validDims = getValidDims(interval);
+                final ValuePair<Integer, Integer> validDims = getValidDims(interval);
 
                 if (validDims == null) {
                         m_valid = false;
@@ -110,22 +110,26 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
         }
 
         private ValuePair<Integer, Integer> getValidDims(
-                        IterableInterval<T> interval) {
+                        final IterableInterval<T> interval) {
 
                 int dimX = -1;
                 int dimY = -1;
 
-                for (int d = 0; d < interval.numDimensions(); d++)
-                        if (interval.dimension(d) > 1)
-                                if (dimX < 0)
+                for (int d = 0; d < interval.numDimensions(); d++) {
+                        if (interval.dimension(d) > 1) {
+                                if (dimX < 0) {
                                         dimX = d;
-                                else if (dimY < 0)
+                                } else if (dimY < 0) {
                                         dimY = d;
-                                else
+                                } else {
                                         return null;
+                                }
+                        }
+                }
 
-                if (dimX < 0 || dimY < 0)
+                if (dimX < 0 || dimY < 0) {
                         return null;
+                }
 
                 return new ValuePair<Integer, Integer>(dimX, dimY);
         }
@@ -134,10 +138,11 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public double value(int id) {
+        public double value(final int id) {
 
-                if (!m_valid)
+                if (!m_valid) {
                         return Double.NaN;
+                }
 
                 switch (id) {
                 case 0:
@@ -162,7 +167,7 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return FEATURES[id];
         }
 
@@ -170,7 +175,7 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 m_enabledFeatures.add(FEATURES[id]);
 
         }
@@ -203,7 +208,7 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public void setSharedObjectInstances(Object[] instances) {
+        public void setSharedObjectInstances(final Object[] instances) {
                 m_ocac = (ObjectCalcAndCache) instances[0];
 
         }

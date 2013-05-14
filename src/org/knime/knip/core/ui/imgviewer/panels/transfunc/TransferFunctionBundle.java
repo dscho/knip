@@ -90,7 +90,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          * @return the new bundle
          */
         public static TransferFunctionBundle newRGBABundle() {
-                TransferFunctionColor[] keys = { TransferFunctionColor.ALPHA,
+                final TransferFunctionColor[] keys = { TransferFunctionColor.ALPHA,
                                 TransferFunctionColor.RED,
                                 TransferFunctionColor.GREEN,
                                 TransferFunctionColor.BLUE };
@@ -106,7 +106,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          * @return the new bundle
          */
         public static TransferFunctionBundle newRGBBundle() {
-                TransferFunctionColor[] keys = { TransferFunctionColor.RED,
+                final TransferFunctionColor[] keys = { TransferFunctionColor.RED,
                                 TransferFunctionColor.GREEN,
                                 TransferFunctionColor.BLUE };
                 return setUpBundle(keys, Type.RGB);
@@ -118,7 +118,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          * @return the new bundle
          */
         public static TransferFunctionBundle newGBundle() {
-                TransferFunctionColor[] keys = { TransferFunctionColor.GREY };
+                final TransferFunctionColor[] keys = { TransferFunctionColor.GREY };
                 return setUpBundle(keys, Type.GREY);
         }
 
@@ -128,7 +128,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          * @return the new bundle
          */
         public static TransferFunctionBundle newGABundle() {
-                TransferFunctionColor[] keys = { TransferFunctionColor.ALPHA,
+                final TransferFunctionColor[] keys = { TransferFunctionColor.ALPHA,
                                 TransferFunctionColor.GREY };
 
                 return moveAlpha(setUpBundle(keys, Type.GREYA),
@@ -143,9 +143,9 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
                         final TransferFunctionColor color) {
                 assert (bundle.get(color).getClass() == PolylineTransferFunction.class);
 
-                PolylineTransferFunction func = (PolylineTransferFunction) bundle
+                final PolylineTransferFunction func = (PolylineTransferFunction) bundle
                                 .get(color);
-                List<PolylineTransferFunction.Point> list = func.getPoints();
+                final List<PolylineTransferFunction.Point> list = func.getPoints();
                 func.movePoint(list.get(list.size() - 1), 1.0, 0.2);
 
                 return bundle;
@@ -160,9 +160,9 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          */
         private static TransferFunctionBundle setUpBundle(
                         final TransferFunctionColor[] colors, final Type type) {
-                TransferFunctionBundle bundle = new TransferFunctionBundle(type);
+                final TransferFunctionBundle bundle = new TransferFunctionBundle(type);
 
-                for (TransferFunctionColor color : colors) {
+                for (final TransferFunctionColor color : colors) {
                         bundle.add(new PolylineTransferFunction(), color);
                 }
 
@@ -187,12 +187,12 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          * @param tfb
          *                the bundle to copy
          */
-        public TransferFunctionBundle(TransferFunctionBundle tfb) {
+        public TransferFunctionBundle(final TransferFunctionBundle tfb) {
 
                 // and copy all functions
-                for (TransferFunction old : tfb.getFunctions()) {
-                        TransferFunction copy = old.copy();
-                        TransferFunctionColor key = tfb.getColorOfFunction(old);
+                for (final TransferFunction old : tfb.getFunctions()) {
+                        final TransferFunction copy = old.copy();
+                        final TransferFunctionColor key = tfb.getColorOfFunction(old);
 
                         m_functions.put(key, copy);
                         m_names.put(copy, key);
@@ -220,7 +220,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
         public final void add(
                         final List<ValuePair<TransferFunction, TransferFunctionColor>> list) {
 
-                for (ValuePair<TransferFunction, TransferFunctionColor> p : list) {
+                for (final ValuePair<TransferFunction, TransferFunctionColor> p : list) {
                         add(p.a, p.b);
                 }
         }
@@ -248,7 +248,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
          */
         public final TransferFunction get(final TransferFunctionColor color)
                         throws IllegalArgumentException {
-                TransferFunction func = m_functions.get(color);
+                final TransferFunction func = m_functions.get(color);
 
                 if (func != null) {
                         return func;
@@ -272,7 +272,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
                         throws IllegalArgumentException {
 
                 if (m_functions.containsKey(color)) {
-                        TransferFunction temp = m_functions.get(color);
+                        final TransferFunction temp = m_functions.get(color);
                         m_functions.remove(color);
                         m_functions.put(color, temp);
                 } else {
@@ -326,7 +326,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
                         final TransferFunction func)
                         throws IllegalArgumentException {
 
-                TransferFunctionColor name = m_names.get(func);
+                final TransferFunctionColor name = m_names.get(func);
                 if (name != null) {
                         return name;
                 } else {

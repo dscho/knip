@@ -40,29 +40,30 @@ public class LabelingDependency<L extends Comparable<L>> implements
 
         private final boolean m_intersectionMode;
 
-        public LabelingDependency(RulebasedLabelFilter<L> leftFilter,
-                        RulebasedLabelFilter<L> rightFilter,
-                        boolean intersectionMode) {
+        public LabelingDependency(final RulebasedLabelFilter<L> leftFilter,
+                        final RulebasedLabelFilter<L> rightFilter,
+                        final boolean intersectionMode) {
                 m_leftFilter = leftFilter;
                 m_rightFilter = rightFilter;
                 m_intersectionMode = intersectionMode;
         }
 
         @Override
-        public Map<L, List<L>> compute(Labeling<L> op, Map<L, List<L>> r) {
+        public Map<L, List<L>> compute(final Labeling<L> op, final Map<L, List<L>> r) {
 
-                HashMap<L, HashMap<L, Integer>> labelMap = new HashMap<L, HashMap<L, Integer>>();
-                HashMap<L, Integer> sizeMap = new HashMap<L, Integer>();
+                final HashMap<L, HashMap<L, Integer>> labelMap = new HashMap<L, HashMap<L, Integer>>();
+                final HashMap<L, Integer> sizeMap = new HashMap<L, Integer>();
 
-                Cursor<LabelingType<L>> cursor = op.cursor();
+                final Cursor<LabelingType<L>> cursor = op.cursor();
 
                 while (cursor.hasNext()) {
                         cursor.fwd();
 
-                        if (cursor.get().getLabeling().isEmpty())
+                        if (cursor.get().getLabeling().isEmpty()) {
                                 continue;
+                        }
 
-                        for (L outerL : m_leftFilter.filterLabeling(cursor
+                        for (final L outerL : m_leftFilter.filterLabeling(cursor
                                         .get().getLabeling())) {
 
                                 if (!labelMap.containsKey(outerL)) {
@@ -71,11 +72,12 @@ public class LabelingDependency<L extends Comparable<L>> implements
                                         sizeMap.put(outerL, 0);
                                 }
 
-                                for (L innerL : m_rightFilter
+                                for (final L innerL : m_rightFilter
                                                 .filterLabeling(cursor.get()
                                                                 .getLabeling())) {
-                                        if (outerL.equals(innerL))
+                                        if (outerL.equals(innerL)) {
                                                 continue;
+                                        }
 
                                         if (!labelMap.get(outerL).containsKey(
                                                         innerL)) {
@@ -89,16 +91,17 @@ public class LabelingDependency<L extends Comparable<L>> implements
                                                                                         .get(innerL) + 1);
                                 }
 
-                                if (!m_intersectionMode)
+                                if (!m_intersectionMode) {
                                         sizeMap.put(outerL,
                                                         sizeMap.get(outerL) + 1);
+                                }
                         }
                 }
 
-                for (L l : labelMap.keySet()) {
-                        List<L> members = new ArrayList<L>();
+                for (final L l : labelMap.keySet()) {
+                        final List<L> members = new ArrayList<L>();
                         if (sizeMap.get(l) > 0) {
-                                for (L groupMember : labelMap.get(l).keySet()) {
+                                for (final L groupMember : labelMap.get(l).keySet()) {
                                         if (labelMap.get(l).get(groupMember)
                                                         .equals(sizeMap.get(l))) {
                                                 members.add(groupMember);
@@ -106,14 +109,15 @@ public class LabelingDependency<L extends Comparable<L>> implements
                                 }
 
                         } else {
-                                for (L groupMember : labelMap.get(l).keySet()) {
+                                for (final L groupMember : labelMap.get(l).keySet()) {
                                         members.add(groupMember);
                                 }
                         }
 
                         if (members.size() > 0
-                                        || m_rightFilter.getRules().size() == 0)
+                                        || m_rightFilter.getRules().size() == 0) {
                                 r.put(l, members);
+                        }
                 }
                 return r;
 
@@ -130,7 +134,7 @@ public class LabelingDependency<L extends Comparable<L>> implements
                 return new UnaryObjectFactory<Labeling<L>, Map<L, List<L>>>() {
 
                         @Override
-                        public Map<L, List<L>> instantiate(Labeling<L> a) {
+                        public Map<L, List<L>> instantiate(final Labeling<L> a) {
                                 return new HashMap<L, List<L>>();
                         }
                 };

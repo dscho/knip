@@ -9,7 +9,7 @@ public class CalibrationUpdateEvent implements KNIPEvent {
         private final int[] m_selectedDims;
         private final double[] m_scaleFactors;
 
-        public CalibrationUpdateEvent(double[] scaleFactors, int[] selectedDims) {
+        public CalibrationUpdateEvent(final double[] scaleFactors, final int[] selectedDims) {
                 m_selectedDims = selectedDims;
                 m_scaleFactors = scaleFactors;
         }
@@ -20,7 +20,7 @@ public class CalibrationUpdateEvent implements KNIPEvent {
         }
 
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 
@@ -42,18 +42,23 @@ public class CalibrationUpdateEvent implements KNIPEvent {
         }
 
         @Override
-        public boolean equals(Object obj) {
-                if (this == obj)
+        public boolean equals(final Object obj) {
+                if (this == obj) {
                         return true;
-                if (obj == null)
+                }
+                if (obj == null) {
                         return false;
-                if (getClass() != obj.getClass())
+                }
+                if (getClass() != obj.getClass()) {
                         return false;
-                CalibrationUpdateEvent other = (CalibrationUpdateEvent) obj;
-                if (!Arrays.equals(m_scaleFactors, other.m_scaleFactors))
+                }
+                final CalibrationUpdateEvent other = (CalibrationUpdateEvent) obj;
+                if (!Arrays.equals(m_scaleFactors, other.m_scaleFactors)) {
                         return false;
-                if (!Arrays.equals(m_selectedDims, other.m_selectedDims))
+                }
+                if (!Arrays.equals(m_selectedDims, other.m_selectedDims)) {
                         return false;
+                }
                 return true;
         }
 

@@ -71,14 +71,14 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
         }
 
         @EventListener
-        public void onLabelsColorReset(AnnotatorLabelsColResetEvent e) {
-                for (String label : e.getLabels()) {
+        public void onLabelsColorReset(final AnnotatorLabelsColResetEvent e) {
+                for (final String label : e.getLabels()) {
                         SegmentColorTable.resetColor(label);
                 }
 
@@ -86,7 +86,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onSetClassLabels(AnnotatorLabelsSetEvent e) {
+        public void onSetClassLabels(final AnnotatorLabelsSetEvent e) {
                 if (m_currentTool != null) {
                         m_currentTool.setLabelsCurrentElements(
                                         m_currentOverlay, e.getLabels());
@@ -94,12 +94,12 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onSelectedLabelsChg(AnnotatorLabelsSelChgEvent e) {
+        public void onSelectedLabelsChg(final AnnotatorLabelsSelChgEvent e) {
                 m_selectedLabels = e.getLabels();
         }
 
         @EventListener
-        public void onToolChange(AnnotatorToolChgEvent e) {
+        public void onToolChange(final AnnotatorToolChgEvent e) {
                 if (m_currentTool != null) {
                         m_currentTool.fireFocusLost(m_currentOverlay);
                 }
@@ -109,12 +109,12 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onFileListChange(AnnotatorFilelistChgEvent e) {
+        public void onFileListChange(final AnnotatorFilelistChgEvent e) {
 
-                for (String key : new HashSet<String>(m_overlayMap.keySet())) {
+                for (final String key : new HashSet<String>(m_overlayMap.keySet())) {
                         // Switching systems
                         boolean contains = false;
-                        for (String file : e.getFileList()) {
+                        for (final String file : e.getFileList()) {
                                 // Exactly same path
                                 if (key.equals(file)) {
                                         contains = true;
@@ -130,11 +130,11 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onLabelsDeleted(AnnotatorLabelsDelEvent e) {
-                for (Overlay<String> overlay : m_overlayMap.values()) {
-                        for (OverlayElement2D<String> element : overlay
+        public void onLabelsDeleted(final AnnotatorLabelsDelEvent e) {
+                for (final Overlay<String> overlay : m_overlayMap.values()) {
+                        for (final OverlayElement2D<String> element : overlay
                                         .getElements()) {
-                                for (String label : e.getLabels()) {
+                                for (final String label : e.getLabels()) {
                                         element.getLabels().remove(label);
                                 }
 
@@ -155,7 +155,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
          * @param axes
          */
         @EventListener
-        public void onUpdate(IntervalWithMetadataChgEvent<T> e) {
+        public void onUpdate(final IntervalWithMetadataChgEvent<T> e) {
 
                 m_currentOverlay = getOverlayMap().get(
                                 e.getSource().getSource());
@@ -167,7 +167,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
                         m_currentOverlay.setEventService(m_eventService);
                 }
 
-                long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+                final long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
                 e.getRandomAccessibleInterval().dimensions(dims);
 
                 if (m_sel == null || !isInsideDims(m_sel.getPlanePos(), dims)) {
@@ -181,7 +181,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
                 m_eventService.publish(new ImgRedrawEvent());
         }
 
-        private boolean isInsideDims(long[] planePos, long[] dims) {
+        private boolean isInsideDims(final long[] planePos, final long[] dims) {
                 if (planePos.length != dims.length) {
                         return false;
                 }
@@ -196,14 +196,14 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onUpdate(PlaneSelectionEvent sel) {
+        public void onUpdate(final PlaneSelectionEvent sel) {
                 m_sel = sel;
         }
 
         @EventListener
-        public void onLabelEdit(AnnotatorLabelEditEvent e) {
-                for (Overlay<String> overlay : m_overlayMap.values()) {
-                        for (OverlayElement2D<String> element : overlay
+        public void onLabelEdit(final AnnotatorLabelEditEvent e) {
+                for (final Overlay<String> overlay : m_overlayMap.values()) {
+                        for (final OverlayElement2D<String> element : overlay
                                         .getElements()) {
                                 if (element.getLabels().remove(e.getOldLabel())) {
                                         element.getLabels()
@@ -223,7 +223,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
          */
 
         @EventListener
-        public void onMousePressed(ImgViewerMousePressedEvent e) {
+        public void onMousePressed(final ImgViewerMousePressedEvent e) {
 
                 if (m_currentOverlay != null && m_currentTool != null) {
                         m_currentTool.onMousePressed(e, m_sel,
@@ -232,7 +232,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onMouseDragged(ImgViewerMouseDraggedEvent e) {
+        public void onMouseDragged(final ImgViewerMouseDraggedEvent e) {
 
                 if (m_currentOverlay != null && m_currentTool != null) {
                         m_currentTool.onMouseDragged(e, m_sel,
@@ -241,7 +241,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @EventListener
-        public void onMouseReleased(ImgViewerMouseReleasedEvent e) {
+        public void onMouseReleased(final ImgViewerMouseReleasedEvent e) {
                 if (m_currentOverlay != null && m_currentTool != null) {
                         if (e.getClickCount() > 1) {
                                 m_currentTool.onMouseDoubleClick(e, m_sel,
@@ -257,18 +257,18 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 out.writeInt(getOverlayMap().size());
 
-                for (Entry<String, Overlay<String>> entry : getOverlayMap()
+                for (final Entry<String, Overlay<String>> entry : getOverlayMap()
                                 .entrySet()) {
                         out.writeUTF(entry.getKey());
                         entry.getValue().writeExternal(out);
                 }
                 out.writeInt(m_selectedLabels.length);
 
-                for (String s : m_selectedLabels) {
+                for (final String s : m_selectedLabels) {
                         out.writeUTF(s);
                 }
 
@@ -277,14 +277,14 @@ public class AnnotatorManager<T extends RealType<T>> extends
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
 
                 getOverlayMap().clear();
-                int num = in.readInt();
+                final int num = in.readInt();
                 for (int i = 0; i < num; i++) {
-                        String key = in.readUTF();
-                        Overlay<String> o = new Overlay<String>();
+                        final String key = in.readUTF();
+                        final Overlay<String> o = new Overlay<String>();
                         o.readExternal(in);
                         o.setEventService(m_eventService);
                         getOverlayMap().put(key, o);
@@ -302,7 +302,7 @@ public class AnnotatorManager<T extends RealType<T>> extends
                 return m_overlayMap;
         }
 
-        public void setOverlayMap(Map<String, Overlay<String>> m_overlayMap) {
+        public void setOverlayMap(final Map<String, Overlay<String>> m_overlayMap) {
                 this.m_overlayMap = m_overlayMap;
         }
 

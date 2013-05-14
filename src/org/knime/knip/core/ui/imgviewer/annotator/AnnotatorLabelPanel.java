@@ -52,12 +52,12 @@ public class AnnotatorLabelPanel extends ViewerComponent {
 
         private Component m_parent;
 
-        public AnnotatorLabelPanel(String... defaultLabels) {
+        public AnnotatorLabelPanel(final String... defaultLabels) {
                 super("Labels", false);
 
                 setPreferredSize(new Dimension(PANEL_WIDTH, 200));
 
-                JPanel buttonPanel = new JPanel();
+                final JPanel buttonPanel = new JPanel();
                 buttonPanel.setLayout(new BoxLayout(buttonPanel,
                                 BoxLayout.Y_AXIS));
                 setLayout(new BorderLayout());
@@ -66,7 +66,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                 if (defaultLabels == null || defaultLabels.length == 0) {
                         m_labels.add("Unknown");
                 } else {
-                        for (String s : defaultLabels) {
+                        for (final String s : defaultLabels) {
                                 m_labels.add(s);
                         }
                 }
@@ -79,10 +79,11 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                 m_jLabelList.addListSelectionListener(new ListSelectionListener() {
 
                         @Override
-                        public void valueChanged(ListSelectionEvent e) {
+                        public void valueChanged(final ListSelectionEvent e) {
 
-                                if (m_isAdjusting || e.getValueIsAdjusting())
+                                if (m_isAdjusting || e.getValueIsAdjusting()) {
                                         return;
+                                }
 
                                 m_eventService.publish(new AnnotatorLabelsSelChgEvent(
                                                 objectArrayAsStringArray(m_jLabelList
@@ -122,7 +123,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                                                                 objectArrayAsStringArray(m_jLabelList
                                                                                 .getSelectedValues())));
 
-                                                for (Object o : m_jLabelList
+                                                for (final Object o : m_jLabelList
                                                                 .getSelectedValues()) {
                                                         m_labels.remove(o);
                                                 }
@@ -151,7 +152,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
 
                         @Override
                         public void actionPerformed(final ActionEvent e) {
-                                String name = JOptionPane.showInputDialog(
+                                final String name = JOptionPane.showInputDialog(
                                                 m_parent, "Class name:");
                                 if (name != null && name.length() > 0) {
                                         m_labels.add(name);
@@ -188,7 +189,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                         @Override
                         public void actionPerformed(final ActionEvent e) {
                                 m_jLabelList.updateUI();
-                                for (Object o : m_jLabelList
+                                for (final Object o : m_jLabelList
                                                 .getSelectedValues()) {
                                         SegmentColorTable
                                                         .resetColor((String) o);
@@ -210,7 +211,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                 jb.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(final ActionEvent e) {
-                                String[] selectedLabels = objectArrayAsStringArray(m_jLabelList
+                                final String[] selectedLabels = objectArrayAsStringArray(m_jLabelList
                                                 .getSelectedValues());
                                 if (selectedLabels.length == 0
                                                 || selectedLabels.length > 1) {
@@ -222,10 +223,10 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                                         return;
                                 } else {
 
-                                        int selIndex = m_jLabelList
+                                        final int selIndex = m_jLabelList
                                                         .getSelectedIndex();
-                                        String oldName = selectedLabels[0];
-                                        String res = JOptionPane
+                                        final String oldName = selectedLabels[0];
+                                        final String res = JOptionPane
                                                         .showInputDialog(
                                                                         m_parent,
                                                                         "New label name:",
@@ -259,7 +260,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
 
         private final void setButtonIcon(final AbstractButton jb,
                         final String path) {
-                URL icon = getClass().getClassLoader().getResource(
+                final URL icon = getClass().getClassLoader().getResource(
                                 getClass().getPackage().getName()
                                                 .replace('.', '/')
                                                 + "/" + path);
@@ -270,7 +271,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         }
 
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
         }
 
@@ -279,8 +280,8 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                 return Position.EAST;
         }
 
-        public static String[] objectArrayAsStringArray(Object[] o) {
-                String[] s = new String[o.length];
+        public static String[] objectArrayAsStringArray(final Object[] o) {
+                final String[] s = new String[o.length];
 
                 for (int i = 0; i < o.length; i++) {
                         s[i] = (String) o[i];
@@ -290,7 +291,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 out.writeInt(m_labels.size());
                 for (int s = 0; s < m_labels.size(); s++) {
@@ -305,7 +306,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 m_labels.clear();
 
@@ -315,7 +316,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                 }
 
                 num = in.readInt();
-                int[] selected = new int[num];
+                final int[] selected = new int[num];
 
                 for (int i = 0; i < num; i++) {
                         selected[i] = in.readInt();
@@ -341,7 +342,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 m_parent = parent;
         }
 }

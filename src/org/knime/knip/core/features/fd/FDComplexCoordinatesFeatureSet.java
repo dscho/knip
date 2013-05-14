@@ -89,7 +89,7 @@ public class FDComplexCoordinatesFeatureSet implements FeatureSet,
         /**
          * @param numAngles
          */
-        public FDComplexCoordinatesFeatureSet(int numAngles) {
+        public FDComplexCoordinatesFeatureSet(final int numAngles) {
                 m_numAngles = numAngles;
                 m_complexSignature = new Complex[numAngles];
                 m_transformed = new Complex[numAngles];
@@ -98,7 +98,7 @@ public class FDComplexCoordinatesFeatureSet implements FeatureSet,
         }
 
         @FeatureTargetListener
-        public void iiUpdated(IterableInterval<BitType> interval) {
+        public void iiUpdated(final IterableInterval<BitType> interval) {
                 m_signature = m_ocac.signature(interval, m_numAngles);
                 for (int y = 0; y < m_signature.length(); y++) {
                         m_complexSignature[y] = new Complex(
@@ -106,7 +106,7 @@ public class FDComplexCoordinatesFeatureSet implements FeatureSet,
                 }
 
                 m_transformed = InplaceFFT.fft(m_complexSignature);
-                double magnitude = m_transformed[1].getMagnitude();
+                final double magnitude = m_transformed[1].getMagnitude();
                 for (int t = 2; t < m_transformed.length; t++) {
                         m_descriptor[t - 2] = (m_transformed[t].getMagnitude() / magnitude);
                 }
@@ -116,7 +116,7 @@ public class FDComplexCoordinatesFeatureSet implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public double value(int id) {
+        public double value(final int id) {
                 return m_descriptor[id];
         }
 
@@ -124,7 +124,7 @@ public class FDComplexCoordinatesFeatureSet implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public String name(int id) {
+        public String name(final int id) {
                 return "FD:ComplexCoordiates [" + id + "]";
         }
 
@@ -140,7 +140,7 @@ public class FDComplexCoordinatesFeatureSet implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public void enable(int id) {
+        public void enable(final int id) {
                 // nothing to do here
 
         }
@@ -165,7 +165,7 @@ public class FDComplexCoordinatesFeatureSet implements FeatureSet,
          * {@inheritDoc}
          */
         @Override
-        public void setSharedObjectInstances(Object[] instances) {
+        public void setSharedObjectInstances(final Object[] instances) {
                 m_ocac = (ObjectCalcAndCache) instances[0];
 
         }

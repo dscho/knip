@@ -19,8 +19,8 @@ public class GaussNativeTypeOp<T extends RealType<T> & NativeType<T>, TYPE exten
         private final OutOfBoundsFactory<T, TYPE> m_fac;
         private final int m_numThreads;
 
-        public GaussNativeTypeOp(int numThreads, double[] sigmas,
-                        OutOfBoundsFactory<T, TYPE> factory) {
+        public GaussNativeTypeOp(final int numThreads, final double[] sigmas,
+                        final OutOfBoundsFactory<T, TYPE> factory) {
                 m_sigmas = sigmas;
                 m_fac = factory;
                 m_numThreads = 1;
@@ -28,7 +28,7 @@ public class GaussNativeTypeOp<T extends RealType<T> & NativeType<T>, TYPE exten
 
         @SuppressWarnings("unchecked")
         @Override
-        public TYPE compute(final TYPE input, TYPE output) {
+        public TYPE compute(final TYPE input, final TYPE output) {
 
                 if (m_sigmas.length != input.numDimensions()) {
                         throw new IllegalArgumentException(
@@ -43,7 +43,7 @@ public class GaussNativeTypeOp<T extends RealType<T> & NativeType<T>, TYPE exten
                                         Gauss3.halfkernels(m_sigmas), rIn,
                                         output, 1);
 
-                } catch (IncompatibleTypeException e) {
+                } catch (final IncompatibleTypeException e) {
                         throw new RuntimeException(e);
                 }
 

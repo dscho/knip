@@ -71,7 +71,7 @@ import org.knime.knip.core.ui.event.EventService;
  * A Panel used to control the Transferfunctions and the actually drawn values
  * of the image to be shown.
  *
- * @author Clemens MŸthing (clemens.muething@uni-konstanz.de)
+ * @author Clemens Mï¿½thing (clemens.muething@uni-konstanz.de)
  */
 public class TransferFunctionControlPanel extends JPanel implements
                 TransferFunctionChgListener {
@@ -118,7 +118,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                 @Override
                 public void actionPerformed(final ActionEvent event) {
 
-                        TransferFunctionColor color = (TransferFunctionColor) m_focusBox
+                        final TransferFunctionColor color = (TransferFunctionColor) m_focusBox
                                         .getSelectedItem();
 
                         m_transferPanel.setTransferFocus(color);
@@ -134,7 +134,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                 @Override
                 public void actionPerformed(final ActionEvent event) {
 
-                        TransferFunctionBundle bundle = (TransferFunctionBundle) m_bundleBox
+                        final TransferFunctionBundle bundle = (TransferFunctionBundle) m_bundleBox
                                         .getSelectedItem();
                         setActiveBundle(bundle);
                 }
@@ -217,33 +217,33 @@ public class TransferFunctionControlPanel extends JPanel implements
                 });
 
                 // create the layout
-                GroupLayout layout = new GroupLayout(this);
+                final GroupLayout layout = new GroupLayout(this);
                 setLayout(layout);
 
-                Component glue = Box.createHorizontalGlue();
+                final Component glue = Box.createHorizontalGlue();
 
                 // Set up the layout
                 // find the box with the longest Text
-                int width = getLongestComboBox();
+                final int width = getLongestComboBox();
 
                 // the subgroups to be added to the main groups
                 // numbers are colums/rows respectivly
                 // use fixed size horizontally
-                GroupLayout.ParallelGroup box0 = layout.createParallelGroup()
+                final GroupLayout.ParallelGroup box0 = layout.createParallelGroup()
                                 .addComponent(m_boxOnlyOneFunc)
                                 .addComponent(m_boxAutoApply);
 
-                GroupLayout.SequentialGroup boxgroup = layout
+                final GroupLayout.SequentialGroup boxgroup = layout
                                 .createSequentialGroup()
                                 .addComponent(m_boxNormalize)
                                 .addComponent(glue).addGroup(box0);
 
-                GroupLayout.ParallelGroup horizontal0 = layout
+                final GroupLayout.ParallelGroup horizontal0 = layout
                                 .createParallelGroup()
                                 .addComponent(m_transferPanel)
                                 .addGroup(boxgroup);
 
-                GroupLayout.ParallelGroup horizontal1 = layout
+                final GroupLayout.ParallelGroup horizontal1 = layout
                                 .createParallelGroup()
                                 .addComponent(m_scaleBox, width, width, width)
                                 .addComponent(m_bundleBox, width, width, width)
@@ -251,7 +251,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                                 .addComponent(m_buttonApply);
 
                 // do not stretch vertically
-                GroupLayout.SequentialGroup verticalButtons = layout
+                final GroupLayout.SequentialGroup verticalButtons = layout
                                 .createSequentialGroup()
                                 .addComponent(m_scaleBox,
                                                 GroupLayout.PREFERRED_SIZE,
@@ -270,31 +270,31 @@ public class TransferFunctionControlPanel extends JPanel implements
                                                 GroupLayout.PREFERRED_SIZE,
                                                 GroupLayout.PREFERRED_SIZE);
 
-                GroupLayout.ParallelGroup vertical0 = layout
+                final GroupLayout.ParallelGroup vertical0 = layout
                                 .createParallelGroup()
                                 .addComponent(m_transferPanel)
                                 .addGroup(verticalButtons);
 
-                GroupLayout.ParallelGroup vertical1 = layout
+                final GroupLayout.ParallelGroup vertical1 = layout
                                 .createParallelGroup()
                                 .addComponent(m_boxNormalize)
                                 .addComponent(glue)
                                 .addComponent(m_boxOnlyOneFunc);
 
-                GroupLayout.ParallelGroup vertical2 = layout
+                final GroupLayout.ParallelGroup vertical2 = layout
                                 .createParallelGroup()
                                 .addComponent(m_boxAutoApply)
                                 .addComponent(m_buttonApply);
 
                 // Set up the main sequential layouts
-                GroupLayout.SequentialGroup horizontal = layout
+                final GroupLayout.SequentialGroup horizontal = layout
                                 .createSequentialGroup()
                                 .addGroup(horizontal0)
                                 .addPreferredGap(
                                                 LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(horizontal1);
 
-                GroupLayout.SequentialGroup vertical = layout
+                final GroupLayout.SequentialGroup vertical = layout
                                 .createSequentialGroup()
                                 .addGroup(vertical0)
                                 .addPreferredGap(
@@ -364,7 +364,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                         throw new NullPointerException();
                 }
 
-                Memento oldMemento = m_memento;
+                final Memento oldMemento = m_memento;
 
                 m_memento = memento;
 
@@ -379,7 +379,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                 m_bundleBox.removeActionListener(m_bundleAdapter);
 
                 m_bundleBox.removeAllItems();
-                for (TransferFunctionBundle b : m_memento.map.keySet()) {
+                for (final TransferFunctionBundle b : m_memento.map.keySet()) {
                         m_bundleBox.addItem(b);
                 }
 
@@ -433,12 +433,12 @@ public class TransferFunctionControlPanel extends JPanel implements
         public final Memento createMemento(final Memento memento,
                         final Histogram hist) {
 
-                List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
+                final List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
 
                 TransferFunctionBundle current = null;
 
-                for (TransferFunctionBundle b : memento.map.keySet()) {
-                        TransferFunctionBundle copy = b.copy();
+                for (final TransferFunctionBundle b : memento.map.keySet()) {
+                        final TransferFunctionBundle copy = b.copy();
 
                         if (b == memento.currentBundle) {
                                 current = copy;
@@ -491,17 +491,18 @@ public class TransferFunctionControlPanel extends JPanel implements
                         final List<TransferFunctionBundle> bundles,
                         final Histogram hist, final TransferFunctionBundle current) {
 
-                if (!bundles.contains(current))
+                if (!bundles.contains(current)) {
                         throw new IllegalArgumentException(
                                         "The current bundle must be part of the bundles list");
+                }
 
-                Memento memento = new Memento(
+                final Memento memento = new Memento(
                                 (HistogramPainter.Scale) m_scaleBox
                                                 .getSelectedItem(),
                                 current, hist);
 
                 // set up the map
-                for (TransferFunctionBundle b : bundles) {
+                for (final TransferFunctionBundle b : bundles) {
                         memento.map.put(b, b.getKeys().iterator().next());
                 }
 
@@ -523,9 +524,9 @@ public class TransferFunctionControlPanel extends JPanel implements
 
                 m_transferPanel.setBundle(m_memento.currentBundle);
 
-                Set<TransferFunctionColor> content = m_memento.currentBundle
+                final Set<TransferFunctionColor> content = m_memento.currentBundle
                                 .getKeys();
-                TransferFunctionColor focus = m_memento.map
+                final TransferFunctionColor focus = m_memento.map
                                 .get(m_memento.currentBundle);
 
                 // change contents or focus box
@@ -533,7 +534,7 @@ public class TransferFunctionControlPanel extends JPanel implements
                 m_focusBox.removeActionListener(m_focusAdapter);
                 m_focusBox.removeAllItems();
 
-                for (TransferFunctionColor color : content) {
+                for (final TransferFunctionColor color : content) {
                         m_focusBox.addItem(color);
                 }
 
@@ -612,7 +613,7 @@ public class TransferFunctionControlPanel extends JPanel implements
         }
 
         private void fireActionEvent(final int id, final String command) {
-                for (ActionListener l : m_listener
+                for (final ActionListener l : m_listener
                                 .getListeners(ActionListener.class)) {
                         l.actionPerformed(new ActionEvent(this, id, command));
                 }

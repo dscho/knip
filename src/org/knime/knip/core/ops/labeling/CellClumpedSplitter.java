@@ -125,8 +125,8 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
         private final DistanceMap<BitType, RandomAccessibleInterval<BitType>, Img<FloatType>> m_distanceMap;
 
         public CellClumpedSplitter(final NeighborhoodType neighborhood,
-                        final ExecutorService executor, double minMaximaSize,
-                        double ignoreValueBelowAvgPrecent, int maxInterations) {
+                        final ExecutorService executor, final double minMaximaSize,
+                        final double ignoreValueBelowAvgPrecent, final int maxInterations) {
 
                 final BitType minBitType = new BitType();
                 minBitType.setReal(minBitType.getMinValue());
@@ -138,8 +138,8 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                 m_converter = new Converter<LabelingType<L>, BitType>() {
 
                         @Override
-                        public void convert(LabelingType<L> input,
-                                        BitType output) {
+                        public void convert(final LabelingType<L> input,
+                                        final BitType output) {
                                 output.set(!input.getLabeling().isEmpty());
 
                         }
@@ -185,7 +185,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                         "Two dimensions have to be selected.");
                 }
 
-                RandomAccessibleInterval<BitType> bitMask = new ConvertedRandomAccessibleInterval<LabelingType<L>, BitType>(
+                final RandomAccessibleInterval<BitType> bitMask = new ConvertedRandomAccessibleInterval<LabelingType<L>, BitType>(
                                 cellLabeling, m_converter, new BitType());
 
                 /*
@@ -194,7 +194,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                 final Queue<L> cellsQueue = new LinkedList<L>(
                                 cellLabeling.getLabels());
 
-                Img<FloatType> distanceMap = m_distanceMap.compute(bitMask,
+                final Img<FloatType> distanceMap = m_distanceMap.compute(bitMask,
                                 new ArrayImgFactory<FloatType>().create(
                                                 bitMask, new FloatType()));
 
@@ -233,8 +233,9 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                         new double[ii.numDimensions()]);
 
                         final long[] centroidL = new long[numDim];
-                        for (int d = 0; d < numDim; ++d)
+                        for (int d = 0; d < numDim; ++d) {
                                 centroidL[d] = (long) centroidD[d];
+                        }
                         centroidsList.add(centroidL);
 
                 }
@@ -253,8 +254,9 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                  * set boundaries. needed for internal cca
                  */
                 final long[] boundaries = new long[numDim];
-                for (int d = 0; d < numDim; ++d)
+                for (int d = 0; d < numDim; ++d) {
                         boundaries[d] = localMaxima.dimension(d);
+                }
                 /*
                  * start threads. every label gets own thread.
                  */
@@ -499,9 +501,10 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                         while (distanceMapRoiCursor.hasNext()) {
                                                 distanceMapRoiCursor.fwd();
                                                 resRandomAccess.setPosition(distanceMapRoiCursor);
-                                                for (int d = 0; d < t_numDim; ++d)
+                                                for (int d = 0; d < t_numDim; ++d) {
                                                         pos[d] = resRandomAccess
                                                                         .getDoublePosition(d);
+                                                }
                                                 final double[] p = r_EM
                                                                 .distributionForInstance(inst);
                                                 double pMax = Double.MIN_VALUE;
@@ -655,9 +658,10 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                 // 1.0d);
                                 if (localMaximaAccess.get().get()) {
                                         final long[] pos = new long[t_numDim];
-                                        for (int d = 0; d < t_numDim; ++d)
+                                        for (int d = 0; d < t_numDim; ++d) {
                                                 pos[d] = distanceMapRoiCursor
                                                                 .getLongPosition(d);
+                                        }
                                         t_seedPoints.add(pos);
                                         avg += distanceMapRoiCursor.get()
                                                         .getRealDouble();
@@ -694,9 +698,10 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                  * create cluster center points
                                  */
                                 attr = new ArrayList<AttributeTmp>(t_numDim);
-                                for (int d = 0; d < t_numDim; ++d)
+                                for (int d = 0; d < t_numDim; ++d) {
                                         attr.add(new AttributeTmp("d" + d,
                                                         AttributeTmp.NUMERIC));
+                                }
 
                                 t_dataSet = new InstancesTmp(
                                                 "CellClumpedSplitter", attr, n);
@@ -843,8 +848,9 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                         for (final long[] t : t_seedPoints) {
                                 final InstanceTmp row = new InstanceTmp(
                                                 t_numDim);
-                                for (int d = 0; d < t_numDim; ++d)
+                                for (int d = 0; d < t_numDim; ++d) {
                                         row.setValue(attr.get(d), (int) t[d]);
+                                }
                                 res.add(row);
                         }
                         return res;
@@ -874,9 +880,10 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                 }
                                 while (distanceMapRoiCursor.hasNext()) {
                                         distanceMapRoiCursor.fwd();
-                                        for (int d = 0; d < t_numDim; ++d)
+                                        for (int d = 0; d < t_numDim; ++d) {
                                                 pos[d] = distanceMapRoiCursor
                                                                 .getDoublePosition(d);
+                                        }
                                         res += extendedEM
                                                         .distributionForInstance(inst)[i]
                                                         * sum;
@@ -912,9 +919,10 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements
                                                                 .get(i)[d]);
                                                 sum += xkmi * xkmi;
                                         }
-                                        for (int d = 0; d < t_numDim; ++d)
+                                        for (int d = 0; d < t_numDim; ++d) {
                                                 pos[d] = distanceMapRoiCursor
                                                                 .getDoublePosition(d);
+                                        }
                                         final double pki = extendedEM
                                                         .distributionForInstance(inst)[i];
                                         pkixkmiSum += pki * sum;

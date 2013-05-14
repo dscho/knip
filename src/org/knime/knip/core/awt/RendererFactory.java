@@ -17,14 +17,14 @@ public class RendererFactory {
         public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
                         final RandomAccessibleInterval<T> img) {
 
-                List<ImageRenderer> res = new ArrayList<ImageRenderer>();
+                final List<ImageRenderer> res = new ArrayList<ImageRenderer>();
 
                 if (img instanceof Labeling) {
                         res.add(new RandomColorLabelingRenderer());
                         res.add(new BoundingBoxLabelRenderer());
                         res.add(new BoundingBoxRandomColorLabelRenderer());
                 } else {
-                        T type = img.randomAccess().get();
+                        final T type = img.randomAccess().get();
 
                         if (type instanceof RealType) {
                                 res.add(new Real2GreyRenderer());
@@ -44,13 +44,13 @@ public class RendererFactory {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
                         final RandomAccessibleInterval<T> img,
-                        ImageMetadata imageMetaData) {
+                        final ImageMetadata imageMetaData) {
 
-                List<ImageRenderer> res = new ArrayList<ImageRenderer>();
+                final List<ImageRenderer> res = new ArrayList<ImageRenderer>();
                 res.addAll(Arrays.asList(createSuitableRenderer(img)));
 
                 // color rendering
-                T type = img.randomAccess().get();
+                final T type = img.randomAccess().get();
 
                 if (type instanceof RealType) {
                         if (imageMetaData != null

@@ -16,21 +16,21 @@ public class AnnotatorRectangleTool extends
         }
 
         @Override
-        public void onMouseDoubleClickLeft(ImgViewerMouseEvent e,
-                        RectangleOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDoubleClickLeft(final ImgViewerMouseEvent e,
+                        final RectangleOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 // Nothing to do here
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onMousePressedLeft(ImgViewerMouseEvent e,
-                        RectangleOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMousePressedLeft(final ImgViewerMouseEvent e,
+                        final RectangleOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 m_startPoint = getDragPoint();
-                RectangleOverlayElement<String> element = new RectangleOverlayElement<String>(
+                final RectangleOverlayElement<String> element = new RectangleOverlayElement<String>(
                                 selection.getPlanePos(e.getPosX(), e.getPosY()),
                                 selection.getDimIndices(), labels);
                 overlay.addElement(element);
@@ -45,20 +45,20 @@ public class AnnotatorRectangleTool extends
         }
 
         @Override
-        public void onMouseReleasedLeft(ImgViewerMouseEvent e,
-                        RectangleOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseReleasedLeft(final ImgViewerMouseEvent e,
+                        final RectangleOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
                 currentOverlayElement.setStatus(OverlayElementStatus.ACTIVE);
                 fireStateChanged();
 
         }
 
         @Override
-        public void onMouseDraggedLeft(ImgViewerMouseEvent e,
-                        RectangleOverlayElement<String> currentOverlayElement,
-                        PlaneSelectionEvent selection, Overlay<String> overlay,
-                        String... labels) {
+        public void onMouseDraggedLeft(final ImgViewerMouseEvent e,
+                        final RectangleOverlayElement<String> currentOverlayElement,
+                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                        final String... labels) {
 
                 if (currentOverlayElement.getStatus() == OverlayElementStatus.DRAWING) {
                         currentOverlayElement.setRectangle(

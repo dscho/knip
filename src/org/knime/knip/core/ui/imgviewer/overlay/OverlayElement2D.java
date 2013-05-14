@@ -24,8 +24,8 @@ public abstract class OverlayElement2D<L extends Comparable<L>> extends
 
         private long[] m_maxExtend;
 
-        public OverlayElement2D(long[] planePos, int[] orientation,
-                        String... labels) {
+        public OverlayElement2D(final long[] planePos, final int[] orientation,
+                        final String... labels) {
                 super(planePos, orientation, labels);
                 m_minExtend = new long[2];
                 m_maxExtend = new long[2];
@@ -36,7 +36,7 @@ public abstract class OverlayElement2D<L extends Comparable<L>> extends
         }
 
         @Override
-        public boolean contains(long[] pos) {
+        public boolean contains(final long[] pos) {
                 if (pos.length < getOrientation().length) {
                         return false;
                 }
@@ -50,28 +50,29 @@ public abstract class OverlayElement2D<L extends Comparable<L>> extends
         }
 
         @Override
-        public void translate(long[] pos) {
+        public void translate(final long[] pos) {
                 translate(pos[getOrientation()[0]], pos[getOrientation()[1]]);
         }
 
-        public void add(long[] pos) {
+        @Override
+        public void add(final long[] pos) {
                 add(pos[getOrientation()[0]], pos[getOrientation()[1]]);
         }
 
         @Override
-        public void renderBoundingBox(Graphics g) {
+        public void renderBoundingBox(final Graphics g) {
                 m_boundingBox = getBoundingBox();
                 g.drawRect(m_boundingBox.x, m_boundingBox.y,
                                 m_boundingBox.width, m_boundingBox.height);
         }
 
         @Override
-        public void renderInterior(Graphics g, int[] dims) {
+        public void renderInterior(final Graphics g, final int[] dims) {
                 renderInterior((Graphics2D) g);
         }
 
         @Override
-        public void renderOutline(Graphics g) {
+        public void renderOutline(final Graphics g) {
                 renderOutline((Graphics2D) g);
         }
 
@@ -98,7 +99,7 @@ public abstract class OverlayElement2D<L extends Comparable<L>> extends
         }
 
         @Override
-        public void writeExternal(ObjectOutput out) throws IOException {
+        public void writeExternal(final ObjectOutput out) throws IOException {
                 super.writeExternal(out);
 
                 out.writeInt(m_minExtend.length);
@@ -112,11 +113,11 @@ public abstract class OverlayElement2D<L extends Comparable<L>> extends
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 super.readExternal(in);
 
-                int num = in.readInt();
+                final int num = in.readInt();
                 m_minExtend = new long[num];
                 m_maxExtend = new long[num];
 

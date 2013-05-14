@@ -52,8 +52,9 @@ public class Real2ColorByLookupTableRenderer<T extends RealType<T>> extends
 
         @Override
         public void setLookupTable(final LookupTable<T, ARGBType> table) {
-                if (table == null)
+                if (table == null) {
                         throw new NullPointerException();
+                }
 
                 m_converter.setLookupTable(table);
         }
@@ -64,9 +65,9 @@ public class Real2ColorByLookupTableRenderer<T extends RealType<T>> extends
         }
 
         @Override
-        protected Abstract2DProjector<T, ARGBType> getProjector(int dimX,
-                        int dimY, RandomAccessibleInterval<T> source,
-                        ARGBScreenImage target) {
+        protected Abstract2DProjector<T, ARGBType> getProjector(final int dimX,
+                        final int dimY, final RandomAccessibleInterval<T> source,
+                        final ARGBScreenImage target) {
                 return new Projector2D<T, ARGBType>(dimX, dimY, source, target,
                                 m_converter);
         }

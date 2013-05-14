@@ -5,13 +5,13 @@ import java.util.ArrayList;
 /** class to ease the multiplication and division or factorials. */
 class FactorialComputer {
         /** the highest number this thing can handle. */
-        private int m_high;
+        private final int m_high;
 
         /** array of prime numbers up to m_high. */
-        private ArrayList<Integer> m_primes;
+        private final ArrayList<Integer> m_primes;
 
         /** array to memorize the current value. */
-        private int[] m_values;
+        private final int[] m_values;
 
         /**
          * test for primality.
@@ -136,7 +136,7 @@ class FactorialComputer {
                                                 "Result is not an integer");
                         }
                         for (int j = 0; j < m_values[i]; ++j) {
-                                int oldResult = result;
+                                final int oldResult = result;
                                 result *= m_primes.get(i);
                                 if (result / m_primes.get(i) != oldResult) {
                                         throw new IllegalArgumentException(

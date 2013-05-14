@@ -93,11 +93,11 @@ public final class SegmentColorTable {
          * @param segmentId
          * @return the color
          */
-        public static <L extends Comparable<L>> int getColor(L label) {
+        public static <L extends Comparable<L>> int getColor(final L label) {
                 return getColor(label, 255);
         }
 
-        public static int getTransparentRGBA(int rgb, int transparency) {
+        public static int getTransparentRGBA(final int rgb, final int transparency) {
                 return (transparency << 24) | (rgb & 0x00FFFFFF);
         }
 
@@ -127,10 +127,10 @@ public final class SegmentColorTable {
          * @param segmentId
          * @return the color
          */
-        public static <L extends Comparable<L>> int getColor(L label,
-                        int transparency) {
+        public static <L extends Comparable<L>> int getColor(final L label,
+                        final int transparency) {
 
-                int hashCode = label.hashCode();
+                final int hashCode = label.hashCode();
                 int res = m_colorTable.get(hashCode);
                 if (res == 0) {
                         res = randomColor();
@@ -146,8 +146,8 @@ public final class SegmentColorTable {
          * @param segmentId
          * @return the color
          */
-        public static <L extends Comparable<L>> int getColor(List<L> labels,
-                        int transparency) {
+        public static <L extends Comparable<L>> int getColor(final List<L> labels,
+                        final int transparency) {
 
                 double totalRes = 0;
                 for (int i = 0; i < labels.size(); i++) {
@@ -164,33 +164,34 @@ public final class SegmentColorTable {
          * @param segmentId
          * @return the color
          */
-        public static <L extends Comparable<L>> int getColor(List<L> labels) {
+        public static <L extends Comparable<L>> int getColor(final List<L> labels) {
 
                 return getColor(labels, 255);
         }
 
-        public static <L extends Comparable<L>> void resetColor(L o) {
+        public static <L extends Comparable<L>> void resetColor(final L o) {
                 m_colorTable.put(o.hashCode(), randomColor());
 
         }
 
         public static int randomColor() {
-                Random rand = new Random();
+                final Random rand = new Random();
                 int col = rand.nextInt(255);
                 col = col << 8;
                 col |= rand.nextInt(255);
                 col = col << 8;
                 col |= rand.nextInt(255);
 
-                if (col == 0)
+                if (col == 0) {
                         col = randomColor();
+                }
 
                 return col;
 
         }
 
-        public static <L extends Comparable<L>> void setColor(L l, int r,
-                        int g, int b) {
+        public static <L extends Comparable<L>> void setColor(final L l, int r,
+                        final int g, final int b) {
                 r = r << 8;
                 r |= g;
                 r = r << 8;
@@ -199,12 +200,12 @@ public final class SegmentColorTable {
                 m_colorTable.put(l.hashCode(), r);
         }
 
-        public static <L extends Comparable<L>> void setColor(L l, int col) {
+        public static <L extends Comparable<L>> void setColor(final L l, final int col) {
 
                 m_colorTable.put(l.hashCode(), col);
         }
 
-        public static void setBoundingBoxColor(Color color) {
+        public static void setBoundingBoxColor(final Color color) {
                 m_boundingBoxColor = color;
         }
 

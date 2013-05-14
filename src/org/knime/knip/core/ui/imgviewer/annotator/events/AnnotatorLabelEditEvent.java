@@ -61,7 +61,7 @@ public class AnnotatorLabelEditEvent implements KNIPEvent {
         private final String m_oldLabel;
         private final String m_newLabel;
 
-        public AnnotatorLabelEditEvent(String oldLabel, String newLabel) {
+        public AnnotatorLabelEditEvent(final String oldLabel, final String newLabel) {
                 m_oldLabel = oldLabel;
                 m_newLabel = newLabel;
 
@@ -90,7 +90,7 @@ public class AnnotatorLabelEditEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

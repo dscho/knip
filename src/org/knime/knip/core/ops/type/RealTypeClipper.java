@@ -10,14 +10,14 @@ public class RealTypeClipper<T extends RealType<T>> implements
         private final double max;
         private final double min;
 
-        public RealTypeClipper(double min, double max) {
+        public RealTypeClipper(final double min, final double max) {
                 this.min = min;
                 this.max = max;
         }
 
         @Override
-        public T compute(T input, T output) {
-                double in = input.getRealDouble();
+        public T compute(final T input, final T output) {
+                final double in = input.getRealDouble();
                 if (in < min) {
                         output.setReal(min);
                 } else if (in > max) {
@@ -39,7 +39,7 @@ public class RealTypeClipper<T extends RealType<T>> implements
                 return new UnaryObjectFactory<T, T>() {
 
                         @Override
-                        public T instantiate(T a) {
+                        public T instantiate(final T a) {
                                 return a.createVariable();
                         }
                 };

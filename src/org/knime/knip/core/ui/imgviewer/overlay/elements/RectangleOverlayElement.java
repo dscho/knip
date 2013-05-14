@@ -73,8 +73,8 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
 
         private double[] m_extend;
 
-        public RectangleOverlayElement(long[] planePos, int[] orientation,
-                        String... labels) {
+        public RectangleOverlayElement(final long[] planePos, final int[] orientation,
+                        final String... labels) {
                 this(new Rectangle(), planePos, orientation, labels);
         }
 
@@ -84,16 +84,16 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
                 m_extend = new double[2];
         }
 
-        public RectangleOverlayElement(Rectangle rect, long[] planePos,
-                        int[] orientation, String... labels) {
+        public RectangleOverlayElement(final Rectangle rect, final long[] planePos,
+                        final int[] orientation, final String... labels) {
                 super(planePos, orientation, labels);
                 m_rect = rect;
                 m_origin = new double[2];
                 m_extend = new double[2];
         }
 
-        public RectangleOverlayElement(long[] min, long[] max, long[] planePos,
-                        int[] orientation, String... labels) {
+        public RectangleOverlayElement(final long[] min, final long[] max, final long[] planePos,
+                        final int[] orientation, final String... labels) {
                 this(new Rectangle((int) min[orientation[0]],
                                 (int) min[orientation[1]],
                                 (int) (max[orientation[0]]
@@ -103,8 +103,8 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
                                 planePos, orientation, labels);
         }
 
-        public void setRectangle(long minExtendX, long minExtendY,
-                        long maxExtendX, long maxExtendY) {
+        public void setRectangle(final long minExtendX, final long minExtendY,
+                        final long maxExtendX, final long maxExtendY) {
                 m_poly.reset();
 
                 add(minExtendX, minExtendY);
@@ -115,12 +115,12 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public boolean containsPoint(long x, long y) {
+        public boolean containsPoint(final long x, final long y) {
                 return m_rect.contains((int) x, (int) y);
         }
 
         @Override
-        public void renderInterior(Graphics2D g) {
+        public void renderInterior(final Graphics2D g) {
                 if (getStatus() == OverlayElementStatus.ACTIVE
                                 || getStatus() == OverlayElementStatus.DRAWING) {
                         renderPointInterior(g);
@@ -130,7 +130,7 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void renderOutline(Graphics2D g) {
+        public void renderOutline(final Graphics2D g) {
 
                 if (getStatus() == OverlayElementStatus.ACTIVE
                                 || getStatus() == OverlayElementStatus.DRAWING) {
@@ -141,7 +141,7 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public boolean add(long x, long y) {
+        public boolean add(final long x, final long y) {
                 if (super.add(x, y)) {
                         m_rect = getBoundingBox();
                         return true;
@@ -151,7 +151,7 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void translate(int m_selectedIndex, long x, long y) {
+        public void translate(final int m_selectedIndex, final long x, final long y) {
                 m_poly.xpoints[m_selectedIndex] += x;
                 m_poly.ypoints[m_selectedIndex] += y;
                 m_poly.invalidate();
@@ -159,7 +159,7 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void translate(long x, long y) {
+        public void translate(final long x, final long y) {
                 super.translate(x, y);
                 m_rect = getBoundingBox();
         }
@@ -174,7 +174,7 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        protected void renderPointInterior(Graphics2D g) {
+        protected void renderPointInterior(final Graphics2D g) {
                 for (int i = 0; i < m_poly.npoints; i++) {
                         g.fillOval(m_poly.xpoints[i] - DRAWING_RADIUS,
                                         m_poly.ypoints[i] - DRAWING_RADIUS,
@@ -184,7 +184,7 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        protected void renderPointOutline(Graphics2D g) {
+        protected void renderPointOutline(final Graphics2D g) {
                 for (int i = 0; i < m_poly.npoints; i++) {
                         g.drawOval(m_poly.xpoints[i] - DRAWING_RADIUS,
                                         m_poly.ypoints[i] - DRAWING_RADIUS,
@@ -193,7 +193,7 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends
         }
 
         @Override
-        public void readExternal(ObjectInput in) throws IOException,
+        public void readExternal(final ObjectInput in) throws IOException,
                         ClassNotFoundException {
                 super.readExternal(in);
                 m_rect = getBoundingBox();

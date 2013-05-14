@@ -14,9 +14,9 @@ public class ImgWithMetadataChgEvent<T extends Type<T>> extends
 
         private final ImageMetadata m_imageMetaData;
 
-        public ImgWithMetadataChgEvent(RandomAccessibleInterval<T> interval,
-                        Named name, Sourced source, CalibratedSpace cspace,
-                        ImageMetadata imageMetaData) {
+        public ImgWithMetadataChgEvent(final RandomAccessibleInterval<T> interval,
+                        final Named name, final Sourced source, final CalibratedSpace cspace,
+                        final ImageMetadata imageMetaData) {
                 super(interval, name, source, cspace);
                 m_imageMetaData = imageMetaData;
         }

@@ -61,7 +61,7 @@ public class ImgViewerTextMessageChgEvent implements KNIPEvent {
 
         private final String m_message;
 
-        public ImgViewerTextMessageChgEvent(String message) {
+        public ImgViewerTextMessageChgEvent(final String message) {
                 m_message = message;
 
         }
@@ -82,7 +82,7 @@ public class ImgViewerTextMessageChgEvent implements KNIPEvent {
          * implements object equality {@inheritDoc}
          */
         @Override
-        public <E extends KNIPEvent> boolean isRedundant(E thatEvent) {
+        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
                 return this.equals(thatEvent);
         }
 

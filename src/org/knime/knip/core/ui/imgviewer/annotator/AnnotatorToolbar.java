@@ -38,7 +38,7 @@ public class AnnotatorToolbar extends ViewerComponent {
 
         private EventService m_eventService;
 
-        public AnnotatorToolbar(AnnotatorTool<?>... tools) {
+        public AnnotatorToolbar(final AnnotatorTool<?>... tools) {
                 super("Toolbox", false);
                 setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -51,7 +51,7 @@ public class AnnotatorToolbar extends ViewerComponent {
                         jtb.addItemListener(new ItemListener() {
 
                                 @Override
-                                public void itemStateChanged(ItemEvent e) {
+                                public void itemStateChanged(final ItemEvent e) {
                                         if (e.getStateChange() == ItemEvent.SELECTED) {
                                                 m_eventService.publish(new AnnotatorToolChgEvent(
                                                                 tool));
@@ -98,7 +98,7 @@ public class AnnotatorToolbar extends ViewerComponent {
 
         private final void setButtonIcon(final AbstractButton jb,
                         final String path) {
-                URL icon = getClass().getClassLoader().getResource(
+                final URL icon = getClass().getClassLoader().getResource(
                                 getClass().getPackage().getName()
                                                 .replace('.', '/')
                                                 + "/" + path);
@@ -109,7 +109,7 @@ public class AnnotatorToolbar extends ViewerComponent {
         }
 
         @Override
-        public void setEventService(EventService eventService) {
+        public void setEventService(final EventService eventService) {
                 m_eventService = eventService;
                 eventService.subscribe(this);
         }
@@ -120,13 +120,13 @@ public class AnnotatorToolbar extends ViewerComponent {
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // Nothing to save here
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 // Nothing to load here
         }
@@ -148,7 +148,7 @@ public class AnnotatorToolbar extends ViewerComponent {
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(final Component parent) {
                 //
         }
 }

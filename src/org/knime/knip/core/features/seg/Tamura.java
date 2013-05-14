@@ -63,7 +63,7 @@ public class Tamura<T extends RealType<T>> {
         private static final double[][] filterV = { { -1, -1, -1 },
                         { 0, 0, 0 }, { 1, 1, 1 } };
 
-        public Tamura(int dimX, int dimY, String[] enabledFeatureNames) {
+        public Tamura(final int dimX, final int dimY, final String[] enabledFeatureNames) {
                 m_enabledFeatureNames = enabledFeatureNames;
                 m_dimX = dimX;
                 m_dimY = dimY;
@@ -96,7 +96,7 @@ public class Tamura<T extends RealType<T>> {
          * @param y
          * @return
          */
-        private final double averageOverNeighborhoods(int x, int y, int k) {
+        private final double averageOverNeighborhoods(final int x, final int y, final int k) {
                 double result = 0, border;
                 border = Math.pow(2, 2 * k);
                 int x0 = 0, y0 = 0;
@@ -105,14 +105,18 @@ public class Tamura<T extends RealType<T>> {
                         for (int j = 0; j < border; j++) {
                                 x0 = x - (int) Math.pow(2, k - 1) + i;
                                 y0 = y - (int) Math.pow(2, k - 1) + j;
-                                if (x0 < 0)
+                                if (x0 < 0) {
                                         x0 = 0;
-                                if (y0 < 0)
+                                }
+                                if (y0 < 0) {
                                         y0 = 0;
-                                if (x0 >= m_greyValues.length)
+                                }
+                                if (x0 >= m_greyValues.length) {
                                         x0 = m_greyValues.length - 1;
-                                if (y0 >= m_greyValues[0].length)
+                                }
+                                if (y0 >= m_greyValues[0].length) {
                                         y0 = m_greyValues[0].length - 1;
+                                }
 
                                 result = result + m_greyValues[x0][y0];
                         }
@@ -130,8 +134,8 @@ public class Tamura<T extends RealType<T>> {
          * @param y
          * @return
          */
-        private final double differencesBetweenNeighborhoodsHorizontal(int x,
-                        int y, int k) {
+        private final double differencesBetweenNeighborhoodsHorizontal(final int x,
+                        final int y, final int k) {
                 double result = 0;
                 result = Math.abs(this.averageOverNeighborhoods(
                                 x + (int) Math.pow(2, k - 1), y, k)
@@ -150,8 +154,8 @@ public class Tamura<T extends RealType<T>> {
          * @param y
          * @return
          */
-        private final double differencesBetweenNeighborhoodsVertical(int x,
-                        int y, int k) {
+        private final double differencesBetweenNeighborhoodsVertical(final int x,
+                        final int y, final int k) {
                 double result = 0;
                 result = Math.abs(this.averageOverNeighborhoods(x, y
                                 + (int) Math.pow(2, k - 1), k)
@@ -168,7 +172,7 @@ public class Tamura<T extends RealType<T>> {
          * @param y
          * @return
          */
-        private final int sizeLeadDiffValue(int x, int y) {
+        private final int sizeLeadDiffValue(final int x, final int y) {
                 double result = 0, tmp;
                 int maxK = 1;
 
@@ -232,9 +236,9 @@ public class Tamura<T extends RealType<T>> {
          * @return
          */
         private final double[] directionality() {
-                double[] histogram = new double[16];
-                double maxResult = 3;
-                double binWindow = maxResult / (histogram.length - 1);
+                final double[] histogram = new double[16];
+                final double maxResult = 3;
+                final double binWindow = maxResult / (histogram.length - 1);
                 int bin = -1;
                 for (int x = 1; x < m_greyValues.length - 1; x++) {
                         for (int y = 1; y < m_greyValues[x].length - 1; y++) {
@@ -250,7 +254,7 @@ public class Tamura<T extends RealType<T>> {
         /**
          * @return
          */
-        private final double calculateDeltaH(int x, int y) {
+        private final double calculateDeltaH(final int x, final int y) {
                 double result = 0;
 
                 for (int i = 0; i < 3; i++) {
@@ -270,7 +274,7 @@ public class Tamura<T extends RealType<T>> {
          * @param y
          * @return
          */
-        private final double calculateDeltaV(int x, int y) {
+        private final double calculateDeltaV(final int x, final int y) {
                 double result = 0;
 
                 for (int i = 0; i < 3; i++) {
@@ -289,10 +293,10 @@ public class Tamura<T extends RealType<T>> {
          * @param s
          * @return
          */
-        public final double[] updateROI(IterableInterval<T> interval) {
+        public final double[] updateROI(final IterableInterval<T> interval) {
 
-                Cursor<T> cursor = interval.localizingCursor();
-                int minVal = (int) interval.firstElement().getMinValue();
+                final Cursor<T> cursor = interval.localizingCursor();
+                final int minVal = (int) interval.firstElement().getMinValue();
 
                 m_greyValues = new int[(int) interval.dimension(m_dimX)][(int) interval
                                 .dimension(m_dimY)];
@@ -301,9 +305,9 @@ public class Tamura<T extends RealType<T>> {
                 while (cursor.hasNext()) {
                         cursor.fwd();
 
-                        int x = (int) (cursor.getIntPosition(m_dimX) - interval
+                        final int x = (int) (cursor.getIntPosition(m_dimX) - interval
                                         .min(m_dimX));
-                        int y = (int) (cursor.getIntPosition(m_dimY) - interval
+                        final int y = (int) (cursor.getIntPosition(m_dimY) - interval
                                         .min(m_dimY));
 
                         m_greyValues[x][y] = (int) cursor.get().getRealDouble()
@@ -314,13 +318,15 @@ public class Tamura<T extends RealType<T>> {
 
                 m_mean /= m_numPix;
 
-                double[] histogram = new double[18];
+                final double[] histogram = new double[18];
 
-                if (isEnabled(TamuraFeatureSet.FEATURES[0]))
+                if (isEnabled(TamuraFeatureSet.FEATURES[0])) {
                         histogram[0] = this.coarseness();
+                }
 
-                if (isEnabled(TamuraFeatureSet.FEATURES[1]))
+                if (isEnabled(TamuraFeatureSet.FEATURES[1])) {
                         histogram[1] = this.contrast();
+                }
 
                 if (isEnabled(TamuraFeatureSet.FEATURES[2])
                                 || isEnabled(TamuraFeatureSet.FEATURES[3])
@@ -337,10 +343,11 @@ public class Tamura<T extends RealType<T>> {
                 return histogram;
         }
 
-        public boolean isEnabled(String featureName) {
-                for (String s : m_enabledFeatureNames) {
-                        if (s.equals(featureName))
+        public boolean isEnabled(final String featureName) {
+                for (final String s : m_enabledFeatureNames) {
+                        if (s.equals(featureName)) {
                                 return true;
+                        }
                 }
                 return false;
         }

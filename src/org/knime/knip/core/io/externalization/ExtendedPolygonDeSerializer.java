@@ -67,7 +67,7 @@ public class ExtendedPolygonDeSerializer {
 
         private static final int CONTOUR_RESAMPLING_REATE = 1000;
 
-        public static void serialize(ExtendedPolygon poly, DataOutput out)
+        public static void serialize(final ExtendedPolygon poly, final DataOutput out)
                         throws IOException {
 
                 ExtendedPolygon resampledPoly;
@@ -82,7 +82,7 @@ public class ExtendedPolygonDeSerializer {
 
                 out.writeInt(poly.length());
 
-                for (int[] p : resampledPoly) {
+                for (final int[] p : resampledPoly) {
                         out.writeInt(p[0]);
                         out.writeInt(p[1]);
                 }
@@ -90,8 +90,8 @@ public class ExtendedPolygonDeSerializer {
 
         public static ExtendedPolygon deserialize(final DataInput in)
                         throws IOException {
-                int length = in.readInt();
-                ExtendedPolygon res = new ExtendedPolygon();
+                final int length = in.readInt();
+                final ExtendedPolygon res = new ExtendedPolygon();
                 for (int i = 0; i < length; i++) {
                         res.addPoint(in.readInt(), in.readInt());
                 }

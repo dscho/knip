@@ -19,15 +19,15 @@ public class MeanAbsoluteDeviation<T extends RealType<T>, V extends RealType<V>>
                 implements UnaryOperation<IterableInterval<T>, V> {
 
         @Override
-        public V compute(IterableInterval<T> input, V output) {
+        public V compute(final IterableInterval<T> input, final V output) {
                 // mean
-                double mean = new Mean<T, DoubleType>().compute(input.cursor(),
+                final double mean = new Mean<T, DoubleType>().compute(input.cursor(),
                                 new DoubleType()).getRealDouble();
 
                 // abs deviation from mean
                 long i = 0;
                 double absDeviationSum = 0;
-                Cursor<T> c = input.cursor();
+                final Cursor<T> c = input.cursor();
 
                 while (c.hasNext()) {
                         absDeviationSum += Math.abs(c.next().getRealDouble()

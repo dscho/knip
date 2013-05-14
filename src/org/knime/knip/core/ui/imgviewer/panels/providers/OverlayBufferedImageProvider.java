@@ -85,7 +85,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
         @Override
         protected Image createImage() {
-                double[] normParams = m_normalizationParameters
+                final double[] normParams = m_normalizationParameters
                                 .getNormalizationParameters(m_src, m_sel);
 
                 if (m_renderer instanceof RendererWithNormalization) {
@@ -100,7 +100,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
                                         .setColorTables(m_colorTables);
                 }
 
-                ScreenImage res = ((ImageRenderer<T>) m_renderer).render(m_src,
+                final ScreenImage res = ((ImageRenderer<T>) m_renderer).render(m_src,
                                 m_sel.getPlaneDimIndex1(),
                                 m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
@@ -111,7 +111,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
         }
 
-        private BufferedImage writeOverlay(BufferedImage img) {
+        private BufferedImage writeOverlay(final BufferedImage img) {
 
                 if (m_overlay == null) {
                         return img;
@@ -139,19 +139,19 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         @EventListener
-        public void onUpdated(OverlayChgEvent e) {
+        public void onUpdated(final OverlayChgEvent e) {
                 m_overlay = e.getOverlay();
                 m_eventService.publish(new AWTImageChgEvent(
                                 writeOverlay(m_tmpRes)));
         }
 
         @Override
-        public void onUpdated(IntervalWithMetadataChgEvent<T> e) {
+        public void onUpdated(final IntervalWithMetadataChgEvent<T> e) {
                 // Do nothing
         }
 
         @EventListener
-        public void onUpdated(AnnotatorImgAndOverlayChgEvent e) {
+        public void onUpdated(final AnnotatorImgAndOverlayChgEvent e) {
                 m_src = e.getImg();
                 m_overlay = e.getOverlay();
 
@@ -169,11 +169,11 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
                         }
                 }
 
-                ImageRenderer<T>[] renderers = RendererFactory
+                final ImageRenderer<T>[] renderers = RendererFactory
                                 .createSuitableRenderer(m_src);
                 if (m_renderer != null) {
                         boolean contained = false;
-                        for (ImageRenderer<T> renderer : renderers) {
+                        for (final ImageRenderer<T> renderer : renderers) {
                                 if (m_renderer.toString().equals(
                                                 renderer.toString())) {
                                         m_renderer = renderer;
@@ -190,7 +190,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         @EventListener
-        public void onUpdate(TransparencyPanelValueChgEvent e) {
+        public void onUpdate(final TransparencyPanelValueChgEvent e) {
                 if (m_src != null) {
                         m_transparency = e.getTransparency();
                         m_eventService.publish(new AWTImageChgEvent(
@@ -207,7 +207,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
          */
         @EventListener
         public void onUpdated(
-                        NormalizationParametersChgEvent<T> normalizationParameters) {
+                        final NormalizationParametersChgEvent<T> normalizationParameters) {
                 if (m_src != null) {
                         m_normalizationParameters = normalizationParameters;
                         // m_eventService.publish(new AWTImageChgEvent(
@@ -216,8 +216,8 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         @EventListener
-        public void onImageUpdated(ImgWithMetadataChgEvent<T> e) {
-                int size = e.getImgMetaData().getColorTableCount();
+        public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
+                final int size = e.getImgMetaData().getColorTableCount();
                 m_colorTables = new ColorTable[size];
 
                 for (int i = 0; i < size; i++) {
@@ -226,7 +226,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 super.saveComponentConfiguration(out);
                 m_overlay.writeExternal(out);
@@ -235,7 +235,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException, ClassNotFoundException {
                 super.loadComponentConfiguration(in);
 
@@ -255,7 +255,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         @EventListener
-        public void onClose(ViewClosedEvent event) {
+        public void onClose(final ViewClosedEvent event) {
                 m_src = null;
                 m_overlay = null;
         }

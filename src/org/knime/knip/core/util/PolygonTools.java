@@ -84,7 +84,7 @@ public class PolygonTools {
          * @return the resulting positions, whereas the number of positions
          *         equals 2*radius+1
          */
-        public static int[][] getLineAt(int[] pos, float[] dir, int radius) {
+        public static int[][] getLineAt(final int[] pos, final float[] dir, final int radius) {
                 new RealVector(dir).norm2().mapMultiply(radius).localize(dir);
 
                 // FloatPoint p1 = dir.multiply(radius).add(new
@@ -131,11 +131,11 @@ public class PolygonTools {
                 // radius * y
                 // / Math.abs(y) : y;
 
-                int[][] dir1 = BresenhamAlgorithm.rasterizeLine(new int[] {
+                final int[][] dir1 = BresenhamAlgorithm.rasterizeLine(new int[] {
                                 pos[0] - x, pos[1] - y }, pos);
-                int[][] dir2 = BresenhamAlgorithm.rasterizeLine(new int[] {
+                final int[][] dir2 = BresenhamAlgorithm.rasterizeLine(new int[] {
                                 pos[0] + x, pos[1] + y }, pos);
-                int[][] res = new int[radius * 2 + 1][2];
+                final int[][] res = new int[radius * 2 + 1][2];
                 // System.arraycopy(dir1, 0, res, 0, dir1.length);
                 // System.arraycopy(dir2, 0, res, radius + 1, dir2.length);
                 for (int i = 0; i < dir1.length; i++) {
@@ -164,7 +164,7 @@ public class PolygonTools {
         public static Polygon extractPolygon(
                         final RandomAccessibleInterval<BitType> img,
                         final int[] offset) {
-                RandomAccess<BitType> cur = new ExtendedRandomAccessibleInterval<BitType, RandomAccessibleInterval<BitType>>(
+                final RandomAccess<BitType> cur = new ExtendedRandomAccessibleInterval<BitType, RandomAccessibleInterval<BitType>>(
                                 img,
                                 new OutOfBoundsConstantValueFactory<BitType, RandomAccessibleInterval<BitType>>(
                                                 new BitType(false)))
@@ -188,9 +188,9 @@ public class PolygonTools {
                 }
                 int dir = 1;
                 int dim = 0;
-                int[] startPos = new int[] { cur.getIntPosition(0),
+                final int[] startPos = new int[] { cur.getIntPosition(0),
                                 cur.getIntPosition(1) };
-                Polygon p = new Polygon();
+                final Polygon p = new Polygon();
                 while (!(cur.getIntPosition(0) == startPos[0]
                                 && cur.getIntPosition(1) == startPos[1]
                                 && dim == 0 && dir == 1 && !start)) {

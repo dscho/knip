@@ -32,7 +32,7 @@ public enum ColorDispenser {
          * Get the next Color.
          */
         public Color next() {
-                Color c = new Color(m_c);
+                final Color c = new Color(m_c);
                 // increase by a large amount so that antialiasing
                 // cannot interfere
                 // with the identification

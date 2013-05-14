@@ -44,12 +44,15 @@ public class Complex {
         // return a string representation of the invoking Complex object
         @Override
         public String toString() {
-                if (im == 0)
+                if (im == 0) {
                         return re + "";
-                if (re == 0)
+                }
+                if (re == 0) {
                         return im + "i";
-                if (im < 0)
+                }
+                if (im < 0) {
                         return re + " - " + (-im) + "i";
+                }
                 return re + " + " + im + "i";
         }
 
@@ -64,25 +67,25 @@ public class Complex {
 
         // return a new Complex object whose value is (this + b)
         public Complex plus(final Complex b) {
-                Complex a = this; // invoking object
-                double real = a.re + b.re;
-                double imag = a.im + b.im;
+                final Complex a = this; // invoking object
+                final double real = a.re + b.re;
+                final double imag = a.im + b.im;
                 return new Complex(real, imag);
         }
 
         // return a new Complex object whose value is (this - b)
         public Complex minus(final Complex b) {
-                Complex a = this;
-                double real = a.re - b.re;
-                double imag = a.im - b.im;
+                final Complex a = this;
+                final double real = a.re - b.re;
+                final double imag = a.im - b.im;
                 return new Complex(real, imag);
         }
 
         // return a new Complex object whose value is (this * b)
         public Complex times(final Complex b) {
-                Complex a = this;
-                double real = a.re * b.re - a.im * b.im;
-                double imag = a.re * b.im + a.im * b.re;
+                final Complex a = this;
+                final double real = a.re * b.re - a.im * b.im;
+                final double imag = a.re * b.im + a.im * b.re;
                 return new Complex(real, imag);
         }
 
@@ -99,7 +102,7 @@ public class Complex {
 
         // return a new Complex object whose value is the reciprocal of this
         public Complex reciprocal() {
-                double scale = re * re + im * im;
+                final double scale = re * re + im * im;
                 return new Complex(re / scale, -im / scale);
         }
 
@@ -114,7 +117,7 @@ public class Complex {
 
         // return a / b
         public Complex divides(final Complex b) {
-                Complex a = this;
+                final Complex a = this;
                 return a.times(b.reciprocal());
         }
 
@@ -145,15 +148,15 @@ public class Complex {
 
         // a static version of plus
         public static Complex plus(final Complex a, final Complex b) {
-                double real = a.re + b.re;
-                double imag = a.im + b.im;
-                Complex sum = new Complex(real, imag);
+                final double real = a.re + b.re;
+                final double imag = a.im + b.im;
+                final Complex sum = new Complex(real, imag);
                 return sum;
         }
 
         public static Complex[] makeComplexVector(final double[] signal) {
-                int M = signal.length;
-                Complex[] g = new Complex[M];
+                final int M = signal.length;
+                final Complex[] g = new Complex[M];
                 for (int i = 0; i < M; i++) {
                         g[i] = new Complex(signal[i], 0);
                 }
@@ -161,8 +164,8 @@ public class Complex {
         }
 
         public static Complex[] makeComplexVector(final int[] signal) {
-                int M = signal.length;
-                Complex[] g = new Complex[M];
+                final int M = signal.length;
+                final Complex[] g = new Complex[M];
                 for (int i = 0; i < M; i++) {
                         g[i] = new Complex(signal[i], 0);
                 }
@@ -170,8 +173,8 @@ public class Complex {
         }
 
         public static Complex[] makeComplexVector(final byte[] signal) {
-                int M = signal.length;
-                Complex[] g = new Complex[M];
+                final int M = signal.length;
+                final Complex[] g = new Complex[M];
                 for (int i = 0; i < M; i++) {
                         g[i] = new Complex(UNSIGNEDBYTE_MAX & signal[i], 0);
                 }
@@ -180,8 +183,8 @@ public class Complex {
 
         public static Complex[] makeComplexVector(final double[] real,
                         final double[] imag) {
-                int M = real.length;
-                Complex[] g = new Complex[M];
+                final int M = real.length;
+                final Complex[] g = new Complex[M];
                 for (int i = 0; i < M; i++) {
                         g[i] = new Complex(real[i], imag[i]);
                 }
@@ -196,29 +199,30 @@ public class Complex {
                         final String title) {
                 System.out.println("Printing " + title);
                 for (int i = 0; i < g.length; i++) {
-                        if (g[i] == null)
+                        if (g[i] == null) {
                                 System.out.println(i + ": ******");
-                        else {
+                        } else {
                                 double gr = g[i].re;
                                 double gi = g[i].im;
                                 gr = (Math.rint(gr * 1000) / 1000);
                                 gi = (Math.rint(gi * 1000) / 1000);
-                                if (gi >= 0)
+                                if (gi >= 0) {
                                         System.out.println(i + ": " + gr
                                                         + " + " + Math.abs(gi)
                                                         + "i");
-                                else
+                                } else {
                                         System.out.println(i + ": " + gr
                                                         + " - " + Math.abs(gi)
                                                         + "i");
+                                }
                         }
                 }
         }
 
         // sample client for testing
         public static void main(final String[] args) {
-                Complex a = new Complex(5.0, 6.0);
-                Complex b = new Complex(-3.0, 4.0);
+                final Complex a = new Complex(5.0, 6.0);
+                final Complex b = new Complex(-3.0, 4.0);
 
                 System.out.println("a            = " + a);
                 System.out.println("b            = " + b);

@@ -15,38 +15,38 @@ public class MakeStringLabeling<L extends Comparable<L>> implements
                 UnaryOperation<Labeling<L>, Labeling<String>> {
 
         @Override
-        public Labeling<String> compute(Labeling<L> op, Labeling<String> res) {
+        public Labeling<String> compute(final Labeling<L> op, final Labeling<String> res) {
 
                 // String based Labeling is generated
-                long[] dims = new long[op.numDimensions()];
+                final long[] dims = new long[op.numDimensions()];
                 op.dimensions(dims);
 
-                LabelingMapping<L> srcMapping = op.firstElement().getMapping();
+                final LabelingMapping<L> srcMapping = op.firstElement().getMapping();
 
                 int size = 0;
                 try {
                         for (size = 0; size < Integer.MAX_VALUE; size++) {
                                 srcMapping.listAtIndex(size);
                         }
-                } catch (IndexOutOfBoundsException e) {
+                } catch (final IndexOutOfBoundsException e) {
                         //
                 }
 
-                LabelingMapping<String> resMapping = res.firstElement()
+                final LabelingMapping<String> resMapping = res.firstElement()
                                 .getMapping();
-                Map<List<L>, List<String>> map = new HashMap<List<L>, List<String>>();
+                final Map<List<L>, List<String>> map = new HashMap<List<L>, List<String>>();
                 for (int i = 0; i < size; i++) {
-                        List<L> from = srcMapping.listAtIndex(i);
-                        List<String> to = new ArrayList<String>(from.size());
-                        for (L type : from) {
+                        final List<L> from = srcMapping.listAtIndex(i);
+                        final List<String> to = new ArrayList<String>(from.size());
+                        for (final L type : from) {
                                 to.add(type.toString());
                         }
 
                         map.put(from, resMapping.intern(to));
                 }
 
-                Cursor<LabelingType<L>> inCursor = op.cursor();
-                Cursor<LabelingType<String>> resCursor = res.cursor();
+                final Cursor<LabelingType<L>> inCursor = op.cursor();
+                final Cursor<LabelingType<String>> resCursor = res.cursor();
 
                 while (inCursor.hasNext()) {
                         inCursor.fwd();

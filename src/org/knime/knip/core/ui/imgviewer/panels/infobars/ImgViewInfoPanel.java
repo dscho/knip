@@ -21,14 +21,16 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
 
         /** Updates cursor probe label. */
         @Override
-        protected String updateMouseLabel(StringBuffer buffer,
-                        Interval interval, CalibratedSpace axes,
-                        RandomAccess<T> rndAccess, long[] coords) {
+        protected String updateMouseLabel(final StringBuffer buffer,
+                        final Interval interval, final CalibratedSpace axes,
+                        final RandomAccess<T> rndAccess, final long[] coords) {
 
-                if (interval == null)
+                if (interval == null) {
                         return "";
-                if (m_sel == null)
+                }
+                if (m_sel == null) {
                         return "No plane selected";
+                }
 
                 buffer.setLength(0);
 
@@ -66,12 +68,13 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
         }
 
         @Override
-        protected String updateImageLabel(StringBuffer buffer,
-                        Interval interval, RandomAccess<T> rndAccess,
-                        String imgName) {
+        protected String updateImageLabel(final StringBuffer buffer,
+                        final Interval interval, final RandomAccess<T> rndAccess,
+                        final String imgName) {
 
-                if (interval == null)
+                if (interval == null) {
                         return "No image set";
+                }
 
                 buffer.setLength(0);
 
@@ -87,13 +90,13 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
         }
 
         @Override
-        public void saveComponentConfiguration(ObjectOutput out)
+        public void saveComponentConfiguration(final ObjectOutput out)
                         throws IOException {
                 // Nothing to do here
         }
 
         @Override
-        public void loadComponentConfiguration(ObjectInput in)
+        public void loadComponentConfiguration(final ObjectInput in)
                         throws IOException {
                 // Nothing to do here
         }
