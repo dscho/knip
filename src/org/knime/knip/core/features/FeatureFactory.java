@@ -77,21 +77,15 @@ public class FeatureFactory {
     private final Map<Class<?>, List<FeatureTargetUpdater>> m_targetListeners =
             new HashMap<Class<?>, List<FeatureFactory.FeatureTargetUpdater>>();
 
-    /*
-     * objects to be shared among feature sets
-     */
     private final Map<Class<?>, Object> m_sharedObjects = new HashMap<Class<?>, Object>();
 
-    /*
-     * the feature sets
-     */
-    protected final List<FeatureSet> m_featureSetList = new ArrayList<FeatureSet>();
+    private final List<FeatureSet> m_featureSetList = new ArrayList<FeatureSet>();
 
-    protected final List<Integer> m_featureSetIdOffset = new ArrayList<Integer>();
+    private final List<Integer> m_featureSetIdOffset = new ArrayList<Integer>();
 
-    protected final List<String> m_featNames = new ArrayList<String>();
+    private final List<String> m_featNames = new ArrayList<String>();
 
-    protected int[] m_featIdxMap;
+    private int[] m_featIdxMap;
 
     /* the enabled features */
     private BitSet m_enabled = null;

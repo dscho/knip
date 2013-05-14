@@ -25,20 +25,14 @@ import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
 
     private static final long serialVersionUID = 1L;
-
-    protected RandomAccessibleInterval<T> m_randomAccessible;
-
-    protected RandomAccess<T> m_rndAccess;
-
-    protected PlaneSelectionEvent m_sel;
 
     private StringBuffer m_infoBuffer;
 
@@ -60,6 +54,12 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
 
     private IterableInterval<T> m_iterable;
 
+    protected RandomAccessibleInterval<T> m_randomAccessible;
+
+    protected RandomAccess<T> m_rndAccess;
+
+    protected PlaneSelectionEvent m_sel;
+
     public ViewInfoPanel() {
         super("Image Info", false);
         m_infoBuffer = new StringBuffer();
@@ -77,9 +77,24 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
         add(m_imageInfoPanel);
     }
 
+    /**
+     * @param buffer
+     * @param img
+     * @param axes
+     * @param rndAccess
+     * @param coords
+     * @return
+     */
     protected abstract String updateMouseLabel(StringBuffer buffer, Interval img, CalibratedSpace axes,
                                                RandomAccess<T> rndAccess, long[] coords);
 
+    /**
+     * @param buffer
+     * @param img
+     * @param rndAccess
+     * @param imgName
+     * @return
+     */
     protected abstract String updateImageLabel(StringBuffer buffer, Interval img, RandomAccess<T> rndAccess,
                                                String imgName);
 
@@ -115,11 +130,11 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
 
         if ((m_sel == null) || (m_sel.numDimensions() != e.getRandomAccessibleInterval().numDimensions())) {
             onPlaneSelectionChanged(new PlaneSelectionEvent(0, 1, new long[e.getRandomAccessibleInterval()
-                                                                           .numDimensions()]));
+                    .numDimensions()]));
         }
 
         m_imageInfoLabel
-        .setText(updateImageLabel(m_infoBuffer, m_randomAccessible, m_rndAccess, e.getName().getName()));
+                .setText(updateImageLabel(m_infoBuffer, m_randomAccessible, m_rndAccess, e.getName().getName()));
     }
 
     @EventListener
@@ -180,7 +195,7 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
     /**
      * sets the mouse and image info labels. This method is intended to be used if a subclass reacts to additional
      * events ... that should change the labels.
-     * 
+     *
      * @param mouseInfoText
      * @param imageInfoText
      */

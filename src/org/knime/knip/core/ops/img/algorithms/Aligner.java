@@ -31,35 +31,35 @@ public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
 
     public final static int MAX_DIMS = 5;
 
-    int[] m_selectedDims;
+    private int[] m_selectedDims;
 
-    int m_alignDim;
+    private int m_alignDim;
 
-    Interval m_iv;
+    private Interval m_iv;
 
-    int[] m_xind;
+    private int[] m_xind;
 
-    int[] m_yind;
+    private int[] m_yind;
 
-    int[] m_gxind;
+    private int[] m_gxind;
 
-    int[] m_gyind;
+    private int[] m_gyind;
 
-    long[] m_offset;
+    private long[] m_offset;
 
-    long[] m_size;
+    private long[] m_size;
+
+    private SIZEMODES m_sizemode;
+
+    private ALIGNMODES m_alignmode;
 
     public enum SIZEMODES {
         NOTHING, CROP, EXTEND
     };
 
-    SIZEMODES m_sizemode;
-
     public enum ALIGNMODES {
         FIRST, LAST, PAIRWISE, STEPWISE
     };
-
-    ALIGNMODES m_alignmode;
 
     private int m_stepsize;
 

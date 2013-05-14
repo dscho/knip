@@ -99,7 +99,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     /**
      * {@link Logger}
      */
-    public final static Logger LOGGER = LoggerFactory.getLogger(AWTImageProvider.class);
+    protected final static Logger LOGGER = LoggerFactory.getLogger(AWTImageProvider.class);
 
     /**
      * {@link Img} rendered as {@link BufferedImage}

@@ -269,7 +269,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolyg
     /* this class represents a cubic polynomial */
     private class Cubic<OverlayClass> {
 
-        float m_a, m_b, m_c, m_d; /* a + b*u + c*u^2 +d*u^3 */
+        private float m_a, m_b, m_c, m_d; /* a + b*u + c*u^2 +d*u^3 */
 
         public Cubic(final float a, final float b, final float c, final float d) {
             this.m_a = a;

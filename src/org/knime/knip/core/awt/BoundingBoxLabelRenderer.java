@@ -22,7 +22,7 @@ import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>> implements ImageRenderer<LabelingType<L>>,
-RendererWithLabels<L>, RendererWithHilite {
+        RendererWithLabels<L>, RendererWithHilite {
 
     private final Color HILITED_RGB_COLOR = new Color(SegmentColorTable.HILITED_RGB);
 

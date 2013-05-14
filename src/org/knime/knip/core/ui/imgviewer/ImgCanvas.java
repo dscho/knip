@@ -92,15 +92,15 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     private boolean m_verScrollbarMoved = false;
 
+    private boolean m_blockMouseEvents;
+
+    private boolean m_blockPanning = false;
+
     protected Rectangle m_currentRectangle;
 
     protected StringBuffer m_labelBuffer = new StringBuffer();
 
     protected EventService m_eventService;
-
-    private boolean m_blockMouseEvents;
-
-    private boolean m_blockPanning = false;
 
     public ImgCanvas() {
         this("Image", false);

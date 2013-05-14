@@ -1,11 +1,12 @@
 package org.knime.knip.core.algorithm.extendedem;
 
 public class InstanceTmp {
-    protected InstancesTmp m_dataset;
 
-    protected double[] m_attValues;
+    private InstancesTmp m_dataset;
 
-    protected double m_weight;
+    private double[] m_attValues;
+
+    private double m_weight;
 
     public InstanceTmp(final double weight, final double[] attValues) {
 

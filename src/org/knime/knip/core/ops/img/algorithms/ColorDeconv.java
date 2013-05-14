@@ -29,7 +29,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
     private double[] m_m3 = {0, 0, 0, 0, 0, 0, 0, 0, 1};
 
     // minimum and maximum of color channels in image
-    double m_min, m_max, m_range;
+    private double m_min, m_max, m_range;
 
     private double[][] m_stainVectors;
 

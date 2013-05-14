@@ -330,11 +330,11 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
     }
 
     private class WaveletDecompositionThread implements Callable<WaveletDecompositionThread> {
-        final double[] m_waveOut;
+        private final double[] m_waveOut;
 
-        final double[] m_waveIn;
+        private final double[] m_waveIn;
 
-        final long[] m_pos;
+        private final long[] m_pos;
 
         public WaveletDecompositionThread(final double[] in, final double[] pos) {
             m_waveOut = new double[in.length];
@@ -372,11 +372,11 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
     }
 
     class WaveletCompositionThread implements Callable<WaveletCompositionThread> {
-        final double[] waveOut;
+        private final double[] waveOut;
 
-        final double[] waveIn;
+        private final double[] waveIn;
 
-        final long[] pos;
+        private final long[] pos;
 
         public WaveletCompositionThread(final double[] in, final double[] pos) {
             waveOut = new double[in.length];

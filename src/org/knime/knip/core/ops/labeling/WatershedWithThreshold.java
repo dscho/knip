@@ -72,13 +72,13 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
         OutputAlgorithm<Labeling<L>> {
 
     private static class PixelIntensity<U extends Comparable<U>> implements Comparable<PixelIntensity<U>> {
-        protected final long m_index;
+        private final long m_index;
 
-        protected final long m_age;
+        private final long m_age;
 
-        protected final double m_intensity;
+        private final double m_intensity;
 
-        protected final List<U> m_labeling;
+        private final List<U> m_labeling;
 
         public PixelIntensity(final long[] position, final long[] dimensions, final double intensity, final long age,
                               final List<U> labeling) {

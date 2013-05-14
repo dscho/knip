@@ -39,9 +39,6 @@ import org.knime.knip.core.util.PolygonTools;
 @Deprecated
 public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 4797555800668312421L;
 
     private Img<BitType> m_mask = null;
@@ -287,7 +284,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     }
 
     protected class ContourIterator implements Iterator<int[]> {
-        protected int m_i = -1;
+        private int m_i = -1;
 
         @Override
         public boolean hasNext() {

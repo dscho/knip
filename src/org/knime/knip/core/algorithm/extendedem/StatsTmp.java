@@ -1,19 +1,20 @@
 package org.knime.knip.core.algorithm.extendedem;
 
 class StatsTmp {
-    public double m_count = 0;
 
-    public double m_sum = 0;
+    private double m_count = 0;
 
-    public double m_sumSq = 0;
+    private double m_sum = 0;
 
-    public double m_stdDev = Double.NaN;
+    private double m_sumSq = 0;
 
-    public double m_mean = Double.NaN;
+    private double m_stdDev = Double.NaN;
 
-    public double m_min = Double.NaN;
+    private double m_mean = Double.NaN;
 
-    public double m_max = Double.NaN;
+    private double m_min = Double.NaN;
+
+    private double m_max = Double.NaN;
 
     public void add(final double value, final double n) {
 
@@ -32,18 +33,32 @@ class StatsTmp {
     public void calculateDerived() {
 
         m_mean = Double.NaN;
-        m_stdDev = Double.NaN;
+        setStdDev(Double.NaN);
         if (m_count > 0) {
             m_mean = m_sum / m_count;
-            m_stdDev = Double.POSITIVE_INFINITY;
+            setStdDev(Double.POSITIVE_INFINITY);
             if (m_count > 1) {
-                m_stdDev = m_sumSq - ((m_sum * m_sum) / m_count);
-                m_stdDev /= (m_count - 1);
-                if (m_stdDev < 0) {
-                    m_stdDev = 0;
+                setStdDev(m_sumSq - ((m_sum * m_sum) / m_count));
+                setStdDev(getStdDev() / (m_count - 1));
+                if (getStdDev() < 0) {
+                    setStdDev(0);
                 }
-                m_stdDev = Math.sqrt(m_stdDev);
+                setStdDev(Math.sqrt(getStdDev()));
             }
         }
+    }
+
+    /**
+     * @return the m_stdDev
+     */
+    public double getStdDev() {
+        return m_stdDev;
+    }
+
+    /**
+     * @param m_stdDev the m_stdDev to set
+     */
+    public void setStdDev(double m_stdDev) {
+        this.m_stdDev = m_stdDev;
     }
 }

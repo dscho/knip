@@ -59,7 +59,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
 
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class Transparency {
@@ -68,7 +68,7 @@ public class Transparency {
         final ImageFilter filter = new RGBImageFilter() {
             // the color we are looking for... Alpha bits are set to
             // opaque
-            public int m_markerRGB = color.getRGB() | 0xFF000000;
+            private final int m_markerRGB = color.getRGB() | 0xFF000000;
 
             @Override
             public final int filterRGB(final int x, final int y, final int rgb) {
@@ -92,7 +92,7 @@ public class Transparency {
 
             // the color we are looking for... Alpha bits are set to
             // opaque
-            public int m_markerRGB = color.getRGB() | 0xFF000000;
+            private final int m_markerRGB = color.getRGB() | 0xFF000000;
 
             @Override
             public final int filterRGB(final int x, final int y, final int rgb) {

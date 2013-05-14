@@ -5,20 +5,41 @@ import net.imglib2.display.projectors.Abstract2DProjector;
 
 class RenderTripel {
 
-    Abstract2DProjector<?, ?> m_projector;
+    private Abstract2DProjector<?, ?> m_projector;
 
-    ScreenImage m_image;
+    private ScreenImage m_img;
 
-    boolean m_successfull;
+    private boolean m_successfull;
 
-    RenderTripel(final Abstract2DProjector<?, ?> projector, final ScreenImage image) {
-        m_projector = projector;
-        m_image = image;
-        m_successfull = true;
+    RenderTripel(final Abstract2DProjector<?, ?> projector, final ScreenImage img) {
+        this.m_projector = projector;
+        this.m_img = img;
+        this.m_successfull = true;
     }
 
     RenderTripel() {
-        m_successfull = false;
+        this.m_successfull = false;
+    }
+
+    /**
+     * @return the m_successfull
+     */
+    public boolean isSuccessfull() {
+        return m_successfull;
+    }
+
+    /**
+     * @return the m_projector
+     */
+    public Abstract2DProjector<?, ?> getProjector() {
+        return m_projector;
+    }
+
+    /**
+     * @return the m_image
+     */
+    public ScreenImage getImage() {
+        return m_img;
     }
 
 }

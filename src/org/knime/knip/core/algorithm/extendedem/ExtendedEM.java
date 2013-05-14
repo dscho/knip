@@ -68,7 +68,7 @@ import java.util.Random;
 public class ExtendedEM {
 
     /** for serialization */
-    static final long serialVersionUID = 8348181483812829475L;
+    private static final long serialVersionUID = 8348181483812829475L;
 
     /** hold the normal estimators for each cluster */
     private double m_modelNormal[][][];
@@ -109,7 +109,7 @@ public class ExtendedEM {
     private boolean m_verbose;
 
     /** the default seed value */
-    protected int m_seedDefault = 1;
+    private int m_seedDefault = 1;
 
     /** The random number seed. */
     private final int m_seed = m_seedDefault;
@@ -203,7 +203,7 @@ public class ExtendedEM {
                 m_modelNormal[i][j][0] = mean;
                 double stdv = ((m_maxValues[j] - m_minValues[j]) / (2 * m_numClusters));
                 if (stdv < minStdD) {
-                    stdv = inst.attributeStats(j).m_numericStats.m_stdDev;
+                    stdv = inst.attributeStats(j).m_numericStats.getStdDev();
                     if (Double.isInfinite(stdv)) {
                         stdv = minStdD;
                     }
@@ -307,7 +307,7 @@ public class ExtendedEM {
                         m_modelNormal[i][j][1] = Math.sqrt(m_modelNormal[i][j][1]);
 
                         if ((m_modelNormal[i][j][1] <= minStdD)) {
-                            m_modelNormal[i][j][1] = inst.attributeStats(j).m_numericStats.m_stdDev;
+                            m_modelNormal[i][j][1] = inst.attributeStats(j).m_numericStats.getStdDev();
                             if ((m_modelNormal[i][j][1] <= minStdD)) {
                                 m_modelNormal[i][j][1] = minStdD;
                             }

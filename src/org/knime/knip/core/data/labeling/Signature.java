@@ -738,9 +738,9 @@ public class Signature {
      */
     private static class IndexedDouble implements Comparable<IndexedDouble> {
 
-        double m_val;
+        private double m_val;
 
-        int m_index;
+        private int m_index;
 
         public IndexedDouble(final double val, final int index) {
             m_val = val;
@@ -790,13 +790,13 @@ public class Signature {
      */
     private static class Path implements Comparable<Path>, Cloneable {
 
-        public int[] m_pos;
+        private int[] m_pos;
 
         private int m_h;
 
-        public double m_score;
+        private double m_score;
 
-        public double m_globalScore;
+        private double m_globalScore;
 
         private final double[][] m_weights;
 

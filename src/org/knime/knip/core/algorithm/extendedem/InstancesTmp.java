@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable {
-    protected int m_classIndex;
 
-    protected String m_relationName;
+    private int m_classIndex;
 
-    protected ArrayList<InstanceTmp> m_instances;
+    private String m_relationName;
 
-    protected ArrayList<AttributeTmp> m_attributes;
+    private ArrayList<InstanceTmp> m_instances;
+
+    private ArrayList<AttributeTmp> m_attributes;
 
     public InstancesTmp(final InstancesTmp dataset, final int capacity) {
         initialize(dataset, capacity);

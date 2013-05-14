@@ -13,7 +13,7 @@ import net.imglib2.view.Views;
 @SuppressWarnings("javadoc")
 public class Projector2D<A extends Type<A>, B extends Type<B>> extends Abstract2DProjector<A, B> {
 
-    protected final IterableInterval<B> m_target;
+    private final IterableInterval<B> m_target;
 
     private final Converter<A, B> m_converter;
 

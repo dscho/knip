@@ -33,15 +33,15 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
      */
     private static final long serialVersionUID = 1L;
 
+    private int m_colorMapNr = SegmentColorTable.getColorMapNr();
+
+    private Color m_boundingBoxColor = SegmentColorTable.getBoundingBoxColor();
+
     protected Set<String> m_activeLabels;
 
     protected Operator m_operator;
 
     protected LabelingMapping<L> m_labelMapping;
-
-    private int m_colorMapNr = SegmentColorTable.getColorMapNr();
-
-    private Color m_boundingBoxColor = SegmentColorTable.getBoundingBoxColor();
 
     protected boolean m_withLabelStrings = false;
 

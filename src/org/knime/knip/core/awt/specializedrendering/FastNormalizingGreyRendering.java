@@ -33,21 +33,21 @@ public class FastNormalizingGreyRendering {
 
         RenderTripel match = new RenderTripel();
 
-        if (!match.m_successfull) {
+        if (!match.isSuccessfull()) {
             // try ArrayImage
             match = tryArrayImage(source, dimX, dimY, planePos, normalizationFactor, min);
         }
 
-        if (!match.m_successfull) {
+        if (!match.isSuccessfull()) {
             // try PlanarImage
             match = tryPlanarImage(source, dimX, dimY, planePos, normalizationFactor, min);
         }
 
-        if (match.m_successfull) {
+        if (match.isSuccessfull()) {
             // speed up possible use tuned implementation
-            match.m_projector.setPosition(planePos);
-            match.m_projector.map();
-            return match.m_image;
+            match.getProjector().setPosition(planePos);
+            match.getProjector().map();
+            return match.getImage();
         } else {
             return null;
         }

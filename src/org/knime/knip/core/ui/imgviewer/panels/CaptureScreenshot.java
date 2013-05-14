@@ -73,7 +73,7 @@ import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 
 /**
  * @author muethingc
- * 
+ *
  */
 public class CaptureScreenshot extends ViewerComponent {
 
@@ -83,9 +83,9 @@ public class CaptureScreenshot extends ViewerComponent {
 
     private final JTextField m_fieldName = new JTextField();
 
-    JButton m_captureButton = new JButton(new ImageIcon(getClass().getResource("CameraIcon.png")));
+    private JButton m_captureButton = new JButton(new ImageIcon(getClass().getResource("CameraIcon.png")));
 
-    JButton m_dirButton = new JButton(new ImageIcon(getClass().getResource("FolderIcon.png")));
+    private JButton m_dirButton = new JButton(new ImageIcon(getClass().getResource("FolderIcon.png")));
 
     private final JFileChooser m_chooser = new JFileChooser();
 
@@ -105,14 +105,14 @@ public class CaptureScreenshot extends ViewerComponent {
 
         final GroupLayout.SequentialGroup horizontal0 =
                 layout.createSequentialGroup().addComponent(m_fieldName)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(m_dirButton);
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(m_dirButton);
 
         layout.setHorizontalGroup(layout.createParallelGroup().addGroup(horizontal0).addComponent(separator)
-                                  .addComponent(m_captureButton));
+                .addComponent(m_captureButton));
 
         final GroupLayout.SequentialGroup vertical0 =
                 layout.createSequentialGroup().addComponent(m_fieldName).addComponent(separator)
-                .addComponent(m_captureButton);
+                        .addComponent(m_captureButton);
 
         layout.setVerticalGroup(layout.createParallelGroup().addGroup(vertical0).addComponent(m_dirButton));
 

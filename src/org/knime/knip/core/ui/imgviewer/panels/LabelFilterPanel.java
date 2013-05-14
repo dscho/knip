@@ -69,11 +69,11 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
     private static final long serialVersionUID = 1L;
 
-    protected JList m_jLabelList;
+    private JList m_jLabelList;
 
-    protected Vector<L> m_activeLabels;
+    private Vector<L> m_activeLabels;
 
-    protected EventService m_eventService;
+    private EventService m_eventService;
 
     private JScrollPane m_scrollPane;
 

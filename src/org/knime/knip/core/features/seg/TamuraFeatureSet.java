@@ -64,15 +64,15 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- * 
+ *
  * @author Christian Dietz, University of Konstanz
  * @param <T>
  */
 public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet, SharesObjects {
 
-    public static String[] FEATURES =
+    public static final String[] FEATURES =
             new String[]{"TamuraGranularity", "TamuraContrast", "TamuraKurtosisOfDirectionality",
-        "TamuraStdDevDirectionality", "TamuraMaxDirectionality", "TamuraSkewness"};
+                    "TamuraStdDevDirectionality", "TamuraMaxDirectionality", "TamuraSkewness"};
 
     private Tamura<T> m_tamura;
 
@@ -97,7 +97,7 @@ public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet, Shar
             m_valid = true;
             m_tamura =
                     new Tamura<T>(validDims.a, validDims.b, m_enabledFeatures.toArray(new String[m_enabledFeatures
-                                                                                                 .size()]));
+                            .size()]));
             m_stats = m_ocac.descriptiveStatistics(interval);
             m_hist = m_tamura.updateROI(interval);
         }

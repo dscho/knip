@@ -1,25 +1,26 @@
 package org.knime.knip.core.algorithm.extendedem;
 
 class AttributeStatsTmp {
-    public int[] m_nominalCounts;
 
-    public double[] m_nominalWeights;
+    protected int[] m_nominalCounts;
 
-    public int m_totalCount = 0;
+    protected double[] m_nominalWeights;
 
-    public int m_missingCount = 0;
+    protected int m_totalCount = 0;
 
-    public int m_uniqueCount = 0;
+    protected int m_missingCount = 0;
 
-    public int m_intCount = 0;
+    protected int m_uniqueCount = 0;
 
-    public int m_realCount = 0;
+    protected int m_intCount = 0;
 
-    public int m_distinctCount = 0;
+    protected int m_realCount = 0;
 
-    public StatsTmp m_numericStats;
+    protected int m_distinctCount = 0;
 
-    public double m_small = 1e-6;
+    protected StatsTmp m_numericStats;
+
+    protected double m_small = 1e-6;
 
     public boolean eq(final double a, final double b) {
 

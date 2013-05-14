@@ -13,14 +13,12 @@ import org.knime.knip.core.awt.specializedrendering.FastNormalizingGreyRendering
 import org.knime.knip.core.awt.specializedrendering.Projector2D;
 
 public class Real2GreyRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
-RendererWithNormalization {
+        RendererWithNormalization {
 
-    // speed up
-    double m_normalizationFactor;
+    private double m_normalizationFactor;
 
-    double m_min;
+    private double m_min;
 
-    // default
     private RealGreyARGBConverter<R> m_converter;
 
     public Real2GreyRenderer() {

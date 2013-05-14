@@ -79,10 +79,7 @@ import org.knime.knip.core.util.ImgUtils;
  */
 public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
-    /**
-     *
-     */
-    public final String[] m_features;
+    private final String[] m_features;
 
     private double[] m_centroid = null;
 

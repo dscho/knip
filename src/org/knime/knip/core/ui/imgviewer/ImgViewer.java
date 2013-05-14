@@ -96,12 +96,12 @@ import org.slf4j.LoggerFactory;
 /**
  * A TableCellViewPane providing another view on image objects. It allows to browser through the individual
  * planes/dimensions, enhance contrast, etc.
- * 
+ *
  * @author dietzc, hornm, University of Konstanz
  * @param <T>
  */
 public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>> extends JPanel implements
-ViewerComponentContainer {
+        ViewerComponentContainer {
 
     /* def */
     private static final long serialVersionUID = 1L;
@@ -121,7 +121,7 @@ ViewerComponentContainer {
     private List<ViewerComponent> m_viewerComponents;
 
     /* EventService of the viewer, unique for each viewer. */
-    protected EventService m_eventService;
+    private EventService m_eventService;
 
     public ImgViewer() {
         this(new EventService());
@@ -171,12 +171,12 @@ ViewerComponentContainer {
 
     /**
      * Adds the {@link ViewerComponent} to the {@link ImgViewer}
-     * 
+     *
      * @param panel {@link ViewerComponent} to be set
-     * 
+     *
      * @param setEventService indicates weather the {@link EventService} of the {@link ImgViewer} shall be set to the
      *            {@link ViewerComponent}
-     * 
+     *
      */
     public void addViewerComponent(final ViewerComponent panel, final boolean setEventService) {
 
@@ -217,7 +217,7 @@ ViewerComponentContainer {
 
     /**
      * Set the current {@link Img} of the viewer
-     * 
+     *
      * @param img {@link Img} to be set
      * @param axes {@link CalibratedSpace} of the {@link Img}
      * @param name {@link Named} of the {@link Img}
@@ -247,12 +247,12 @@ ViewerComponentContainer {
                 m_eventService.publish(new ImgWithMetadataChgEvent<FloatType>(
                         new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
                                 (RandomAccessibleInterval<DoubleType>)img2d, convertOp, new FloatType()), name, source,
-                                axes2d, imageMetaData));
+                        axes2d, imageMetaData));
             } else {
                 m_eventService.publish(new IntervalWithMetadataChgEvent<FloatType>(
                         new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
                                 (RandomAccessibleInterval<DoubleType>)img2d, convertOp, new FloatType()), name, source,
-                                axes2d));
+                        axes2d));
             }
             m_eventService.publish(new ImgRedrawEvent());
         } else {
@@ -270,7 +270,7 @@ ViewerComponentContainer {
 
     /**
      * Save the current settings/state of an ImgViewer to a base64 coded String
-     * 
+     *
      * @return base64 coded String of the current settings/state of the viewer
      * @throws IOException
      */
@@ -311,7 +311,7 @@ ViewerComponentContainer {
     /**
      * Loading settings of the viewer from a base64Coded String produced by
      * {@link ImgViewer#getComponentConfiguration()}
-     * 
+     *
      * @param base64coded the base64 representation of the viewer state
      * @throws IOException
      * @throws ClassNotFoundException
