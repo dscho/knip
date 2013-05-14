@@ -220,7 +220,6 @@ public class ExtendedEM {
             }
         }
         for (j = 0; j < m_numClusters; j++) {
-            // m_priors[j] += 1.0;
             m_priors[j] = clusterSizes[j];
         }
         normalize(m_priors);
@@ -360,7 +359,6 @@ public class ExtendedEM {
      *
      **/
     public ExtendedEM() {
-        // super();
         m_seedDefault = 100;
         m_maxIterations = 100;
     }
@@ -440,7 +438,6 @@ public class ExtendedEM {
             m_rr.nextDouble();
         }
 
-        // m_num_instances = m_theInstances.numInstances();
         m_numAttribs = m_theInstances.numAttributes();
 
         // fit full training set
@@ -484,7 +481,6 @@ public class ExtendedEM {
                 }
                 ok = true;
             } catch (final Exception ex) {
-                // System.err.println("Restarting after training failure");
                 ex.printStackTrace();
                 seed++;
                 restartCount++;
@@ -494,7 +490,6 @@ public class ExtendedEM {
                     m_rr.nextInt();
                 }
                 if (restartCount > 5) {
-                    // System.err.println("Reducing the number of clusters");
                     m_numClusters--;
                     restartCount = 0;
                 }

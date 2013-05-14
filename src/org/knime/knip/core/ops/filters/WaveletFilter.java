@@ -266,7 +266,6 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
                     m_selectedRowRoi = new RectangleRegionOfInterest(m_selectedRowRoiOrigin, m_selectedRowRoiExtend);
                     m_selectedRowTempRoiCur =
                             m_selectedRowRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
-                    // m_SelectedRowRoi.setOrigin(m_SelectedRowRoiOrigin);
 
                     while (m_beginTempRoiCur.hasNext()) {
                         m_beginTempRoiCur.next();

@@ -456,15 +456,6 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
             meanObj = (numObj == 0 ? 0.0 : (sumObj / (double)numObj));
 
             /* Calculate the new threshold: Equation (7) in Ref. 2 */
-            // new_thresh = simple_round ( ( mean_back - mean_obj )
-            // / ( Math.log
-            // ( mean_back ) - Math.log ( mean_obj ) ) );
-            // simple_round ( double x ) {
-            // return ( int ) ( IS_NEG ( x ) ? x - .5 : x + .5 );
-            // }
-            //
-            // #define IS_NEG( x ) ( ( x ) < -DBL_EPSILON )
-            // DBL_EPSILON = 2.220446049250313E-16
             temp = (meanBack - meanObj) / (Math.log(meanBack) - Math.log(meanObj));
 
             if (temp < -2.220446049250313E-16) {
@@ -625,7 +616,6 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         // found with the MEAN algorithm.
         int Tprev = -2;
         double mu, nu, p, q, sigma2, tau2, w0, w1, w2, sqterm, temp;
-        // int counter=1;
         while (threshold != Tprev) {
             // Calculate some statistics.
             mu = B(data, threshold) / A(data, threshold);

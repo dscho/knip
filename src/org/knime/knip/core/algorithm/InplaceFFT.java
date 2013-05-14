@@ -14,16 +14,16 @@ import org.knime.knip.core.data.algebra.Complex;
 
 /*************************************************************************
  * Compilation: javac InplaceFFT.java Execution: java InplaceFFT N Dependencies: Complex.java
- * 
+ *
  * Compute the FFT of a length N complex sequence in-place. Uses a non-recursive version of the Cooley-Tukey FFT. Runs
  * in O(N log N) time.
- * 
+ *
  * Reference: Algorithm 1.6.1 in Computational Frameworks for the Fast Fourier Transform by Charles Van Loan.
- * 
- * 
+ *
+ *
  * Limitations ----------- - assumes N is a power of 2
- * 
- * 
+ *
+ *
  *************************************************************************/
 
 public class InplaceFFT {
@@ -67,7 +67,6 @@ public class InplaceFFT {
     // compute the inverse FFT of x[], assuming its length is a power of 2
     public static Complex[] ifft(final Complex[] x) {
         final int N = x.length;
-        // Complex[] y = new Complex[N];
 
         // take conjugate
         for (int i = 0; i < N; i++) {

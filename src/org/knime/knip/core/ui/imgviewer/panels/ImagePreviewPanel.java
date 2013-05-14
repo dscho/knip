@@ -109,8 +109,6 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
      */
     public ImagePreviewPanel() {
         super();
-        // image.setPreferredSize(new Dimension(300, 250));
-        // table.setPreferredSize(new Dimension(300, 100));
         m_table.setLayout(new BoxLayout(m_table, BoxLayout.Y_AXIS));
         m_reader = new BufferedImageReader(new ImageReader());
         setPreferredSize(new Dimension(300, 250));
@@ -154,8 +152,6 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
         });
         final JScrollPane sp = new JScrollPane(m_metadataTable);
         sp.setPreferredSize(new Dimension(300, 100));
-        // table.setTableHeader(null);
-        // sp.setColumnHeaderView(null);
         m_table.add("Metadata", sp);
         add(m_image);
         add(m_table);

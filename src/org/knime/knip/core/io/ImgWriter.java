@@ -127,14 +127,6 @@ public class ImgWriter {
             for (int i = 0; i < writers.length; i++) {
 
                 m_writers[i] = writers[i].getFormat() + " (" + writers[i].getSuffixes()[0] + ")";
-                // String[] suffixes = writers[i].getSuffixes();
-                // for (int j = 0; j < suffixes.length - 1; j++)
-                // {
-                // WRITERS[i] += suffixes[j] + ";";
-                // }
-                // WRITERS[i] += suffixes[suffixes.length - 1] +
-                // ")";
-
                 m_mapWriters.put(m_writers[i], writers[i]);
 
             }

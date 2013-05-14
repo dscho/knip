@@ -40,9 +40,6 @@ class StatsTmp {
                 m_stdDev = m_sumSq - ((m_sum * m_sum) / m_count);
                 m_stdDev /= (m_count - 1);
                 if (m_stdDev < 0) {
-                    // System.err.println("Warning: stdDev value = "
-                    // + stdDev
-                    // + " -- rounded to zero.");
                     m_stdDev = 0;
                 }
                 m_stdDev = Math.sqrt(m_stdDev);

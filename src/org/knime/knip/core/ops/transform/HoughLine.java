@@ -12,7 +12,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.Util;
 
 public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType<S> & NativeType<S>, K extends IterableInterval<T>>
-implements UnaryOutputOperation<K, Img<S>> {
+        implements UnaryOutputOperation<K, Img<S>> {
 
     private final int m_numBinsRho;
 
@@ -75,13 +75,7 @@ implements UnaryOutputOperation<K, Img<S>> {
                     try {
                         placeVote(voteLoc, resAccess);
                     } catch (final Exception e) {
-                        // System.out.println(fRho);
-                        // System.err.println("Tried to place vote at "
-                        // + r +
-                        // " "
-                        // + t + " for theta " +
-                        // m_theta[t] + ", and rho "
-                        // + fRho);
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -101,7 +95,7 @@ implements UnaryOutputOperation<K, Img<S>> {
 
     /**
      * Place a vote of value 1.
-     * 
+     *
      * @param loc the integer array indicating the location where the vote is to be placed in voteSpace.
      * @return whether the vote was successful. This here particular method should always return true.
      */

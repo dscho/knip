@@ -36,9 +36,9 @@ import org.knime.knip.core.ui.imgviewer.panels.HiddenViewerComponent;
 
 /**
  * Manages overlays and overlay elements ...
- * 
+ *
  * @author Christian
- * 
+ *
  */
 public class AnnotatorManager<T extends RealType<T>> extends HiddenViewerComponent {
 
@@ -253,8 +253,6 @@ public class AnnotatorManager<T extends RealType<T>> extends HiddenViewerCompone
             out.writeUTF(s);
         }
 
-        // out.writeObject(m_sel);
-
     }
 
     @Override
@@ -275,7 +273,6 @@ public class AnnotatorManager<T extends RealType<T>> extends HiddenViewerCompone
             m_selectedLabels[i] = in.readUTF();
         }
 
-        // m_sel = (PlaneSelection) in.readObject();
     }
 
     public Map<String, Overlay<String>> getOverlayMap() {

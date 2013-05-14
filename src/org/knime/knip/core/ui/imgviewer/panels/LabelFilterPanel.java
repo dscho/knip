@@ -60,9 +60,9 @@ import org.knime.knip.core.util.MiscViews;
 
 /**
  * Panel to generate a Rulebased LabelFilter.
- * 
+ *
  * Publishes {@link RulebasedLabelFilter}
- * 
+ *
  * @author hornm, dietzc, schoenenbergerf, ortweinm University of Konstanz
  */
 public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
@@ -170,7 +170,6 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
         m_scrollPane = new JScrollPane(m_jLabelList);
         m_scrollPane.setPreferredSize(new Dimension(150, 1));
-        // m_scrollPane.setSize(new Dimension(150, 1);
 
         final JPanel confirmationPanel = new JPanel();
         confirmationPanel.setLayout(new BoxLayout(confirmationPanel, BoxLayout.X_AXIS));
@@ -310,7 +309,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(null, null));
             } else {
                 m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(allLabels, (Operator)(m_operatorBox)
-                                                                           .getSelectedItem()));
+                        .getSelectedItem()));
             }
 
             m_eventService.publish(new ImgRedrawEvent());

@@ -358,15 +358,10 @@ public class Signature {
         x = (maxX + minX) / 2;
         y = (maxY + minY) / 2;
 
-        // centroid
-        // x = avX / count;
-        // y = avY / count;
-
         // set new center
         m_center[0] = (int)Math.round(x);
         m_center[1] = (int)Math.round(y);
 
-        // test.showInFrame();
     }
 
     /**

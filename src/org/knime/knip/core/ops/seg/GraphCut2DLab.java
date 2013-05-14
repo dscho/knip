@@ -364,13 +364,6 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>> imple
                 // found source at loc_cursor.getPosition()
                 graphCut.setTerminalWeights(nodeID, K_value, 0);
             } else {
-                // float r_Source = (float) -Math.log(1.0 /
-                // Math.abs(value
-                // .getRealFloat() - m_srcAvg));
-                //
-                // float r_Sink = (float) -Math.log(1.0 /
-                // Math.abs(value
-                // .getRealFloat() - m_sinkAvg));
 
                 float r_Source = 0;
 

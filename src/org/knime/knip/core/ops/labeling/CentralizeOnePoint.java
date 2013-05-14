@@ -128,7 +128,6 @@ public class CentralizeOnePoint<T extends RealType<T>> implements UnaryOperation
 
         if ((maxIterations > 0) && ((newX != 0) || (newY != 0))) {
             return centralizeOnePoint(res, maxIterations - 1);
-            // return res;
         } else {
             return res;
         }

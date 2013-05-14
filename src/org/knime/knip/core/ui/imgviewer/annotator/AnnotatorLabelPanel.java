@@ -85,7 +85,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                 }
 
                 m_eventService.publish(new AnnotatorLabelsSelChgEvent(objectArrayAsStringArray(m_jLabelList
-                                                                                               .getSelectedValues())));
+                        .getSelectedValues())));
             }
         });
 
@@ -112,7 +112,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                                                               + " \'?", "Confirm", JOptionPane.OK_CANCEL_OPTION) == 0) {
 
                         m_eventService.publish(new AnnotatorLabelsDelEvent(objectArrayAsStringArray(m_jLabelList
-                                                                                                    .getSelectedValues())));
+                                .getSelectedValues())));
 
                         for (final Object o : m_jLabelList.getSelectedValues()) {
                             m_labels.remove(o);
@@ -160,7 +160,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 m_eventService.publish(new AnnotatorLabelsSetEvent(objectArrayAsStringArray(m_jLabelList
-                                                                                            .getSelectedValues())));
+                        .getSelectedValues())));
             }
         });
         jb.setMaximumSize(new Dimension(PANEL_WIDTH, BUTTON_HEIGHT));
@@ -179,7 +179,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                 }
 
                 m_eventService.publish(new AnnotatorLabelsColResetEvent(objectArrayAsStringArray(m_jLabelList
-                                                                                                 .getSelectedValues())));
+                        .getSelectedValues())));
 
             }
         });
@@ -230,7 +230,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
     private final void setButtonIcon(final AbstractButton jb, final String path) {
         final URL icon =
                 getClass().getClassLoader().getResource(getClass().getPackage().getName().replace('.', '/') + "/"
-                        + path);
+                                                                + path);
         jb.setHorizontalAlignment(SwingConstants.LEFT);
         if (icon != null) {
             jb.setIcon(new ImageIcon(icon));
@@ -299,11 +299,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
      */
     @Override
     public void reset() {
-        // m_isAdjusting = true;
-        // m_labels.clear();
-        // m_labels.add("Unknown");
-        // m_jLabelList.setListData(m_labels);
-        // m_isAdjusting = false;
+        // Nothing to do here
     }
 
     @Override

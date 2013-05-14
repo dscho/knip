@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public abstract class ImgViewerMouseEvent implements KNIPEvent {
@@ -74,11 +74,6 @@ public abstract class ImgViewerMouseEvent implements KNIPEvent {
      * not!
      */
     public boolean isInsideImgView(final long dimA, final long dimB) {
-        // if ((e.getX() / m_factor > m_imgWidth || e.getX() / m_factor
-        // < 0
-        // || e.getY() / m_factor > m_imgHeight|| e.getY() / m_factor <
-        // 0))
-        // System.out.println("test");
 
         return !(((m_e.getX() / m_factorA) >= dimA) || ((m_e.getX() / m_factorA) < 0)
                 || ((m_e.getY() / m_factorB) >= dimB) || ((m_e.getY() / m_factorB) < 0));

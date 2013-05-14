@@ -68,7 +68,7 @@ public enum ImgFactoryTypes {
      */
     @SuppressWarnings("rawtypes")
     public static final <T extends NativeType<T>> ImgFactory
-    getImgFactory(final ImgFactoryTypes facType, final Img img) {
+            getImgFactory(final ImgFactoryTypes facType, final Img img) {
 
         if (facType == SOURCE_FACTORY) {
             return img.factory();
@@ -103,8 +103,6 @@ public enum ImgFactoryTypes {
                 return new ArrayImgFactory<T>();
             case CELL_IMG_FACTORY:
                 return new CellImgFactory<T>();
-                // case LIST_IMG_FACTORY:
-                // return new ListImgFactory<T>();
             case PLANAR_IMG_FACTORY:
                 return new PlanarImgFactory<T>();
             case NTREE_IMG_FACTORY:

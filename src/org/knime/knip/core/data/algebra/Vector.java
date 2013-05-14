@@ -15,9 +15,9 @@ import net.imglib2.Point;
 
 /**
  * Class representing a simple point in the image. It mainly serves to facilitate simple operations on the coordinates.
- * 
+ *
  * @author hornm, schoenen University of Konstanz
- * 
+ *
  */
 
 public class Vector extends Point implements Cloneable {
@@ -37,27 +37,6 @@ public class Vector extends Point implements Cloneable {
     public Vector(final Localizable localizable) {
         super(localizable);
     }
-
-    // /**
-    // *
-    // * @param p
-    // * the point
-    // * @param round
-    // * true - p will be rounded, false - casted
-    // */
-    // @SuppressWarnings("cast")
-    // public IntPoint(RealPoint p, boolean round) {
-    // m_pos = new int[p.getNumDimensions()];
-    // if (round) {
-    // for (int i = 0; i < m_pos.length; i++) {
-    // m_pos[i] = (int) Math.round(p.getPos(i));
-    // }
-    // } else {
-    // for (int i = 0; i < m_pos.length; i++) {
-    // m_pos[i] = (int) p.getPos(i);
-    // }
-    // }
-    // }
 
     /**
      * Length (magnitude)
@@ -81,7 +60,7 @@ public class Vector extends Point implements Cloneable {
 
     /**
      * Two norm.
-     * 
+     *
      * @return normalized vector
      */
     public Vector norm2() {
@@ -90,7 +69,7 @@ public class Vector extends Point implements Cloneable {
 
     /**
      * Addition. The points must be of same dimensionality, no check is made.
-     * 
+     *
      * @param p
      * @return the resulting point
      */
@@ -112,7 +91,7 @@ public class Vector extends Point implements Cloneable {
 
     /**
      * Multiplies a point with a scalar.
-     * 
+     *
      * @param scalar
      * @return the resulting point
      */

@@ -171,7 +171,6 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
      */
     private Integer m_label = 0;
 
-    // AWTImageTools.showInSameFrame(...)
     @Override
     public Labeling<Integer> compute(final Labeling<L> cellLabeling, final Labeling<Integer> res) {
 
@@ -237,7 +236,6 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                 new PositionsToBitTypeImage().compute(centroidsList, new ImgPlus<BitType>(
                         new NtreeImgFactory<BitType>().create(cellLabeling, new BitType())));
 
-        // AWTImageTools.showInSameFrame(localMaxima, 1.0);
         /*
          * set boundaries. needed for internal cca
          */
@@ -323,11 +321,6 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
          * Random Access
          */
         private final RandomAccess<FloatType> m_distanceMapRandomAccess;
-
-        // /*
-        // * local maxima image cursor
-        // */
-        // private final Cursor<BitType> localMaximaRoiCursor;
 
         /*
          * distanceMap image access cursor

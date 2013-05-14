@@ -117,7 +117,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
 
     private JScrollBar m_totalSlider;
 
-    // private JComboBox[] m_planeFields;
     private JCheckBox[] m_planeCheckBoxes;
 
     private JFormattedTextField[] m_coordinateTextFields;
@@ -136,7 +135,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     /* recognizes which dimension to alter next */
     private int m_alterDim;
 
-    // private I m_img;
     private AxisType[] m_axesLabels;
 
     private EventService m_eventService;
@@ -513,7 +511,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
             m_planeCheckBoxes = new JCheckBox[m_dims.length];
             m_coordinateTextFields = new JFormattedTextField[m_dims.length];
 
-            // m_planeFields = new JComboBox[m_dimSizes.length];
             JPanel sliderPanel;
             for (int i = 0; i < m_dims.length; i++) {
                 sliderPanel = new JPanel();

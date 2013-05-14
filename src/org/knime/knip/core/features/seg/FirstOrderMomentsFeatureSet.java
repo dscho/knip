@@ -61,7 +61,7 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  * @param <T> image type
  */
@@ -71,9 +71,9 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements Featu
      * the feature names
      */
     public static final String[] FEATURES = new String[]{"Min", "Max", "Mean", "Geometric Mean", "Sum",
-        "Squares of Sum", "Std Dev", "Variance", "Skewness", "Kurtosis", "Quantil 25", "Quantil 50", "Quantil 75",
-        "Median absolute deviation (MAD)", "WeightedCentroid Dim 1", "WeightedCentroid Dim 2",
-        "WeightedCentroid Dim 3", "WeightedCentroid Dim 4", "WeightedCentroid Dim 5", "Mass Displacement",};
+            "Squares of Sum", "Std Dev", "Variance", "Skewness", "Kurtosis", "Quantil 25", "Quantil 50", "Quantil 75",
+            "Median absolute deviation (MAD)", "WeightedCentroid Dim 1", "WeightedCentroid Dim 2",
+            "WeightedCentroid Dim 3", "WeightedCentroid Dim 4", "WeightedCentroid Dim 5", "Mass Displacement",};
 
     private DescriptiveStatistics m_statistics;
 
@@ -152,7 +152,6 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements Featu
                 final double[] centroid = new Centroid().compute(m_interval, new double[m_interval.numDimensions()]);
                 for (int d = 0; d < m_interval.numDimensions(); d++) {
                     m_weightedCentroid[d] /= m_statistics.getSum();
-                    // m_weightedCentroid[d] /= m_interval.size();
                     centroid[d] /= m_interval.size();
                     m_massDisplacement += Math.pow(m_weightedCentroid[d] - centroid[d], 2);
                 }

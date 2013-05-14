@@ -51,14 +51,16 @@
 package org.knime.knip.core.algorithm;
 
 /**
- * 
+ * Use imglib2 implementations instead
+ *
  * @author hornm, University of Konstanz
  */
+@Deprecated
 public class BresenhamAlgorithm {
 
     /**
      * Rasterizes a line from Point P1 to Point P2 using the Bresenham-Algorithm.
-     * 
+     *
      * @param x1
      * @param y1
      * @param x2
@@ -120,7 +122,6 @@ public class BresenhamAlgorithm {
                 }
             }
         }
-        // res[res.length - 1] = new Point(p2.getPos(0), p2.getPos(1));
         return res;
     }
 }

@@ -8,7 +8,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
 public class DirectionalGradient<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>>
-implements UnaryOperation<K, K> {
+        implements UnaryOperation<K, K> {
 
     // TODO: Can be extended to diagonalA and diagonalB
     public enum GradientDirection {
@@ -75,9 +75,6 @@ implements UnaryOperation<K, K> {
                     diff = (opLeftRndAccess.get().getRealDouble() - opRightRndAccess.get().getRealDouble()) + min;
                 }
 
-                // sum -= min;
-                // sum += max;
-                // sum /= 2;
                 resAccess.get().setReal(Math.max(min, Math.min(max, diff)));
 
                 opLeftRndAccess.fwd(m_dims[1]);

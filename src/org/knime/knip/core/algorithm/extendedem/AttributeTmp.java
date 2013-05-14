@@ -265,7 +265,6 @@ public class AttributeTmp {
 }
 
 class ProtectedProperties extends Properties {
-    // private boolean closed = false;
 
     public ProtectedProperties(final Properties props) {
 
@@ -275,6 +274,5 @@ class ProtectedProperties extends Properties {
             final String propValue = props.getProperty(propName);
             super.setProperty(propName, propValue);
         }
-        // closed = true; // no modifications allowed from now on
     }
 }

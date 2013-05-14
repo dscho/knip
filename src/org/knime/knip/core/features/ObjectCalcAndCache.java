@@ -70,9 +70,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.knime.knip.core.data.labeling.Signature;
 
 /**
- * 
+ *
  * Utility class which calculates caches commonly used objects.
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class ObjectCalcAndCache {
@@ -208,7 +208,6 @@ public class ObjectCalcAndCache {
 
             massDisplacement = 0;
             for (int d = 0; d < ii.numDimensions(); d++) {
-                // m_weightedCentroid[d] /= m_interval.size();
                 centroid[d] /= ii.size();
                 massDisplacement += Math.pow(m_weightedCentroid[d] - centroid[d], 2);
             }

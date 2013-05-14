@@ -67,7 +67,6 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
             cp.fwd();
             cp.localize(p);
             double d;
-            // Cursor<T> cq = srcIn.localizingCursor();
             cp.localize(mi);
             cp.localize(ma);
             mi[0] = Math.max(0, mi[0] - m_radius);
@@ -82,11 +81,7 @@ public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleIn
             while (cq.hasNext()) {
                 cq.fwd();
                 cq.localize(q);
-                // d = 0.0;
                 d = ((p[0] - q[0] - mi[0]) * (p[0] - q[0] - mi[0])) + ((p[1] - q[1] - mi[1]) * (p[1] - q[1] - mi[1]));
-                // for(int i=0; i<q.length; i++) {
-                // d += (p[i]-q[i]-mi[i])*(p[i]-q[i]-mi[i]);
-                // }
                 d = Math.sqrt(d);
                 s = gauss(d, m_sigmaS);
 

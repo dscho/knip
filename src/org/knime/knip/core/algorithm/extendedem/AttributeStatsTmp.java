@@ -42,7 +42,6 @@ class AttributeStatsTmp {
                 m_nominalWeights[(int)value] = weight;
             }
             if (m_numericStats != null) {
-                // numericStats.add(value, count);
                 m_numericStats.add(value, weight);
                 m_numericStats.calculateDerived();
             }

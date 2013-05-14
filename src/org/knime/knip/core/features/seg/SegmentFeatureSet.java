@@ -114,8 +114,6 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
     private final AxisType[] m_defaultAxis;
 
-    // private CalibratedSpace m_cs;
-
     /**
      * @param target
      */

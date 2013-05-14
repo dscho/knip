@@ -14,9 +14,9 @@ import net.imglib2.type.logic.BitType;
  * as all pixels, which are next to the pixels which are on the border of the connected component. Please be aware that
  * for a correct calculation of the Perimeter only one connected component should be contained in the {@link Img} of
  * {@link BitType}
- * 
+ *
  * @author Christian Dietz
- * 
+ *
  */
 public class ExtractOutlineImg implements UnaryOperation<Img<BitType>, Img<BitType>> {
 
@@ -40,11 +40,6 @@ public class ExtractOutlineImg implements UnaryOperation<Img<BitType>, Img<BitTy
         if (op.numDimensions() != 2) {
             throw new IllegalArgumentException("Operation only permitted on two dimensions");
         }
-
-        // This produces black results
-        // if (!m_outlineInsideSegment) {
-        // new ExpandAndCenterImg<BitType, K>(1).compute(op, op);
-        // }
 
         m_op.compute(op, r);
         m_imgManWith.compute(op, r, r);
