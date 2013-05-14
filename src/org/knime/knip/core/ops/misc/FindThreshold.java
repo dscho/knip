@@ -61,10 +61,9 @@ import org.knime.knip.core.algorithm.types.ThresholdingType;
  *
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  */
-public class FindThreshold<T extends RealType<T>> implements
-UnaryOperation<OpsHistogram, DoubleType> {
+public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsHistogram, DoubleType> {
 
-    private static int MAXVALUE;
+    private int m_maxValue;
 
     private final ThresholdingType m_ttype;
 
@@ -77,7 +76,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
      */
     @Override
     public DoubleType compute(final OpsHistogram hist, final DoubleType r) {
-        MAXVALUE = hist.numBins() - 1;
+        m_maxValue = hist.numBins() - 1;
         int bin = 0;
         if (m_ttype == ThresholdingType.HUANG) {
             bin = Huang(hist.hist());
@@ -117,11 +116,10 @@ UnaryOperation<OpsHistogram, DoubleType> {
     }
 
     /**
-     * @param data
-     *                histogramm
+     * @param data histogramm
      * @return
      */
-    private static int Huang(final int[] data) {
+    private int Huang(final int[] data) {
         // Implements Huang's fuzzy thresholding method
         // Uses Shannon's entropy function (one can also use Yager's
         // entropy
@@ -146,7 +144,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
 
         /* Determine the first non-zero bin */
         first_bin = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             if (data[ih] != 0) {
                 first_bin = ih;
                 break;
@@ -154,60 +152,52 @@ UnaryOperation<OpsHistogram, DoubleType> {
         }
 
         /* Determine the last non-zero bin */
-        last_bin = MAXVALUE;
-        for (ih = MAXVALUE; ih >= first_bin; ih--) {
+        last_bin = m_maxValue;
+        for (ih = m_maxValue; ih >= first_bin; ih--) {
             if (data[ih] != 0) {
                 last_bin = ih;
                 break;
             }
         }
         term = 1.0 / (last_bin - first_bin);
-        final double[] mu_0 = new double[MAXVALUE + 1];
+        final double[] mu_0 = new double[m_maxValue + 1];
         sum_pix = num_pix = 0;
-        for (ih = first_bin; ih < (MAXVALUE + 1); ih++) {
+        for (ih = first_bin; ih < (m_maxValue + 1); ih++) {
             sum_pix += ih * data[ih];
             num_pix += data[ih];
             /* NUM_PIX cannot be zero ! */
-            mu_0[ih] = sum_pix / (double) num_pix;
+            mu_0[ih] = sum_pix / (double)num_pix;
         }
 
-        final double[] mu_1 = new double[MAXVALUE + 1];
+        final double[] mu_1 = new double[m_maxValue + 1];
         sum_pix = num_pix = 0;
         for (ih = last_bin; ih > 0; ih--) {
             sum_pix += ih * data[ih];
             num_pix += data[ih];
             /* NUM_PIX cannot be zero ! */
-            mu_1[ih - 1] = sum_pix / (double) num_pix;
+            mu_1[ih - 1] = sum_pix / (double)num_pix;
         }
 
         /* Determine the threshold that minimizes the fuzzy entropy */
         threshold = -1;
         min_ent = Double.MAX_VALUE;
-        for (it = 0; it < (MAXVALUE + 1); it++) {
+        for (it = 0; it < (m_maxValue + 1); it++) {
             ent = 0.0;
             for (ih = 0; ih <= it; ih++) {
                 /* Equation (4) in Ref. 1 */
-                mu_x = 1.0 / (1.0 + (term
-                        * Math.abs(ih - mu_0[it])));
+                mu_x = 1.0 / (1.0 + (term * Math.abs(ih - mu_0[it])));
                 if (!((mu_x < 1e-06) || (mu_x > 0.999999))) {
                     /* Equation (6) & (8) in Ref. 1 */
-                    ent += data[ih]
-                            * ((-mu_x
-                                    * Math.log(mu_x)) - ((1.0 - mu_x)
-                                            * Math.log(1.0 - mu_x)));
+                    ent += data[ih] * ((-mu_x * Math.log(mu_x)) - ((1.0 - mu_x) * Math.log(1.0 - mu_x)));
                 }
             }
 
-            for (ih = it + 1; ih < (MAXVALUE + 1); ih++) {
+            for (ih = it + 1; ih < (m_maxValue + 1); ih++) {
                 /* Equation (4) in Ref. 1 */
-                mu_x = 1.0 / (1.0 + (term
-                        * Math.abs(ih - mu_1[it])));
+                mu_x = 1.0 / (1.0 + (term * Math.abs(ih - mu_1[it])));
                 if (!((mu_x < 1e-06) || (mu_x > 0.999999))) {
                     /* Equation (6) & (8) in Ref. 1 */
-                    ent += data[ih]
-                            * ((-mu_x
-                                    * Math.log(mu_x)) - ((1.0 - mu_x)
-                                            * Math.log(1.0 - mu_x)));
+                    ent += data[ih] * ((-mu_x * Math.log(mu_x)) - ((1.0 - mu_x) * Math.log(1.0 - mu_x)));
                 }
             }
             /* No need to divide by NUM_ROWS * NUM_COLS * LOG(2) ! */
@@ -238,7 +228,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return b;
     }
 
-    private static int Intermodes(final int[] data) {
+    private int Intermodes(final int[] data) {
         // J. M. S. Prewitt and M. L. Mendelsohn,
         // "The analysis of cell images,"
         // in
@@ -264,10 +254,10 @@ UnaryOperation<OpsHistogram, DoubleType> {
         // Images with histograms having extremely unequal peaks or a
         // broad and
         // flat valley are unsuitable for this method.
-        double[] iHisto = new double[MAXVALUE + 1];
+        double[] iHisto = new double[m_maxValue + 1];
         int iter = 0;
         int threshold = -1;
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             iHisto[i] = data[i];
         }
 
@@ -275,11 +265,11 @@ UnaryOperation<OpsHistogram, DoubleType> {
 
         while (!bimodalTest(iHisto)) {
             // smooth with a 3 point running mean filter
-            for (int i = 1; i < MAXVALUE; i++) {
+            for (int i = 1; i < m_maxValue; i++) {
                 tHisto[i] = (iHisto[i - 1] + iHisto[i] + iHisto[i + 1]) / 3;
             }
             tHisto[0] = (iHisto[0] + iHisto[1]) / 3; // 0 outside
-            tHisto[MAXVALUE] = (iHisto[254] + iHisto[MAXVALUE]) / 3; // 0
+            tHisto[m_maxValue] = (iHisto[254] + iHisto[m_maxValue]) / 3; // 0
             // outside
             iHisto = tHisto;
             iter++;
@@ -291,18 +281,17 @@ UnaryOperation<OpsHistogram, DoubleType> {
 
         // The threshold is the mean between the two peaks.
         int tt = 0;
-        for (int i = 1; i < MAXVALUE; i++) {
-            if ((iHisto[i - 1] < iHisto[i])
-                    && (iHisto[i + 1] < iHisto[i])) {
+        for (int i = 1; i < m_maxValue; i++) {
+            if ((iHisto[i - 1] < iHisto[i]) && (iHisto[i + 1] < iHisto[i])) {
                 tt += i;
                 // IJ.log("mode:" +i);
             }
         }
-        threshold = (int) Math.floor(tt / 2.0);
+        threshold = (int)Math.floor(tt / 2.0);
         return threshold;
     }
 
-    private static int IsoData(final int[] data) {
+    private int IsoData(final int[] data) {
         // Also called intermeans
         // Iterative procedure based on the isodata algorithm [T.W.
         // Ridler, S.
@@ -350,7 +339,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         // different
         // methods
         int i, l, toth, totl, h, g = 0;
-        for (i = 1; i < (MAXVALUE + 1); i++) {
+        for (i = 1; i < (m_maxValue + 1); i++) {
             if (data[i] > 0) {
                 g = i + 1;
                 break;
@@ -365,26 +354,26 @@ UnaryOperation<OpsHistogram, DoubleType> {
             }
             h = 0;
             toth = 0;
-            for (i = g + 1; i < (MAXVALUE + 1); i++) {
+            for (i = g + 1; i < (m_maxValue + 1); i++) {
                 toth += data[i];
                 h += (data[i] * i);
             }
             if ((totl > 0) && (toth > 0)) {
                 l /= totl;
                 h /= toth;
-                if (g == (int) Math.round((l + h) / 2.0)) {
+                if (g == (int)Math.round((l + h) / 2.0)) {
                     break;
                 }
             }
             g++;
-            if (g > (MAXVALUE - 1)) { // was g > 254
+            if (g > (m_maxValue - 1)) { // was g > 254
                 return -1;
             }
         }
         return g;
     }
 
-    private static int Li(final int[] data) {
+    private int Li(final int[] data) {
         // Implements Li's Minimum Cross Entropy thresholding method
         // This implementation is based on the iterative version (Ref.
         // 2) of the
@@ -410,35 +399,35 @@ UnaryOperation<OpsHistogram, DoubleType> {
         int ih;
         int numPixels;
         int sumBack; /*
-         * sum of the background pixels at a given
-         * threshold
-         */
+                     * sum of the background pixels at a given
+                     * threshold
+                     */
         int sumObj; /* sum of the object pixels at a given threshold */
         int numBack; /* number of background pixels at a given threshold */
         int numObj; /* number of object pixels at a given threshold */
         double oldThresh;
         double newThresh;
         double meanBack; /*
-         * mean of the background pixels at a given
-         * threshold
-         */
+                         * mean of the background pixels at a given
+                         * threshold
+                         */
         double meanObj; /*
-         * mean of the object pixels at a given
-         * threshold
-         */
+                        * mean of the object pixels at a given
+                        * threshold
+                        */
         double mean; /* mean gray-level in the image */
         double tolerance; /* threshold tolerance */
         double temp;
 
         tolerance = 0.5;
         numPixels = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             numPixels += data[ih];
         }
 
         /* Calculate the mean gray-level */
         mean = 0.0;
-        for (ih = 0 + 1; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0 + 1; ih < (m_maxValue + 1); ih++) {
             // 0 + 1?
             mean += ih * data[ih];
         }
@@ -448,7 +437,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
 
         do {
             oldThresh = newThresh;
-            threshold = (int) (oldThresh + 0.5); /* range */
+            threshold = (int)(oldThresh + 0.5); /* range */
             /* Calculate the means of background and object pixels */
             /* Background */
             sumBack = 0;
@@ -457,17 +446,15 @@ UnaryOperation<OpsHistogram, DoubleType> {
                 sumBack += ih * data[ih];
                 numBack += data[ih];
             }
-            meanBack = (numBack == 0 ? 0.0
-                    : (sumBack / (double) numBack));
+            meanBack = (numBack == 0 ? 0.0 : (sumBack / (double)numBack));
             /* Object */
             sumObj = 0;
             numObj = 0;
-            for (ih = threshold + 1; ih < (MAXVALUE + 1); ih++) {
+            for (ih = threshold + 1; ih < (m_maxValue + 1); ih++) {
                 sumObj += ih * data[ih];
                 numObj += data[ih];
             }
-            meanObj = (numObj == 0 ? 0.0
-                    : (sumObj / (double) numObj));
+            meanObj = (numObj == 0 ? 0.0 : (sumObj / (double)numObj));
 
             /* Calculate the new threshold: Equation (7) in Ref. 2 */
             // new_thresh = simple_round ( ( mean_back - mean_obj )
@@ -479,14 +466,12 @@ UnaryOperation<OpsHistogram, DoubleType> {
             //
             // #define IS_NEG( x ) ( ( x ) < -DBL_EPSILON )
             // DBL_EPSILON = 2.220446049250313E-16
-            temp = (meanBack - meanObj)
-                    / (Math.log(meanBack) - Math
-                            .log(meanObj));
+            temp = (meanBack - meanObj) / (Math.log(meanBack) - Math.log(meanObj));
 
             if (temp < -2.220446049250313E-16) {
-                newThresh = (int) (temp - 0.5);
+                newThresh = (int)(temp - 0.5);
             } else {
-                newThresh = (int) (temp + 0.5);
+                newThresh = (int)(temp + 0.5);
                 /*
                  * Stop the iterations when the difference
                  * between the new and old threshold values is
@@ -497,7 +482,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return threshold;
     }
 
-    private static int MaxEntropy(final int[] data) {
+    private int MaxEntropy(final int[] data) {
         // Implements Kapur-Sahoo-Wong (Maximum Entropy) thresholding
         // method
         // Kapur J.N., Sahoo P.K., and Wong A.K.C. (1985) "A New Method
@@ -517,42 +502,42 @@ UnaryOperation<OpsHistogram, DoubleType> {
         double totEnt; /* total entropy */
         double maxEnt; /* max entropy */
         double entBack; /*
-         * entropy of the background pixels at a given
-         * threshold
-         */
+                        * entropy of the background pixels at a given
+                        * threshold
+                        */
         double entObj; /*
-         * entropy of the object pixels at a given
-         * threshold
-         */
-        final double[] norm_histo = new double[MAXVALUE + 1]; /*
-         * normalized
-         * histogram
-         */
-        final double[] P1 = new double[MAXVALUE + 1]; /*
-         * cumulative normalized
-         * histogram
-         */
-        final double[] P2 = new double[MAXVALUE + 1];
+                       * entropy of the object pixels at a given
+                       * threshold
+                       */
+        final double[] norm_histo = new double[m_maxValue + 1]; /*
+                                                                * normalized
+                                                                * histogram
+                                                                */
+        final double[] P1 = new double[m_maxValue + 1]; /*
+                                                        * cumulative normalized
+                                                        * histogram
+                                                        */
+        final double[] P2 = new double[m_maxValue + 1];
 
         int total = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             total += data[ih];
         }
 
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
-            norm_histo[ih] = (double) data[ih] / total;
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
+            norm_histo[ih] = (double)data[ih] / total;
         }
 
         P1[0] = norm_histo[0];
         P2[0] = 1.0 - P1[0];
-        for (ih = 1; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 1; ih < (m_maxValue + 1); ih++) {
             P1[ih] = P1[ih - 1] + norm_histo[ih];
             P2[ih] = 1.0 - P1[ih];
         }
 
         /* Determine the first non-zero bin */
         firstBin = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             if (!(Math.abs(P1[ih]) < 2.220446049250313E-16)) {
                 firstBin = ih;
                 break;
@@ -560,8 +545,8 @@ UnaryOperation<OpsHistogram, DoubleType> {
         }
 
         /* Determine the last non-zero bin */
-        lastBin = MAXVALUE;
-        for (ih = MAXVALUE; ih >= firstBin; ih--) {
+        lastBin = m_maxValue;
+        for (ih = m_maxValue; ih >= firstBin; ih--) {
             if (!(Math.abs(P2[ih]) < 2.220446049250313E-16)) {
                 lastBin = ih;
                 break;
@@ -577,19 +562,15 @@ UnaryOperation<OpsHistogram, DoubleType> {
             entBack = 0.0;
             for (ih = 0; ih <= it; ih++) {
                 if (data[ih] != 0) {
-                    entBack -= (norm_histo[ih] / P1[it])
-                            * Math.log(norm_histo[ih]
-                                    / P1[it]);
+                    entBack -= (norm_histo[ih] / P1[it]) * Math.log(norm_histo[ih] / P1[it]);
                 }
             }
 
             /* Entropy of the object pixels */
             entObj = 0.0;
-            for (ih = it + 1; ih < (MAXVALUE + 1); ih++) {
+            for (ih = it + 1; ih < (m_maxValue + 1); ih++) {
                 if (data[ih] != 0) {
-                    entObj -= (norm_histo[ih] / P2[it])
-                            * Math.log(norm_histo[ih]
-                                    / P2[it]);
+                    entObj -= (norm_histo[ih] / P2[it]) * Math.log(norm_histo[ih] / P2[it]);
                 }
             }
 
@@ -605,7 +586,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return threshold;
     }
 
-    private static int Mean(final int[] data) {
+    private int Mean(final int[] data) {
         // C. A. Glasbey,
         // "An analysis of histogram-based thresholding algorithms,"
         // CVGIP: Graphical Models and Image Processing, vol. 55, pp.
@@ -615,15 +596,15 @@ UnaryOperation<OpsHistogram, DoubleType> {
         // The threshold is the mean of the greyscale data
         int threshold = -1;
         double tot = 0, sum = 0;
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             tot += data[i];
             sum += (i * data[i]);
         }
-        threshold = (int) Math.floor(sum / tot);
+        threshold = (int)Math.floor(sum / tot);
         return threshold;
     }
 
-    static int MinErrorI(final int[] data) {
+    int MinErrorI(final int[] data) {
         // Kittler and J. Illingworth, "Minimum error thresholding,"
         // Pattern
         // Recognition, vol. 19, pp. 41-47, 1986.
@@ -650,27 +631,18 @@ UnaryOperation<OpsHistogram, DoubleType> {
         while (threshold != Tprev) {
             // Calculate some statistics.
             mu = B(data, threshold) / A(data, threshold);
-            nu = (B(data, MAXVALUE) - B(data, threshold))
-                    / (A(data, MAXVALUE) - A(data,
-                                             threshold));
-            p = A(data, threshold) / A(data, MAXVALUE);
-            q = (A(data, MAXVALUE) - A(data, threshold))
-                    / A(data, MAXVALUE);
-            sigma2 = (C(data, threshold) / A(data, threshold))
-                    - (mu * mu);
-            tau2 = ((C(data, MAXVALUE) - C(data, threshold))
-                    / (A(data, MAXVALUE) - A(data,
-                                             threshold))) - (nu * nu);
+            nu = (B(data, m_maxValue) - B(data, threshold)) / (A(data, m_maxValue) - A(data, threshold));
+            p = A(data, threshold) / A(data, m_maxValue);
+            q = (A(data, m_maxValue) - A(data, threshold)) / A(data, m_maxValue);
+            sigma2 = (C(data, threshold) / A(data, threshold)) - (mu * mu);
+            tau2 =
+                    ((C(data, m_maxValue) - C(data, threshold)) / (A(data, m_maxValue) - A(data, threshold)))
+                            - (nu * nu);
 
             // The terms of the quadratic equation to be solved.
             w0 = (1.0 / sigma2) - (1.0 / tau2);
             w1 = (mu / sigma2) - (nu / tau2);
-            w2 = (((mu * mu)
-                    / sigma2)
-                    - ((nu * nu)
-                            / tau2))
-                            + Math.log10((sigma2 * (q * q))
-                                         / (tau2 * (p * p)));
+            w2 = (((mu * mu) / sigma2) - ((nu * nu) / tau2)) + Math.log10((sigma2 * (q * q)) / (tau2 * (p * p)));
 
             // If the next threshold would be imaginary, return with
             // the current
@@ -689,7 +661,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
             if (Double.isNaN(temp)) {
                 threshold = Tprev;
             } else {
-                threshold = (int) Math.floor(temp);
+                threshold = (int)Math.floor(temp);
                 // IJ.log("Iter: "+ counter+++"  t:"+threshold);
             }
         }
@@ -720,7 +692,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return x;
     }
 
-    static int Minimum(final int[] data) {
+    int Minimum(final int[] data) {
         // J. M. S. Prewitt and M. L. Mendelsohn,
         // "The analysis of cell images,"
         // in
@@ -747,9 +719,9 @@ UnaryOperation<OpsHistogram, DoubleType> {
         // flat valley are unsuitable for this method.
         int iter = 0;
         int threshold = -1;
-        double[] iHisto = new double[MAXVALUE + 1];
+        double[] iHisto = new double[m_maxValue + 1];
 
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             iHisto[i] = data[i];
         }
 
@@ -757,11 +729,11 @@ UnaryOperation<OpsHistogram, DoubleType> {
 
         while (!bimodalTest(iHisto)) {
             // smooth with a 3 point running mean filter
-            for (int i = 1; i < MAXVALUE; i++) {
+            for (int i = 1; i < m_maxValue; i++) {
                 tHisto[i] = (iHisto[i - 1] + iHisto[i] + iHisto[i + 1]) / 3;
             }
             tHisto[0] = (iHisto[0] + iHisto[1]) / 3; // 0 outside
-            tHisto[MAXVALUE] = (iHisto[254] + iHisto[MAXVALUE]) / 3; // 0
+            tHisto[m_maxValue] = (iHisto[254] + iHisto[m_maxValue]) / 3; // 0
             // outside
             iHisto = tHisto;
             iter++;
@@ -771,17 +743,16 @@ UnaryOperation<OpsHistogram, DoubleType> {
             }
         }
         // The threshold is the minimum between the two peaks.
-        for (int i = 1; i < MAXVALUE; i++) {
+        for (int i = 1; i < m_maxValue; i++) {
             // IJ.log(" "+i+"  "+iHisto[i]);
-            if ((iHisto[i - 1] > iHisto[i])
-                    && (iHisto[i + 1] >= iHisto[i])) {
+            if ((iHisto[i - 1] > iHisto[i]) && (iHisto[i + 1] >= iHisto[i])) {
                 threshold = i;
             }
         }
         return threshold;
     }
 
-    static int Moments(final int[] data) {
+    int Moments(final int[] data) {
         // W. Tsai, "Moment-preserving thresholding: a new approach,"
         // Computer
         // Vision,
@@ -801,18 +772,18 @@ UnaryOperation<OpsHistogram, DoubleType> {
         double cd, c0, c1, z0, z1; /* auxiliary variables */
         int threshold = -1;
 
-        final double[] histo = new double[MAXVALUE + 1];
+        final double[] histo = new double[m_maxValue + 1];
 
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             total += data[i];
         }
 
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             histo[i] = (data[i] / total); // normalised histogram
         }
 
         /* Calculate the first, second, and third order moments */
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             m1 += i * histo[i];
             m2 += i * i * histo[i];
             m3 += i * i * i * histo[i];
@@ -829,14 +800,14 @@ UnaryOperation<OpsHistogram, DoubleType> {
         z0 = 0.5 * (-c1 - Math.sqrt((c1 * c1) - (4.0 * c0)));
         z1 = 0.5 * (-c1 + Math.sqrt((c1 * c1) - (4.0 * c0)));
         p0 = (z1 - m1) / (z1 - z0); /*
-         * Fraction of the object pixels in
-         * the target binary image
-         */
+                                    * Fraction of the object pixels in
+                                    * the target binary image
+                                    */
 
         // The threshold is the gray-level closest
         // to the p0-tile of the normalized histogram
         sum = 0;
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             sum += histo[i];
             if (sum > p0) {
                 threshold = i;
@@ -846,7 +817,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return threshold;
     }
 
-    static int Otsu(final int[] data) {
+    int Otsu(final int[] data) {
         // Otsu's threshold algorithm
         // C++ code by Jordan Bevik <Jordan.Bevic@qtiworld.com>
         // ported to ImageJ plugin by G.Landini
@@ -861,7 +832,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         double num, denom; // temporary bookeeping
         int sk; // The total intensity for all histogram points <=k
         int s; // The total intensity of the image
-        final int L = MAXVALUE + 1;
+        final int L = m_maxValue + 1;
 
         // Initialize values:
         s = 0;
@@ -891,14 +862,14 @@ UnaryOperation<OpsHistogram, DoubleType> {
             // precision and
             // will prevent overflow in the case of large saturated
             // images
-            denom = (double) (n1) * (n - n1); // Maximum value of
+            denom = (double)(n1) * (n - n1); // Maximum value of
             // denom is
             // (N^2)/4 = approx. 3E10
 
             if (denom != 0) {
                 // Float here is to avoid loss of precision when
                 // dividing
-                num = (((double) n1 / n) * s) - sk; // Maximum
+                num = (((double)n1 / n) * s) - sk; // Maximum
                 // value of
                 // num =
                 // MAX_VALUE*N = approx 8E7
@@ -920,7 +891,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return kStar;
     }
 
-    static int Percentile(final int[] data) {
+    int Percentile(final int[] data) {
         // W. Doyle,
         // "Operation useful for similarity-invariant pattern recognition,"
         // Journal of the Association for Computing Machinery, vol.
@@ -937,17 +908,16 @@ UnaryOperation<OpsHistogram, DoubleType> {
 
         int threshold = -1;
         final double ptile = 0.5; // default fraction of foreground pixels
-        final double[] avec = new double[MAXVALUE + 1];
+        final double[] avec = new double[m_maxValue + 1];
 
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             avec[i] = 0.0;
         }
 
-        final double total = partialSum(data, MAXVALUE);
+        final double total = partialSum(data, m_maxValue);
         double temp = 1.0;
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
-            avec[i] = Math.abs((partialSum(data, i) / total)
-                               - ptile);
+        for (int i = 0; i < (m_maxValue + 1); i++) {
+            avec[i] = Math.abs((partialSum(data, i) / total) - ptile);
             // IJ.log("Ptile["+i+"]:"+ avec[i]);
             if (avec[i] < temp) {
                 temp = avec[i];
@@ -965,7 +935,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return x;
     }
 
-    static int RenyiEntropy(final int[] data) {
+    int RenyiEntropy(final int[] data) {
         // Kapur J.N., Sahoo P.K., and Wong A.K.C. (1985) "A New Method
         // for
         // Gray-Level Picture Thresholding Using the Entropy of the
@@ -991,43 +961,43 @@ UnaryOperation<OpsHistogram, DoubleType> {
         double totEnt; /* total entropy */
         double maxEnt; /* max entropy */
         double entBack; /*
-         * entropy of the background pixels at a given
-         * threshold
-         */
+                        * entropy of the background pixels at a given
+                        * threshold
+                        */
         double entObj; /*
-         * entropy of the object pixels at a given
-         * threshold
-         */
+                       * entropy of the object pixels at a given
+                       * threshold
+                       */
         double omega;
-        final double[] normHisto = new double[MAXVALUE + 1]; /*
-         * normalized
-         * histogram
-         */
-        final double[] P1 = new double[MAXVALUE + 1]; /*
-         * cumulative normalized
-         * histogram
-         */
-        final double[] P2 = new double[MAXVALUE + 1];
+        final double[] normHisto = new double[m_maxValue + 1]; /*
+                                                               * normalized
+                                                               * histogram
+                                                               */
+        final double[] P1 = new double[m_maxValue + 1]; /*
+                                                        * cumulative normalized
+                                                        * histogram
+                                                        */
+        final double[] P2 = new double[m_maxValue + 1];
 
         int total = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             total += data[ih];
         }
 
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
-            normHisto[ih] = (double) data[ih] / total;
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
+            normHisto[ih] = (double)data[ih] / total;
         }
 
         P1[0] = normHisto[0];
         P2[0] = 1.0 - P1[0];
-        for (ih = 1; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 1; ih < (m_maxValue + 1); ih++) {
             P1[ih] = P1[ih - 1] + normHisto[ih];
             P2[ih] = 1.0 - P1[ih];
         }
 
         /* Determine the first non-zero bin */
         firstBin = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             if (!(Math.abs(P1[ih]) < 2.220446049250313E-16)) {
                 firstBin = ih;
                 break;
@@ -1035,8 +1005,8 @@ UnaryOperation<OpsHistogram, DoubleType> {
         }
 
         /* Determine the last non-zero bin */
-        lastBin = MAXVALUE;
-        for (ih = MAXVALUE; ih >= firstBin; ih--) {
+        lastBin = m_maxValue;
+        for (ih = m_maxValue; ih >= firstBin; ih--) {
             if (!(Math.abs(P2[ih]) < 2.220446049250313E-16)) {
                 lastBin = ih;
                 break;
@@ -1059,19 +1029,15 @@ UnaryOperation<OpsHistogram, DoubleType> {
             entBack = 0.0;
             for (ih = 0; ih <= it; ih++) {
                 if (data[ih] != 0) {
-                    entBack -= (normHisto[ih] / P1[it])
-                            * Math.log(normHisto[ih]
-                                    / P1[it]);
+                    entBack -= (normHisto[ih] / P1[it]) * Math.log(normHisto[ih] / P1[it]);
                 }
             }
 
             /* Entropy of the object pixels */
             entObj = 0.0;
-            for (ih = it + 1; ih < (MAXVALUE + 1); ih++) {
+            for (ih = it + 1; ih < (m_maxValue + 1); ih++) {
                 if (data[ih] != 0) {
-                    entObj -= (normHisto[ih] / P2[it])
-                            * Math.log(normHisto[ih]
-                                    / P2[it]);
+                    entObj -= (normHisto[ih] / P2[it]) * Math.log(normHisto[ih] / P2[it]);
                 }
             }
 
@@ -1103,15 +1069,12 @@ UnaryOperation<OpsHistogram, DoubleType> {
 
             /* Entropy of the object pixels */
             entObj = 0.0;
-            for (ih = it + 1; ih < (MAXVALUE + 1); ih++) {
+            for (ih = it + 1; ih < (m_maxValue + 1); ih++) {
                 entObj += Math.sqrt(normHisto[ih] / P2[it]);
             }
 
             /* Total entropy */
-            totEnt = term
-                    * ((entBack * entObj) > 0.0 ? Math
-                            .log(entBack * entObj)
-                            : 0.0);
+            totEnt = term * ((entBack * entObj) > 0.0 ? Math.log(entBack * entObj) : 0.0);
 
             if (totEnt > maxEnt) {
                 maxEnt = totEnt;
@@ -1131,22 +1094,17 @@ UnaryOperation<OpsHistogram, DoubleType> {
             /* Entropy of the background pixels */
             entBack = 0.0;
             for (ih = 0; ih <= it; ih++) {
-                entBack += (normHisto[ih] * normHisto[ih])
-                        / (P1[it] * P1[it]);
+                entBack += (normHisto[ih] * normHisto[ih]) / (P1[it] * P1[it]);
             }
 
             /* Entropy of the object pixels */
             entObj = 0.0;
-            for (ih = it + 1; ih < (MAXVALUE + 1); ih++) {
-                entObj += (normHisto[ih] * normHisto[ih])
-                        / (P2[it] * P2[it]);
+            for (ih = it + 1; ih < (m_maxValue + 1); ih++) {
+                entObj += (normHisto[ih] * normHisto[ih]) / (P2[it] * P2[it]);
             }
 
             /* Total entropy */
-            totEnt = term
-                    * ((entBack * entObj) > 0.0 ? Math
-                            .log(entBack * entObj)
-                            : 0.0);
+            totEnt = term * ((entBack * entObj) > 0.0 ? Math.log(entBack * entObj) : 0.0);
 
             if (totEnt > maxEnt) {
                 maxEnt = totEnt;
@@ -1198,15 +1156,13 @@ UnaryOperation<OpsHistogram, DoubleType> {
         // IJ.log(""+t_star1+" "+t_star2+" "+t_star3);
         /* Determine the optimal threshold value */
         omega = P1[tStar3] - P1[tStar1];
-        optThreshold = (int) ((tStar1
-                * (P1[tStar1] + (0.25 * omega * beta1))) + (0.25
-                        * tStar2 * omega * beta2) + (tStar3
-                                * (P2[tStar3] + (0.25 * omega * beta3))));
+        optThreshold =
+                (int)((tStar1 * (P1[tStar1] + (0.25 * omega * beta1))) + (0.25 * tStar2 * omega * beta2) + (tStar3 * (P2[tStar3] + (0.25 * omega * beta3))));
 
         return optThreshold;
     }
 
-    static int Shanbhag(final int[] data) {
+    int Shanbhag(final int[] data) {
         // Shanhbag A.G. (1994) "Utilization of Information Measure as a
         // Means
         // of
@@ -1224,42 +1180,42 @@ UnaryOperation<OpsHistogram, DoubleType> {
         double tot_ent; /* total entropy */
         double min_ent; /* max entropy */
         double ent_back; /*
-         * entropy of the background pixels at a given
-         * threshold
-         */
+                         * entropy of the background pixels at a given
+                         * threshold
+                         */
         double ent_obj; /*
-         * entropy of the object pixels at a given
-         * threshold
-         */
-        final double[] norm_histo = new double[MAXVALUE + 1]; /*
-         * normalized
-         * histogram
-         */
-        final double[] P1 = new double[MAXVALUE + 1]; /*
-         * cumulative normalized
-         * histogram
-         */
-        final double[] P2 = new double[MAXVALUE + 1];
+                        * entropy of the object pixels at a given
+                        * threshold
+                        */
+        final double[] norm_histo = new double[m_maxValue + 1]; /*
+                                                                * normalized
+                                                                * histogram
+                                                                */
+        final double[] P1 = new double[m_maxValue + 1]; /*
+                                                        * cumulative normalized
+                                                        * histogram
+                                                        */
+        final double[] P2 = new double[m_maxValue + 1];
 
         int total = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             total += data[ih];
         }
 
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
-            norm_histo[ih] = (double) data[ih] / total;
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
+            norm_histo[ih] = (double)data[ih] / total;
         }
 
         P1[0] = norm_histo[0];
         P2[0] = 1.0 - P1[0];
-        for (ih = 1; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 1; ih < (m_maxValue + 1); ih++) {
             P1[ih] = P1[ih - 1] + norm_histo[ih];
             P2[ih] = 1.0 - P1[ih];
         }
 
         /* Determine the first non-zero bin */
         first_bin = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             if (!(Math.abs(P1[ih]) < 2.220446049250313E-16)) {
                 first_bin = ih;
                 break;
@@ -1267,8 +1223,8 @@ UnaryOperation<OpsHistogram, DoubleType> {
         }
 
         /* Determine the last non-zero bin */
-        last_bin = MAXVALUE;
-        for (ih = MAXVALUE; ih >= first_bin; ih--) {
+        last_bin = m_maxValue;
+        for (ih = m_maxValue; ih >= first_bin; ih--) {
             if (!(Math.abs(P2[ih]) < 2.220446049250313E-16)) {
                 last_bin = ih;
                 break;
@@ -1285,18 +1241,15 @@ UnaryOperation<OpsHistogram, DoubleType> {
             ent_back = 0.0;
             term = 0.5 / P1[it];
             for (ih = 1; ih <= it; ih++) { // 0+1?
-                ent_back -= norm_histo[ih]
-                        * Math.log(1.0 - (term
-                                * P1[ih - 1]));
+                ent_back -= norm_histo[ih] * Math.log(1.0 - (term * P1[ih - 1]));
             }
             ent_back *= term;
 
             /* Entropy of the object pixels */
             ent_obj = 0.0;
             term = 0.5 / P2[it];
-            for (ih = it + 1; ih < (MAXVALUE + 1); ih++) {
-                ent_obj -= norm_histo[ih]
-                        * Math.log(1.0 - (term * P2[ih]));
+            for (ih = it + 1; ih < (m_maxValue + 1); ih++) {
+                ent_obj -= norm_histo[ih] * Math.log(1.0 - (term * P2[ih]));
             }
             ent_obj *= term;
 
@@ -1311,7 +1264,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
         return threshold;
     }
 
-    static int Triangle(final int[] data) {
+    int Triangle(final int[] data) {
         // Zack, G. W., Rogers, W. E. and Latt, S. A., 1977,
         // Automatic Measurement of Sister Chromatid Exchange Frequency,
         // Journal of Histochemistry and Cytochemistry 25 (7), pp.
@@ -1342,17 +1295,17 @@ UnaryOperation<OpsHistogram, DoubleType> {
         // data is
         // furthest, and use that as
         // the other extreme.
-        for (int i = MAXVALUE; i > 0; i--) {
+        for (int i = m_maxValue; i > 0; i--) {
             if (data[i] > 0) {
                 min2 = i;
                 break;
             }
         }
-        if (min2 < MAXVALUE) {
+        if (min2 < m_maxValue) {
             min2++; // line to the (p==0) point, not to data[min]
         }
 
-        for (int i = 0; i < (MAXVALUE + 1); i++) {
+        for (int i = 0; i < (m_maxValue + 1); i++) {
             if (data[i] > dmax) {
                 max = i;
                 dmax = data[i];
@@ -1366,7 +1319,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
             // IJ.log("Reversing histogram.");
             inverted = true;
             int left = 0; // index of leftmost element
-            int right = MAXVALUE; // index of rightmost element
+            int right = m_maxValue; // index of rightmost element
             while (left < right) {
                 // exchange the left and right elements
                 final int temp = data[left];
@@ -1376,8 +1329,8 @@ UnaryOperation<OpsHistogram, DoubleType> {
                 left++;
                 right--;
             }
-            min = MAXVALUE - min2;
-            max = MAXVALUE - max;
+            min = m_maxValue - min2;
+            max = m_maxValue - max;
         }
 
         if (min == max) {
@@ -1415,7 +1368,7 @@ UnaryOperation<OpsHistogram, DoubleType> {
             // let's reverse
             // it back
             int left = 0;
-            int right = MAXVALUE;
+            int right = m_maxValue;
             while (left < right) {
                 final int temp = data[left];
                 data[left] = data[right];
@@ -1423,12 +1376,12 @@ UnaryOperation<OpsHistogram, DoubleType> {
                 left++;
                 right--;
             }
-            return (MAXVALUE - split);
+            return (m_maxValue - split);
         }
         return split;
     }
 
-    static int Yen(final int[] data) {
+    int Yen(final int[] data) {
         // Implements Yen thresholding method
         // 1) Yen J.C., Chang F.J., and Chang S. (1995) "A New Criterion
         // for Automatic Multilevel Thresholding" IEEE Trans. on Image
@@ -1449,56 +1402,48 @@ UnaryOperation<OpsHistogram, DoubleType> {
         int ih, it;
         double crit;
         double maxCrit;
-        final double[] normHisto = new double[MAXVALUE + 1]; /*
-         * normalized
-         * histogram
-         */
-        final double[] p1 = new double[MAXVALUE + 1]; /*
-         * cumulative normalized
-         * histogram
-         */
-        final double[] p1Sq = new double[MAXVALUE + 1];
-        final double[] p2Sq = new double[MAXVALUE + 1];
+        final double[] normHisto = new double[m_maxValue + 1]; /*
+                                                               * normalized
+                                                               * histogram
+                                                               */
+        final double[] p1 = new double[m_maxValue + 1]; /*
+                                                        * cumulative normalized
+                                                        * histogram
+                                                        */
+        final double[] p1Sq = new double[m_maxValue + 1];
+        final double[] p2Sq = new double[m_maxValue + 1];
 
         int total = 0;
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
             total += data[ih];
         }
 
-        for (ih = 0; ih < (MAXVALUE + 1); ih++) {
-            normHisto[ih] = (double) data[ih] / total;
+        for (ih = 0; ih < (m_maxValue + 1); ih++) {
+            normHisto[ih] = (double)data[ih] / total;
         }
 
         p1[0] = normHisto[0];
-        for (ih = 1; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 1; ih < (m_maxValue + 1); ih++) {
             p1[ih] = p1[ih - 1] + normHisto[ih];
         }
 
         p1Sq[0] = normHisto[0] * normHisto[0];
-        for (ih = 1; ih < (MAXVALUE + 1); ih++) {
+        for (ih = 1; ih < (m_maxValue + 1); ih++) {
             p1Sq[ih] = p1Sq[ih - 1] + (normHisto[ih] * normHisto[ih]);
         }
 
-        p2Sq[MAXVALUE] = 0.0;
+        p2Sq[m_maxValue] = 0.0;
         for (ih = 254; ih >= 0; ih--) {
-            p2Sq[ih] = p2Sq[ih + 1] + (normHisto[ih + 1]
-                    * normHisto[ih + 1]);
+            p2Sq[ih] = p2Sq[ih + 1] + (normHisto[ih + 1] * normHisto[ih + 1]);
         }
 
         /* Find the threshold that maximizes the criterion */
         threshold = -1;
         maxCrit = Double.MIN_VALUE;
-        for (it = 0; it < (MAXVALUE + 1); it++) {
-            crit = (-1.0
-                    * ((p1Sq[it] * p2Sq[it]) > 0.0 ? Math
-                            .log(p1Sq[it]
-                                    * p2Sq[it])
-                                    : 0.0))
-                                    + (2
-                                            * ((p1[it] * (1.0 - p1[it])) > 0.0 ? Math
-                                                    .log(p1[it]
-                                                            * (1.0 - p1[it]))
-                                                            : 0.0));
+        for (it = 0; it < (m_maxValue + 1); it++) {
+            crit =
+                    (-1.0 * ((p1Sq[it] * p2Sq[it]) > 0.0 ? Math.log(p1Sq[it] * p2Sq[it]) : 0.0))
+                            + (2 * ((p1[it] * (1.0 - p1[it])) > 0.0 ? Math.log(p1[it] * (1.0 - p1[it])) : 0.0));
             if (crit > maxCrit) {
                 maxCrit = crit;
                 threshold = it;
