@@ -144,10 +144,10 @@ public class ExtendedEM {
      * @throws Exception if n is 0
      */
 
-    public void setNumClusters(final int n) throws Exception {
+    public void setNumClusters(final int n) {
 
         if (n == 0) {
-            throw new Exception("Number of clusters must be > 0. (or -1 to " + "select by cross validation).");
+            throw new RuntimeException("Number of clusters must be > 0. (or -1 to " + "select by cross validation).");
         }
 
         if (n < 0) {
@@ -185,7 +185,7 @@ public class ExtendedEM {
      * @param inst the instances
      * @throws Exception if initialization fails
      **/
-    private void EM_Init(final InstancesTmp inst) throws Exception {
+    private void EM_Init(final InstancesTmp inst) {
         int i, j;
 
         m_weights = new double[inst.numInstances()][m_numClusters];
@@ -231,7 +231,7 @@ public class ExtendedEM {
      * @param inst the instances
      * @throws Exception if priors can't be calculated
      **/
-    private void estimate_priors(final InstancesTmp inst) throws Exception {
+    private void estimate_priors(final InstancesTmp inst) {
 
         for (int i = 0; i < m_numClusters; i++) {
             m_priors[i] = 0.0;
@@ -263,7 +263,7 @@ public class ExtendedEM {
      * @param inst the training instances
      * @throws Exception if something goes wrong
      */
-    private void M(final InstancesTmp inst) throws Exception {
+    private void M(final InstancesTmp inst) {
 
         int i, j, l;
 
@@ -335,7 +335,7 @@ public class ExtendedEM {
      * @return the average log likelihood
      * @throws Exception if computation fails
      */
-    private double E(final InstancesTmp inst, final boolean change_weights) throws Exception {
+    private double E(final InstancesTmp inst, final boolean change_weights) {
 
         double loglk = 0.0, sOW = 0.0;
 
@@ -403,7 +403,7 @@ public class ExtendedEM {
      * @param data set of instances serving as training data
      * @throws Exception if the clusterer has not been generated successfully
      */
-    public void buildClusterer(final InstancesTmp data) throws Exception {
+    public void buildClusterer(final InstancesTmp data) {
         m_theInstances = data;
 
         // calculate min and max values for attributes
@@ -427,7 +427,7 @@ public class ExtendedEM {
      *
      * @throws Exception if something goes wrong
      */
-    private void doEM() throws Exception {
+    private void doEM()  {
 
         m_rr = new Random(getSeed());
 
@@ -453,7 +453,7 @@ public class ExtendedEM {
      * @return the log likelihood of the data
      * @throws Exception if something goes wrong
      */
-    private double iterate(final InstancesTmp inst, final boolean report) throws Exception {
+    private double iterate(final InstancesTmp inst, final boolean report)  {
 
         int i;
         double llkold = 0.0;
@@ -531,7 +531,7 @@ public class ExtendedEM {
         return maxIndex;
     }
 
-    public double logDensityForInstance(final InstanceTmp instance) throws Exception {
+    public double logDensityForInstance(final InstanceTmp instance)  {
 
         final double[] a = logJointDensitiesForInstance(instance);
         final double max = a[maxIndex(a)];

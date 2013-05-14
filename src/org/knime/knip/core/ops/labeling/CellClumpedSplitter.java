@@ -391,7 +391,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
         }
 
         @Override
-        public Long call() throws Exception {
+        public Long call() {
             final long start = System.nanoTime();
             /*
              * set predicted number of clusters. generates
@@ -495,9 +495,8 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
          *
          * @param seedPoints seed points
          * @return result of EM Algorithm
-         * @throws Exception
          */
-        private ExtendedEM performEMAlgo(final InstancesTmp seedPoints) throws Exception {
+        private ExtendedEM performEMAlgo(final InstancesTmp seedPoints) {
             final ExtendedEM res = new ExtendedEM();
             /*
              * set cluster centers
@@ -783,10 +782,8 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
          * @param extendedEM result of finished EM
          * @param emClusterCenters new calculated cluster centers
          * @return separation of given clustering
-         * @throws Exception
          */
-        private double getSeperation(final ExtendedEM extendedEM, final ArrayList<long[]> emClusterCenters)
-                throws Exception {
+        private double getSeperation(final ExtendedEM extendedEM, final ArrayList<long[]> emClusterCenters) {
             double res = 0;
             for (int i = 0; i < m_predictionOfCluster; ++i) {
                 m_distanceMapRoiCursor.reset();
@@ -812,10 +809,8 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
          * @param extendedEM result of finished EM
          * @param emClusterCenters new calculated cluster centers
          * @return compactness of given clustering
-         * @throws Exception
          */
-        private double getCompactness(final ExtendedEM extendedEM, final ArrayList<long[]> emClusterCenters)
-                throws Exception {
+        private double getCompactness(final ExtendedEM extendedEM, final ArrayList<long[]> emClusterCenters) {
             double res = 0;
             for (int i = 0; i < m_predictionOfCluster; ++i) {
                 double pkixkmiSum = 0;// numerator
