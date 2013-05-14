@@ -60,41 +60,41 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class LabelPanelHiliteSelectionChgEvent implements KNIPEvent {
 
-        private final Set<String> m_labels;
-        private final boolean m_hilite;
+    private final Set<String> m_labels;
+    private final boolean m_hilite;
 
-        public LabelPanelHiliteSelectionChgEvent(final Set<String> labels,
-                        final boolean hilite) {
-                m_labels = labels;
-                m_hilite = hilite;
+    public LabelPanelHiliteSelectionChgEvent(final Set<String> labels,
+                                             final boolean hilite) {
+        m_labels = labels;
+        m_hilite = hilite;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the labels
-         */
-        public Set<String> getLabels() {
-                return m_labels;
-        }
+    /**
+     * @return the labels
+     */
+    public Set<String> getLabels() {
+        return m_labels;
+    }
 
-        /**
-         * @return the hilite
-         */
-        public boolean isHilite() {
-                return m_hilite;
-        }
+    /**
+     * @return the hilite
+     */
+    public boolean isHilite() {
+        return m_hilite;
+    }
 
 }

@@ -58,17 +58,17 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class ResetCacheEvent implements KNIPEvent {
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
 }

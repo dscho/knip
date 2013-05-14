@@ -58,107 +58,107 @@ package org.knime.knip.core.util;
  * @author Thorsten Meinl, University of Konstanz
  */
 public final class Triple<F, S, T> {
-        private final F m_first;
-        private final S m_second;
-        private final T m_third;
+    private final F m_first;
+    private final S m_second;
+    private final T m_third;
 
-        /**
-         * Creates a new pair.
-         *
-         * @param first
-         *                the first object
-         * @param second
-         *                the second object
-         */
-        public Triple(final F first, final S second, final T third) {
-                m_first = first;
-                m_second = second;
-                m_third = third;
+    /**
+     * Creates a new pair.
+     *
+     * @param first
+     *                the first object
+     * @param second
+     *                the second object
+     */
+    public Triple(final F first, final S second, final T third) {
+        m_first = first;
+        m_second = second;
+        m_third = third;
+    }
+
+    /**
+     * Returns the first object.
+     *
+     * @return the first object
+     */
+    public F getFirst() {
+        return m_first;
+    }
+
+    /**
+     * Returns the second object.
+     *
+     * @return the second object
+     */
+    public S getSecond() {
+        return m_second;
+    }
+
+    /**
+     * Returns the third object.
+     *
+     * @return the third object
+     */
+    public T getThird() {
+        return m_third;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object o) {
+        if (!(o instanceof Triple)) {
+            return false;
         }
 
-        /**
-         * Returns the first object.
-         *
-         * @return the first object
-         */
-        public F getFirst() {
-                return m_first;
+        final Triple<?, ?, ?> p = (Triple<?, ?, ?>) o;
+        if (!areEqual(m_first, p.m_first)) {
+            return false;
         }
-
-        /**
-         * Returns the second object.
-         *
-         * @return the second object
-         */
-        public S getSecond() {
-                return m_second;
+        if (!areEqual(m_second, p.m_second)) {
+            return false;
         }
-
-        /**
-         * Returns the third object.
-         *
-         * @return the third object
-         */
-        public T getThird() {
-                return m_third;
+        if (!areEqual(m_third, p.m_third)) {
+            return false;
         }
+        return true;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean equals(final Object o) {
-                if (!(o instanceof Triple)) {
-                        return false;
-                }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        hash = (hash * 31) + (m_first == null ? 0 : m_first.hashCode());
+        hash = (hash * 31) + (m_second == null ? 0 : m_second.hashCode());
+        hash = (hash * 31) + (m_third == null ? 0 : m_third.hashCode());
+        return hash;
+    }
 
-                final Triple<?, ?, ?> p = (Triple<?, ?, ?>) o;
-                if (!areEqual(m_first, p.m_first)) {
-                        return false;
-                }
-                if (!areEqual(m_second, p.m_second)) {
-                        return false;
-                }
-                if (!areEqual(m_third, p.m_third)) {
-                        return false;
-                }
-                return true;
+    /**
+     * Determines if both arguments are equal according to their equals
+     * method (assumed to be symmetric). This method handles null arguments.
+     *
+     * @param o1
+     *                First object for comparison, may be <code>null</code>.
+     * @param o2
+     *                Second object for comparison, may be <code>null</code>
+     *                .
+     * @return If both arguments are equal (if either one is null, so must
+     *         be the other one)
+     */
+    private static boolean areEqual(final Object o1, final Object o2) {
+        if (o1 == o2) {
+            // same object or both are null
+            return true;
         }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-                int hash = 17;
-                hash = hash * 31 + (m_first == null ? 0 : m_first.hashCode());
-                hash = hash * 31 + (m_second == null ? 0 : m_second.hashCode());
-                hash = hash * 31 + (m_third == null ? 0 : m_third.hashCode());
-                return hash;
+        if (o1 != null) {
+            return o1.equals(o2);
+        } else {
+            // o2 != null && o1 == null
+            return false;
         }
-
-        /**
-         * Determines if both arguments are equal according to their equals
-         * method (assumed to be symmetric). This method handles null arguments.
-         *
-         * @param o1
-         *                First object for comparison, may be <code>null</code>.
-         * @param o2
-         *                Second object for comparison, may be <code>null</code>
-         *                .
-         * @return If both arguments are equal (if either one is null, so must
-         *         be the other one)
-         */
-        private static boolean areEqual(final Object o1, final Object o2) {
-                if (o1 == o2) {
-                        // same object or both are null
-                        return true;
-                }
-                if (o1 != null) {
-                        return o1.equals(o2);
-                } else {
-                        // o2 != null && o1 == null
-                        return false;
-                }
-        }
+    }
 }

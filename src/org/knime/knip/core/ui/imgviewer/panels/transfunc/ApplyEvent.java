@@ -58,7 +58,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  * No arguments.
  */
 public class ApplyEvent implements KNIPEvent {
-    
+
     /**
      * {@inheritDoc}
      */

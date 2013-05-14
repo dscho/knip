@@ -7,6 +7,6 @@ package org.knime.knip.core.awt.lookup;
  */
 public interface LookupTable<T, U> {
 
-        public U lookup(final T value);
+    public U lookup(final T value);
 
 }

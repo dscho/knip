@@ -65,138 +65,138 @@ import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
  * @author dietc, hornm, schoenenbergerf University of Konstanz
  */
 public class RectangleOverlayElement<L extends Comparable<L>> extends
-                AbstractPolygonOverlayElement<L> {
+AbstractPolygonOverlayElement<L> {
 
-        private Rectangle m_rect;
+    private Rectangle m_rect;
 
-        private double[] m_origin;
+    private double[] m_origin;
 
-        private double[] m_extend;
+    private double[] m_extend;
 
-        public RectangleOverlayElement(final long[] planePos, final int[] orientation,
-                        final String... labels) {
-                this(new Rectangle(), planePos, orientation, labels);
+    public RectangleOverlayElement(final long[] planePos, final int[] orientation,
+                                   final String... labels) {
+        this(new Rectangle(), planePos, orientation, labels);
+    }
+
+    public RectangleOverlayElement() {
+        super();
+        m_origin = new double[2];
+        m_extend = new double[2];
+    }
+
+    public RectangleOverlayElement(final Rectangle rect, final long[] planePos,
+                                   final int[] orientation, final String... labels) {
+        super(planePos, orientation, labels);
+        m_rect = rect;
+        m_origin = new double[2];
+        m_extend = new double[2];
+    }
+
+    public RectangleOverlayElement(final long[] min, final long[] max, final long[] planePos,
+                                   final int[] orientation, final String... labels) {
+        this(new Rectangle((int) min[orientation[0]],
+                           (int) min[orientation[1]],
+                           (int) ((max[orientation[0]]
+                                   - min[orientation[0]]) + 1),
+                                   (int) ((max[orientation[1]]
+                                           - min[orientation[1]]) + 1)),
+                                           planePos, orientation, labels);
+    }
+
+    public void setRectangle(final long minExtendX, final long minExtendY,
+                             final long maxExtendX, final long maxExtendY) {
+        m_poly.reset();
+
+        add(minExtendX, minExtendY);
+        add(maxExtendX, maxExtendY);
+
+        m_rect = getBoundingBox();
+
+    }
+
+    @Override
+    public boolean containsPoint(final long x, final long y) {
+        return m_rect.contains((int) x, (int) y);
+    }
+
+    @Override
+    public void renderInterior(final Graphics2D g) {
+        if ((getStatus() == OverlayElementStatus.ACTIVE)
+                || (getStatus() == OverlayElementStatus.DRAWING)) {
+            renderPointInterior(g);
         }
 
-        public RectangleOverlayElement() {
-                super();
-                m_origin = new double[2];
-                m_extend = new double[2];
+        g.fillRect(m_rect.x, m_rect.y, m_rect.width, m_rect.height);
+    }
+
+    @Override
+    public void renderOutline(final Graphics2D g) {
+
+        if ((getStatus() == OverlayElementStatus.ACTIVE)
+                || (getStatus() == OverlayElementStatus.DRAWING)) {
+            renderPointOutline(g);
         }
 
-        public RectangleOverlayElement(final Rectangle rect, final long[] planePos,
-                        final int[] orientation, final String... labels) {
-                super(planePos, orientation, labels);
-                m_rect = rect;
-                m_origin = new double[2];
-                m_extend = new double[2];
+        g.drawRect(m_rect.x, m_rect.y, m_rect.width, m_rect.height);
+    }
+
+    @Override
+    public boolean add(final long x, final long y) {
+        if (super.add(x, y)) {
+            m_rect = getBoundingBox();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void translate(final int m_selectedIndex, final long x, final long y) {
+        m_poly.xpoints[m_selectedIndex] += x;
+        m_poly.ypoints[m_selectedIndex] += y;
+        m_poly.invalidate();
+        m_rect = getBoundingBox();
+    }
+
+    @Override
+    public void translate(final long x, final long y) {
+        super.translate(x, y);
+        m_rect = getBoundingBox();
+    }
+
+    @Override
+    public IterableRegionOfInterest getRegionOfInterest() {
+        m_origin[0] = m_rect.x;
+        m_origin[1] = m_rect.y;
+        m_extend[0] = m_rect.width;
+        m_extend[1] = m_rect.height;
+        return new RectangleRegionOfInterest(m_origin, m_extend);
+    }
+
+    @Override
+    protected void renderPointInterior(final Graphics2D g) {
+        for (int i = 0; i < m_poly.npoints; i++) {
+            g.fillOval(m_poly.xpoints[i] - DRAWING_RADIUS,
+                       m_poly.ypoints[i] - DRAWING_RADIUS,
+                       2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
         }
 
-        public RectangleOverlayElement(final long[] min, final long[] max, final long[] planePos,
-                        final int[] orientation, final String... labels) {
-                this(new Rectangle((int) min[orientation[0]],
-                                (int) min[orientation[1]],
-                                (int) (max[orientation[0]]
-                                                - min[orientation[0]] + 1),
-                                (int) (max[orientation[1]]
-                                                - min[orientation[1]] + 1)),
-                                planePos, orientation, labels);
+    }
+
+    @Override
+    protected void renderPointOutline(final Graphics2D g) {
+        for (int i = 0; i < m_poly.npoints; i++) {
+            g.drawOval(m_poly.xpoints[i] - DRAWING_RADIUS,
+                       m_poly.ypoints[i] - DRAWING_RADIUS,
+                       2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
         }
+    }
 
-        public void setRectangle(final long minExtendX, final long minExtendY,
-                        final long maxExtendX, final long maxExtendY) {
-                m_poly.reset();
-
-                add(minExtendX, minExtendY);
-                add(maxExtendX, maxExtendY);
-
-                m_rect = getBoundingBox();
-
-        }
-
-        @Override
-        public boolean containsPoint(final long x, final long y) {
-                return m_rect.contains((int) x, (int) y);
-        }
-
-        @Override
-        public void renderInterior(final Graphics2D g) {
-                if (getStatus() == OverlayElementStatus.ACTIVE
-                                || getStatus() == OverlayElementStatus.DRAWING) {
-                        renderPointInterior(g);
-                }
-
-                g.fillRect(m_rect.x, m_rect.y, m_rect.width, m_rect.height);
-        }
-
-        @Override
-        public void renderOutline(final Graphics2D g) {
-
-                if (getStatus() == OverlayElementStatus.ACTIVE
-                                || getStatus() == OverlayElementStatus.DRAWING) {
-                        renderPointOutline(g);
-                }
-
-                g.drawRect(m_rect.x, m_rect.y, m_rect.width, m_rect.height);
-        }
-
-        @Override
-        public boolean add(final long x, final long y) {
-                if (super.add(x, y)) {
-                        m_rect = getBoundingBox();
-                        return true;
-                } else {
-                        return false;
-                }
-        }
-
-        @Override
-        public void translate(final int m_selectedIndex, final long x, final long y) {
-                m_poly.xpoints[m_selectedIndex] += x;
-                m_poly.ypoints[m_selectedIndex] += y;
-                m_poly.invalidate();
-                m_rect = getBoundingBox();
-        }
-
-        @Override
-        public void translate(final long x, final long y) {
-                super.translate(x, y);
-                m_rect = getBoundingBox();
-        }
-
-        @Override
-        public IterableRegionOfInterest getRegionOfInterest() {
-                m_origin[0] = m_rect.x;
-                m_origin[1] = m_rect.y;
-                m_extend[0] = m_rect.width;
-                m_extend[1] = m_rect.height;
-                return new RectangleRegionOfInterest(m_origin, m_extend);
-        }
-
-        @Override
-        protected void renderPointInterior(final Graphics2D g) {
-                for (int i = 0; i < m_poly.npoints; i++) {
-                        g.fillOval(m_poly.xpoints[i] - DRAWING_RADIUS,
-                                        m_poly.ypoints[i] - DRAWING_RADIUS,
-                                        2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
-                }
-
-        }
-
-        @Override
-        protected void renderPointOutline(final Graphics2D g) {
-                for (int i = 0; i < m_poly.npoints; i++) {
-                        g.drawOval(m_poly.xpoints[i] - DRAWING_RADIUS,
-                                        m_poly.ypoints[i] - DRAWING_RADIUS,
-                                        2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
-                }
-        }
-
-        @Override
-        public void readExternal(final ObjectInput in) throws IOException,
-                        ClassNotFoundException {
-                super.readExternal(in);
-                m_rect = getBoundingBox();
-        }
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException,
+    ClassNotFoundException {
+        super.readExternal(in);
+        m_rect = getBoundingBox();
+    }
 
 }

@@ -73,7 +73,7 @@ public class ForceChgEvent implements KNIPEvent {
     public boolean getVal() {
         return m_val;
     }
-    
+
     /**
      * {@inheritDoc}
      */

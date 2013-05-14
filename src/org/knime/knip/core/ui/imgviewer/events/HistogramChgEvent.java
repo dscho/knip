@@ -58,30 +58,30 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class HistogramChgEvent implements KNIPEvent {
 
-        private final int[] m_histogram;
+    private final int[] m_histogram;
 
-        public HistogramChgEvent(final int[] histogram) {
-                m_histogram = histogram;
+    public HistogramChgEvent(final int[] histogram) {
+        m_histogram = histogram;
 
-        }
+    }
 
-        /**
-         * @return the histogram
-         */
-        public int[] getHistogram() {
-                return m_histogram;
-        }
+    /**
+     * @return the histogram
+     */
+    public int[] getHistogram() {
+        return m_histogram;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 }

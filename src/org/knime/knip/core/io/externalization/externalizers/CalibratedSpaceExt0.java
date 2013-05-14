@@ -64,65 +64,65 @@ import org.knime.knip.core.io.externalization.Externalizer;
  */
 public class CalibratedSpaceExt0 implements Externalizer<CalibratedSpace> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<CalibratedSpace> getType() {
+        return CalibratedSpace.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CalibratedSpace read(final BufferedDataInputStream in)
+            throws Exception {
+        final int numDims = in.readInt();
+        final CalibratedSpace res = new CalibratedSpaceImpl(numDims);
+        for (int d = 0; d < numDims; d++) {
+            final char[] label = new char[in.readInt()];
+            in.read(label);
+            res.setAxis(Axes.get(String.valueOf(label)), d);
+            res.setCalibration(in.readDouble(), d);
+        }
+        return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final CalibratedSpace obj)
+            throws Exception {
+        out.writeInt(obj.numDimensions());
+        for (int d = 0; d < obj.numDimensions(); d++) {
+            final char[] label = obj.axis(d).getLabel().toCharArray();
+            out.writeInt(label.length);
+            out.write(label);
+            if (Double.isNaN(obj.calibration(d))) {
+                out.writeDouble(0.0d);
+            } else {
+                out.writeDouble(obj.calibration(d));
+            }
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<CalibratedSpace> getType() {
-                return CalibratedSpace.class;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public CalibratedSpace read(final BufferedDataInputStream in)
-                        throws Exception {
-                final int numDims = in.readInt();
-                final CalibratedSpace res = new CalibratedSpaceImpl(numDims);
-                for (int d = 0; d < numDims; d++) {
-                        final char[] label = new char[in.readInt()];
-                        in.read(label);
-                        res.setAxis(Axes.get(String.valueOf(label)), d);
-                        res.setCalibration(in.readDouble(), d);
-                }
-                return res;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final CalibratedSpace obj)
-                        throws Exception {
-                out.writeInt(obj.numDimensions());
-                for (int d = 0; d < obj.numDimensions(); d++) {
-                        final char[] label = obj.axis(d).getLabel().toCharArray();
-                        out.writeInt(label.length);
-                        out.write(label);
-                        if (Double.isNaN(obj.calibration(d))) {
-                                out.writeDouble(0.0d);
-                        } else {
-                                out.writeDouble(obj.calibration(d));
-                        }
-                }
-
-        }
+    }
 
 }

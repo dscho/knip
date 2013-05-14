@@ -60,80 +60,80 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.ValuePair;
 
 public class ImgNormalize<T extends RealType<T>> implements
-                UnaryOutputOperation<Img<T>, Img<T>> {
+UnaryOutputOperation<Img<T>, Img<T>> {
 
-        private final double m_saturation;
-        private final T m_val;
-        private ValuePair<T, T> m_minmaxtarget, m_minmaxsource;
-        private final boolean m_isManual;
-        private final boolean m_isTarget;
+    private final double m_saturation;
+    private final T m_val;
+    private ValuePair<T, T> m_minmaxtarget, m_minmaxsource;
+    private final boolean m_isManual;
+    private final boolean m_isTarget;
 
-        public ImgNormalize(final double saturation, final T val, final ValuePair<T, T> minmax,
+    public ImgNormalize(final double saturation, final T val, final ValuePair<T, T> minmax,
                         final boolean isTarget) {
-                m_saturation = saturation;
-                m_val = val;
-                m_isTarget = isTarget;
-                if (isTarget) {
-                        m_minmaxtarget = minmax;
-                } else {
-                        m_minmaxsource = minmax;
-                }
-
-                m_isManual = minmax != null;
-
+        m_saturation = saturation;
+        m_val = val;
+        m_isTarget = isTarget;
+        if (isTarget) {
+            m_minmaxtarget = minmax;
+        } else {
+            m_minmaxsource = minmax;
         }
 
-        @Override
-        public Img<T> compute(final Img<T> input, final Img<T> output) {
+        m_isManual = minmax != null;
 
-                if (m_minmaxtarget == null) {
-                        final T min = m_val.createVariable();
-                        final T max = m_val.createVariable();
-                        min.setReal(m_val.getMinValue());
-                        max.setReal(m_val.getMaxValue());
+    }
 
-                        m_minmaxtarget = new ValuePair<T, T>(min, max);
-                }
+    @Override
+    public Img<T> compute(final Img<T> input, final Img<T> output) {
 
-                if (m_minmaxsource == null) {
-                        m_minmaxsource = Operations.compute(new MinMax<T>(
-                                        m_saturation, m_val), input);
-                }
+        if (m_minmaxtarget == null) {
+            final T min = m_val.createVariable();
+            final T max = m_val.createVariable();
+            min.setReal(m_val.getMinValue());
+            max.setReal(m_val.getMaxValue());
 
-                Operations.map(new Normalize<T>(m_minmaxsource.a,
-                                m_minmaxsource.b, m_minmaxtarget.a,
-                                m_minmaxtarget.b)).compute(input, output);
-
-                if (!m_isManual) {
-                        m_minmaxsource = null;
-                        m_minmaxtarget = null;
-                } else if (m_isTarget) {
-                        m_minmaxsource = null;
-                } else {
-                        m_minmaxtarget = null;
-                }
-
-                return output;
+            m_minmaxtarget = new ValuePair<T, T>(min, max);
         }
 
-        @Override
-        public UnaryObjectFactory<Img<T>, Img<T>> bufferFactory() {
-                return new UnaryObjectFactory<Img<T>, Img<T>>() {
-                        @Override
-                        public Img<T> instantiate(final Img<T> a) {
-                                return a.factory()
-                                                .create(a,
-                                                                a.firstElement()
-                                                                                .createVariable());
-                        }
-                };
+        if (m_minmaxsource == null) {
+            m_minmaxsource = Operations.compute(new MinMax<T>(
+                    m_saturation, m_val), input);
         }
 
-        @Override
-        public UnaryOutputOperation<Img<T>, Img<T>> copy() {
-                return new ImgNormalize<T>(m_saturation,
-                                m_val.createVariable(),
-                                m_isTarget ? m_minmaxtarget : m_minmaxsource,
-                                m_isTarget);
+        Operations.map(new Normalize<T>(m_minmaxsource.a,
+                m_minmaxsource.b, m_minmaxtarget.a,
+                m_minmaxtarget.b)).compute(input, output);
+
+        if (!m_isManual) {
+            m_minmaxsource = null;
+            m_minmaxtarget = null;
+        } else if (m_isTarget) {
+            m_minmaxsource = null;
+        } else {
+            m_minmaxtarget = null;
         }
+
+        return output;
+    }
+
+    @Override
+    public UnaryObjectFactory<Img<T>, Img<T>> bufferFactory() {
+        return new UnaryObjectFactory<Img<T>, Img<T>>() {
+            @Override
+            public Img<T> instantiate(final Img<T> a) {
+                return a.factory()
+                        .create(a,
+                                a.firstElement()
+                                .createVariable());
+            }
+        };
+    }
+
+    @Override
+    public UnaryOutputOperation<Img<T>, Img<T>> copy() {
+        return new ImgNormalize<T>(m_saturation,
+                m_val.createVariable(),
+                m_isTarget ? m_minmaxtarget : m_minmaxsource,
+                        m_isTarget);
+    }
 }

@@ -101,308 +101,308 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
-                extends JPanel implements ViewerComponentContainer {
+extends JPanel implements ViewerComponentContainer {
 
-        /* def */
-        private static final long serialVersionUID = 1L;
+    /* def */
+    private static final long serialVersionUID = 1L;
 
-        /* Panels of the viewer accoding to the BorderLayout */
-        private JPanel m_southPanels;
+    /* Panels of the viewer accoding to the BorderLayout */
+    private JPanel m_southPanels;
 
-        private JPanel m_eastPanels;
+    private JPanel m_eastPanels;
 
-        private JPanel m_westPanels;
+    private JPanel m_westPanels;
 
-        private Container m_northPanels;
+    private Container m_northPanels;
 
-        private JPanel m_centerPanels;
+    private JPanel m_centerPanels;
 
-        /* keep the option panel-references to load and save configurations */
-        private List<ViewerComponent> m_viewerComponents;
+    /* keep the option panel-references to load and save configurations */
+    private List<ViewerComponent> m_viewerComponents;
 
-        /* EventService of the viewer, unique for each viewer. */
-        protected EventService m_eventService;
+    /* EventService of the viewer, unique for each viewer. */
+    protected EventService m_eventService;
 
-        public ImgViewer() {
-                this(new EventService());
+    public ImgViewer() {
+        this(new EventService());
+
+    }
+
+    /**
+     * @param nodeModel
+     */
+    public ImgViewer(final EventService eventService) {
+
+        m_eventService = eventService;
+        m_viewerComponents = new ArrayList<ViewerComponent>();
+        // content pane
+        setLayout(new BorderLayout());
+
+        m_centerPanels = new JPanel();
+        m_centerPanels.setLayout(new BoxLayout(m_centerPanels,
+                                               BoxLayout.Y_AXIS));
+        add(m_centerPanels, BorderLayout.CENTER);
+
+        m_southPanels = new JPanel();
+        m_southPanels.setLayout(new BoxLayout(m_southPanels,
+                                              BoxLayout.X_AXIS));
+        add(m_southPanels, BorderLayout.SOUTH);
+
+        m_eastPanels = new JPanel();
+        m_eastPanels.setLayout(new BoxLayout(m_eastPanels,
+                                             BoxLayout.Y_AXIS));
+        add(m_eastPanels, BorderLayout.EAST);
+
+        m_westPanels = new JPanel();
+        m_westPanels.setLayout(new BoxLayout(m_westPanels,
+                                             BoxLayout.Y_AXIS));
+        add(m_westPanels, BorderLayout.WEST);
+
+        m_northPanels = new JPanel();
+        m_northPanels.setLayout(new BoxLayout(m_northPanels,
+                                              BoxLayout.X_AXIS));
+        add(m_northPanels, BorderLayout.NORTH);
+
+    }
+
+    /**
+     * Adds the panel
+     */
+    @Override
+    public void addViewerComponent(final ViewerComponent panel) {
+        addViewerComponent(panel, true);
+
+    }
+
+    /**
+     * Adds the {@link ViewerComponent} to the {@link ImgViewer}
+     *
+     * @param panel
+     *                {@link ViewerComponent} to be set
+     *
+     * @param setEventService
+     *                indicates weather the {@link EventService} of the
+     *                {@link ImgViewer} shall be set to the
+     *                {@link ViewerComponent}
+     *
+     */
+    public void addViewerComponent(final ViewerComponent panel,
+                                   final boolean setEventService) {
+
+        if (setEventService) {
+            panel.setEventService(m_eventService);
+        }
+
+        m_viewerComponents.add(panel);
+
+        switch (panel.getPosition()) {
+            case CENTER:
+                m_centerPanels.add(panel);
+                break;
+            case NORTH:
+                m_northPanels.add(panel);
+                break;
+            case SOUTH:
+                m_southPanels.add(panel);
+                break;
+            case EAST:
+                m_eastPanels.add(panel);
+                break;
+            case WEST:
+                m_westPanels.add(panel);
+                break;
+            default: // hidden
 
         }
 
-        /**
-         * @param nodeModel
-         */
-        public ImgViewer(final EventService eventService) {
+    }
 
-                m_eventService = eventService;
-                m_viewerComponents = new ArrayList<ViewerComponent>();
-                // content pane
-                setLayout(new BorderLayout());
+    /**
+     * @return the event service used in this particular viewer (e.g. to
+     *         subscribe other listeners)
+     */
+    public EventService getEventService() {
+        return m_eventService;
+    }
 
-                m_centerPanels = new JPanel();
-                m_centerPanels.setLayout(new BoxLayout(m_centerPanels,
-                                BoxLayout.Y_AXIS));
-                add(m_centerPanels, BorderLayout.CENTER);
+    /**
+     * Set the current {@link Img} of the viewer
+     *
+     * @param img
+     *                {@link Img} to be set
+     * @param axes
+     *                {@link CalibratedSpace} of the {@link Img}
+     * @param name
+     *                {@link Named} of the {@link Img}
+     * @param imageMetaData
+     *                {@link ImageMetadata} might be null if no metadata
+     *                exists
+     */
+    public void setImg(final I img, final CalibratedSpace axes, final Named name,
+                       final Sourced source, final ImageMetadata imageMetaData) {
 
-                m_southPanels = new JPanel();
-                m_southPanels.setLayout(new BoxLayout(m_southPanels,
-                                BoxLayout.X_AXIS));
-                add(m_southPanels, BorderLayout.SOUTH);
-
-                m_eastPanels = new JPanel();
-                m_eastPanels.setLayout(new BoxLayout(m_eastPanels,
-                                BoxLayout.Y_AXIS));
-                add(m_eastPanels, BorderLayout.EAST);
-
-                m_westPanels = new JPanel();
-                m_westPanels.setLayout(new BoxLayout(m_westPanels,
-                                BoxLayout.Y_AXIS));
-                add(m_westPanels, BorderLayout.WEST);
-
-                m_northPanels = new JPanel();
-                m_northPanels.setLayout(new BoxLayout(m_northPanels,
-                                BoxLayout.X_AXIS));
-                add(m_northPanels, BorderLayout.NORTH);
-
+        // make sure that at least two dimensions exist
+        CalibratedSpace axes2d;
+        RandomAccessibleInterval<T> img2d;
+        if (img.numDimensions() > 1) {
+            axes2d = axes;
+            img2d = img;
+        } else {
+            img2d = Views.addDimension(img, 0, 0);
+            axes2d = new CopyCalibratedSpace<CalibratedSpace>(img2d)
+                    .compute(axes, new CalibratedSpaceImpl(
+                                                           2));
         }
 
-        /**
-         * Adds the panel
-         */
-        @Override
-        public void addViewerComponent(final ViewerComponent panel) {
-                addViewerComponent(panel, true);
+        final IterableInterval<T> iterable = Views.iterable(img2d);
 
+        if (iterable.firstElement() instanceof DoubleType) {
+            final Convert<DoubleType, FloatType> convertOp = new Convert<DoubleType, FloatType>(
+                    new DoubleType(), new FloatType(),
+                    TypeConversionTypes.DIRECT);
+
+            if (imageMetaData != null) {
+                m_eventService.publish(new ImgWithMetadataChgEvent<FloatType>(
+                        new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
+                                (RandomAccessibleInterval<DoubleType>) img2d,
+                                convertOp,
+                                new FloatType()),
+                                name, source, axes2d,
+                                imageMetaData));
+            } else {
+                m_eventService.publish(new IntervalWithMetadataChgEvent<FloatType>(
+                        new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
+                                (RandomAccessibleInterval<DoubleType>) img2d,
+                                convertOp,
+                                new FloatType()),
+                                name, source, axes2d));
+            }
+            m_eventService.publish(new ImgRedrawEvent());
+        } else {
+            if (imageMetaData != null) {
+                m_eventService.publish(new ImgWithMetadataChgEvent<T>(
+                        img2d, name, source, axes2d,
+                        imageMetaData));
+
+            } else {
+                m_eventService.publish(new IntervalWithMetadataChgEvent<T>(
+                        img2d, name, source, axes2d));
+
+            }
+            m_eventService.publish(new ImgRedrawEvent());
         }
 
-        /**
-         * Adds the {@link ViewerComponent} to the {@link ImgViewer}
-         *
-         * @param panel
-         *                {@link ViewerComponent} to be set
-         *
-         * @param setEventService
-         *                indicates weather the {@link EventService} of the
-         *                {@link ImgViewer} shall be set to the
-         *                {@link ViewerComponent}
-         *
-         */
-        public void addViewerComponent(final ViewerComponent panel,
-                        final boolean setEventService) {
+    }
 
-                if (setEventService) {
-                        panel.setEventService(m_eventService);
-                }
+    /**
+     * Save the current settings/state of an ImgViewer to a base64 coded
+     * String
+     *
+     * @return base64 coded String of the current settings/state of the
+     *         viewer
+     * @throws IOException
+     */
+    public String getComponentConfiguration() throws IOException {
+        String res = "";
+        try {
+            final ByteArrayOutputStream totalBytes = new ByteArrayOutputStream();
+            final ObjectOutputStream totalOut = new ObjectOutputStream(
+                                                                       totalBytes);
 
-                m_viewerComponents.add(panel);
+            totalOut.writeInt(m_viewerComponents.size());
 
-                switch (panel.getPosition()) {
-                case CENTER:
-                        m_centerPanels.add(panel);
-                        break;
-                case NORTH:
-                        m_northPanels.add(panel);
-                        break;
-                case SOUTH:
-                        m_southPanels.add(panel);
-                        break;
-                case EAST:
-                        m_eastPanels.add(panel);
-                        break;
-                case WEST:
-                        m_westPanels.add(panel);
-                        break;
-                default: // hidden
+            ByteArrayOutputStream componentBytes;
+            ObjectOutput componentOutput;
+            for (final ViewerComponent c : m_viewerComponents) {
 
-                }
+                componentBytes = new ByteArrayOutputStream();
+                componentOutput = new ObjectOutputStream(
+                                                         componentBytes);
+                c.saveComponentConfiguration(componentOutput);
+                componentOutput.close();
+                totalOut.writeUTF(c.getClass().getSimpleName());
 
+                totalOut.writeInt(componentBytes.size());
+                totalOut.write(componentBytes.toByteArray());
+                totalOut.flush();
+
+            }
+            totalOut.close();
+            res = new String(Base64.encodeBase64(totalBytes
+                                                 .toByteArray()));
+
+        } catch (final IOException e) {
+            e.printStackTrace();
         }
 
-        /**
-         * @return the event service used in this particular viewer (e.g. to
-         *         subscribe other listeners)
-         */
-        public EventService getEventService() {
-                return m_eventService;
+        return res;
+
+    }
+
+    /**
+     * Loading settings of the viewer from a base64Coded String produced by
+     * {@link ImgViewer#getComponentConfiguration()}
+     *
+     * @param base64coded
+     *                the base64 representation of the viewer state
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public void setComponentConfiguration(final String base64coded)
+            throws IOException, ClassNotFoundException {
+        final Map<String, ObjectInput> configMap = new HashMap<String, ObjectInput>();
+
+        if (base64coded.equals("")) {
+            return;
         }
 
-        /**
-         * Set the current {@link Img} of the viewer
-         *
-         * @param img
-         *                {@link Img} to be set
-         * @param axes
-         *                {@link CalibratedSpace} of the {@link Img}
-         * @param name
-         *                {@link Named} of the {@link Img}
-         * @param imageMetaData
-         *                {@link ImageMetadata} might be null if no metadata
-         *                exists
-         */
-        public void setImg(final I img, final CalibratedSpace axes, final Named name,
-                        final Sourced source, final ImageMetadata imageMetaData) {
+        try {
+            final byte[] bytes = Base64.decodeBase64(base64coded
+                                                     .getBytes());
+            final ObjectInputStream totalIn = new ObjectInputStream(
+                                                                    new ByteArrayInputStream(bytes));
 
-                // make sure that at least two dimensions exist
-                CalibratedSpace axes2d;
-                RandomAccessibleInterval<T> img2d;
-                if (img.numDimensions() > 1) {
-                        axes2d = axes;
-                        img2d = img;
-                } else {
-                        img2d = Views.addDimension(img, 0, 0);
-                        axes2d = new CopyCalibratedSpace<CalibratedSpace>(img2d)
-                                        .compute(axes, new CalibratedSpaceImpl(
-                                                        2));
+            final int num = totalIn.readInt();
+
+            String title = null;
+            byte[] buf;
+            for (int i = 0; i < num; i++) {
+                title = totalIn.readUTF();
+                final int len = totalIn.readInt();
+                buf = new byte[len];
+
+                for (int b = 0; b < len; b++) {
+                    buf[b] = totalIn.readByte();
                 }
+                configMap.put(title, new ObjectInputStream(
+                                                           new ByteArrayInputStream(buf)));
+            }
 
-                final IterableInterval<T> iterable = Views.iterable(img2d);
-
-                if (iterable.firstElement() instanceof DoubleType) {
-                        final Convert<DoubleType, FloatType> convertOp = new Convert<DoubleType, FloatType>(
-                                        new DoubleType(), new FloatType(),
-                                        TypeConversionTypes.DIRECT);
-
-                        if (imageMetaData != null) {
-                                m_eventService.publish(new ImgWithMetadataChgEvent<FloatType>(
-                                                new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                                                (RandomAccessibleInterval<DoubleType>) img2d,
-                                                                convertOp,
-                                                                new FloatType()),
-                                                name, source, axes2d,
-                                                imageMetaData));
-                        } else {
-                                m_eventService.publish(new IntervalWithMetadataChgEvent<FloatType>(
-                                                new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                                                (RandomAccessibleInterval<DoubleType>) img2d,
-                                                                convertOp,
-                                                                new FloatType()),
-                                                name, source, axes2d));
-                        }
-                        m_eventService.publish(new ImgRedrawEvent());
-                } else {
-                        if (imageMetaData != null) {
-                                m_eventService.publish(new ImgWithMetadataChgEvent<T>(
-                                                img2d, name, source, axes2d,
-                                                imageMetaData));
-
-                        } else {
-                                m_eventService.publish(new IntervalWithMetadataChgEvent<T>(
-                                                img2d, name, source, axes2d));
-
-                        }
-                        m_eventService.publish(new ImgRedrawEvent());
-                }
-
+            totalIn.close();
+        } catch (final IOException e) {
+            LoggerFactory.getLogger(ImgViewer.class).error("error",
+                                                           e);
+            return;
         }
 
-        /**
-         * Save the current settings/state of an ImgViewer to a base64 coded
-         * String
-         *
-         * @return base64 coded String of the current settings/state of the
-         *         viewer
-         * @throws IOException
-         */
-        public String getComponentConfiguration() throws IOException {
-                String res = "";
-                try {
-                        final ByteArrayOutputStream totalBytes = new ByteArrayOutputStream();
-                        final ObjectOutputStream totalOut = new ObjectOutputStream(
-                                        totalBytes);
-
-                        totalOut.writeInt(m_viewerComponents.size());
-
-                        ByteArrayOutputStream componentBytes;
-                        ObjectOutput componentOutput;
-                        for (final ViewerComponent c : m_viewerComponents) {
-
-                                componentBytes = new ByteArrayOutputStream();
-                                componentOutput = new ObjectOutputStream(
-                                                componentBytes);
-                                c.saveComponentConfiguration(componentOutput);
-                                componentOutput.close();
-                                totalOut.writeUTF(c.getClass().getSimpleName());
-
-                                totalOut.writeInt(componentBytes.size());
-                                totalOut.write(componentBytes.toByteArray());
-                                totalOut.flush();
-
-                        }
-                        totalOut.close();
-                        res = new String(Base64.encodeBase64(totalBytes
-                                        .toByteArray()));
-
-                } catch (final IOException e) {
-                        e.printStackTrace();
-                }
-
-                return res;
-
+        for (final ViewerComponent c : m_viewerComponents) {
+            final ObjectInput oi = configMap.get(c.getClass()
+                                                 .getSimpleName());
+            if (oi != null) {
+                c.loadComponentConfiguration(oi);
+            }
         }
+    }
 
-        /**
-         * Loading settings of the viewer from a base64Coded String produced by
-         * {@link ImgViewer#getComponentConfiguration()}
-         *
-         * @param base64coded
-         *                the base64 representation of the viewer state
-         * @throws IOException
-         * @throws ClassNotFoundException
-         */
-        public void setComponentConfiguration(final String base64coded)
-                        throws IOException, ClassNotFoundException {
-                final Map<String, ObjectInput> configMap = new HashMap<String, ObjectInput>();
-
-                if (base64coded.equals("")) {
-                        return;
-                }
-
-                try {
-                        final byte[] bytes = Base64.decodeBase64(base64coded
-                                        .getBytes());
-                        final ObjectInputStream totalIn = new ObjectInputStream(
-                                        new ByteArrayInputStream(bytes));
-
-                        final int num = totalIn.readInt();
-
-                        String title = null;
-                        byte[] buf;
-                        for (int i = 0; i < num; i++) {
-                                title = totalIn.readUTF();
-                                final int len = totalIn.readInt();
-                                buf = new byte[len];
-
-                                for (int b = 0; b < len; b++) {
-                                        buf[b] = totalIn.readByte();
-                                }
-                                configMap.put(title, new ObjectInputStream(
-                                                new ByteArrayInputStream(buf)));
-                        }
-
-                        totalIn.close();
-                } catch (final IOException e) {
-                        LoggerFactory.getLogger(ImgViewer.class).error("error",
-                                        e);
-                        return;
-                }
-
-                for (final ViewerComponent c : m_viewerComponents) {
-                        final ObjectInput oi = configMap.get(c.getClass()
-                                        .getSimpleName());
-                        if (oi != null) {
-                                c.loadComponentConfiguration(oi);
-                        }
-                }
+    public void reset() {
+        for (final ViewerComponent c : m_viewerComponents) {
+            c.reset();
         }
+    }
 
-        public void reset() {
-                for (final ViewerComponent c : m_viewerComponents) {
-                        c.reset();
-                }
+    public void setParent(final Component parent) {
+        for (final ViewerComponent c : m_viewerComponents) {
+            c.setParent(parent);
         }
-
-        public void setParent(final Component parent) {
-                for (final ViewerComponent c : m_viewerComponents) {
-                        c.setParent(parent);
-                }
-        }
+    }
 }

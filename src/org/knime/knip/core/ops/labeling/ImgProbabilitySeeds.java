@@ -77,178 +77,178 @@ import org.knime.knip.core.data.LabelGenerator;
  * @author hornm, University of Konstanz
  */
 public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>>
-                implements UnaryOperation<Img<T>, Labeling<L>> {
+implements UnaryOperation<Img<T>, Labeling<L>> {
 
-        private final int m_avgDistance;
-        private final LabelGenerator<L> m_seedGen;
+    private final int m_avgDistance;
+    private final LabelGenerator<L> m_seedGen;
 
-        public ImgProbabilitySeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
-                m_seedGen = seedGen;
-                m_avgDistance = avgDistance;
+    public ImgProbabilitySeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
+        m_seedGen = seedGen;
+        m_avgDistance = avgDistance;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Labeling<L> compute(final Img<T> input, final Labeling<L> output) {
+
+        m_seedGen.reset();
+        final Random rand = new Random();
+
+        if (m_avgDistance == 1) {
+            /*
+             * if the seeding point probability is determined only
+             * by the value of each single pixel
+             */
+
+            final RandomAccess<LabelingType<L>> out = output
+                    .randomAccess();
+            final Cursor<T> in = input.cursor();
+            final ValuePair<T, T> mm = Operations.compute(
+                                                          new MinMax<T>(), input);
+            final double range = mm.b.getRealDouble()
+                    - mm.a.getRealDouble();
+            final double min = mm.a.getRealDouble();
+
+            while (in.hasNext()) {
+                in.next();
+                out.setPosition(in);
+                if (rand.nextFloat() < ((min + in.get()
+                        .getRealDouble()) / range)) {
+                    out.get().setLabel(
+                                       m_seedGen.nextLabel());
+                }
+            }
+
+        } else {
+            /*
+             * if the seeding point probability is determined by the
+             * individual pixel values, but a certain average
+             * distance between labels should be garantied. TODO
+             * here: improve efficiency
+             */
+
+            final long[] currentGridPos = new long[output.numDimensions()];
+            final RandomAccess<LabelingType<L>> outLabRA = Views
+                    .extendValue(output,
+                                 output.firstElement()
+                                 .createVariable())
+                                 .randomAccess();
+            final RandomAccess<T> inImgRA = Views.extendValue(
+                                                              input,
+                                                              input.firstElement().createVariable())
+                                                              .randomAccess();
+
+            // cumulative distribution function (as
+            // image)
+            final long[] dim = new long[input.numDimensions()];
+            Arrays.fill(dim, (m_avgDistance * 2) + 1);
+            final Img<DoubleType> cdf = new ArrayImgFactory<DoubleType>()
+                    .create(dim, new DoubleType());
+            final Cursor<DoubleType> cdfCur = cdf.localizingCursor();
+
+            while (currentGridPos[currentGridPos.length - 1] < input
+                    .dimension(currentGridPos.length - 1)) {
+
+                /* regular grid */
+
+                currentGridPos[0] += m_avgDistance;
+
+                // select the position according
+                // to the pixel intensity value
+                // distribution in the
+                // neighbourhood
+                double sum = calcCdf(cdfCur, inImgRA,
+                                     currentGridPos);
+                sum = rand.nextDouble() * sum;
+                retrieveRandPosition(cdfCur, outLabRA, sum,
+                                     currentGridPos);
+                outLabRA.get().setLabel(m_seedGen.nextLabel());
+
+                // next position in the higher
+                // dimensions than 0
+                for (int i = 0; i < (output.numDimensions() - 1); i++) {
+                    if (currentGridPos[i] > input
+                            .dimension(i)) {
+                        currentGridPos[i] = 0;
+                        currentGridPos[i + 1] += m_avgDistance;
+                    }
+                }
+
+            }
 
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Labeling<L> compute(final Img<T> input, final Labeling<L> output) {
+        return output;
+    }
 
-                m_seedGen.reset();
-                final Random rand = new Random();
+    private double calcCdf(final Cursor<DoubleType> cdfCur, final RandomAccess<T> inRA,
+                           final long[] currentGridPos) {
 
-                if (m_avgDistance == 1) {
-                        /*
-                         * if the seeding point probability is determined only
-                         * by the value of each single pixel
-                         */
+        cdfCur.reset();
+        double sum = 0;
+        while (cdfCur.hasNext()) {
+            cdfCur.fwd();
+            for (int i = 0; i < inRA.numDimensions(); i++) {
+                inRA.setPosition(
+                                 (currentGridPos[i]
+                                         - m_avgDistance)
+                                         + cdfCur.getIntPosition(i),
+                                         i);
+            }
 
-                        final RandomAccess<LabelingType<L>> out = output
-                                        .randomAccess();
-                        final Cursor<T> in = input.cursor();
-                        final ValuePair<T, T> mm = Operations.compute(
-                                        new MinMax<T>(), input);
-                        final double range = mm.b.getRealDouble()
-                                        - mm.a.getRealDouble();
-                        final double min = mm.a.getRealDouble();
+            // to avoid that there are equal entries in the cdf, we
+            // add a small value for integer types (avoids a bias in
+            // the random
+            // position selection)
 
-                        while (in.hasNext()) {
-                                in.next();
-                                out.setPosition(in);
-                                if (rand.nextFloat() < (min + in.get()
-                                                .getRealDouble()) / range) {
-                                        out.get().setLabel(
-                                                        m_seedGen.nextLabel());
-                                }
-                        }
-
+            if (inRA.get() instanceof IntegerType) {
+                double val;
+                if ((val = inRA.get().getRealDouble()) == 0) {
+                    sum += Double.MIN_VALUE;
                 } else {
-                        /*
-                         * if the seeding point probability is determined by the
-                         * individual pixel values, but a certain average
-                         * distance between labels should be garantied. TODO
-                         * here: improve efficiency
-                         */
-
-                        final long[] currentGridPos = new long[output.numDimensions()];
-                        final RandomAccess<LabelingType<L>> outLabRA = Views
-                                        .extendValue(output,
-                                                        output.firstElement()
-                                                                        .createVariable())
-                                        .randomAccess();
-                        final RandomAccess<T> inImgRA = Views.extendValue(
-                                        input,
-                                        input.firstElement().createVariable())
-                                        .randomAccess();
-
-                        // cumulative distribution function (as
-                        // image)
-                        final long[] dim = new long[input.numDimensions()];
-                        Arrays.fill(dim, m_avgDistance * 2 + 1);
-                        final Img<DoubleType> cdf = new ArrayImgFactory<DoubleType>()
-                                        .create(dim, new DoubleType());
-                        final Cursor<DoubleType> cdfCur = cdf.localizingCursor();
-
-                        while (currentGridPos[currentGridPos.length - 1] < input
-                                        .dimension(currentGridPos.length - 1)) {
-
-                                /* regular grid */
-
-                                currentGridPos[0] += m_avgDistance;
-
-                                // select the position according
-                                // to the pixel intensity value
-                                // distribution in the
-                                // neighbourhood
-                                double sum = calcCdf(cdfCur, inImgRA,
-                                                currentGridPos);
-                                sum = rand.nextDouble() * sum;
-                                retrieveRandPosition(cdfCur, outLabRA, sum,
-                                                currentGridPos);
-                                outLabRA.get().setLabel(m_seedGen.nextLabel());
-
-                                // next position in the higher
-                                // dimensions than 0
-                                for (int i = 0; i < output.numDimensions() - 1; i++) {
-                                        if (currentGridPos[i] > input
-                                                        .dimension(i)) {
-                                                currentGridPos[i] = 0;
-                                                currentGridPos[i + 1] += m_avgDistance;
-                                        }
-                                }
-
-                        }
-
+                    sum += val;
                 }
+            } else {
 
-                return output;
+                sum += inRA.get().getRealDouble();
+            }
+            cdfCur.get().set(sum);
         }
 
-        private double calcCdf(final Cursor<DoubleType> cdfCur, final RandomAccess<T> inRA,
-                        final long[] currentGridPos) {
+        return sum;
 
-                cdfCur.reset();
-                double sum = 0;
-                while (cdfCur.hasNext()) {
-                        cdfCur.fwd();
-                        for (int i = 0; i < inRA.numDimensions(); i++) {
-                                inRA.setPosition(
-                                                currentGridPos[i]
-                                                                - m_avgDistance
-                                                                + cdfCur.getIntPosition(i),
-                                                i);
-                        }
+    }
 
-                        // to avoid that there are equal entries in the cdf, we
-                        // add a small value for integer types (avoids a bias in
-                        // the random
-                        // position selection)
+    private void retrieveRandPosition(final Cursor<DoubleType> cdfCur,
+                                      final RandomAccess<LabelingType<L>> labRA, final double randVal,
+                                      final long[] currentGridPos) {
 
-                        if (inRA.get() instanceof IntegerType) {
-                                double val;
-                                if ((val = inRA.get().getRealDouble()) == 0) {
-                                        sum += Double.MIN_VALUE;
-                                } else {
-                                        sum += val;
-                                }
-                        } else {
-
-                                sum += inRA.get().getRealDouble();
-                        }
-                        cdfCur.get().set(sum);
+        cdfCur.reset();
+        while (cdfCur.hasNext()) {
+            cdfCur.fwd();
+            if (cdfCur.get().getRealDouble() >= randVal) {
+                for (int i = 0; i < labRA.numDimensions(); i++) {
+                    labRA.setPosition(
+                                      (currentGridPos[i]
+                                              - m_avgDistance)
+                                              + cdfCur.getIntPosition(i),
+                                              i);
                 }
-
-                return sum;
-
+                return;
+            }
         }
 
-        private void retrieveRandPosition(final Cursor<DoubleType> cdfCur,
-                        final RandomAccess<LabelingType<L>> labRA, final double randVal,
-                        final long[] currentGridPos) {
+    }
 
-                cdfCur.reset();
-                while (cdfCur.hasNext()) {
-                        cdfCur.fwd();
-                        if (cdfCur.get().getRealDouble() >= randVal) {
-                                for (int i = 0; i < labRA.numDimensions(); i++) {
-                                        labRA.setPosition(
-                                                        currentGridPos[i]
-                                                                        - m_avgDistance
-                                                                        + cdfCur.getIntPosition(i),
-                                                        i);
-                                }
-                                return;
-                        }
-                }
-
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public UnaryOperation<Img<T>, Labeling<L>> copy() {
-                return new ImgProbabilitySeeds<T, L>(m_seedGen, m_avgDistance);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UnaryOperation<Img<T>, Labeling<L>> copy() {
+        return new ImgProbabilitySeeds<T, L>(m_seedGen, m_avgDistance);
+    }
 
 }

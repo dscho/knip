@@ -56,24 +56,24 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class LookupTableChgEvent<T, U> implements KNIPEvent {
 
-        private final LookupTable<T, U> m_table;
+    private final LookupTable<T, U> m_table;
 
-        public LookupTableChgEvent(final LookupTable<T, U> table) {
-                m_table = table;
-        }
+    public LookupTableChgEvent(final LookupTable<T, U> table) {
+        m_table = table;
+    }
 
-        public LookupTable<T, U> getTable() {
-                return m_table;
-        }
+    public LookupTable<T, U> getTable() {
+        return m_table;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return false;
-        }
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return false;
+    }
 
 }

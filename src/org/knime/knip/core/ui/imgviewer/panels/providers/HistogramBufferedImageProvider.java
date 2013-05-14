@@ -20,44 +20,44 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramChgEvent;
  * @author dietzc, hornm, University of Konstanz
  */
 public class HistogramBufferedImageProvider<T extends RealType<T>> extends
-                AWTImageProvider<T> {
+AWTImageProvider<T> {
 
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-        private final int m_histHeight;
+    private final int m_histHeight;
 
-        public HistogramBufferedImageProvider(final int cacheSize, final int histHeight) {
-                super(cacheSize);
+    public HistogramBufferedImageProvider(final int cacheSize, final int histHeight) {
+        super(cacheSize);
 
-                m_histHeight = histHeight;
-        }
+        m_histHeight = histHeight;
+    }
 
-        @Override
-        protected Image createImage() {
-                final int[] hist = Operations
-                                .compute(new MakeHistogram<T>(),
-                                                Views.iterable(SubsetOperations
-                                                                .subsetview(m_src,
-                                                                                m_sel.getInterval(m_src))))
-                                .hist();
-                m_eventService.publish(new HistogramChgEvent(hist));
-                return AWTImageTools.drawHistogram(hist, m_histHeight);
+    @Override
+    protected Image createImage() {
+        final int[] hist = Operations
+                .compute(new MakeHistogram<T>(),
+                         Views.iterable(SubsetOperations
+                                        .subsetview(m_src,
+                                                    m_sel.getInterval(m_src))))
+                                                    .hist();
+        m_eventService.publish(new HistogramChgEvent(hist));
+        return AWTImageTools.drawHistogram(hist, m_histHeight);
 
-        }
+    }
 
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                super.saveComponentConfiguration(out);
-        }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        super.saveComponentConfiguration(out);
+    }
 
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-                super.loadComponentConfiguration(in);
-        }
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException, ClassNotFoundException {
+        super.loadComponentConfiguration(in);
+    }
 
 }

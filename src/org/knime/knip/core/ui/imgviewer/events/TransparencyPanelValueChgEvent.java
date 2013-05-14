@@ -59,31 +59,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class TransparencyPanelValueChgEvent implements KNIPEvent {
 
-        private final int m_transparency;
+    private final int m_transparency;
 
-        public TransparencyPanelValueChgEvent(final int transparency) {
-                m_transparency = transparency;
+    public TransparencyPanelValueChgEvent(final int transparency) {
+        m_transparency = transparency;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the transparency
-         */
-        public int getTransparency() {
-                return m_transparency;
-        }
+    /**
+     * @return the transparency
+     */
+    public int getTransparency() {
+        return m_transparency;
+    }
 
 }

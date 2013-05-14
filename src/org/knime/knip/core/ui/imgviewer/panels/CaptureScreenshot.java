@@ -77,152 +77,152 @@ import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
  */
 public class CaptureScreenshot extends ViewerComponent {
 
-        private EventService m_eventService = new EventService();
+    private EventService m_eventService = new EventService();
 
-        private Image m_currentImage;
+    private Image m_currentImage;
 
-        private final JTextField m_fieldName = new JTextField();
+    private final JTextField m_fieldName = new JTextField();
 
-        JButton m_captureButton = new JButton(new ImageIcon(getClass()
-                        .getResource("CameraIcon.png")));
-        JButton m_dirButton = new JButton(new ImageIcon(getClass().getResource(
-                        "FolderIcon.png")));
+    JButton m_captureButton = new JButton(new ImageIcon(getClass()
+                                                        .getResource("CameraIcon.png")));
+    JButton m_dirButton = new JButton(new ImageIcon(getClass().getResource(
+            "FolderIcon.png")));
 
-        private final JFileChooser m_chooser = new JFileChooser();
+    private final JFileChooser m_chooser = new JFileChooser();
 
-        public CaptureScreenshot() {
-                super("Screenshot", false);
+    public CaptureScreenshot() {
+        super("Screenshot", false);
 
-                setUpFileChooser();
-                setUpTextFields();
-                setUpButtons();
+        setUpFileChooser();
+        setUpTextFields();
+        setUpButtons();
 
-                final JSeparator separator = new JSeparator();
+        final JSeparator separator = new JSeparator();
 
-                final GroupLayout layout = new GroupLayout(this);
+        final GroupLayout layout = new GroupLayout(this);
 
-                final GroupLayout.SequentialGroup horizontal0 = layout
-                                .createSequentialGroup()
-                                .addComponent(m_fieldName)
-                                .addPreferredGap(
-                                                LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(m_dirButton);
+        final GroupLayout.SequentialGroup horizontal0 = layout
+                .createSequentialGroup()
+                .addComponent(m_fieldName)
+                .addPreferredGap(
+                                 LayoutStyle.ComponentPlacement.RELATED)
+                                 .addComponent(m_dirButton);
 
-                layout.setHorizontalGroup(layout.createParallelGroup()
-                                .addGroup(horizontal0).addComponent(separator)
-                                .addComponent(m_captureButton));
+        layout.setHorizontalGroup(layout.createParallelGroup()
+                                  .addGroup(horizontal0).addComponent(separator)
+                                  .addComponent(m_captureButton));
 
-                final GroupLayout.SequentialGroup vertical0 = layout
-                                .createSequentialGroup()
-                                .addComponent(m_fieldName)
-                                .addComponent(separator)
-                                .addComponent(m_captureButton);
+        final GroupLayout.SequentialGroup vertical0 = layout
+                .createSequentialGroup()
+                .addComponent(m_fieldName)
+                .addComponent(separator)
+                .addComponent(m_captureButton);
 
-                layout.setVerticalGroup(layout.createParallelGroup()
+        layout.setVerticalGroup(layout.createParallelGroup()
                                 .addGroup(vertical0).addComponent(m_dirButton));
 
-                setLayout(layout);
-        }
+        setLayout(layout);
+    }
 
-        private void setUpButtons() {
-                m_captureButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(final ActionEvent e) {
-                                if (m_currentImage != null) {
-                                        try {
-                                                final RenderedImage ri = (RenderedImage) m_currentImage;
-                                                ImageIO.write(ri, "png",
-                                                                getFile());
-                                        } catch (final ClassCastException exception) {
-                                                System.err.println("Could not cast image to RenderedImage, not writing image");
-                                        } catch (final IOException exception) {
-                                                System.err.println("Could not write image");
-                                        }
-                                }
-                        }
-                });
-
-                m_dirButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(final ActionEvent e) {
-                                final int val = m_chooser
-                                                .showOpenDialog(CaptureScreenshot.this);
-                        }
-                });
-        }
-
-        private File getFile() {
-                final String path = getFileName();
-                File file = new File(path + ".png");
-
-                int counter = 1;
-                while (file.exists()) {
-                        file = new File(path + "_"
-                                        + Integer.toString(counter++) + ".png");
+    private void setUpButtons() {
+        m_captureButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                if (m_currentImage != null) {
+                    try {
+                        final RenderedImage ri = (RenderedImage) m_currentImage;
+                        ImageIO.write(ri, "png",
+                                      getFile());
+                    } catch (final ClassCastException exception) {
+                        System.err.println("Could not cast image to RenderedImage, not writing image");
+                    } catch (final IOException exception) {
+                        System.err.println("Could not write image");
+                    }
                 }
+            }
+        });
 
-                return file;
+        m_dirButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final int val = m_chooser
+                        .showOpenDialog(CaptureScreenshot.this);
+            }
+        });
+    }
+
+    private File getFile() {
+        final String path = getFileName();
+        File file = new File(path + ".png");
+
+        int counter = 1;
+        while (file.exists()) {
+            file = new File(path + "_"
+                    + Integer.toString(counter++) + ".png");
         }
 
-        private String getFileName() {
-                return m_chooser.getSelectedFile()
-                                + System.getProperty("file.separator")
-                                + m_fieldName.getText();
+        return file;
+    }
+
+    private String getFileName() {
+        return m_chooser.getSelectedFile()
+                + System.getProperty("file.separator")
+                + m_fieldName.getText();
+    }
+
+    private void setUpFileChooser() {
+        m_chooser.setCurrentDirectory(new File(System
+                                               .getProperty("user.home")));
+        m_chooser.setDialogTitle("Choose a directory");
+        m_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        m_chooser.setAcceptAllFileFilterUsed(false);
+    }
+
+    private void setUpTextFields() {
+        m_fieldName.setText("Image");
+    }
+
+    @EventListener
+    public void onImageChg(final AWTImageChgEvent event) {
+        m_currentImage = event.getImage();
+    }
+
+    @Override
+    public void setEventService(final EventService eventService) {
+        if (eventService == null) {
+            m_eventService = new EventService();
+        } else {
+            m_eventService = eventService;
         }
 
-        private void setUpFileChooser() {
-                m_chooser.setCurrentDirectory(new File(System
-                                .getProperty("user.home")));
-                m_chooser.setDialogTitle("Choose a directory");
-                m_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                m_chooser.setAcceptAllFileFilterUsed(false);
-        }
+        m_eventService.subscribe(this);
+    }
 
-        private void setUpTextFields() {
-                m_fieldName.setText("Image");
-        }
+    @Override
+    public void setParent(final Component parent) {
+        // not used
+    }
 
-        @EventListener
-        public void onImageChg(final AWTImageChgEvent event) {
-                m_currentImage = event.getImage();
-        }
+    @Override
+    public Position getPosition() {
+        return Position.SOUTH;
+    }
 
-        @Override
-        public void setEventService(final EventService eventService) {
-                if (eventService == null) {
-                        m_eventService = new EventService();
-                } else {
-                        m_eventService = eventService;
-                }
+    @Override
+    public void reset() {
+        // not used
+    }
 
-                m_eventService.subscribe(this);
-        }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        // not used
+    }
 
-        @Override
-        public void setParent(final Component parent) {
-                // not used
-        }
-
-        @Override
-        public Position getPosition() {
-                return Position.SOUTH;
-        }
-
-        @Override
-        public void reset() {
-                // not used
-        }
-
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                // not used
-        }
-
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-                // not used
-        }
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException, ClassNotFoundException {
+        // not used
+    }
 
 }

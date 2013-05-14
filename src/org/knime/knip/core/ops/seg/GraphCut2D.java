@@ -76,148 +76,148 @@ import net.imglib2.view.Views;
  */
 
 public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterval<T>, O extends RandomAccessibleInterval<BitType>>
-                implements UnaryOutputOperation<I, O> {
+implements UnaryOutputOperation<I, O> {
 
-        private double[] m_srcVal;
+    private double[] m_srcVal;
 
-        private double[] m_sinkVal;
+    private double[] m_sinkVal;
 
-        private double m_pottsWeight;
+    private double m_pottsWeight;
 
-        private final int m_dimX;
+    private final int m_dimX;
 
-        private final int m_dimY;
+    private final int m_dimY;
 
-        private final int m_dimFeat;
+    private final int m_dimFeat;
 
-        /**
-         * @param factory
-         *                factory of the source image
-         * @param lambda
-         * @param dimX
-         *                the first dimensions
-         * @param dimY
-         *                the second dimensions
-         * @param dimFeat
-         *                the dimension containing the features (feature vector)
+    /**
+     * @param factory
+     *                factory of the source image
+     * @param lambda
+     * @param dimX
+     *                the first dimensions
+     * @param dimY
+     *                the second dimensions
+     * @param dimFeat
+     *                the dimension containing the features (feature vector)
+     */
+    public GraphCut2D(final double pottsWeight, final int dimX, final int dimY, final int dimFeat,
+                      final double[] srcVal, final double[] sinkVal) {
+        m_dimX = dimX;
+        m_dimY = dimY;
+        m_dimFeat = dimFeat;
+        m_pottsWeight = pottsWeight;
+        m_srcVal = srcVal;
+        m_sinkVal = sinkVal;
+    }
+
+    /**
+     * @param lambda
+     * @param fgLabel
+     *                foreground label (can contain wildcards)
+     * @param bgLabel
+     *                the background label (can contain wildcards
+     * @param dimX
+     *                the first dimensions
+     * @param dimY
+     *                the second dimensions
+     */
+    public GraphCut2D(final double pottsWeight, final int dimX, final int dimY, final int dimFeat,
+                      final double srcVal, final double sinkVal) {
+        this(pottsWeight, dimX, dimY, dimFeat, new double[] { srcVal },
+             new double[] { sinkVal });
+    }
+
+    /**
+     * @param lambda
+     * @param fgLabel
+     *                foreground label (can contain wildcards)
+     * @param bgLabel
+     *                the background label (can contain wildcards
+     * @param dimX
+     *                the first dimensions
+     * @param dimY
+     *                the second dimensions
+     */
+    public GraphCut2D(final double pottsWeight, final int dimX, final int dimY,
+                      final double srcVal, final double sinkVal) {
+        this(pottsWeight, dimX, dimY, -1, new double[] { srcVal },
+             new double[] { sinkVal });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return
+     */
+    @Override
+    public O compute(final I src, final O res) {
+
+        /*
+         * Image has been normalized before. Therefore the lowest and
+         * the highest possible values MUST exist. These can be used as
+         * sources and sinks for the graphcut algorithm.
          */
-        public GraphCut2D(final double pottsWeight, final int dimX, final int dimY, final int dimFeat,
-                        final double[] srcVal, final double[] sinkVal) {
-                m_dimX = dimX;
-                m_dimY = dimY;
-                m_dimFeat = dimFeat;
-                m_pottsWeight = pottsWeight;
-                m_srcVal = srcVal;
-                m_sinkVal = sinkVal;
+
+        final int numFeat = m_dimFeat == -1 ? 1 : (int) src
+                .dimension(m_dimFeat);
+
+        /*
+         * Calculate the 'camera noise' as the std. deviation of the
+         * image's pixel values.
+         */
+        final float[] stdDev = new float[numFeat];
+
+        final long[] min = new long[src.numDimensions()];
+        final long[] max = new long[src.numDimensions()];
+        src.min(min);
+        src.max(max);
+
+        final MakeHistogram<T> hist = new MakeHistogram<T>();
+
+        for (int i = 0; i < numFeat; i++) {
+
+            int[] bins;
+            if (m_dimFeat != -1) {
+                min[m_dimFeat] = i;
+                max[m_dimFeat] = i;
+
+                bins = Operations
+                        .compute(hist,
+                                 Views.iterable(SubsetOperations
+                                                .subsetview(src,
+                                                            new FinalInterval(
+                                                                              min,
+                                                                              max))))
+                                                                              .hist();
+            } else {
+
+                bins = hist.compute(
+                                    Views.iterable(src),
+                                    hist.bufferFactory()
+                                    .instantiate(Views
+                                                 .iterable(src)))
+                                                 .hist();
+            }
+
+            long noPixels = 0;
+            long sumValues = 0;
+            for (int j = 0; j < bins.length; ++j) {
+                sumValues += j * bins[j];
+                noPixels += bins[j];
+            }
+            final double mean = sumValues / noPixels;
+            long sum = 0;
+            for (int j = 0; j < bins.length; ++j) {
+                sum += bins[j] * (j - mean) * (j - mean);
+            }
+            stdDev[i] = (float) Math.sqrt(sum / noPixels);
         }
 
-        /**
-         * @param lambda
-         * @param fgLabel
-         *                foreground label (can contain wildcards)
-         * @param bgLabel
-         *                the background label (can contain wildcards
-         * @param dimX
-         *                the first dimensions
-         * @param dimY
-         *                the second dimensions
-         */
-        public GraphCut2D(final double pottsWeight, final int dimX, final int dimY, final int dimFeat,
-                        final double srcVal, final double sinkVal) {
-                this(pottsWeight, dimX, dimY, dimFeat, new double[] { srcVal },
-                                new double[] { sinkVal });
-        }
-
-        /**
-         * @param lambda
-         * @param fgLabel
-         *                foreground label (can contain wildcards)
-         * @param bgLabel
-         *                the background label (can contain wildcards
-         * @param dimX
-         *                the first dimensions
-         * @param dimY
-         *                the second dimensions
-         */
-        public GraphCut2D(final double pottsWeight, final int dimX, final int dimY,
-                        final double srcVal, final double sinkVal) {
-                this(pottsWeight, dimX, dimY, -1, new double[] { srcVal },
-                                new double[] { sinkVal });
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @return
-         */
-        @Override
-        public O compute(final I src, final O res) {
-
-                /*
-                 * Image has been normalized before. Therefore the lowest and
-                 * the highest possible values MUST exist. These can be used as
-                 * sources and sinks for the graphcut algorithm.
-                 */
-
-                final int numFeat = m_dimFeat == -1 ? 1 : (int) src
-                                .dimension(m_dimFeat);
-
-                /*
-                 * Calculate the 'camera noise' as the std. deviation of the
-                 * image's pixel values.
-                 */
-                final float[] stdDev = new float[numFeat];
-
-                final long[] min = new long[src.numDimensions()];
-                final long[] max = new long[src.numDimensions()];
-                src.min(min);
-                src.max(max);
-
-                final MakeHistogram<T> hist = new MakeHistogram<T>();
-
-                for (int i = 0; i < numFeat; i++) {
-
-                        int[] bins;
-                        if (m_dimFeat != -1) {
-                                min[m_dimFeat] = i;
-                                max[m_dimFeat] = i;
-
-                                bins = Operations
-                                                .compute(hist,
-                                                                Views.iterable(SubsetOperations
-                                                                                .subsetview(src,
-                                                                                                new FinalInterval(
-                                                                                                                min,
-                                                                                                                max))))
-                                                .hist();
-                        } else {
-
-                                bins = hist.compute(
-                                                Views.iterable(src),
-                                                hist.bufferFactory()
-                                                                .instantiate(Views
-                                                                                .iterable(src)))
-                                                .hist();
-                        }
-
-                        long noPixels = 0;
-                        long sumValues = 0;
-                        for (int j = 0; j < bins.length; ++j) {
-                                sumValues += j * bins[j];
-                                noPixels += bins[j];
-                        }
-                        final double mean = sumValues / noPixels;
-                        long sum = 0;
-                        for (int j = 0; j < bins.length; ++j) {
-                                sum += bins[j] * (j - mean) * (j - mean);
-                        }
-                        stdDev[i] = (float) Math.sqrt(sum / noPixels);
-                }
-
-                // for the neighbor nodes we need the slower ByDim Cursor
-                final RandomAccess<T> srcRandomAcess = src.randomAccess();
+        // for the neighbor nodes we need the slower ByDim Cursor
+        final RandomAccess<T> srcRandomAcess = src.randomAccess();
                 final Cursor<BitType> resCursor = Views.iterable(res)
-                                .localizingCursor();
+                        .localizingCursor();
 
                 // get the number of nodes and number of edges from all
                 // dimensions
@@ -225,7 +225,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                 final long numEdges = numNodes * (2 + 2);
 
                 final org.knime.knip.core.algorithm.GraphCutAlgorithm graphCut = new org.knime.knip.core.algorithm.GraphCutAlgorithm(
-                                (int) numNodes, (int) numEdges);
+                                                                                                                                     (int) numNodes, (int) numEdges);
 
                 /*
                  * computing the edge weights and Computing the maximum weight
@@ -241,73 +241,73 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                 final double[] nodeValues = new double[numFeat];
                 final double[] neighborValues = new double[numFeat];
                 while (resCursor.hasNext()) {
-                        resCursor.fwd();
+                    resCursor.fwd();
 
-                        // get the position of the cursor
-                        resCursor.localize(cursorPos);
-                        srcRandomAcess.setPosition(cursorPos[0], m_dimX);
-                        srcRandomAcess.setPosition(cursorPos[1], m_dimY);
-                        final int nodeID = listPosition(cursorPos, dims);
-                        getValues(nodeValues, srcRandomAcess);
-                        for (final Integer d : new int[] { m_dimX, m_dimY }) {
+                    // get the position of the cursor
+                    resCursor.localize(cursorPos);
+                    srcRandomAcess.setPosition(cursorPos[0], m_dimX);
+                    srcRandomAcess.setPosition(cursorPos[1], m_dimY);
+                    final int nodeID = listPosition(cursorPos, dims);
+                    getValues(nodeValues, srcRandomAcess);
+                    for (final Integer d : new int[] { m_dimX, m_dimY }) {
 
-                                // if we are not at the lower dimension bounds
-                                if (srcRandomAcess.getIntPosition(d) - 1 >= 0) {
+                        // if we are not at the lower dimension bounds
+                        if ((srcRandomAcess.getIntPosition(d) - 1) >= 0) {
 
-                                        /*
-                                         * weight according to p.109 lower right
-                                         * in the paper (ad-hoc) function
-                                         */
+                            /*
+                             * weight according to p.109 lower right
+                             * in the paper (ad-hoc) function
+                             */
 
-                                        // // get the intensity from this pixel
-                                        // final float intensity1 =
-                                        // value.getRealFloat();
+                            // // get the intensity from this pixel
+                            // final float intensity1 =
+                            // value.getRealFloat();
 
-                                        // get the intensity from the neighbor
-                                        // pixel
-                                        srcRandomAcess.bck(d);
-                                        cursorPos[0] = srcRandomAcess
-                                                        .getIntPosition(m_dimX);
-                                        cursorPos[1] = srcRandomAcess
-                                                        .getIntPosition(m_dimY);
-                                        final int neighborID = listPosition(
-                                                        cursorPos, dims);
-                                        getValues(neighborValues,
-                                                        srcRandomAcess);
+                            // get the intensity from the neighbor
+                            // pixel
+                            srcRandomAcess.bck(d);
+                            cursorPos[0] = srcRandomAcess
+                                    .getIntPosition(m_dimX);
+                            cursorPos[1] = srcRandomAcess
+                                    .getIntPosition(m_dimY);
+                            final int neighborID = listPosition(
+                                                                cursorPos, dims);
+                            getValues(neighborValues,
+                                      srcRandomAcess);
 
-                                        srcRandomAcess.fwd(d);
+                            srcRandomAcess.fwd(d);
 
-                                        // // float weight = -((intensity1 -
-                                        // intensity2)
-                                        // // * (intensity1 - intensity2) / (2 *
-                                        // stdDev * stdDev));
-                                        // float weight = 0;
-                                        //
-                                        // for (int i = 0; i <
-                                        // nodeValues.length; i++) {
-                                        // weight -= Math
-                                        // .pow(nodeValues[i] -
-                                        // neighborValues[i], 2)
-                                        // / (2 * stdDev[i] * stdDev[i]);
-                                        // }
-                                        // weight /= (float) numFeat;
-                                        //
-                                        // // save maximum value for K
-                                        // K_value = Math.max(K_value, weight);
-                                        //
-                                        // // assumption distance between nodes
-                                        // is 1
-                                        // weight = (float) Math.exp(weight);
-                                        //
-                                        // weight *= (1 - m_pottsWeight);
+                            // // float weight = -((intensity1 -
+                            // intensity2)
+                            // // * (intensity1 - intensity2) / (2 *
+                            // stdDev * stdDev));
+                            // float weight = 0;
+                            //
+                            // for (int i = 0; i <
+                            // nodeValues.length; i++) {
+                            // weight -= Math
+                            // .pow(nodeValues[i] -
+                            // neighborValues[i], 2)
+                            // / (2 * stdDev[i] * stdDev[i]);
+                            // }
+                            // weight /= (float) numFeat;
+                            //
+                            // // save maximum value for K
+                            // K_value = Math.max(K_value, weight);
+                            //
+                            // // assumption distance between nodes
+                            // is 1
+                            // weight = (float) Math.exp(weight);
+                            //
+                            // weight *= (1 - m_pottsWeight);
 
-                                        // setting all edge weights to
-                                        // pottsWeight
-                                        graphCut.setEdgeWeight(nodeID,
-                                                        neighborID,
-                                                        (float) m_pottsWeight);
-                                }
+                            // setting all edge weights to
+                            // pottsWeight
+                            graphCut.setEdgeWeight(nodeID,
+                                                   neighborID,
+                                                   (float) m_pottsWeight);
                         }
+                    }
 
                 }
 
@@ -320,32 +320,32 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
 
                 resCursor.reset();
                 while (resCursor.hasNext()) {
-                        resCursor.fwd();
-                        resCursor.localize(cursorPos);
-                        final int nodeID = listPosition(cursorPos, dims);
+                    resCursor.fwd();
+                    resCursor.localize(cursorPos);
+                    final int nodeID = listPosition(cursorPos, dims);
 
-                        srcRandomAcess.setPosition(cursorPos[0], m_dimX);
-                        srcRandomAcess.setPosition(cursorPos[1], m_dimY);
+                    srcRandomAcess.setPosition(cursorPos[0], m_dimX);
+                    srcRandomAcess.setPosition(cursorPos[1], m_dimY);
 
-                        getValues(nodeValues, srcRandomAcess);
+                    getValues(nodeValues, srcRandomAcess);
 
-                        // float r_Source = (float) -Math.log(1.0 /
-                        // Math.abs(value
-                        // .getRealFloat() - m_srcAvg));
-                        //
-                        // float r_Sink = (float) -Math.log(1.0 / Math.abs(value
-                        // .getRealFloat() - m_sinkAvg));
-                        //
-                        float r_Source = 0;
+                    // float r_Source = (float) -Math.log(1.0 /
+                    // Math.abs(value
+                    // .getRealFloat() - m_srcAvg));
+                    //
+                    // float r_Sink = (float) -Math.log(1.0 / Math.abs(value
+                    // .getRealFloat() - m_sinkAvg));
+                    //
+                    float r_Source = 0;
 
-                        float r_Sink = 0;
+                    float r_Sink = 0;
 
-                        for (int i = 0; i < nodeValues.length; i++) {
-                                r_Source += Math.abs(nodeValues[i]
-                                                - m_srcVal[i]);
-                                r_Sink += Math.abs(nodeValues[i] - m_sinkVal[i]);
-                        }
-                        graphCut.setTerminalWeights(nodeID, r_Source, r_Sink);
+                    for (int i = 0; i < nodeValues.length; i++) {
+                        r_Source += Math.abs(nodeValues[i]
+                                - m_srcVal[i]);
+                        r_Sink += Math.abs(nodeValues[i] - m_sinkVal[i]);
+                    }
+                    graphCut.setTerminalWeights(nodeID, r_Source, r_Sink);
 
                 }
 
@@ -357,90 +357,90 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                 // Set output image
                 final long[] resPos = new long[resCursor.numDimensions()];
                 while (resCursor.hasNext()) {
-                        resCursor.fwd();
-                        resCursor.localize(resPos);
-                        resCursor.get()
-                                        .set(graphCut.getTerminal(
-                                                        listPosition(resPos,
-                                                                        dims))
-                                                        .equals(org.knime.knip.core.algorithm.GraphCutAlgorithm.Terminal.BACKGROUND));
+                    resCursor.fwd();
+                    resCursor.localize(resPos);
+                    resCursor.get()
+                    .set(graphCut.getTerminal(
+                                              listPosition(resPos,
+                                                           dims))
+                                                           .equals(org.knime.knip.core.algorithm.GraphCutAlgorithm.Terminal.BACKGROUND));
 
                 }
                 return res;
 
-        }
+    }
 
-        /**
-         * Gives the position of the node in the list from the pixel position in
-         * the image.
-         *
-         * @param imagePosition
-         *                Coordinates of the pixel in x,y,z,... direction
-         * @param dimensions
-         *                overall image dimensions (width, height, depth,...)
-         * @return the position of the node in the list
-         */
-        private static synchronized int listPosition(
-                        final long[] imagePosition, final long[] dimensions) {
-                return (int) IntervalIndexer.positionToIndex(imagePosition,
-                                dimensions);
-        }
+    /**
+     * Gives the position of the node in the list from the pixel position in
+     * the image.
+     *
+     * @param imagePosition
+     *                Coordinates of the pixel in x,y,z,... direction
+     * @param dimensions
+     *                overall image dimensions (width, height, depth,...)
+     * @return the position of the node in the list
+     */
+    private static synchronized int listPosition(
+                                                 final long[] imagePosition, final long[] dimensions) {
+        return (int) IntervalIndexer.positionToIndex(imagePosition,
+                                                     dimensions);
+    }
 
-        private void getValues(final double[] res, final RandomAccess<T> ra) {
-                for (int i = 0; i < res.length; i++) {
-                        if (m_dimFeat != -1) {
-                                ra.setPosition(i, m_dimFeat);
-                        }
-                        res[i] = ra.get().getRealDouble();
+    private void getValues(final double[] res, final RandomAccess<T> ra) {
+        for (int i = 0; i < res.length; i++) {
+            if (m_dimFeat != -1) {
+                ra.setPosition(i, m_dimFeat);
+            }
+            res[i] = ra.get().getRealDouble();
+        }
+    }
+
+    public long[] resultDims(final Interval src) {
+        return new long[] { src.dimension(m_dimX),
+                src.dimension(m_dimY) };
+    }
+
+    @Override
+    public UnaryOutputOperation<I, O> copy() {
+        return new GraphCut2D<T, I, O>(m_pottsWeight, m_dimX, m_dimY,
+                m_dimFeat, m_srcVal.clone(), m_sinkVal.clone());
+    }
+
+    @Override
+    public UnaryObjectFactory<I, O> bufferFactory() {
+        return new UnaryObjectFactory<I, O>() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public O instantiate(final I in) {
+                if (m_dimFeat != -1) {
+                    // check dimensionality
+                    if ((m_sinkVal.length != in
+                            .dimension(m_dimFeat))
+                            || (m_srcVal.length != in
+                            .dimension(m_dimFeat))) {
+                        throw new IllegalArgumentException(
+                                                           "Vectors of the source or sink values are not of the same size as the feature dimensions of the image.!");
+                    }
                 }
-        }
 
-        public long[] resultDims(final Interval src) {
-                return new long[] { src.dimension(m_dimX),
-                                src.dimension(m_dimY) };
-        }
+                try {
+                    ImgFactory<BitType> factory;
+                    if (in instanceof Img) {
+                        factory = ((Img<T>) in)
+                                .factory()
+                                .imgFactory(new BitType());
+                    } else {
+                        factory = new ArrayImgFactory<BitType>();
+                    }
+                    return (O) factory.create(
+                                              resultDims(in),
+                                              new BitType());
 
-        @Override
-        public UnaryOutputOperation<I, O> copy() {
-                return new GraphCut2D<T, I, O>(m_pottsWeight, m_dimX, m_dimY,
-                                m_dimFeat, m_srcVal.clone(), m_sinkVal.clone());
-        }
-
-        @Override
-        public UnaryObjectFactory<I, O> bufferFactory() {
-                return new UnaryObjectFactory<I, O>() {
-
-                        @SuppressWarnings("unchecked")
-                        @Override
-                        public O instantiate(final I in) {
-                                if (m_dimFeat != -1) {
-                                        // check dimensionality
-                                        if (m_sinkVal.length != in
-                                                        .dimension(m_dimFeat)
-                                                        || m_srcVal.length != in
-                                                                        .dimension(m_dimFeat)) {
-                                                throw new IllegalArgumentException(
-                                                                "Vectors of the source or sink values are not of the same size as the feature dimensions of the image.!");
-                                        }
-                                }
-
-                                try {
-                                        ImgFactory<BitType> factory;
-                                        if (in instanceof Img) {
-                                                factory = ((Img<T>) in)
-                                                                .factory()
-                                                                .imgFactory(new BitType());
-                                        } else {
-                                                factory = new ArrayImgFactory<BitType>();
-                                        }
-                                        return (O) factory.create(
-                                                        resultDims(in),
-                                                        new BitType());
-
-                                } catch (final IncompatibleTypeException e) {
-                                        throw new RuntimeException(e);
-                                }
-                        }
-                };
-        }
+                } catch (final IncompatibleTypeException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
 }

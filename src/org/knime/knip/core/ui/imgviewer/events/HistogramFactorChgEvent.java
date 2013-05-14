@@ -58,30 +58,30 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class HistogramFactorChgEvent implements KNIPEvent {
 
-        private final double m_factor;
+    private final double m_factor;
 
-        public HistogramFactorChgEvent(final double factor) {
-                m_factor = factor;
+    public HistogramFactorChgEvent(final double factor) {
+        m_factor = factor;
 
-        }
+    }
 
-        /**
-         * @return the factor
-         */
-        public double getFactor() {
-                return m_factor;
-        }
+    /**
+     * @return the factor
+     */
+    public double getFactor() {
+        return m_factor;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 }

@@ -56,23 +56,23 @@ package org.knime.knip.core.data;
  */
 public class IntegerLabelGenerator implements LabelGenerator<Integer> {
 
-        private int label = 1;
+    private int label = 1;
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void reset() {
-                label = 1;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() {
+        label = 1;
 
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Integer nextLabel() {
-                return new Integer(label++);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer nextLabel() {
+        return new Integer(label++);
+    }
 
 }

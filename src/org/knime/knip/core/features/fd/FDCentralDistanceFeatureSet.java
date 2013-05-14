@@ -67,106 +67,106 @@ import org.knime.knip.core.features.SharesObjects;
  */
 public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
 
-        /*
-         * Complex array containing the current signature as complex values
-         */
-        private final Complex[] m_complexSignature;
+    /*
+     * Complex array containing the current signature as complex values
+     */
+    private final Complex[] m_complexSignature;
 
-        /*
-         * The Fourier Transformed Signature
-         */
-        private Complex[] m_transformed;
+    /*
+     * The Fourier Transformed Signature
+     */
+    private Complex[] m_transformed;
 
-        private final int m_numAngles;
+    private final int m_numAngles;
 
-        private Signature m_signature;
+    private Signature m_signature;
 
-        private final double[] m_descriptor;
+    private final double[] m_descriptor;
 
-        private ObjectCalcAndCache m_ocac;
+    private ObjectCalcAndCache m_ocac;
 
-        /**
-         * @param numAngles
-         */
-        public FDCentralDistanceFeatureSet(final int numAngles) {
-                m_numAngles = numAngles;
-                m_complexSignature = new Complex[numAngles];
-                m_transformed = new Complex[numAngles];
-                m_descriptor = new double[numAngles];
+    /**
+     * @param numAngles
+     */
+    public FDCentralDistanceFeatureSet(final int numAngles) {
+        m_numAngles = numAngles;
+        m_complexSignature = new Complex[numAngles];
+        m_transformed = new Complex[numAngles];
+        m_descriptor = new double[numAngles];
 
+    }
+
+    @FeatureTargetListener
+    public void iiUpdated(final IterableInterval<BitType> interval) {
+        m_signature = m_ocac.signature(interval, m_numAngles);
+        for (int x = 0; x < m_signature.length(); x++) {
+            m_complexSignature[x] = new Complex(
+                                                m_signature.getPosAt(x), 0);
         }
 
-        @FeatureTargetListener
-        public void iiUpdated(final IterableInterval<BitType> interval) {
-                m_signature = m_ocac.signature(interval, m_numAngles);
-                for (int x = 0; x < m_signature.length(); x++) {
-                        m_complexSignature[x] = new Complex(
-                                        m_signature.getPosAt(x), 0);
-                }
-
-                m_transformed = InplaceFFT.fft(m_complexSignature);
-                final double dcMagnitude = m_transformed[0].getMagnitude();
-                for (int t = 1; t < m_transformed.length / 2; t++) {
-                        m_descriptor[t - 1] = (m_transformed[t].getMagnitude() / dcMagnitude);
-                }
+        m_transformed = InplaceFFT.fft(m_complexSignature);
+        final double dcMagnitude = m_transformed[0].getMagnitude();
+        for (int t = 1; t < (m_transformed.length / 2); t++) {
+            m_descriptor[t - 1] = (m_transformed[t].getMagnitude() / dcMagnitude);
         }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double value(final int id) {
-                return m_descriptor[id];
-        }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public double value(final int id) {
+         return m_descriptor[id];
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name(final int id) {
-                return "FD:CentralDistance [" + id + "]";
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public String name(final int id) {
+         return "FD:CentralDistance [" + id + "]";
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int numFeatures() {
-                return m_numAngles;
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public int numFeatures() {
+         return m_numAngles;
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String featureSetId() {
-                return "FD Central Distance Feature Factory";
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public String featureSetId() {
+         return "FD Central Distance Feature Factory";
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void enable(final int id) {
-                // nothing to do here
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public void enable(final int id) {
+         // nothing to do here
 
-        }
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<?>[] getSharedObjectClasses() {
-                return new Class[] { ObjectCalcAndCache.class };
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public Class<?>[] getSharedObjectClasses() {
+         return new Class[] { ObjectCalcAndCache.class };
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setSharedObjectInstances(final Object[] instances) {
-                m_ocac = (ObjectCalcAndCache) instances[0];
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public void setSharedObjectInstances(final Object[] instances) {
+         m_ocac = (ObjectCalcAndCache) instances[0];
 
-        }
+     }
 
 }

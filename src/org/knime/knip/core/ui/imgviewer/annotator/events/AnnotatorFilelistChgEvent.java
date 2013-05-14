@@ -58,30 +58,30 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class AnnotatorFilelistChgEvent implements KNIPEvent {
 
-        private final String[] m_fileList;
+    private final String[] m_fileList;
 
-        public AnnotatorFilelistChgEvent(final String[] fileList) {
-                m_fileList = fileList;
+    public AnnotatorFilelistChgEvent(final String[] fileList) {
+        m_fileList = fileList;
 
-        }
+    }
 
-        /**
-         * @return the fileList
-         */
-        public String[] getFileList() {
-                return m_fileList;
-        }
+    /**
+     * @return the fileList
+     */
+    public String[] getFileList() {
+        return m_fileList;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 }

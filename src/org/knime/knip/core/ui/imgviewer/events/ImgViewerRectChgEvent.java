@@ -60,31 +60,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class ImgViewerRectChgEvent implements KNIPEvent {
 
-        private final Rectangle m_rectangle;
+    private final Rectangle m_rectangle;
 
-        public ImgViewerRectChgEvent(final Rectangle rectangle) {
-                m_rectangle = rectangle;
+    public ImgViewerRectChgEvent(final Rectangle rectangle) {
+        m_rectangle = rectangle;
 
-        }
+    }
 
-        /**
-         * @return the rectangle
-         */
-        public Rectangle getRectangle() {
-                return m_rectangle;
-        }
+    /**
+     * @return the rectangle
+     */
+    public Rectangle getRectangle() {
+        return m_rectangle;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
 }

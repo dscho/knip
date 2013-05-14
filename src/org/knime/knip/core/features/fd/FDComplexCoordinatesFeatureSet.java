@@ -66,107 +66,107 @@ import org.knime.knip.core.features.SharesObjects;
  * @author dietzc, University of Konstanz
  */
 public class FDComplexCoordinatesFeatureSet implements FeatureSet,
-                SharesObjects {
+SharesObjects {
 
-        /*
-         * Complex array containing the current signature as complex values
-         */
-        private final Complex[] m_complexSignature;
+    /*
+     * Complex array containing the current signature as complex values
+     */
+    private final Complex[] m_complexSignature;
 
-        /*
-         * The Fourier Transformed Signature
-         */
-        private Complex[] m_transformed;
+    /*
+     * The Fourier Transformed Signature
+     */
+    private Complex[] m_transformed;
 
-        private final int m_numAngles;
+    private final int m_numAngles;
 
-        private Signature m_signature;
+    private Signature m_signature;
 
-        private final double[] m_descriptor;
+    private final double[] m_descriptor;
 
-        private ObjectCalcAndCache m_ocac;
+    private ObjectCalcAndCache m_ocac;
 
-        /**
-         * @param numAngles
-         */
-        public FDComplexCoordinatesFeatureSet(final int numAngles) {
-                m_numAngles = numAngles;
-                m_complexSignature = new Complex[numAngles];
-                m_transformed = new Complex[numAngles];
-                m_descriptor = new double[numAngles];
+    /**
+     * @param numAngles
+     */
+    public FDComplexCoordinatesFeatureSet(final int numAngles) {
+        m_numAngles = numAngles;
+        m_complexSignature = new Complex[numAngles];
+        m_transformed = new Complex[numAngles];
+        m_descriptor = new double[numAngles];
 
+    }
+
+    @FeatureTargetListener
+    public void iiUpdated(final IterableInterval<BitType> interval) {
+        m_signature = m_ocac.signature(interval, m_numAngles);
+        for (int y = 0; y < m_signature.length(); y++) {
+            m_complexSignature[y] = new Complex(
+                                                m_signature.getPosAt(y), y);
         }
 
-        @FeatureTargetListener
-        public void iiUpdated(final IterableInterval<BitType> interval) {
-                m_signature = m_ocac.signature(interval, m_numAngles);
-                for (int y = 0; y < m_signature.length(); y++) {
-                        m_complexSignature[y] = new Complex(
-                                        m_signature.getPosAt(y), y);
-                }
-
-                m_transformed = InplaceFFT.fft(m_complexSignature);
-                final double magnitude = m_transformed[1].getMagnitude();
-                for (int t = 2; t < m_transformed.length; t++) {
-                        m_descriptor[t - 2] = (m_transformed[t].getMagnitude() / magnitude);
-                }
+        m_transformed = InplaceFFT.fft(m_complexSignature);
+        final double magnitude = m_transformed[1].getMagnitude();
+        for (int t = 2; t < m_transformed.length; t++) {
+            m_descriptor[t - 2] = (m_transformed[t].getMagnitude() / magnitude);
         }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double value(final int id) {
-                return m_descriptor[id];
-        }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public double value(final int id) {
+         return m_descriptor[id];
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name(final int id) {
-                return "FD:ComplexCoordiates [" + id + "]";
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public String name(final int id) {
+         return "FD:ComplexCoordiates [" + id + "]";
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String featureSetId() {
-                return "FD Complex Coordinates Features Factory";
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public String featureSetId() {
+         return "FD Complex Coordinates Features Factory";
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void enable(final int id) {
-                // nothing to do here
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public void enable(final int id) {
+         // nothing to do here
 
-        }
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int numFeatures() {
-                return m_numAngles;
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public int numFeatures() {
+         return m_numAngles;
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<?>[] getSharedObjectClasses() {
-                return new Class[] { ObjectCalcAndCache.class };
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public Class<?>[] getSharedObjectClasses() {
+         return new Class[] { ObjectCalcAndCache.class };
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setSharedObjectInstances(final Object[] instances) {
-                m_ocac = (ObjectCalcAndCache) instances[0];
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public void setSharedObjectInstances(final Object[] instances) {
+         m_ocac = (ObjectCalcAndCache) instances[0];
 
-        }
+     }
 }

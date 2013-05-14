@@ -63,51 +63,51 @@ import org.knime.knip.core.io.externalization.Externalizer;
  */
 public class SourcedExt0 implements Externalizer<Sourced> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<Sourced> getType() {
-                return Sourced.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<Sourced> getType() {
+        return Sourced.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Sourced read(final BufferedDataInputStream in) throws Exception {
-                final char[] source = new char[in.readInt()];
-                in.read(source);
-                return new SourcedImpl(new String(source));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Sourced read(final BufferedDataInputStream in) throws Exception {
+        final char[] source = new char[in.readInt()];
+        in.read(source);
+        return new SourcedImpl(new String(source));
 
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final Sourced obj)
-                        throws Exception {
-                final char[] source = obj.getSource().toCharArray();
-                out.writeInt(source.length);
-                out.write(source);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final Sourced obj)
+            throws Exception {
+        final char[] source = obj.getSource().toCharArray();
+        out.writeInt(source.length);
+        out.write(source);
 
-        }
+    }
 
 }

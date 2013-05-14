@@ -30,70 +30,70 @@ import org.knime.knip.core.data.algebra.Complex;
 
 public class InplaceFFT {
 
-        // compute the FFT of x[], assuming its length is a power of 2
-        public static Complex[] fft(final Complex[] x) {
+    // compute the FFT of x[], assuming its length is a power of 2
+    public static Complex[] fft(final Complex[] x) {
 
-                // check that length is a power of 2
-                final int N = x.length;
-                if (Integer.highestOneBit(N) != N) {
-                        throw new RuntimeException("N is not a power of 2");
-                }
-
-                // bit reversal permutation
-                final int shift = 1 + Integer.numberOfLeadingZeros(N);
-                for (int k = 0; k < N; k++) {
-                        final int j = Integer.reverse(k) >>> shift;
-                        if (j > k) {
-                                final Complex temp = x[j];
-                                x[j] = x[k];
-                                x[k] = temp;
-                        }
-                }
-
-                // butterfly updates
-                for (int L = 2; L <= N; L = L + L) {
-                        for (int k = 0; k < L / 2; k++) {
-                                final double kth = -2 * k * Math.PI / L;
-                                final Complex w = new Complex(Math.cos(kth),
-                                                Math.sin(kth));
-                                for (int j = 0; j < N / L; j++) {
-                                        final Complex tao = w.times(x[j * L + k + L
-                                                        / 2]);
-                                        x[j * L + k + L / 2] = x[j * L + k]
-                                                        .minus(tao);
-                                        x[j * L + k] = x[j * L + k].plus(tao);
-                                }
-                        }
-                }
-
-                return x;
+        // check that length is a power of 2
+        final int N = x.length;
+        if (Integer.highestOneBit(N) != N) {
+            throw new RuntimeException("N is not a power of 2");
         }
 
-        // compute the inverse FFT of x[], assuming its length is a power of 2
-        public static Complex[] ifft(final Complex[] x) {
-                final int N = x.length;
-                // Complex[] y = new Complex[N];
-
-                // take conjugate
-                for (int i = 0; i < N; i++) {
-                        x[i] = x[i].conjugate();
-                }
-
-                // compute forward FFT
-                fft(x);
-
-                // take conjugate again
-                for (int i = 0; i < N; i++) {
-                        x[i] = x[i].conjugate();
-                }
-
-                // divide by N
-                for (int i = 0; i < N; i++) {
-                        x[i] = x[i].times(1.0 / N);
-                }
-
-                return x;
-
+        // bit reversal permutation
+        final int shift = 1 + Integer.numberOfLeadingZeros(N);
+        for (int k = 0; k < N; k++) {
+            final int j = Integer.reverse(k) >>> shift;
+            if (j > k) {
+                final Complex temp = x[j];
+                x[j] = x[k];
+                x[k] = temp;
+            }
         }
+
+        // butterfly updates
+        for (int L = 2; L <= N; L = L + L) {
+            for (int k = 0; k < (L / 2); k++) {
+                final double kth = (-2 * k * Math.PI) / L;
+                final Complex w = new Complex(Math.cos(kth),
+                                              Math.sin(kth));
+                for (int j = 0; j < (N / L); j++) {
+                    final Complex tao = w.times(x[(j * L) + k + (L
+                            / 2)]);
+                    x[(j * L) + k + (L / 2)] = x[(j * L) + k]
+                            .minus(tao);
+                    x[(j * L) + k] = x[(j * L) + k].plus(tao);
+                }
+            }
+        }
+
+        return x;
+    }
+
+    // compute the inverse FFT of x[], assuming its length is a power of 2
+    public static Complex[] ifft(final Complex[] x) {
+        final int N = x.length;
+        // Complex[] y = new Complex[N];
+
+        // take conjugate
+        for (int i = 0; i < N; i++) {
+            x[i] = x[i].conjugate();
+        }
+
+        // compute forward FFT
+        fft(x);
+
+        // take conjugate again
+        for (int i = 0; i < N; i++) {
+            x[i] = x[i].conjugate();
+        }
+
+        // divide by N
+        for (int i = 0; i < N; i++) {
+            x[i] = x[i].times(1.0 / N);
+        }
+
+        return x;
+
+    }
 
 }

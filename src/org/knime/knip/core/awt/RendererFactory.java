@@ -13,61 +13,61 @@ import net.imglib2.type.numeric.RealType;
 
 public class RendererFactory {
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
-                        final RandomAccessibleInterval<T> img) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
+                                                                                final RandomAccessibleInterval<T> img) {
 
-                final List<ImageRenderer> res = new ArrayList<ImageRenderer>();
+        final List<ImageRenderer> res = new ArrayList<ImageRenderer>();
 
-                if (img instanceof Labeling) {
-                        res.add(new RandomColorLabelingRenderer());
-                        res.add(new BoundingBoxLabelRenderer());
-                        res.add(new BoundingBoxRandomColorLabelRenderer());
-                } else {
-                        final T type = img.randomAccess().get();
+        if (img instanceof Labeling) {
+            res.add(new RandomColorLabelingRenderer());
+            res.add(new BoundingBoxLabelRenderer());
+            res.add(new BoundingBoxRandomColorLabelRenderer());
+        } else {
+            final T type = img.randomAccess().get();
 
-                        if (type instanceof RealType) {
-                                res.add(new Real2GreyRenderer());
-                                for (int d = 0; d < img.numDimensions(); d++) {
-                                        if (img.dimension(d) > 1
-                                                        && img.dimension(d) < 4) {
-                                                res.add(new Real2ColorRenderer(
-                                                                d));
-                                        }
-                                }
-                        }
+            if (type instanceof RealType) {
+                res.add(new Real2GreyRenderer());
+                for (int d = 0; d < img.numDimensions(); d++) {
+                    if ((img.dimension(d) > 1)
+                            && (img.dimension(d) < 4)) {
+                        res.add(new Real2ColorRenderer(
+                                                       d));
+                    }
                 }
-
-                return res.toArray(new ImageRenderer[res.size()]);
+            }
         }
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
-                        final RandomAccessibleInterval<T> img,
-                        final ImageMetadata imageMetaData) {
+        return res.toArray(new ImageRenderer[res.size()]);
+    }
 
-                final List<ImageRenderer> res = new ArrayList<ImageRenderer>();
-                res.addAll(Arrays.asList(createSuitableRenderer(img)));
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <T extends Type<T>> ImageRenderer<T>[] createSuitableRenderer(
+                                                                                final RandomAccessibleInterval<T> img,
+                                                                                final ImageMetadata imageMetaData) {
 
-                // color rendering
-                final T type = img.randomAccess().get();
+        final List<ImageRenderer> res = new ArrayList<ImageRenderer>();
+        res.addAll(Arrays.asList(createSuitableRenderer(img)));
 
-                if (type instanceof RealType) {
-                        if (imageMetaData != null
-                                        && imageMetaData.getColorTableCount() > 0) {
+        // color rendering
+        final T type = img.randomAccess().get();
 
-                                for (int d = 0; d < img.numDimensions(); d++) {
-                                        if (img.dimension(d) == imageMetaData
-                                                        .getColorTableCount()) {
+        if (type instanceof RealType) {
+            if ((imageMetaData != null)
+                    && (imageMetaData.getColorTableCount() > 0)) {
 
-                                                res.add(new Real2TableColorRenderer(
-                                                                d));
-                                        }
-                                }
-                        }
+                for (int d = 0; d < img.numDimensions(); d++) {
+                    if (img.dimension(d) == imageMetaData
+                            .getColorTableCount()) {
+
+                        res.add(new Real2TableColorRenderer(
+                                                            d));
+                    }
                 }
-
-                return res.toArray(new ImageRenderer[res.size()]);
+            }
         }
+
+        return res.toArray(new ImageRenderer[res.size()]);
+    }
 
 }

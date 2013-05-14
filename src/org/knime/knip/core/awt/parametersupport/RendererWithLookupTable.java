@@ -9,12 +9,12 @@ import org.knime.knip.core.awt.lookup.LookupTable;
  */
 public interface RendererWithLookupTable<T, U> {
 
-        /**
-         * Set a new lookup table for the next rendering pass.<br>
-         *
-         * @param table
-         *                the table to use
-         */
-        public void setLookupTable(final LookupTable<T, U> table);
+    /**
+     * Set a new lookup table for the next rendering pass.<br>
+     *
+     * @param table
+     *                the table to use
+     */
+    public void setLookupTable(final LookupTable<T, U> table);
 
 }

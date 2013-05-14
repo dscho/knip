@@ -69,190 +69,190 @@ import org.slf4j.LoggerFactory;
  */
 public class EventService {
 
-        private static final Logger LOGGER = LoggerFactory
-                        .getLogger(EventService.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(EventService.class);
 
-        private final Map<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>> m_typeToSubscriber;
+    private final Map<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>> m_typeToSubscriber;
 
-        private final PriorityBlockingQueue<KNIPEvent> m_eventQueue;
+    private final PriorityBlockingQueue<KNIPEvent> m_eventQueue;
 
-        private boolean m_openQueue = true;
+    private boolean m_openQueue = true;
 
-        public EventService() {
-                final Comparator<KNIPEvent> comparator = new KNIPEventComparator();
-                m_eventQueue = new PriorityBlockingQueue<KNIPEvent>(20,
-                                comparator);
-                m_typeToSubscriber = new HashMap<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>>();
+    public EventService() {
+        final Comparator<KNIPEvent> comparator = new KNIPEventComparator();
+        m_eventQueue = new PriorityBlockingQueue<KNIPEvent>(20,
+                comparator);
+        m_typeToSubscriber = new HashMap<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>>();
+    }
+
+    /**
+     * Subscribes all of the given object's @{@link EventListener} annotated
+     * methods. This allows a single class to subscribe to multiple types of
+     * events by implementing multiple event handling methods and annotating
+     * each one with @{@link EventListener}.
+     */
+
+    public void subscribe(final Object obj) {
+        subscribeRecursively(obj.getClass(), obj);
+    }
+
+    /**
+     * @param <E>
+     * @param event
+     */
+    public <E extends KNIPEvent> void publish(final E event) {
+
+        // test for redundant events i.e. events that have the
+        // same effect than already inserted event. (E.g. ImgRedrawEvent
+        // should only occur once)
+        boolean redundant = false;
+        for (final KNIPEvent eve : m_eventQueue) {
+            if (event.isRedundant(eve)) {
+                redundant = true;
+                break;
+            }
+        }
+        if (!redundant) {
+            m_eventQueue.add(event);
         }
 
-        /**
-         * Subscribes all of the given object's @{@link EventListener} annotated
-         * methods. This allows a single class to subscribe to multiple types of
-         * events by implementing multiple event handling methods and annotating
-         * each one with @{@link EventListener}.
-         */
+        if (m_openQueue) {
+            m_openQueue = false;
+            while (!m_eventQueue.isEmpty()) {
+                processQueue();
+            }
 
-        public void subscribe(final Object obj) {
-                subscribeRecursively(obj.getClass(), obj);
+            m_openQueue = true;
+        }
+    }
+
+    // -- Helper methods --
+
+    /*
+     * Recursively scans for @{@link EventListener} annotated methods, and
+     * subscribes them to the event service.
+     */
+    private void subscribeRecursively(final Class<?> type, final Object o) {
+        if ((type == null) || (type == Object.class)) {
+            return;
+        }
+        for (final Method m : type.getDeclaredMethods()) {
+            final EventListener ann = m
+                    .getAnnotation(EventListener.class);
+            if (ann == null)
+            {
+                continue; // not an event handler method
+            }
+
+            final Class<? extends KNIPEvent> eventClass = getEventClass(m);
+            if (eventClass == null) {
+                LOGGER.warn("Invalid EventHandler method: " + m);
+                continue;
+            }
+
+            subscribe(eventClass, o, m);
+        }
+        subscribeRecursively(type.getSuperclass(), o);
+    }
+
+    /* Gets the event class parameter of the given method. */
+    private Class<? extends KNIPEvent> getEventClass(final Method m) {
+        final Class<?>[] c = m.getParameterTypes();
+        if ((c == null) || (c.length != 1))
+        {
+            return null; // wrong number of args
+        }
+        if (!KNIPEvent.class.isAssignableFrom(c[0]))
+        {
+            return null; // wrong class
         }
 
-        /**
-         * @param <E>
-         * @param event
-         */
-        public <E extends KNIPEvent> void publish(final E event) {
+        @SuppressWarnings("unchecked")
+        final Class<? extends KNIPEvent> eventClass = (Class<? extends KNIPEvent>) c[0];
+        return eventClass;
+    }
 
-                // test for redundant events i.e. events that have the
-                // same effect than already inserted event. (E.g. ImgRedrawEvent
-                // should only occur once)
-                boolean redundant = false;
-                for (final KNIPEvent eve : m_eventQueue) {
-                        if (event.isRedundant(eve)) {
-                                redundant = true;
-                                break;
-                        }
-                }
-                if (!redundant) {
-                        m_eventQueue.add(event);
-                }
+    private <E extends KNIPEvent> void subscribe(final Class<E> c,
+                                                 final Object o, final Method m) {
+        final ProxyEventSubscriber<E> subscriber = new ProxyEventSubscriber<E>(
+                o, m);
+        // Mapping Listeners to Topics
+        List<ProxyEventSubscriber<?>> ref = m_typeToSubscriber.get(c);
 
-                if (m_openQueue) {
-                        m_openQueue = false;
-                        while (!m_eventQueue.isEmpty()) {
-                                processQueue();
-                        }
-
-                        m_openQueue = true;
-                }
+        if (ref == null) {
+            ref = new ArrayList<ProxyEventSubscriber<?>>();
+            m_typeToSubscriber.put(c, ref);
         }
 
-        // -- Helper methods --
+        ref.add(subscriber);
 
-        /*
-         * Recursively scans for @{@link EventListener} annotated methods, and
-         * subscribes them to the event service.
-         */
-        private void subscribeRecursively(final Class<?> type, final Object o) {
-                if (type == null || type == Object.class) {
-                        return;
+    }
+
+    private void processQueue() {
+        while (!m_eventQueue.isEmpty()) {
+            // priority queue => higher priority events first
+            final KNIPEvent event = m_eventQueue.poll();
+            Class<?> clazz = event.getClass();
+
+            while (KNIPEvent.class.isAssignableFrom(clazz)) {
+                final List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber
+                        .get(clazz);
+
+                if (suscribers != null) {
+                    for (final ProxyEventSubscriber l : suscribers) {
+                        l.onEvent(event);
+                    }
+                    LOGGER.debug("Event " + event
+                                 + " processed");
+                } else {
+                    LOGGER.debug("Nobody is listening to: "
+                            + event);
                 }
-                for (final Method m : type.getDeclaredMethods()) {
-                        final EventListener ann = m
-                                        .getAnnotation(EventListener.class);
-                        if (ann == null)
-                         {
-                                continue; // not an event handler method
-                        }
+                clazz = clazz.getSuperclass();
+            }
 
-                        final Class<? extends KNIPEvent> eventClass = getEventClass(m);
-                        if (eventClass == null) {
-                                LOGGER.warn("Invalid EventHandler method: " + m);
-                                continue;
-                        }
+            m_eventQueue.remove(event);
+        }
+    }
 
-                        subscribe(eventClass, o, m);
-                }
-                subscribeRecursively(type.getSuperclass(), o);
+    private static class ProxyEventSubscriber<E extends KNIPEvent> {
+
+        private final Method m_method;
+
+        private final Object m_subscriber;
+
+        public ProxyEventSubscriber(final Object subscriber, final Method method) {
+            m_method = method;
+            m_subscriber = subscriber;
         }
 
-        /* Gets the event class parameter of the given method. */
-        private Class<? extends KNIPEvent> getEventClass(final Method m) {
-                final Class<?>[] c = m.getParameterTypes();
-                if (c == null || c.length != 1)
-                 {
-                        return null; // wrong number of args
-                }
-                if (!KNIPEvent.class.isAssignableFrom(c[0]))
-                 {
-                        return null; // wrong class
-                }
+        public void onEvent(final E event) {
 
-                @SuppressWarnings("unchecked")
-                final Class<? extends KNIPEvent> eventClass = (Class<? extends KNIPEvent>) c[0];
-                return eventClass;
+            try {
+                m_method.invoke(m_subscriber, event);
+            } catch (final Exception e) {
+                throw new RuntimeException(
+                                           "InvocationTargetException when invoking annotated method from EventService publication. Eata: "
+                                                   + event
+                                                   + ", subscriber:"
+                                                   + m_subscriber,
+                                                   e);
+            }
         }
+    }
 
-        private <E extends KNIPEvent> void subscribe(final Class<E> c,
-                        final Object o, final Method m) {
-                final ProxyEventSubscriber<E> subscriber = new ProxyEventSubscriber<E>(
-                                o, m);
-                // Mapping Listeners to Topics
-                List<ProxyEventSubscriber<?>> ref = m_typeToSubscriber.get(c);
-
-                if (ref == null) {
-                        ref = new ArrayList<ProxyEventSubscriber<?>>();
-                        m_typeToSubscriber.put(c, ref);
-                }
-
-                ref.add(subscriber);
-
+    private class KNIPEventComparator implements Comparator<KNIPEvent> {
+        @Override
+        public int compare(final KNIPEvent a, final KNIPEvent b) {
+            if (a.getExecutionOrder().ordinal() == b
+                    .getExecutionOrder().ordinal()) {
+                return 0;
+            } else if (a.getExecutionOrder().ordinal() < b
+                    .getExecutionOrder().ordinal()) {
+                return -1;
+            }
+            return 1;
         }
-
-        private void processQueue() {
-                while (!m_eventQueue.isEmpty()) {
-                        // priority queue => higher priority events first
-                        final KNIPEvent event = m_eventQueue.poll();
-                        Class<?> clazz = event.getClass();
-
-                        while (KNIPEvent.class.isAssignableFrom(clazz)) {
-                                final List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber
-                                                .get(clazz);
-
-                                if (suscribers != null) {
-                                        for (final ProxyEventSubscriber l : suscribers) {
-                                                l.onEvent(event);
-                                        }
-                                        LOGGER.debug("Event " + event
-                                                        + " processed");
-                                } else {
-                                        LOGGER.debug("Nobody is listening to: "
-                                                        + event);
-                                }
-                                clazz = clazz.getSuperclass();
-                        }
-
-                        m_eventQueue.remove(event);
-                }
-        }
-
-        private static class ProxyEventSubscriber<E extends KNIPEvent> {
-
-                private final Method m_method;
-
-                private final Object m_subscriber;
-
-                public ProxyEventSubscriber(final Object subscriber, final Method method) {
-                        m_method = method;
-                        m_subscriber = subscriber;
-                }
-
-                public void onEvent(final E event) {
-
-                        try {
-                                m_method.invoke(m_subscriber, event);
-                        } catch (final Exception e) {
-                                throw new RuntimeException(
-                                                "InvocationTargetException when invoking annotated method from EventService publication. Eata: "
-                                                                + event
-                                                                + ", subscriber:"
-                                                                + m_subscriber,
-                                                e);
-                        }
-                }
-        }
-
-        private class KNIPEventComparator implements Comparator<KNIPEvent> {
-                @Override
-                public int compare(final KNIPEvent a, final KNIPEvent b) {
-                        if (a.getExecutionOrder().ordinal() == b
-                                        .getExecutionOrder().ordinal()) {
-                                return 0;
-                        } else if (a.getExecutionOrder().ordinal() < b
-                                        .getExecutionOrder().ordinal()) {
-                                return -1;
-                        }
-                        return 1;
-                }
-        }
+    }
 
 }

@@ -84,141 +84,141 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
  * @param <I>
  */
 public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
-                extends ViewerComponent {
+extends ViewerComponent {
 
-        // 0..400 with steps of 1 <=> (0..50 with steps of 0.125) * 8
-        private final int SATURATION_SLIDER_MAX = 400;
-        private final int SATURATION_SLIDER_FACTOR = 8;
+    // 0..400 with steps of 1 <=> (0..50 with steps of 0.125) * 8
+    private final int SATURATION_SLIDER_MAX = 400;
+    private final int SATURATION_SLIDER_FACTOR = 8;
 
-        /**
-	 *
-	 */
-        private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-        /* The saturation slider going in steps of 0.125 from 0 to 50 */
-        private final JSlider m_saturationSlider;
+    /* The saturation slider going in steps of 0.125 from 0 to 50 */
+    private final JSlider m_saturationSlider;
 
-        /* CheckBox indicating weather the image should be normalized or not */
-        private final JCheckBox m_normalize;
+    /* CheckBox indicating weather the image should be normalized or not */
+    private final JCheckBox m_normalize;
 
-        /* EventService to publish events */
-        private EventService m_eventService;
+    /* EventService to publish events */
+    private EventService m_eventService;
 
-        private final JLabel m_sat;
+    private final JLabel m_sat;
 
-        /**
-         * Constructor creating the GUI.
-         */
-        public ImgNormalizationPanel() {
-                this(0, false);
-        }
+    /**
+     * Constructor creating the GUI.
+     */
+    public ImgNormalizationPanel() {
+        this(0, false);
+    }
 
-        /**
-         * Creates {@link ImgNormalizationPanel} with the given default value
-         * for normalization.
-         *
-         * @param saturation
-         *                the default saturation
-         *
-         *
-         * @param normalize
-         *                whether normalization should be enabled
-         */
-        public ImgNormalizationPanel(final double sat, final boolean normalize) {
-                super("Normalize", false);
+    /**
+     * Creates {@link ImgNormalizationPanel} with the given default value
+     * for normalization.
+     *
+     * @param saturation
+     *                the default saturation
+     *
+     *
+     * @param normalize
+     *                whether normalization should be enabled
+     */
+    public ImgNormalizationPanel(final double sat, final boolean normalize) {
+        super("Normalize", false);
 
-                setMaximumSize(new Dimension(250, getMaximumSize().height));
-                setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setMaximumSize(new Dimension(250, getMaximumSize().height));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-                m_normalize = new JCheckBox("Normalize");
-                m_normalize.setSelected(normalize);
+        m_normalize = new JCheckBox("Normalize");
+        m_normalize.setSelected(normalize);
 
-                m_normalize.addActionListener(new ActionListener() {
+        m_normalize.addActionListener(new ActionListener() {
 
-                        @Override
-                        public void actionPerformed(final ActionEvent e) {
-                                m_saturationSlider.setEnabled(m_normalize
-                                                .isSelected());
-                                m_sat.setEnabled(m_normalize.isSelected());
-                                m_eventService.publish(new NormalizationParametersChgEvent<T>(
-                                                (m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR),
-                                                m_normalize.isSelected()));
-                                m_eventService.publish(new ImgRedrawEvent());
-                        }
-                });
-                final JLabel saturation = new JLabel("Saturation (%):");
-                m_sat = new JLabel("             " + sat + "%");
-                m_sat.setEnabled(false);
-                add(m_normalize);
-                add(saturation);
-                // DO NOT CHANGE THE SLIDER W
-                m_saturationSlider = new JSlider(0, SATURATION_SLIDER_MAX);
-                m_saturationSlider
-                                .setValue((int) (sat * SATURATION_SLIDER_FACTOR));
-                m_saturationSlider.setEnabled(false);
-                m_saturationSlider.addChangeListener(new ChangeListener() {
-                        @Override
-                        public void stateChanged(final ChangeEvent e) {
-                                m_eventService.publish(new NormalizationParametersChgEvent<T>(
-                                                m_saturationSlider.getValue()
-                                                                / SATURATION_SLIDER_FACTOR,
-                                                m_normalize.isSelected()));
-                                m_eventService.publish(new ImgRedrawEvent());
-                                final float percent = ((float) m_saturationSlider
-                                                .getValue())
-                                                / SATURATION_SLIDER_FACTOR;
-                                m_sat.setText("             " + percent + "%");
-                        }
-                });
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                m_saturationSlider.setEnabled(m_normalize
+                                              .isSelected());
+                m_sat.setEnabled(m_normalize.isSelected());
+                m_eventService.publish(new NormalizationParametersChgEvent<T>(
+                        (m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR),
+                        m_normalize.isSelected()));
+                m_eventService.publish(new ImgRedrawEvent());
+            }
+        });
+        final JLabel saturation = new JLabel("Saturation (%):");
+        m_sat = new JLabel("             " + sat + "%");
+        m_sat.setEnabled(false);
+        add(m_normalize);
+        add(saturation);
+        // DO NOT CHANGE THE SLIDER W
+        m_saturationSlider = new JSlider(0, SATURATION_SLIDER_MAX);
+        m_saturationSlider
+        .setValue((int) (sat * SATURATION_SLIDER_FACTOR));
+        m_saturationSlider.setEnabled(false);
+        m_saturationSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                m_eventService.publish(new NormalizationParametersChgEvent<T>(
+                        m_saturationSlider.getValue()
+                        / SATURATION_SLIDER_FACTOR,
+                        m_normalize.isSelected()));
+                m_eventService.publish(new ImgRedrawEvent());
+                final float percent = ((float) m_saturationSlider
+                        .getValue())
+                        / SATURATION_SLIDER_FACTOR;
+                m_sat.setText("             " + percent + "%");
+            }
+        });
 
-                add(m_saturationSlider);
-                add(m_sat);
-                add(Box.createVerticalGlue());
-        }
+        add(m_saturationSlider);
+        add(m_sat);
+        add(Box.createVerticalGlue());
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Position getPosition() {
-                return Position.SOUTH;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Position getPosition() {
+        return Position.SOUTH;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setEventService(final EventService eventService) {
-                m_eventService = eventService;
-                eventService.subscribe(this);
-                // inform everybody about our settings.
-                eventService.publish(new NormalizationParametersChgEvent<T>(
-                                m_saturationSlider.getValue(), m_normalize
-                                                .isSelected()));
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEventService(final EventService eventService) {
+        m_eventService = eventService;
+        eventService.subscribe(this);
+        // inform everybody about our settings.
+        eventService.publish(new NormalizationParametersChgEvent<T>(
+                m_saturationSlider.getValue(), m_normalize
+                .isSelected()));
+    }
 
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                out.writeInt(m_saturationSlider.getValue());
-                out.writeBoolean(m_normalize.isSelected());
-        }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        out.writeInt(m_saturationSlider.getValue());
+        out.writeBoolean(m_normalize.isSelected());
+    }
 
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException {
-                m_saturationSlider.setValue(in.readInt());
-                m_normalize.setSelected(in.readBoolean());
-        }
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException {
+        m_saturationSlider.setValue(in.readInt());
+        m_normalize.setSelected(in.readBoolean());
+    }
 
-        @Override
-        public void reset() {
-                m_saturationSlider.setValue(0);
-                m_normalize.setSelected(false);
-        }
+    @Override
+    public void reset() {
+        m_saturationSlider.setValue(0);
+        m_normalize.setSelected(false);
+    }
 
-        @Override
-        public void setParent(final Component parent) {
-                // Nothing to do here
-        }
+    @Override
+    public void setParent(final Component parent) {
+        // Nothing to do here
+    }
 }

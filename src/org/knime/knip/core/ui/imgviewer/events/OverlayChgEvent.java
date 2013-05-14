@@ -59,30 +59,30 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
  */
 public class OverlayChgEvent implements KNIPEvent {
 
-        private final Overlay m_overlay;
+    private final Overlay m_overlay;
 
-        public OverlayChgEvent(final Overlay overlay) {
-                m_overlay = overlay;
-        }
+    public OverlayChgEvent(final Overlay overlay) {
+        m_overlay = overlay;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the overlay
-         */
-        public Overlay getOverlay() {
-                return m_overlay;
-        }
+    /**
+     * @return the overlay
+     */
+    public Overlay getOverlay() {
+        return m_overlay;
+    }
 
 }

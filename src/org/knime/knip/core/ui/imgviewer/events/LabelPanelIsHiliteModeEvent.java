@@ -59,31 +59,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class LabelPanelIsHiliteModeEvent implements KNIPEvent {
 
-        private final boolean m_isHiliteMode;
+    private final boolean m_isHiliteMode;
 
-        public LabelPanelIsHiliteModeEvent(final boolean isHiliteMode) {
-                m_isHiliteMode = isHiliteMode;
+    public LabelPanelIsHiliteModeEvent(final boolean isHiliteMode) {
+        m_isHiliteMode = isHiliteMode;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the isHiliteMode
-         */
-        public boolean isHiliteMode() {
-                return m_isHiliteMode;
-        }
+    /**
+     * @return the isHiliteMode
+     */
+    public boolean isHiliteMode() {
+        return m_isHiliteMode;
+    }
 
 }

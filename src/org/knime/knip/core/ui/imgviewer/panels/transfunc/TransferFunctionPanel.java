@@ -67,210 +67,210 @@ import mpicbg.ij.integral.Scale;
  */
 public class TransferFunctionPanel extends JPanel implements TransferFunctionChgListener {
 
-        private final static Dimension PREFERRED_SIZE = new Dimension(250, 50);
+    private final static Dimension PREFERRED_SIZE = new Dimension(250, 50);
 
-        private final static String DEFAULT_MSG = "Count ---";
+    private final static String DEFAULT_MSG = "Count ---";
 
-        private final EventListenerList m_listener = new EventListenerList();
+    private final EventListenerList m_listener = new EventListenerList();
 
-        /* the bundle we are currently drawing */
-        private TransferFunctionBundle m_bundle = null;
+    /* the bundle we are currently drawing */
+    private TransferFunctionBundle m_bundle = null;
 
-        /* the current histogram */
-        private HistogramWithNormalization m_histogram;
-        private Histogram m_histogramNormalized;
+    /* the current histogram */
+    private HistogramWithNormalization m_histogram;
+    private Histogram m_histogramNormalized;
 
-        /* controls wheter functions should be displayed normalized */
-        private boolean m_normalize = false;
+    /* controls wheter functions should be displayed normalized */
+    private boolean m_normalize = false;
 
-        private final HistogramPainter m_histogramPainter = new HistogramPainter();
-        private final TransferFunctionBundlePainter m_tfPainter = new TransferFunctionBundlePainter();
-        private final JLabel m_histInfoLabel = new JLabel(DEFAULT_MSG);
-        private final JPanel m_tfPanel = new JPanel() {
-                @Override
-                public final void paintComponent(final Graphics g) {
-
-                        // call super for painting background etc
-                        super.paintComponent(g);
-                        final Graphics2D g2 = (Graphics2D) g.create();
-
-                        m_histogramPainter.paint(g2);
-                        m_tfPainter.paint(g2);
-                }
-
-        };
-
-        /**
-         * Set up a new Panel displaying a bundle of transfer functions.
-         */
-        public TransferFunctionPanel() {
-
-                m_tfPanel.addMouseListener(m_tfPainter);
-                m_tfPanel.addMouseMotionListener(m_tfPainter);
-                m_tfPanel.addMouseMotionListener(m_histogramPainter);
-
-                m_tfPainter.addTransferFunctionChgListener(this);
-                m_tfPainter.addChangeListener(new ChangeListener() {
-                        @Override
-                        public void stateChanged(final ChangeEvent e) {
-                                setCursor(m_tfPainter.getCursor());
-                                repaint();
-                        }
-                });
-
-                m_histogramPainter.addChangeListener(new ChangeListener() {
-                        @Override
-                        public void stateChanged(final ChangeEvent e) {
-                                String text = m_histogramPainter.getMessage();
-
-                                if (text.length() == 0) {
-                                        text = DEFAULT_MSG;
-                                }
-
-                                m_histInfoLabel.setText(text);
-                                repaint();
-                        }
-                });
-
-                setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-                add(m_histInfoLabel);
-                add(m_tfPanel);
-        }
-
-        /**
-         * Set the new histogram that should be used for painting.<br>
-         *
-         * @param hist the new histogram
-         */
-        public final void setHistogram(final Histogram hist) {
-
-
-                if (hist == null) {
-                        m_histogramNormalized = null;
-                        m_histogram = null;
-                } else {
-                        m_histogram = getHistogram(hist);
-                        m_histogramNormalized = m_histogram.getNormalizedHistogram();
-                }
-
-                setHistogram();
-
-                normalizeFunctions();
-
-                repaint();
-        }
-
-        private HistogramWithNormalization getHistogram(final Histogram hist) {
-                if (hist instanceof HistogramWithNormalization) {
-                        return (HistogramWithNormalization) hist;
-                } else {
-                        return new HistogramWithNormalization(hist);
-                }
-        }
-
-        /**
-         * @see HistogramPainter#setScale(Scale)
-         * @param scale
-         *                the new scale
-         */
-        public final void setScale(final HistogramPainter.Scale scale) {
-                m_histogramPainter.setScale(scale);
-                repaint();
-        }
-
-        /**
-         * @see TransferFunctionBundlePainter#setTransferFocus(String)
-         * @param color
-         *                the color of the function to draw topmost
-         */
-        public final void setTransferFocus(final TransferFunctionColor color) {
-                m_tfPainter.setTransferFocus(color);
-                repaint();
-        }
-
-        /**
-         * @see TransferFunctionBundlePainter#setFunctions(TransferFunctionBundle)
-         * @param bundle
-         *                the bundle of functions to display
-         */
-        public final void setBundle(final TransferFunctionBundle bundle) {
-                if (bundle == null) {
-                        throw new NullPointerException();
-                }
-
-                m_bundle = bundle;
-
-                normalizeFunctions();
-
-                repaint();
-        }
-
-        private void setHistogram() {
-                if (m_normalize) {
-                        m_histogramPainter.setHistogram(m_histogramNormalized);
-                } else {
-                        m_histogramPainter.setHistogram(m_histogram);
-                }
-        }
-
-        private void normalizeFunctions() {
-                double[] frac = new double[] {0, 1};
-
-                if (m_normalize && m_histogram != null) {
-                        frac = m_histogram.getFractions();
-                }
-
-                if (m_bundle != null) {
-                        for (final TransferFunction tf : m_bundle) {
-                                tf.zoom(frac[0], frac[1]);
-                        }
-                }
-
-                m_tfPainter.setBundle(m_bundle);
-        }
-
-        public final void normalize(final boolean value) {
-
-                m_normalize = value;
-
-                setHistogram();
-
-                normalizeFunctions();
-
-                repaint();
-        }
-
-
+    private final HistogramPainter m_histogramPainter = new HistogramPainter();
+    private final TransferFunctionBundlePainter m_tfPainter = new TransferFunctionBundlePainter();
+    private final JLabel m_histInfoLabel = new JLabel(DEFAULT_MSG);
+    private final JPanel m_tfPanel = new JPanel() {
         @Override
-        public void transferFunctionChg(final TransferFunctionChgEvent event) {
-                for (final TransferFunctionChgListener l : m_listener.getListeners(TransferFunctionChgListener.class)) {
-                        l.transferFunctionChg(event);
+        public final void paintComponent(final Graphics g) {
+
+            // call super for painting background etc
+            super.paintComponent(g);
+            final Graphics2D g2 = (Graphics2D) g.create();
+
+            m_histogramPainter.paint(g2);
+            m_tfPainter.paint(g2);
+        }
+
+    };
+
+    /**
+     * Set up a new Panel displaying a bundle of transfer functions.
+     */
+    public TransferFunctionPanel() {
+
+        m_tfPanel.addMouseListener(m_tfPainter);
+        m_tfPanel.addMouseMotionListener(m_tfPainter);
+        m_tfPanel.addMouseMotionListener(m_histogramPainter);
+
+        m_tfPainter.addTransferFunctionChgListener(this);
+        m_tfPainter.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                setCursor(m_tfPainter.getCursor());
+                repaint();
+            }
+        });
+
+        m_histogramPainter.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                String text = m_histogramPainter.getMessage();
+
+                if (text.length() == 0) {
+                    text = DEFAULT_MSG;
                 }
 
+                m_histInfoLabel.setText(text);
                 repaint();
+            }
+        });
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(m_histInfoLabel);
+        add(m_tfPanel);
+    }
+
+    /**
+     * Set the new histogram that should be used for painting.<br>
+     *
+     * @param hist the new histogram
+     */
+    public final void setHistogram(final Histogram hist) {
+
+
+        if (hist == null) {
+            m_histogramNormalized = null;
+            m_histogram = null;
+        } else {
+            m_histogram = getHistogram(hist);
+            m_histogramNormalized = m_histogram.getNormalizedHistogram();
         }
 
-        public void addTransferFunctionChgListener(final TransferFunctionChgListener l) {
-                m_listener.add(TransferFunctionChgListener.class, l);
+        setHistogram();
+
+        normalizeFunctions();
+
+        repaint();
+    }
+
+    private HistogramWithNormalization getHistogram(final Histogram hist) {
+        if (hist instanceof HistogramWithNormalization) {
+            return (HistogramWithNormalization) hist;
+        } else {
+            return new HistogramWithNormalization(hist);
+        }
+    }
+
+    /**
+     * @see HistogramPainter#setScale(Scale)
+     * @param scale
+     *                the new scale
+     */
+    public final void setScale(final HistogramPainter.Scale scale) {
+        m_histogramPainter.setScale(scale);
+        repaint();
+    }
+
+    /**
+     * @see TransferFunctionBundlePainter#setTransferFocus(String)
+     * @param color
+     *                the color of the function to draw topmost
+     */
+    public final void setTransferFocus(final TransferFunctionColor color) {
+        m_tfPainter.setTransferFocus(color);
+        repaint();
+    }
+
+    /**
+     * @see TransferFunctionBundlePainter#setFunctions(TransferFunctionBundle)
+     * @param bundle
+     *                the bundle of functions to display
+     */
+    public final void setBundle(final TransferFunctionBundle bundle) {
+        if (bundle == null) {
+            throw new NullPointerException();
         }
 
-        public void removeTransferFunctionChgListener(
-                        final TransferFunctionChgListener l) {
-                m_listener.remove(TransferFunctionChgListener.class, l);
+        m_bundle = bundle;
+
+        normalizeFunctions();
+
+        repaint();
+    }
+
+    private void setHistogram() {
+        if (m_normalize) {
+            m_histogramPainter.setHistogram(m_histogramNormalized);
+        } else {
+            m_histogramPainter.setHistogram(m_histogram);
+        }
+    }
+
+    private void normalizeFunctions() {
+        double[] frac = new double[] {0, 1};
+
+        if (m_normalize && (m_histogram != null)) {
+            frac = m_histogram.getFractions();
         }
 
-        @Override
-        public Dimension getMinimumSize() {
-                return m_histogramPainter.getMinimumSize();
+        if (m_bundle != null) {
+            for (final TransferFunction tf : m_bundle) {
+                tf.zoom(frac[0], frac[1]);
+            }
         }
 
-        @Override
-        public Dimension getPreferredSize() {
-                final Dimension h = m_histogramPainter.getPreferredSize();
+        m_tfPainter.setBundle(m_bundle);
+    }
 
-                final int width = Math.max(h.width, PREFERRED_SIZE.width);
-                final int height = Math.max(h.height, PREFERRED_SIZE.height);
+    public final void normalize(final boolean value) {
 
-                return new Dimension(width, height);
+        m_normalize = value;
+
+        setHistogram();
+
+        normalizeFunctions();
+
+        repaint();
+    }
+
+
+    @Override
+    public void transferFunctionChg(final TransferFunctionChgEvent event) {
+        for (final TransferFunctionChgListener l : m_listener.getListeners(TransferFunctionChgListener.class)) {
+            l.transferFunctionChg(event);
         }
+
+        repaint();
+    }
+
+    public void addTransferFunctionChgListener(final TransferFunctionChgListener l) {
+        m_listener.add(TransferFunctionChgListener.class, l);
+    }
+
+    public void removeTransferFunctionChgListener(
+                                                  final TransferFunctionChgListener l) {
+        m_listener.remove(TransferFunctionChgListener.class, l);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return m_histogramPainter.getMinimumSize();
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        final Dimension h = m_histogramPainter.getPreferredSize();
+
+        final int width = Math.max(h.width, PREFERRED_SIZE.width);
+        final int height = Math.max(h.height, PREFERRED_SIZE.height);
+
+        return new Dimension(width, height);
+    }
 }

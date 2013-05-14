@@ -66,69 +66,69 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  * @author hornm, dietzc, zinsmaierm University of Konstanz
  */
 public class IntervalWithMetadataChgEvent<T extends Type<T>>
-                implements
-                KNIPEvent {
+implements
+KNIPEvent {
 
-        private final RandomAccessibleInterval<T> m_interval;
-        private final Named m_name;
-        private final CalibratedSpace m_cspace;
-        private final Sourced m_source;
+    private final RandomAccessibleInterval<T> m_interval;
+    private final Named m_name;
+    private final CalibratedSpace m_cspace;
+    private final Sourced m_source;
 
-        public IntervalWithMetadataChgEvent(
-                        final RandomAccessibleInterval<T> interval,
-                        final Named name,
-                        final Sourced source, final CalibratedSpace cspace) {
-                m_interval = interval;
-                m_name = name;
-                m_source = source;
-                m_cspace = cspace;
+    public IntervalWithMetadataChgEvent(
+                                        final RandomAccessibleInterval<T> interval,
+                                        final Named name,
+                                        final Sourced source, final CalibratedSpace cspace) {
+        m_interval = interval;
+        m_name = name;
+        m_source = source;
+        m_cspace = cspace;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the interval
-         */
-        public RandomAccessibleInterval<T> getRandomAccessibleInterval() {
-                return m_interval;
-        }
+    /**
+     * @return the interval
+     */
+    public RandomAccessibleInterval<T> getRandomAccessibleInterval() {
+        return m_interval;
+    }
 
-        public IterableInterval<T> getIterableInterval() {
-                return Views.iterable(m_interval);
-        }
+    public IterableInterval<T> getIterableInterval() {
+        return Views.iterable(m_interval);
+    }
 
-        /**
-         * @return the name
-         */
-        public Named getName() {
-                return m_name;
-        }
+    /**
+     * @return the name
+     */
+    public Named getName() {
+        return m_name;
+    }
 
-        /**
-         * @return the source
-         */
-        public Sourced getSource() {
-                return m_source;
-        }
+    /**
+     * @return the source
+     */
+    public Sourced getSource() {
+        return m_source;
+    }
 
-        /**
-         * @return the axes
-         */
-        public CalibratedSpace getCalibratedSpace() {
-                return m_cspace;
-        }
+    /**
+     * @return the axes
+     */
+    public CalibratedSpace getCalibratedSpace() {
+        return m_cspace;
+    }
 
 
 }

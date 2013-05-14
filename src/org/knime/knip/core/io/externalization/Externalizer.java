@@ -63,38 +63,38 @@ package org.knime.knip.core.io.externalization;
  */
 public interface Externalizer<T> {
 
-        /**
-         * @return a unique id of the exteranlizer
-         */
-        String getId();
+    /**
+     * @return a unique id of the exteranlizer
+     */
+    String getId();
 
-        /**
-         * @return the type of the objects the exteranlizer can read/write
-         */
-        Class<? extends T> getType();
+    /**
+     * @return the type of the objects the exteranlizer can read/write
+     */
+    Class<? extends T> getType();
 
-        /**
-         * @return with which priority this externalizer should be used
-         */
-        int getPriority();
+    /**
+     * @return with which priority this externalizer should be used
+     */
+    int getPriority();
 
-        /**
-         * Restores the object from a stream
-         *
-         * @param in
-         * @return the object
-         * @throws Exception
-         */
-        T read(BufferedDataInputStream in) throws Exception;
+    /**
+     * Restores the object from a stream
+     *
+     * @param in
+     * @return the object
+     * @throws Exception
+     */
+    T read(BufferedDataInputStream in) throws Exception;
 
-        /**
-         * Writes the object to the stream
-         *
-         * @param out
-         * @param obj
-         *                object to write
-         * @throws Exception
-         */
-        void write(BufferedDataOutputStream out, T obj) throws Exception;
+    /**
+     * Writes the object to the stream
+     *
+     * @param out
+     * @param obj
+     *                object to write
+     * @throws Exception
+     */
+    void write(BufferedDataOutputStream out, T obj) throws Exception;
 
 }

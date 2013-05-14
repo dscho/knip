@@ -60,30 +60,30 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class HilitedLabelsChgEvent implements KNIPEvent {
 
-        private final Set<String> m_hilitedLabels;
+    private final Set<String> m_hilitedLabels;
 
-        public HilitedLabelsChgEvent(final Set<String> hilitedLabels) {
-                m_hilitedLabels = hilitedLabels;
+    public HilitedLabelsChgEvent(final Set<String> hilitedLabels) {
+        m_hilitedLabels = hilitedLabels;
 
-        }
+    }
 
-        /**
-         * @return the hilitedLabels
-         */
-        public Set<String> getHilitedLabels() {
-                return m_hilitedLabels;
-        }
+    /**
+     * @return the hilitedLabels
+     */
+    public Set<String> getHilitedLabels() {
+        return m_hilitedLabels;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 }

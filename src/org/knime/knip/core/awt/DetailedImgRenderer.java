@@ -71,115 +71,115 @@ import org.knime.knip.core.data.img.GeneralMetadataImpl;
  * @param <T>
  */
 public class DetailedImgRenderer<T extends Type<T>> implements
- ImageRenderer<T> {
+ImageRenderer<T> {
 
-        /* for source images below that size, no details will be shown */
-        private static final Dimension MIN_SIZE = new Dimension(150, 150);
+    /* for source images below that size, no details will be shown */
+    private static final Dimension MIN_SIZE = new Dimension(150, 150);
 
-        private final ProjectingRenderer<T> m_projectingRenderer;
+    private final ProjectingRenderer<T> m_projectingRenderer;
 
-        private Sourced m_imgSource;
+    private Sourced m_imgSource;
 
-        private Named m_imgName;
+    private Named m_imgName;
 
-        private CalibratedSpace m_axes;
+    private CalibratedSpace m_axes;
 
-        private int m_height;
+    private int m_height;
 
-        public DetailedImgRenderer(final ProjectingRenderer<T> projectingRenderer) {
-                m_projectingRenderer = projectingRenderer;
+    public DetailedImgRenderer(final ProjectingRenderer<T> projectingRenderer) {
+        m_projectingRenderer = projectingRenderer;
+    }
+
+    public void setHeight(final int height) {
+        m_height = height;
+    }
+
+    public void setMetaData(final Metadata meta) {
+        m_imgSource = meta;
+        m_imgName = meta;
+        m_axes = meta;
+    }
+
+    public void setMetaData(final GeneralMetadataImpl meta) {
+        m_imgSource = meta;
+        m_imgName = meta;
+        m_axes = meta;
+    }
+
+    public ImageRenderer<T> getUnderlyingRenderer() {
+        return m_projectingRenderer;
+    }
+
+    @Override
+    public ScreenImage render(final RandomAccessibleInterval<T> source, final int dimX,
+                              final int dimY, final long[] planePos) {
+
+        final long[] orgDims = new long[planePos.length];
+        source.dimensions(orgDims);
+
+        // create information string
+        final StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < planePos.length; i++) {
+            if (m_axes != null) {
+                sb.append("Size " + m_axes.axis(i).getLabel()
+                          + "=" + orgDims[i] + "\n");
+            } else {
+                sb.append("Size " + i + "=" + orgDims[i] + "\n");
+            }
         }
 
-        public void setHeight(final int height) {
-                m_height = height;
+        sb.append("Pixel Type="
+                + source.randomAccess().get().getClass()
+                .getSimpleName() + "\n");
+
+        sb.append("Image Type=" + source.getClass().getSimpleName()
+                  + "\n");
+
+        if (m_imgName != null) {
+            sb.append("Image Name=" + m_imgName.getName() + "\n");
         }
 
-        public void setMetaData(final Metadata meta) {
-                m_imgSource = meta;
-                m_imgName = meta;
-                m_axes = meta;
+        if (m_imgSource != null) {
+            sb.append("Image Source=" + m_imgSource.getSource());
         }
+        final int lineHeight = 15;
+        final int posX = 10;
+        final String[] tmp = sb.toString().split("\n");
 
-        public void setMetaData(final GeneralMetadataImpl meta) {
-                m_imgSource = meta;
-                m_imgName = meta;
-                m_axes = meta;
+        // render image and created information string
+        final ScreenImage res = m_projectingRenderer.render(source, dimX,
+                                                            dimY, planePos);
+
+        final int width = (int) (orgDims[dimX] * ((double) m_height / orgDims[dimY]));
+
+        if ((width < MIN_SIZE.width) || (m_height < MIN_SIZE.height)) {
+            // scale render without text
+            final ScreenImage scaledRes = new ARGBScreenImage(width,
+                                                              m_height);
+            final Graphics g = scaledRes.image().getGraphics();
+            g.drawImage(res.image(), 0, 0, width, m_height, null);
+
+            return scaledRes;
+        } else {
+            // scale render with text
+            final ScreenImage composedRes = new ARGBScreenImage(width,
+                                                                m_height);
+            final Graphics g = composedRes.image().getGraphics();
+            g.drawImage(res.image(), 0, 0, width, m_height, null);
+            g.setXORMode(Color.black);
+
+            for (int i = 0; i < tmp.length; i++) {
+                g.drawString(tmp[i], posX, composedRes.image()
+                             .getHeight(null)
+                             - ((tmp.length - i) * lineHeight));
+            }
+            return composedRes;
         }
+    }
 
-        public ImageRenderer<T> getUnderlyingRenderer() {
-                return m_projectingRenderer;
-        }
-
-        @Override
-        public ScreenImage render(final RandomAccessibleInterval<T> source, final int dimX,
-                        final int dimY, final long[] planePos) {
-
-                final long[] orgDims = new long[planePos.length];
-                source.dimensions(orgDims);
-
-                // create information string
-                final StringBuffer sb = new StringBuffer();
-
-                for (int i = 0; i < planePos.length; i++) {
-                        if (m_axes != null) {
-                                sb.append("Size " + m_axes.axis(i).getLabel()
-                                                + "=" + orgDims[i] + "\n");
-                        } else {
-                                sb.append("Size " + i + "=" + orgDims[i] + "\n");
-                        }
-                }
-
-                sb.append("Pixel Type="
-                                + source.randomAccess().get().getClass()
-                                                .getSimpleName() + "\n");
-
-                sb.append("Image Type=" + source.getClass().getSimpleName()
-                                + "\n");
-
-                if (m_imgName != null) {
-                        sb.append("Image Name=" + m_imgName.getName() + "\n");
-                }
-
-                if (m_imgSource != null) {
-                        sb.append("Image Source=" + m_imgSource.getSource());
-                }
-                final int lineHeight = 15;
-                final int posX = 10;
-                final String[] tmp = sb.toString().split("\n");
-
-                // render image and created information string
-                final ScreenImage res = m_projectingRenderer.render(source, dimX,
-                                dimY, planePos);
-
-                final int width = (int) (orgDims[dimX] * ((double) m_height / orgDims[dimY]));
-
-                if (width < MIN_SIZE.width || m_height < MIN_SIZE.height) {
-                        // scale render without text
-                        final ScreenImage scaledRes = new ARGBScreenImage(width,
-                                        m_height);
-                        final Graphics g = scaledRes.image().getGraphics();
-                        g.drawImage(res.image(), 0, 0, width, m_height, null);
-
-                        return scaledRes;
-                } else {
-                        // scale render with text
-                        final ScreenImage composedRes = new ARGBScreenImage(width,
-                                        m_height);
-                        final Graphics g = composedRes.image().getGraphics();
-                        g.drawImage(res.image(), 0, 0, width, m_height, null);
-                        g.setXORMode(Color.black);
-
-                        for (int i = 0; i < tmp.length; i++) {
-                                g.drawString(tmp[i], posX, composedRes.image()
-                                                .getHeight(null)
-                                                - (tmp.length - i) * lineHeight);
-                        }
-                        return composedRes;
-                }
-        }
-
-        @Override
-        public String toString() {
-                return m_projectingRenderer.toString() + " (detailed)";
-        }
+    @Override
+    public String toString() {
+        return m_projectingRenderer.toString() + " (detailed)";
+    }
 }

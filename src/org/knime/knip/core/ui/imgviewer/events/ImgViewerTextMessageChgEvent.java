@@ -59,31 +59,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class ImgViewerTextMessageChgEvent implements KNIPEvent {
 
-        private final String m_message;
+    private final String m_message;
 
-        public ImgViewerTextMessageChgEvent(final String message) {
-                m_message = message;
+    public ImgViewerTextMessageChgEvent(final String message) {
+        m_message = message;
 
-        }
+    }
 
-        /**
-         * @return the message
-         */
-        public String getMessage() {
-                return m_message;
-        }
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return m_message;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
 }

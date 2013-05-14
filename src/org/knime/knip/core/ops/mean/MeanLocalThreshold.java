@@ -45,24 +45,24 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @author Christian Dietz (University of Konstanz)
  */
 public class MeanLocalThreshold<T extends RealType<T>> implements
-                BinaryOperation<DoubleType, T, BitType> {
+BinaryOperation<DoubleType, T, BitType> {
 
-        private final double m_c;
+    private final double m_c;
 
-        public MeanLocalThreshold(final double c) {
-                m_c = c;
-        }
+    public MeanLocalThreshold(final double c) {
+        m_c = c;
+    }
 
-        @Override
-        public BitType compute(final DoubleType input, final T px, final BitType output) {
+    @Override
+    public BitType compute(final DoubleType input, final T px, final BitType output) {
 
-                output.set(px.getRealDouble() > input.getRealDouble() - m_c);
-                return output;
-        }
+        output.set(px.getRealDouble() > (input.getRealDouble() - m_c));
+        return output;
+    }
 
-        @Override
-        public BinaryOperation<DoubleType, T, BitType> copy() {
-                return new MeanLocalThreshold<T>(m_c);
-        }
+    @Override
+    public BinaryOperation<DoubleType, T, BitType> copy() {
+        return new MeanLocalThreshold<T>(m_c);
+    }
 
 }

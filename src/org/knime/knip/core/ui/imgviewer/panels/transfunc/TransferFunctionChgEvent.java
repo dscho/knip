@@ -56,23 +56,23 @@ import java.util.EventObject;
  */
 public class TransferFunctionChgEvent extends EventObject {
 
-        private final TransferFunction m_function;
+    private final TransferFunction m_function;
 
-        private final boolean m_adjusting;
+    private final boolean m_adjusting;
 
-        public TransferFunctionChgEvent(final Object source,
-                        final TransferFunction function, final boolean adjusting) {
-                super(source);
+    public TransferFunctionChgEvent(final Object source,
+                                    final TransferFunction function, final boolean adjusting) {
+        super(source);
 
-                m_function = function;
-                m_adjusting = adjusting;
-        }
+        m_function = function;
+        m_adjusting = adjusting;
+    }
 
-        public TransferFunction getFunction() {
-                return m_function;
-        }
+    public TransferFunction getFunction() {
+        return m_function;
+    }
 
-        public boolean isAdjusting() {
-                return m_adjusting;
-        }
+    public boolean isAdjusting() {
+        return m_adjusting;
+    }
 }

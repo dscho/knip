@@ -79,272 +79,272 @@ import org.knime.knip.core.util.ImgUtils;
  */
 public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
-        private double[] m_centroid = null;
+    private double[] m_centroid = null;
 
-        public final String[] FEATURES;
+    public final String[] FEATURES;
 
-        private final ExtractOutlineImg m_outlineOp;
+    private final ExtractOutlineImg m_outlineOp;
 
-        private IterableInterval<BitType> m_interval;
+    private IterableInterval<BitType> m_interval;
 
-        private Img<BitType> m_outline;
+    private Img<BitType> m_outline;
 
-        private final CalculatePerimeter m_calculatePerimeter;
+    private final CalculatePerimeter m_calculatePerimeter;
 
-        private final ConvexHull2D<Img<BitType>> m_convexityOp;
+    private final ConvexHull2D<Img<BitType>> m_convexityOp;
 
-        private final CalculateDiameter m_calculateDiameter;
+    private final CalculateDiameter m_calculateDiameter;
 
-        private double m_perimeter;
+    private double m_perimeter;
 
-        private double m_solidity;
+    private double m_solidity;
 
-        private double m_circularity;
+    private double m_circularity;
 
-        private double m_diameter;
+    private double m_diameter;
 
-        private final BitSet m_enabled = new BitSet();
+    private final BitSet m_enabled = new BitSet();
 
-        private ObjectCalcAndCache m_ocac;
+    private ObjectCalcAndCache m_ocac;
 
-        private CalibratedSpace m_cs;
+    private CalibratedSpace m_cs;
 
-        private final AxisType[] m_defaultAxis;
+    private final AxisType[] m_defaultAxis;
 
-        // private CalibratedSpace m_cs;
+    // private CalibratedSpace m_cs;
 
-        /**
-         * @param target
-         */
-        public SegmentFeatureSet(final AxisType[] defaultAxes) {
-                super();
-                m_calculatePerimeter = new CalculatePerimeter();
-                m_outlineOp = new ExtractOutlineImg(false);
-                m_convexityOp = new ConvexHull2D<Img<BitType>>(0, 1, false);
-                m_calculateDiameter = new CalculateDiameter();
-                m_defaultAxis = defaultAxes;
-                FEATURES = getFeatures(defaultAxes);
+    /**
+     * @param target
+     */
+    public SegmentFeatureSet(final AxisType[] defaultAxes) {
+        super();
+        m_calculatePerimeter = new CalculatePerimeter();
+        m_outlineOp = new ExtractOutlineImg(false);
+        m_convexityOp = new ConvexHull2D<Img<BitType>>(0, 1, false);
+        m_calculateDiameter = new CalculateDiameter();
+        m_defaultAxis = defaultAxes;
+        FEATURES = getFeatures(defaultAxes);
+    }
+
+    public static String[] getFeatures(final AxisType[] defaultAxes) {
+
+        final ArrayList<String> features = new ArrayList<String>();
+
+        for (final AxisType type : defaultAxes) {
+            features.add("Centroid " + type.getLabel());
         }
 
-        public static String[] getFeatures(final AxisType[] defaultAxes) {
+        features.add("Num Pix");
+        features.add("Circularity");
+        features.add("Perimeter");
+        features.add("Convexity");
+        features.add("Extend");
+        features.add("Diameter");
 
-                final ArrayList<String> features = new ArrayList<String>();
-
-                for (final AxisType type : defaultAxes) {
-                        features.add("Centroid " + type.getLabel());
-                }
-
-                features.add("Num Pix");
-                features.add("Circularity");
-                features.add("Perimeter");
-                features.add("Convexity");
-                features.add("Extend");
-                features.add("Diameter");
-
-                for (final AxisType type : defaultAxes) {
-                        features.add("Dimension " + type.getLabel());
-                }
-
-                return features.toArray(new String[features.size()]);
+        for (final AxisType type : defaultAxes) {
+            features.add("Dimension " + type.getLabel());
         }
 
-        @FeatureTargetListener
-        public void calibratedSpaceUpdated(final CalibratedSpace cs) {
-                m_cs = cs;
+        return features.toArray(new String[features.size()]);
+    }
+
+    @FeatureTargetListener
+    public void calibratedSpaceUpdated(final CalibratedSpace cs) {
+        m_cs = cs;
+    }
+
+    @FeatureTargetListener
+    public void iiUpdated(final IterableInterval<BitType> interval) {
+        m_interval = interval;
+        m_centroid = null;
+
+        int activeDims = 0;
+        for (int d = 0; d < interval.numDimensions(); d++) {
+            if (interval.dimension(d) > 1) {
+                activeDims++;
+            }
         }
 
-        @FeatureTargetListener
-        public void iiUpdated(final IterableInterval<BitType> interval) {
-                m_interval = interval;
-                m_centroid = null;
+        if (m_enabled.get(m_defaultAxis.length + 1)
+                || m_enabled.get(m_defaultAxis.length + 2)
+                || m_enabled.get(m_defaultAxis.length + 3)
+                || m_enabled.get(m_defaultAxis.length + 5)) {
+            if (activeDims > 2) {
+                m_solidity = Double.NaN;
+                m_perimeter = Double.NaN;
+                m_circularity = Double.NaN;
+                m_diameter = Double.NaN;
 
-                int activeDims = 0;
-                for (int d = 0; d < interval.numDimensions(); d++) {
-                        if (interval.dimension(d) > 1) {
-                                activeDims++;
+                throw new IllegalArgumentException(
+                                                   "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
+
+            } else {
+
+                final Img<BitType> bitMask = m_ocac
+                        .binaryMask2D(interval);
+                m_outline = m_outlineOp
+                        .compute(bitMask,
+                                 ImgUtils.createEmptyImg(bitMask));
+                m_perimeter = Operations
+                        .compute(m_calculatePerimeter,
+                                 m_outline)
+                                 .get();
+
+                if (m_enabled.get(1 + m_defaultAxis.length)
+                        || m_enabled.get(3 + m_defaultAxis.length)) {
+
+                    if (activeDims == 2) {
+                        m_convexityOp.compute(
+                                              new ImgView<BitType>(
+                                                      SubsetOperations.subsetview(
+                                                                                  bitMask,
+                                                                                  bitMask),
+                                                                                  null),
+                                                                                  new ImgView<BitType>(
+                                                                                          SubsetOperations.subsetview(
+                                                                                                                      bitMask,
+                                                                                                                      bitMask),
+                                                                                                                      null));
+                        final Cursor<BitType> convexBitMaskCursor = bitMask
+                                .cursor();
+
+                        double ctr = 0;
+                        while (convexBitMaskCursor
+                                .hasNext()) {
+                            convexBitMaskCursor
+                            .fwd();
+                            ctr += convexBitMaskCursor
+                                    .get()
+                                    .get() ? 1
+                                            : 0;
                         }
+
+                        m_circularity = (4d * Math.PI * m_interval
+                                .size())
+                                / Math.pow(m_perimeter,
+                                           2);
+                        m_solidity = interval.size()
+                                / ctr;
+
+                    } else {
+                        m_circularity = Double.NaN;
+                        m_solidity = Double.NaN;
+
+                        throw new IllegalArgumentException(
+                                                           "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
+                    }
+
                 }
 
-                if (m_enabled.get(m_defaultAxis.length + 1)
-                                || m_enabled.get(m_defaultAxis.length + 2)
-                                || m_enabled.get(m_defaultAxis.length + 3)
-                                || m_enabled.get(m_defaultAxis.length + 5)) {
-                        if (activeDims > 2) {
-                                m_solidity = Double.NaN;
-                                m_perimeter = Double.NaN;
-                                m_circularity = Double.NaN;
-                                m_diameter = Double.NaN;
-
-                                throw new IllegalArgumentException(
-                                                "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
-
-                        } else {
-
-                                final Img<BitType> bitMask = m_ocac
-                                                .binaryMask2D(interval);
-                                m_outline = m_outlineOp
-                                                .compute(bitMask,
-                                                                ImgUtils.createEmptyImg(bitMask));
-                                m_perimeter = Operations
-                                                .compute(m_calculatePerimeter,
-                                                                m_outline)
-                                                .get();
-
-                                if (m_enabled.get(1 + m_defaultAxis.length)
-                                                || m_enabled.get(3 + m_defaultAxis.length)) {
-
-                                        if (activeDims == 2) {
-                                                m_convexityOp.compute(
-                                                                new ImgView<BitType>(
-                                                                                SubsetOperations.subsetview(
-                                                                                                bitMask,
-                                                                                                bitMask),
-                                                                                null),
-                                                                new ImgView<BitType>(
-                                                                                SubsetOperations.subsetview(
-                                                                                                bitMask,
-                                                                                                bitMask),
-                                                                                null));
-                                                final Cursor<BitType> convexBitMaskCursor = bitMask
-                                                                .cursor();
-
-                                                double ctr = 0;
-                                                while (convexBitMaskCursor
-                                                                .hasNext()) {
-                                                        convexBitMaskCursor
-                                                                        .fwd();
-                                                        ctr += convexBitMaskCursor
-                                                                        .get()
-                                                                        .get() ? 1
-                                                                        : 0;
-                                                }
-
-                                                m_circularity = (4d * Math.PI * m_interval
-                                                                .size())
-                                                                / Math.pow(m_perimeter,
-                                                                                2);
-                                                m_solidity = interval.size()
-                                                                / ctr;
-
-                                        } else {
-                                                m_circularity = Double.NaN;
-                                                m_solidity = Double.NaN;
-
-                                                throw new IllegalArgumentException(
-                                                                "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
-                                        }
-
-                                }
-
-                                if (m_enabled.get(5 + m_defaultAxis.length)) {
-                                        m_diameter = m_calculateDiameter
-                                                        .compute(m_outline,
-                                                                        new DoubleType())
-                                                        .get();
-                                }
-                        }
+                if (m_enabled.get(5 + m_defaultAxis.length)) {
+                    m_diameter = m_calculateDiameter
+                            .compute(m_outline,
+                                     new DoubleType())
+                                     .get();
                 }
-
+            }
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double value(int id) {
+    }
 
-                if (id < m_defaultAxis.length) {
-                        final int idx = m_cs.getAxisIndex(m_defaultAxis[id]);
-                        if (idx != -1) {
-                                m_centroid = m_ocac.centroid(m_interval);
-                                return m_centroid[idx];
-                        } else {
-                                return 0;
-                        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double value(int id) {
+
+        if (id < m_defaultAxis.length) {
+            final int idx = m_cs.getAxisIndex(m_defaultAxis[id]);
+            if (idx != -1) {
+                m_centroid = m_ocac.centroid(m_interval);
+                return m_centroid[idx];
+            } else {
+                return 0;
+            }
+        }
+
+        if (id > (m_defaultAxis.length + 5)) {
+            final int idx = m_cs.getAxisIndex(m_defaultAxis[id
+                                                            - m_defaultAxis.length - 6]);
+            if (idx != -1) {
+                return m_interval.dimension(idx);
+            } else {
+                return 0;
+            }
+        }
+
+        id -= m_defaultAxis.length;
+        switch (id) {
+            case 0:
+                return m_interval.size();
+            case 1:
+                return m_circularity;
+            case 2:
+                return m_perimeter;
+            case 3:
+                return m_solidity;
+            case 4:
+                double numPixBB = 1;
+                for (int d = 0; d < m_interval.numDimensions(); d++) {
+                    numPixBB *= m_interval.dimension(d);
                 }
+                return m_interval.size() / numPixBB;
 
-                if (id > m_defaultAxis.length + 5) {
-                        final int idx = m_cs.getAxisIndex(m_defaultAxis[id
-                                        - m_defaultAxis.length - 6]);
-                        if (idx != -1) {
-                                return m_interval.dimension(idx);
-                        } else {
-                                return 0;
-                        }
-                }
-
-                id -= m_defaultAxis.length;
-                switch (id) {
-                case 0:
-                        return m_interval.size();
-                case 1:
-                        return m_circularity;
-                case 2:
-                        return m_perimeter;
-                case 3:
-                        return m_solidity;
-                case 4:
-                        double numPixBB = 1;
-                        for (int d = 0; d < m_interval.numDimensions(); d++) {
-                                numPixBB *= m_interval.dimension(d);
-                        }
-                        return m_interval.size() / numPixBB;
-
-                case 5:
-                        return m_diameter;
-                default:
-                        return 0;
-                }
+            case 5:
+                return m_diameter;
+            default:
+                return 0;
         }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name(final int id) {
-                return FEATURES[id];
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return FEATURES[id];
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void enable(final int id) {
-                m_enabled.set(id);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        m_enabled.set(id);
 
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int numFeatures() {
-                return FEATURES.length;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return FEATURES.length;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String featureSetId() {
-                return "Segment Feature Factory";
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "Segment Feature Factory";
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<?>[] getSharedObjectClasses() {
-                return new Class[] { ObjectCalcAndCache.class };
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?>[] getSharedObjectClasses() {
+        return new Class[] { ObjectCalcAndCache.class };
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setSharedObjectInstances(final Object[] instances) {
-                m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSharedObjectInstances(final Object[] instances) {
+        m_ocac = (ObjectCalcAndCache) instances[0];
 
-        }
+    }
 
 }

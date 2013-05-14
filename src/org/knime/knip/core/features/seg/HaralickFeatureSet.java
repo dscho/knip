@@ -69,148 +69,148 @@ import org.knime.knip.core.features.SharesObjects;
  * @author dietzc, hornm, University of Konstanz
  */
 public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
-                SharesObjects {
+SharesObjects {
 
-        private final int m_distance;
+    private final int m_distance;
 
-        private final int m_nrGrayLevels;
+    private final int m_nrGrayLevels;
 
-        private final MatrixOrientation m_matrixOrientation;
+    private final MatrixOrientation m_matrixOrientation;
 
-        private ObjectCalcAndCache m_ocac;
+    private ObjectCalcAndCache m_ocac;
 
-        private final BitSet enabledFeatures = new BitSet(numFeatures());
+    private final BitSet enabledFeatures = new BitSet(numFeatures());
 
-        private IterableInterval<T> m_interval;
+    private IterableInterval<T> m_interval;
 
-        private ValuePair<Integer, Integer> m_validDims;
+    private ValuePair<Integer, Integer> m_validDims;
 
-        private int m_dimX;
+    private int m_dimX;
 
-        private int m_dimY;
+    private int m_dimY;
 
-        private boolean m_isValid;
+    private boolean m_isValid;
 
-        /**
-         * @param nrGrayLevels
-         * @param distance
-         * @param target
-         */
-        public HaralickFeatureSet(final int nrGrayLevels, final int distance,
-                        final MatrixOrientation orientation) {
-                super();
-                m_nrGrayLevels = nrGrayLevels;
-                m_distance = distance;
-                m_matrixOrientation = orientation;
+    /**
+     * @param nrGrayLevels
+     * @param distance
+     * @param target
+     */
+    public HaralickFeatureSet(final int nrGrayLevels, final int distance,
+                              final MatrixOrientation orientation) {
+        super();
+        m_nrGrayLevels = nrGrayLevels;
+        m_distance = distance;
+        m_matrixOrientation = orientation;
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double value(final int id) {
+
+        if (!m_isValid) {
+            return Double.NaN;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double value(final int id) {
+        final CooccurrenceMatrix coocMat = m_ocac.cooccurenceMatrix(
+                                                                    m_interval, m_dimX, m_dimY, m_distance,
+                                                                    m_nrGrayLevels, m_matrixOrientation,
+                                                                    enabledFeatures);
 
-                if (!m_isValid) {
-                        return Double.NaN;
-                }
+        return coocMat.getFeature(id);
+    }
 
-                final CooccurrenceMatrix coocMat = m_ocac.cooccurenceMatrix(
-                                m_interval, m_dimX, m_dimY, m_distance,
-                                m_nrGrayLevels, m_matrixOrientation,
-                                enabledFeatures);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return HaralickFeature.values()[id].toString();
+    }
 
-                return coocMat.getFeature(id);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return HaralickFeature.values().length;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "Haralick Feature Factory";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        enabledFeatures.set(id);
+    }
+
+    @FeatureTargetListener
+    public final void iiUpdated(final IterableInterval<T> interval) {
+
+        m_validDims = getValidDims(interval);
+
+        if (m_validDims != null) {
+            m_isValid = true;
+            m_interval = interval;
+            m_dimX = m_validDims.a;
+            m_dimY = m_validDims.b;
+        } else {
+            m_isValid = false;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name(final int id) {
-                return HaralickFeature.values()[id].toString();
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int numFeatures() {
-                return HaralickFeature.values().length;
-        }
+    private ValuePair<Integer, Integer> getValidDims(
+                                                     final IterableInterval<T> interval) {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String featureSetId() {
-                return "Haralick Feature Factory";
-        }
+        int dimX = -1;
+        int dimY = -1;
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void enable(final int id) {
-                enabledFeatures.set(id);
-        }
-
-        @FeatureTargetListener
-        public final void iiUpdated(final IterableInterval<T> interval) {
-
-                m_validDims = getValidDims(interval);
-
-                if (m_validDims != null) {
-                        m_isValid = true;
-                        m_interval = interval;
-                        m_dimX = m_validDims.a;
-                        m_dimY = m_validDims.b;
+        for (int d = 0; d < interval.numDimensions(); d++) {
+            if (interval.dimension(d) > 1) {
+                if (dimX < 0) {
+                    dimX = d;
+                } else if (dimY < 0) {
+                    dimY = d;
                 } else {
-                        m_isValid = false;
+                    return null;
                 }
-
+            }
         }
 
-        private ValuePair<Integer, Integer> getValidDims(
-                        final IterableInterval<T> interval) {
-
-                int dimX = -1;
-                int dimY = -1;
-
-                for (int d = 0; d < interval.numDimensions(); d++) {
-                        if (interval.dimension(d) > 1) {
-                                if (dimX < 0) {
-                                        dimX = d;
-                                } else if (dimY < 0) {
-                                        dimY = d;
-                                } else {
-                                        return null;
-                                }
-                        }
-                }
-
-                if (dimX < 0 || dimY < 0) {
-                        return null;
-                }
-
-                return new ValuePair<Integer, Integer>(dimX, dimY);
+        if ((dimX < 0) || (dimY < 0)) {
+            return null;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<?>[] getSharedObjectClasses() {
-                return new Class[] { ObjectCalcAndCache.class };
-        }
+        return new ValuePair<Integer, Integer>(dimX, dimY);
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setSharedObjectInstances(final Object[] instances) {
-                m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public Class<?>[] getSharedObjectClasses() {
+         return new Class[] { ObjectCalcAndCache.class };
+     }
 
-        }
+     /**
+      * {@inheritDoc}
+      */
+      @Override
+      public void setSharedObjectInstances(final Object[] instances) {
+          m_ocac = (ObjectCalcAndCache) instances[0];
+
+      }
 
 }

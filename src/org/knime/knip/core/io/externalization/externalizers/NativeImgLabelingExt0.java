@@ -66,70 +66,70 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<NativeImgLabeling> getType() {
+        return NativeImgLabeling.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NativeImgLabeling read(final BufferedDataInputStream in)
+            throws Exception {
+        // Create Labeling
+        final Img img = ExternalizerManager.<Img> read(in);
+        final LabelingMapping mapping = ExternalizerManager
+                .<LabelingMapping> read(in);
+        final NativeImgLabeling<? extends Comparable<?>, ? extends IntegerType<?>> res = new ExtNativeImgLabeling(
+                                                                                                                  img, mapping);
+        return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final NativeImgLabeling obj)
+            throws Exception {
+
+        // write the backed image
+        ExternalizerManager.write(out, obj.getStorageImg());
+
+        // write the actual mapping
+        ExternalizerManager.write(out, obj.getMapping());
+
+    }
+
+    private class ExtNativeImgLabeling<T extends Comparable<T>, I extends IntegerType<I>>
+    extends NativeImgLabeling<T, I> {
         /**
-         * {@inheritDoc}
+         * @param img
          */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
+        public ExtNativeImgLabeling(final Img<I> img, final LabelingMapping mapping) {
+            super(img);
+            super.mapping = mapping;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<NativeImgLabeling> getType() {
-                return NativeImgLabeling.class;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public NativeImgLabeling read(final BufferedDataInputStream in)
-                        throws Exception {
-                // Create Labeling
-                final Img img = ExternalizerManager.<Img> read(in);
-                final LabelingMapping mapping = ExternalizerManager
-                                .<LabelingMapping> read(in);
-                final NativeImgLabeling<? extends Comparable<?>, ? extends IntegerType<?>> res = new ExtNativeImgLabeling(
-                                img, mapping);
-                return res;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final NativeImgLabeling obj)
-                        throws Exception {
-
-                // write the backed image
-                ExternalizerManager.write(out, obj.getStorageImg());
-
-                // write the actual mapping
-                ExternalizerManager.write(out, obj.getMapping());
-
-        }
-
-        private class ExtNativeImgLabeling<T extends Comparable<T>, I extends IntegerType<I>>
-                        extends NativeImgLabeling<T, I> {
-                /**
-                 * @param img
-                 */
-                public ExtNativeImgLabeling(final Img<I> img, final LabelingMapping mapping) {
-                        super(img);
-                        super.mapping = mapping;
-                }
-
-        }
+    }
 
 }

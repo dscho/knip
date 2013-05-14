@@ -16,32 +16,32 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @param <V>
  */
 public class MeanAbsoluteDeviation<T extends RealType<T>, V extends RealType<V>>
-                implements UnaryOperation<IterableInterval<T>, V> {
+implements UnaryOperation<IterableInterval<T>, V> {
 
-        @Override
-        public V compute(final IterableInterval<T> input, final V output) {
-                // mean
-                final double mean = new Mean<T, DoubleType>().compute(input.cursor(),
-                                new DoubleType()).getRealDouble();
+    @Override
+    public V compute(final IterableInterval<T> input, final V output) {
+        // mean
+        final double mean = new Mean<T, DoubleType>().compute(input.cursor(),
+                                                              new DoubleType()).getRealDouble();
 
-                // abs deviation from mean
-                long i = 0;
-                double absDeviationSum = 0;
-                final Cursor<T> c = input.cursor();
+        // abs deviation from mean
+        long i = 0;
+        double absDeviationSum = 0;
+        final Cursor<T> c = input.cursor();
 
-                while (c.hasNext()) {
-                        absDeviationSum += Math.abs(c.next().getRealDouble()
+        while (c.hasNext()) {
+            absDeviationSum += Math.abs(c.next().getRealDouble()
                                         - mean);
-                        i++;
-                }
-
-                // mean of abs deviations
-                output.setReal(absDeviationSum / i);
-                return output;
+            i++;
         }
 
-        @Override
-        public UnaryOperation<IterableInterval<T>, V> copy() {
-                return new MeanAbsoluteDeviation<T, V>();
-        }
+        // mean of abs deviations
+        output.setReal(absDeviationSum / i);
+        return output;
+    }
+
+    @Override
+    public UnaryOperation<IterableInterval<T>, V> copy() {
+        return new MeanAbsoluteDeviation<T, V>();
+    }
 }

@@ -63,47 +63,47 @@ import org.knime.knip.core.data.LabelGenerator;
  * @author hornm, University of Konstanz
  */
 public class RegularGridSeeds<L extends Comparable<L>> implements
-                UnaryOperation<Interval, Labeling<L>> {
+UnaryOperation<Interval, Labeling<L>> {
 
-        private final int m_avgDistance;
-        private final LabelGenerator<L> m_seedGen;
+    private final int m_avgDistance;
+    private final LabelGenerator<L> m_seedGen;
 
-        public RegularGridSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
-                m_seedGen = seedGen;
-                m_avgDistance = avgDistance;
+    public RegularGridSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
+        m_seedGen = seedGen;
+        m_avgDistance = avgDistance;
 
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Labeling<L> compute(final Interval input, final Labeling<L> output) {
-                m_seedGen.reset();
-                final RandomAccess<LabelingType<L>> out = output.randomAccess();
-                while (out.getIntPosition(output.numDimensions() - 1) < input
-                                .dimension(output.numDimensions() - 1)) {
-                        out.get().setLabel(m_seedGen.nextLabel());
-                        out.move(m_avgDistance, 0);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Labeling<L> compute(final Interval input, final Labeling<L> output) {
+        m_seedGen.reset();
+        final RandomAccess<LabelingType<L>> out = output.randomAccess();
+        while (out.getIntPosition(output.numDimensions() - 1) < input
+                .dimension(output.numDimensions() - 1)) {
+            out.get().setLabel(m_seedGen.nextLabel());
+            out.move(m_avgDistance, 0);
 
-                        // next position in the higher
-                        // dimensions than 0
-                        for (int i = 0; i < output.numDimensions() - 1; i++) {
-                                if (out.getIntPosition(i) > input.dimension(i)) {
-                                        out.setPosition(0, i);
-                                        out.move(m_avgDistance, i + 1);
-                                }
-                        }
+            // next position in the higher
+            // dimensions than 0
+            for (int i = 0; i < (output.numDimensions() - 1); i++) {
+                if (out.getIntPosition(i) > input.dimension(i)) {
+                    out.setPosition(0, i);
+                    out.move(m_avgDistance, i + 1);
                 }
-                return output;
+            }
         }
+        return output;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public UnaryOperation<Interval, Labeling<L>> copy() {
-                return new RegularGridSeeds<L>(m_seedGen, m_avgDistance);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UnaryOperation<Interval, Labeling<L>> copy() {
+        return new RegularGridSeeds<L>(m_seedGen, m_avgDistance);
+    }
 
 }

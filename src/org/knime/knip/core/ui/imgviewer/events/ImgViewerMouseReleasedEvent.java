@@ -60,28 +60,28 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class ImgViewerMouseReleasedEvent extends ImgViewerMouseEvent {
 
-        /**
-         * @param e
-         * @param m_factors
-         * @param imgWidth
-         * @param imgHeight
-         */
-        public ImgViewerMouseReleasedEvent(final MouseEvent e, final double[] factors,
-                        final int imgWidth, final int imgHeight) {
-                super(e, factors, imgWidth, imgHeight);
-        }
+    /**
+     * @param e
+     * @param m_factors
+     * @param imgWidth
+     * @param imgHeight
+     */
+    public ImgViewerMouseReleasedEvent(final MouseEvent e, final double[] factors,
+                                       final int imgWidth, final int imgHeight) {
+        super(e, factors, imgWidth, imgHeight);
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
 }

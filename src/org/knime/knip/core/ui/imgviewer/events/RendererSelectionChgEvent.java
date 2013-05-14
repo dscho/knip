@@ -59,31 +59,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class RendererSelectionChgEvent implements KNIPEvent {
 
-        private final ImageRenderer m_renderer;
+    private final ImageRenderer m_renderer;
 
-        public RendererSelectionChgEvent(final ImageRenderer renderer) {
-                m_renderer = renderer;
+    public RendererSelectionChgEvent(final ImageRenderer renderer) {
+        m_renderer = renderer;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the renderer
-         */
-        public ImageRenderer getRenderer() {
-                return m_renderer;
-        }
+    /**
+     * @return the renderer
+     */
+    public ImageRenderer getRenderer() {
+        return m_renderer;
+    }
 
 }

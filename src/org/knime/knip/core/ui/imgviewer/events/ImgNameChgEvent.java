@@ -58,31 +58,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class ImgNameChgEvent implements KNIPEvent {
 
-        private final String m_name;
+    private final String m_name;
 
-        public ImgNameChgEvent(final String name) {
-                m_name = name;
+    public ImgNameChgEvent(final String name) {
+        m_name = name;
 
-        }
+    }
 
-        /**
-         * @return the name
-         */
-        public String getName() {
-                return m_name;
-        }
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return m_name;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
 }

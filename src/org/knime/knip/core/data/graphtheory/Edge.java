@@ -27,105 +27,105 @@ package org.knime.knip.core.data.graphtheory;
  */
 public class Edge {
 
-        // node the edge points to
-        private Node head;
+    // node the edge points to
+    private Node head;
 
-        // nect edge with the same originating node
-        private Edge next;
+    // nect edge with the same originating node
+    private Edge next;
 
-        // reverse arc
-        private Edge sister;
+    // reverse arc
+    private Edge sister;
 
-        // residual capacity of this edge
-        private float residualCapacity;
+    // residual capacity of this edge
+    private float residualCapacity;
 
-        // special edges
-        public final static Edge TERMINAL = new Edge();
+    // special edges
+    public final static Edge TERMINAL = new Edge();
 
-        public final static Edge ORPHAN = new Edge();
+    public final static Edge ORPHAN = new Edge();
 
-        public Edge() {
+    public Edge() {
 
-                head = null;
-                next = null;
-                sister = null;
+        head = null;
+        next = null;
+        sister = null;
 
-                residualCapacity = 0;
-        }
+        residualCapacity = 0;
+    }
 
-        /**
-         * Gets the head, i.e., the node this edge points to for this edge.
-         * 
-         * @return The head, i.e., the node this edge points to.
-         */
-        public Node getHead() {
-                return this.head;
-        }
+    /**
+     * Gets the head, i.e., the node this edge points to for this edge.
+     * 
+     * @return The head, i.e., the node this edge points to.
+     */
+    public Node getHead() {
+        return this.head;
+    }
 
-        /**
-         * Sets the head for this edge.
-         * 
-         * @param head
-         *                The head, i.e., the node this edge shall point to.
-         */
-        public void setHead(final Node head) {
-                this.head = head;
-        }
+    /**
+     * Sets the head for this edge.
+     * 
+     * @param head
+     *                The head, i.e., the node this edge shall point to.
+     */
+    public void setHead(final Node head) {
+        this.head = head;
+    }
 
-        /**
-         * Sets the next edge for this edge.
-         * 
-         * @param next
-         *                The next edge.
-         */
-        public void setNext(final Edge next) {
-                this.next = next;
-        }
+    /**
+     * Sets the next edge for this edge.
+     * 
+     * @param next
+     *                The next edge.
+     */
+    public void setNext(final Edge next) {
+        this.next = next;
+    }
 
-        /**
-         * Sets the sister for this instance.
-         * 
-         * @param sister
-         *                The sister.
-         */
-        public void setSister(final Edge sister) {
-                this.sister = sister;
-        }
+    /**
+     * Sets the sister for this instance.
+     * 
+     * @param sister
+     *                The sister.
+     */
+    public void setSister(final Edge sister) {
+        this.sister = sister;
+    }
 
-        /**
-         * Sets the residual capacity for this instance.
-         * 
-         * @param residualCapacity
-         *                The residual capacity.
-         */
-        public void setResidualCapacity(final float residualCapacity) {
-                this.residualCapacity = residualCapacity;
-        }
+    /**
+     * Sets the residual capacity for this instance.
+     * 
+     * @param residualCapacity
+     *                The residual capacity.
+     */
+    public void setResidualCapacity(final float residualCapacity) {
+        this.residualCapacity = residualCapacity;
+    }
 
-        /**
-         * Gets the residual capacity for this instance.
-         * 
-         * @return The residualCapacity.
-         */
-        public float getResidualCapacity() {
-                return this.residualCapacity;
-        }
+    /**
+     * Gets the residual capacity for this instance.
+     * 
+     * @return The residualCapacity.
+     */
+    public float getResidualCapacity() {
+        return this.residualCapacity;
+    }
 
-        /**
-         * Gets the sister for this instance.
-         * 
-         * @return The sister.
-         */
-        public Edge getSister() {
-                return this.sister;
-        }
+    /**
+     * Gets the sister for this instance.
+     * 
+     * @return The sister.
+     */
+    public Edge getSister() {
+        return this.sister;
+    }
 
-        /**
-         * Gets the next for this instance.
-         * 
-         * @return The next.
-         */
-        public Edge getNext() {
-                return this.next;
-        }
+    /**
+     * Gets the next for this instance.
+     * 
+     * @return The next.
+     */
+    public Edge getNext() {
+        return this.next;
+    }
 }

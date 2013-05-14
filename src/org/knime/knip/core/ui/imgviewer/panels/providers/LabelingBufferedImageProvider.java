@@ -28,110 +28,110 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
  * @author hornm, University of Konstanz
  */
 public class LabelingBufferedImageProvider<L extends Comparable<L>> extends
-                AWTImageProvider<LabelingType<L>> {
+AWTImageProvider<LabelingType<L>> {
 
-        /**
-	 *
-	 */
-        private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-        protected Set<String> m_activeLabels;
+    protected Set<String> m_activeLabels;
 
-        protected Operator m_operator;
+    protected Operator m_operator;
 
-        protected LabelingMapping<L> m_labelMapping;
+    protected LabelingMapping<L> m_labelMapping;
 
-        private int m_ColorMapNr = SegmentColorTable.getColorMapNr();
+    private int m_ColorMapNr = SegmentColorTable.getColorMapNr();
 
-        private Color m_boundingBoxColor = SegmentColorTable
-                        .getBoundingBoxColor();
+    private Color m_boundingBoxColor = SegmentColorTable
+            .getBoundingBoxColor();
 
-        protected boolean m_withLabelStrings = false;
+    protected boolean m_withLabelStrings = false;
 
-        public LabelingBufferedImageProvider(final int cacheSize) {
-                super(cacheSize);
+    public LabelingBufferedImageProvider(final int cacheSize) {
+        super(cacheSize);
+    }
+
+    @Override
+    @EventListener
+    public void onUpdated(final IntervalWithMetadataChgEvent<LabelingType<L>> e) {
+        m_labelMapping = e.getIterableInterval().firstElement()
+                .getMapping();
+        super.onUpdated(e);
+    }
+
+    @EventListener
+    public void onLabelColoringChangeEvent(final LabelColoringChangeEvent e) {
+        m_ColorMapNr = e.getColorMapNr();
+        m_boundingBoxColor = e.getBoundingBoxColor();
+    }
+
+    @EventListener
+    public void onLabelOptionsChangeEvent(final LabelOptionsChangeEvent e) {
+        m_withLabelStrings = e.getRenderWithLabelStrings();
+    }
+
+    @Override
+    protected int generateHashCode() {
+
+        int hash = super.generateHashCode();
+
+        if (m_activeLabels != null) {
+            hash *= 31;
+            hash += m_activeLabels.hashCode();
+            hash *= 31;
+            hash += m_operator.ordinal();
         }
 
-        @Override
-        @EventListener
-        public void onUpdated(final IntervalWithMetadataChgEvent<LabelingType<L>> e) {
-                m_labelMapping = e.getIterableInterval().firstElement()
-                                .getMapping();
-                super.onUpdated(e);
+        hash *= 31;
+        hash += m_boundingBoxColor.hashCode();
+        hash *= 31;
+        hash += m_ColorMapNr;
+        hash *= 31;
+        if (m_withLabelStrings) {
+            hash += 1;
+        } else {
+            hash += 2;
         }
 
-        @EventListener
-        public void onLabelColoringChangeEvent(final LabelColoringChangeEvent e) {
-                m_ColorMapNr = e.getColorMapNr();
-                m_boundingBoxColor = e.getBoundingBoxColor();
+        return hash;
+    }
+
+    @Override
+    protected Image createImage() {
+        if (m_renderer instanceof RendererWithLabels) {
+            final RendererWithLabels<L> r = (RendererWithLabels<L>) m_renderer;
+            r.setActiveLabels(m_activeLabels);
+            r.setOperator(m_operator);
+            r.setLabelMapping(m_labelMapping);
+            r.setRenderingWithLabelStrings(m_withLabelStrings);
         }
 
-        @EventListener
-        public void onLabelOptionsChangeEvent(final LabelOptionsChangeEvent e) {
-                m_withLabelStrings = e.getRenderWithLabelStrings();
-        }
+        final ScreenImage ret = m_renderer.render(m_src,
+                                                  m_sel.getPlaneDimIndex1(),
+                                                  m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
-        @Override
-        protected int generateHashCode() {
+        return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
+    }
 
-                int hash = super.generateHashCode();
+    @EventListener
+    public void onUpdate(final LabelPanelVisibleLabelsChgEvent e) {
+        m_activeLabels = e.getLabels();
+        m_operator = e.getOperator();
+    }
 
-                if (m_activeLabels != null) {
-                        hash *= 31;
-                        hash += m_activeLabels.hashCode();
-                        hash *= 31;
-                        hash += m_operator.ordinal();
-                }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        super.saveComponentConfiguration(out);
+        out.writeObject(m_activeLabels);
+    }
 
-                hash *= 31;
-                hash += m_boundingBoxColor.hashCode();
-                hash *= 31;
-                hash += m_ColorMapNr;
-                hash *= 31;
-                if (m_withLabelStrings) {
-                        hash += 1;
-                } else {
-                        hash += 2;
-                }
-
-                return hash;
-        }
-
-        @Override
-        protected Image createImage() {
-                if (m_renderer instanceof RendererWithLabels) {
-                        final RendererWithLabels<L> r = (RendererWithLabels<L>) m_renderer;
-                        r.setActiveLabels(m_activeLabels);
-                        r.setOperator(m_operator);
-                        r.setLabelMapping(m_labelMapping);
-                        r.setRenderingWithLabelStrings(m_withLabelStrings);
-                }
-
-                final ScreenImage ret = m_renderer.render(m_src,
-                                m_sel.getPlaneDimIndex1(),
-                                m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
-
-                return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
-        }
-
-        @EventListener
-        public void onUpdate(final LabelPanelVisibleLabelsChgEvent e) {
-                m_activeLabels = e.getLabels();
-                m_operator = e.getOperator();
-        }
-
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                super.saveComponentConfiguration(out);
-                out.writeObject(m_activeLabels);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-                super.loadComponentConfiguration(in);
-                m_activeLabels = (Set<String>) in.readObject();
-        }
+    @SuppressWarnings("unchecked")
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException, ClassNotFoundException {
+        super.loadComponentConfiguration(in);
+        m_activeLabels = (Set<String>) in.readObject();
+    }
 }

@@ -56,38 +56,38 @@ package org.knime.knip.core.features;
  */
 public interface FeatureSet {
 
-        /**
-         * @param id
-         * @return the value for the specified feature
-         */
-        double value(int id);
+    /**
+     * @param id
+     * @return the value for the specified feature
+     */
+    double value(int id);
 
-        /**
-         * Called whenever a feature is going to be enabled.
-         *
-         * @param id
-         */
-        void enable(int id);
+    /**
+     * Called whenever a feature is going to be enabled.
+     *
+     * @param id
+     */
+    void enable(int id);
 
-        /**
-         * @param id
-         * @return a unique name for the feature of id 'id'
-         */
-        String name(int id);
+    /**
+     * @param id
+     * @return a unique name for the feature of id 'id'
+     */
+    String name(int id);
 
-        /**
-         * @return the number of features
-         */
-        int numFeatures();
+    /**
+     * @return the number of features
+     */
+    int numFeatures();
 
-        /**
-         * Returns a unique identifier of this feature set. If the feature set
-         * is initialized with parameters, it should be included in the returned
-         * id.
-         *
-         * @return a unique id
-         */
-        String featureSetId();
+    /**
+     * Returns a unique identifier of this feature set. If the feature set
+     * is initialized with parameters, it should be included in the returned
+     * id.
+     *
+     * @return a unique id
+     */
+    String featureSetId();
 
 
 }

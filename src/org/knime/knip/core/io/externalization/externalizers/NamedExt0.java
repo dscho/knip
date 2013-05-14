@@ -63,50 +63,50 @@ import org.knime.knip.core.io.externalization.Externalizer;
  */
 public class NamedExt0 implements Externalizer<Named> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<Named> getType() {
-                return Named.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<Named> getType() {
+        return Named.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Named read(final BufferedDataInputStream in) throws Exception {
-                final char[] name = new char[in.readInt()];
-                in.read(name);
-                return new NamedImpl(new String(name));
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Named read(final BufferedDataInputStream in) throws Exception {
+        final char[] name = new char[in.readInt()];
+        in.read(name);
+        return new NamedImpl(new String(name));
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final Named obj)
-                        throws Exception {
-                final char[] name = obj.getName().toCharArray();
-                out.writeInt(name.length);
-                out.write(name);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final Named obj)
+            throws Exception {
+        final char[] name = obj.getName().toCharArray();
+        out.writeInt(name.length);
+        out.write(name);
 
-        }
+    }
 
 }

@@ -74,162 +74,162 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class NtreeImgExt0 implements Externalizer<NtreeImg> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<NtreeImg> getType() {
+        return NtreeImg.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NtreeImg read(final BufferedDataInputStream in) throws Exception {
+
+        final long[] dims = new long[in.readInt()];
+        in.read(dims);
+
+        final NativeType<?> type = (NativeType<?>) ExternalizerManager
+                .<Class> read(in).newInstance();
+
+        final int numChildren = in.readInt();
+
+        @SuppressWarnings({ "rawtypes" })
+        final NtreeImg<? extends Type<?>, ? extends NtreeAccess<? extends Comparable<?>, ?>> img = new NtreeImgFactory()
+        .create(dims, type);
+        final Ntree<? extends Comparable<?>> tree = img.update(
+                                                               new NtreeImg.PositionProvider() {
+
+                                                                   @Override
+                                                                   public long[] getPosition() {
+                                                                       return new long[img
+                                                                                       .numDimensions()];
+                                                                   }
+
+                                                               }).getCurrentStorageNtree();
+
+        final NtreeNode<? extends Comparable<?>> root = tree.getRootNode();
+
+        readNtreeNode(new ObjectInputStream(in),
+                      (NtreeNode<Object>) root, numChildren);
+
+        return img;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final NtreeImg obj)
+            throws Exception {
+        // write dimensions
+        out.writeInt(obj.numDimensions());
+        for (int i = 0; i < obj.numDimensions(); i++) {
+            out.writeLong(obj.dimension(i));
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<NtreeImg> getType() {
-                return NtreeImg.class;
+        ExternalizerManager.<Class> write(out, obj.firstElement()
+                                          .getClass());
+
+        final int n = obj.numDimensions();
+        final int numChildren = 1 << n;
+
+        out.writeInt(numChildren);
+
+        final Ntree<?> tree = obj.update(new NtreeImg.PositionProvider() {
+
+            @Override
+            public long[] getPosition() {
+                return new long[obj.numDimensions()];
+            }
+
+        }).getCurrentStorageNtree();
+
+        writeNtreeNode(new ObjectOutputStream(out), tree.getRootNode());
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readNtreeNode(final ObjectInputStream in,
+                               NtreeNode<Object> current, final int numChildren)
+                                       throws IOException {
+        try {
+            current.setValue(in.readObject());
+            if (!in.readBoolean()) {
+                return;
+            }
+
+            final LinkedList<NtreeNode<Object>> queue = new LinkedList<NtreeNode<Object>>();
+            queue.add(current);
+
+            while (!queue.isEmpty()) {
+                current = queue.getFirst();
+                final NtreeNode<Object>[] children = new NtreeNode[numChildren];
+                for (int i = 0; i < numChildren; i++) {
+                    children[i] = new NtreeNode<Object>(
+                            current,
+                            in.readObject());
+                    ;
+                    if (((Boolean) in.readObject())
+                            .booleanValue()) {
+                        queue.add(children[i]);
+                    }
+                }
+                queue.removeFirst().setChildren(children);
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void writeNtreeNode(final ObjectOutputStream out,
+                                NtreeNode<? extends Comparable<?>> current)
+                                        throws IOException {
+
+        out.writeObject(current.getValue());
+        out.writeBoolean(current.getChildren() != null);
+
+        final LinkedList<NtreeNode<? extends Comparable<?>>> queue = new LinkedList<NtreeNode<? extends Comparable<?>>>();
+        queue.add(current);
+
+        if (current.getChildren() == null) {
+            out.flush();
+            return;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+        while (!queue.isEmpty()) {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public NtreeImg read(final BufferedDataInputStream in) throws Exception {
+            current = queue.removeFirst();
+            for (final NtreeNode<? extends Comparable<?>> child : current
+                    .getChildren()) {
+                out.writeObject(child.getValue());
+                out.writeObject(child.getChildren() != null);
 
-                final long[] dims = new long[in.readInt()];
-                in.read(dims);
-
-                final NativeType<?> type = (NativeType<?>) ExternalizerManager
-                                .<Class> read(in).newInstance();
-
-                final int numChildren = in.readInt();
-
-                @SuppressWarnings({ "rawtypes" })
-                final NtreeImg<? extends Type<?>, ? extends NtreeAccess<? extends Comparable<?>, ?>> img = new NtreeImgFactory()
-                                .create(dims, type);
-                final Ntree<? extends Comparable<?>> tree = img.update(
-                                new NtreeImg.PositionProvider() {
-
-                                        @Override
-                                        public long[] getPosition() {
-                                                return new long[img
-                                                                .numDimensions()];
-                                        }
-
-                                }).getCurrentStorageNtree();
-
-                final NtreeNode<? extends Comparable<?>> root = tree.getRootNode();
-
-                readNtreeNode(new ObjectInputStream(in),
-                                (NtreeNode<Object>) root, numChildren);
-
-                return img;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final NtreeImg obj)
-                        throws Exception {
-                // write dimensions
-                out.writeInt(obj.numDimensions());
-                for (int i = 0; i < obj.numDimensions(); i++) {
-                        out.writeLong(obj.dimension(i));
+                if (child.getChildren() != null) {
+                    queue.add(child);
                 }
 
-                ExternalizerManager.<Class> write(out, obj.firstElement()
-                                .getClass());
-
-                final int n = obj.numDimensions();
-                final int numChildren = 1 << n;
-
-                out.writeInt(numChildren);
-
-                final Ntree<?> tree = obj.update(new NtreeImg.PositionProvider() {
-
-                        @Override
-                        public long[] getPosition() {
-                                return new long[obj.numDimensions()];
-                        }
-
-                }).getCurrentStorageNtree();
-
-                writeNtreeNode(new ObjectOutputStream(out), tree.getRootNode());
+            }
 
         }
-
-        @SuppressWarnings("unchecked")
-        private void readNtreeNode(final ObjectInputStream in,
-                        NtreeNode<Object> current, final int numChildren)
-                        throws IOException {
-                try {
-                        current.setValue(in.readObject());
-                        if (!in.readBoolean()) {
-                                return;
-                        }
-
-                        final LinkedList<NtreeNode<Object>> queue = new LinkedList<NtreeNode<Object>>();
-                        queue.add(current);
-
-                        while (!queue.isEmpty()) {
-                                current = queue.getFirst();
-                                final NtreeNode<Object>[] children = new NtreeNode[numChildren];
-                                for (int i = 0; i < numChildren; i++) {
-                                        children[i] = new NtreeNode<Object>(
-                                                        current,
-                                                        in.readObject());
-                                        ;
-                                        if (((Boolean) in.readObject())
-                                                        .booleanValue()) {
-                                                queue.add(children[i]);
-                                        }
-                                }
-                                queue.removeFirst().setChildren(children);
-                        }
-                } catch (final Exception e) {
-                        throw new RuntimeException(e);
-                }
-        }
-
-        private void writeNtreeNode(final ObjectOutputStream out,
-                        NtreeNode<? extends Comparable<?>> current)
-                        throws IOException {
-
-                out.writeObject(current.getValue());
-                out.writeBoolean(current.getChildren() != null);
-
-                final LinkedList<NtreeNode<? extends Comparable<?>>> queue = new LinkedList<NtreeNode<? extends Comparable<?>>>();
-                queue.add(current);
-
-                if (current.getChildren() == null) {
-                        out.flush();
-                        return;
-                }
-
-                while (!queue.isEmpty()) {
-
-                        current = queue.removeFirst();
-                        for (final NtreeNode<? extends Comparable<?>> child : current
-                                        .getChildren()) {
-                                out.writeObject(child.getValue());
-                                out.writeObject(child.getChildren() != null);
-
-                                if (child.getChildren() != null) {
-                                        queue.add(child);
-                                }
-
-                        }
-
-                }
-        }
+    }
 
 }

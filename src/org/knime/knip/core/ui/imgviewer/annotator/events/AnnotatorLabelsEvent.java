@@ -58,31 +58,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class AnnotatorLabelsEvent implements KNIPEvent {
 
-        private final String[] m_labels;
+    private final String[] m_labels;
 
-        public AnnotatorLabelsEvent(final String... labels) {
-                m_labels = labels;
+    public AnnotatorLabelsEvent(final String... labels) {
+        m_labels = labels;
 
-        }
+    }
 
-        /**
-         * @return the labels
-         */
-        public String[] getLabels() {
-                return m_labels;
-        }
+    /**
+     * @return the labels
+     */
+    public String[] getLabels() {
+        return m_labels;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
 }

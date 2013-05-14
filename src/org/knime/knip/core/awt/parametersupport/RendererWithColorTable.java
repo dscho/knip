@@ -13,6 +13,6 @@ import net.imglib2.display.ColorTable;
  */
 public interface RendererWithColorTable {
 
-        public void setColorTables(ColorTable[] tables);
+    public void setColorTables(ColorTable[] tables);
 
 }

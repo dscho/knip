@@ -66,52 +66,52 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class ImgMetadataExt0 implements Externalizer<ImgMetadata> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<ImgMetadata> getType() {
-                return ImgMetadata.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<ImgMetadata> getType() {
+        return ImgMetadata.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ImgMetadata read(final BufferedDataInputStream in) throws Exception {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ImgMetadata read(final BufferedDataInputStream in) throws Exception {
 
-                final GeneralMetadata metadata = ExternalizerManager
-                                .<GeneralMetadata> read(in);
+        final GeneralMetadata metadata = ExternalizerManager
+                .<GeneralMetadata> read(in);
 
-                final ImageMetadata imgMetadata = ExternalizerManager
-                                .<ImageMetadata> read(in);
+        final ImageMetadata imgMetadata = ExternalizerManager
+                .<ImageMetadata> read(in);
 
-                return new ImgMetadataImpl(metadata, imgMetadata);
-        }
+        return new ImgMetadataImpl(metadata, imgMetadata);
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final ImgMetadata obj)
-                        throws Exception {
-                ExternalizerManager.write(out, obj, GeneralMetadata.class);
-                ExternalizerManager.write(out, obj, ImageMetadata.class);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final ImgMetadata obj)
+            throws Exception {
+        ExternalizerManager.write(out, obj, GeneralMetadata.class);
+        ExternalizerManager.write(out, obj, ImageMetadata.class);
+    }
 }

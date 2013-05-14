@@ -69,132 +69,132 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class CellImgExt0 implements Externalizer<CellImg> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<CellImg> getType() {
+        return CellImg.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellImg read(final BufferedDataInputStream in) throws Exception {
+
+        final long[] dims = new long[in.readInt()];
+        in.read(dims);
+
+        final NativeType<?> type = (NativeType<?>) ExternalizerManager
+                .<Class> read(in).newInstance();
+
+        final CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cellImg = new CellImgFactory()
+        .create(dims, type);
+
+        final DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursor = new DirectCellCursor(
+                                                                                                                                               cellImg.cursor());
+
+        boolean indicateStop = cursor.isLastCell();
+        while (true) {
+
+            in.readLArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursor)
+                    .getCell().getData())
+                    .getCurrentStorageArray());
+
+            if (indicateStop) {
+                break;
+            }
+
+            cursor.moveToNextCell();
+
+            if (cursor.isLastCell()) {
+                indicateStop = true;
+            }
+        }
+
+        return cellImg;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final CellImg obj)
+            throws Exception {
+
+        // write dimensions
+        out.writeInt(obj.numDimensions());
+        for (int i = 0; i < obj.numDimensions(); i++) {
+            out.writeLong(obj.dimension(i));
+        }
+
+        ExternalizerManager.<Class> write(out, obj.firstElement()
+                                          .getClass());
+
+        final DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursorOnCells = new DirectCellCursor(
+                                                                                                                                                      ((CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) obj)
+                                                                                                                                                      .cursor());
+
+        boolean indicateStop = cursorOnCells.isLastCell();
+        while (true) {
+            // TODO extend for other types
+            out.writeArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursorOnCells)
+                    .getCell().getData())
+                    .getCurrentStorageArray());
+
+            if (indicateStop) {
+                break;
+            }
+
+            cursorOnCells.moveToNextCell();
+
+            if (cursorOnCells.isLastCell()) {
+                indicateStop = true;
+            }
+
+        }
+
+    }
+
+    private class DirectCellCursor<T extends NativeType<T>, A extends ArrayDataAccess<A>, C extends AbstractCell<A>>
+    extends CellCursor<T, A, C> {
+
+        protected DirectCellCursor(final CellCursor<T, A, C> cursor) {
+            super(cursor);
         }
 
         /**
-         * {@inheritDoc}
+         * Move cursor right before the first element of the next cell.
+         * Update type and index variables.
          */
-        @Override
-        public Class<CellImg> getType() {
-                return CellImg.class;
+        public synchronized void moveToNextCell() {
+            cursorOnCells.fwd();
+            isNotLastCell = cursorOnCells.hasNext();
+            lastIndexInCell = (int) (getCell().size() - 1);
+            index = -1;
+            type.updateContainer(this);
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
+        public synchronized boolean isLastCell() {
+            return !isNotLastCell;
         }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public CellImg read(final BufferedDataInputStream in) throws Exception {
-
-                final long[] dims = new long[in.readInt()];
-                in.read(dims);
-
-                final NativeType<?> type = (NativeType<?>) ExternalizerManager
-                                .<Class> read(in).newInstance();
-
-                final CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cellImg = new CellImgFactory()
-                                .create(dims, type);
-
-                final DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursor = new DirectCellCursor(
-                                cellImg.cursor());
-
-                boolean indicateStop = cursor.isLastCell();
-                while (true) {
-
-                        in.readLArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursor)
-                                        .getCell().getData())
-                                        .getCurrentStorageArray());
-
-                        if (indicateStop) {
-                                break;
-                        }
-
-                        cursor.moveToNextCell();
-
-                        if (cursor.isLastCell()) {
-                                indicateStop = true;
-                        }
-                }
-
-                return cellImg;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final CellImg obj)
-                        throws Exception {
-
-                // write dimensions
-                out.writeInt(obj.numDimensions());
-                for (int i = 0; i < obj.numDimensions(); i++) {
-                        out.writeLong(obj.dimension(i));
-                }
-
-                ExternalizerManager.<Class> write(out, obj.firstElement()
-                                .getClass());
-
-                final DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursorOnCells = new DirectCellCursor(
-                                ((CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) obj)
-                                                .cursor());
-
-                boolean indicateStop = cursorOnCells.isLastCell();
-                while (true) {
-                        // TODO extend for other types
-                        out.writeArray(((ArrayDataAccess<? extends ArrayDataAccess<?>>) ((CellContainerSampler<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>) cursorOnCells)
-                                        .getCell().getData())
-                                        .getCurrentStorageArray());
-
-                        if (indicateStop) {
-                                break;
-                        }
-
-                        cursorOnCells.moveToNextCell();
-
-                        if (cursorOnCells.isLastCell()) {
-                                indicateStop = true;
-                        }
-
-                }
-
-        }
-
-        private class DirectCellCursor<T extends NativeType<T>, A extends ArrayDataAccess<A>, C extends AbstractCell<A>>
-                        extends CellCursor<T, A, C> {
-
-                protected DirectCellCursor(final CellCursor<T, A, C> cursor) {
-                        super(cursor);
-                }
-
-                /**
-                 * Move cursor right before the first element of the next cell.
-                 * Update type and index variables.
-                 */
-                public synchronized void moveToNextCell() {
-                        cursorOnCells.fwd();
-                        isNotLastCell = cursorOnCells.hasNext();
-                        lastIndexInCell = (int) (getCell().size() - 1);
-                        index = -1;
-                        type.updateContainer(this);
-                }
-
-                public synchronized boolean isLastCell() {
-                        return !isNotLastCell;
-                }
-        }
+    }
 
 }

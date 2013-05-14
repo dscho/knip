@@ -58,7 +58,7 @@ package org.knime.knip.core.util;
 //
 ///**
 // * @author ohl
-// * 
+// *
 // */
 //public class DebugView<T extends RealType<T>> extends JFrame implements
 //		ImageProducer {
@@ -98,7 +98,7 @@ package org.knime.knip.core.util;
 //
 //	/**
 //	 * Creates a new instance of the debug view.
-//	 * 
+//	 *
 //	 * @param cellPic
 //	 *            the original cell picture
 //	 * @param labelArray
@@ -361,12 +361,12 @@ package org.knime.knip.core.util;
 //	 * Call this whenever the label of a pixel was changed in the array initialy
 //	 * passed to this producer. It will notify interested ImageConsumers to
 //	 * update their view on the image.
-//	 * 
+//	 *
 //	 * @param x
 //	 *            the x coord of the pixel that changed
 //	 * @param y
 //	 *            the y coord of the pixel that changed
-//	 * 
+//	 *
 //	 */
 //	public synchronized void newLabel(final int x, final int y) {
 //

@@ -58,17 +58,17 @@ package org.knime.knip.core.features;
  */
 public interface SharesObjects {
 
-        /**
-         * @return the object classes this class wants to share. Note that the
-         *         provided classes need to have an empty contructor!
-         */
-        Class<?>[] getSharedObjectClasses();
+    /**
+     * @return the object classes this class wants to share. Note that the
+     *         provided classes need to have an empty contructor!
+     */
+    Class<?>[] getSharedObjectClasses();
 
-        /**
-         * @param instances
-         *                the instances of the classes returned in
-         *                {@link SharesObjects#getSharedObjectClasses()}
-         */
-        void setSharedObjectInstances(Object[] instances);
+    /**
+     * @param instances
+     *                the instances of the classes returned in
+     *                {@link SharesObjects#getSharedObjectClasses()}
+     */
+    void setSharedObjectInstances(Object[] instances);
 
 }

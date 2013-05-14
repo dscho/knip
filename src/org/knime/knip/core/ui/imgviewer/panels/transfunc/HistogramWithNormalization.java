@@ -59,249 +59,249 @@ import java.util.NoSuchElementException;
  */
 public class HistogramWithNormalization implements Histogram {
 
-        private class Iter implements Iterator<Integer> {
+    private class Iter implements Iterator<Integer> {
 
-                private final int end;
-                private int pos;
+        private final int end;
+        private int pos;
 
-                public Iter(final int s, final int e) {
-                        pos = s;
-                        end = e;
-                }
-
-                @Override
-                public boolean hasNext() {
-                        return pos < end;
-                }
-
-                @Override
-                public Integer next() {
-                        if (pos < end) {
-                                return m_data[pos++];
-                        } else {
-                                throw new NoSuchElementException();
-                        }
-                }
-
-                @Override
-                public void remove() {
-                        throw new UnsupportedOperationException();
-                }
-        }
-
-        private final int[] m_data;
-
-        /* The first and last occurence in m_data that is not null */
-        /* with [0] = fist and [1] = last */
-        private final int[] m_pos;
-
-        /* same as above, but as a fraction of the lenght of m_data */
-        private final double[] m_frac;
-
-        /* the min and max value of the represented data */
-        private final double m_minValue;
-        private final double m_maxValue;
-
-        /**
-         * Set up a new instance with the passed data.<br>
-         *
-         * @param data
-         *                the data to use for this histogram, a deep copy will
-         *                be made
-         *
-         * @param min the minimum value this histogram starts at
-         * @param max the maximum value this histogram ends at
-         */
-        public HistogramWithNormalization(final int[] data, final double min, final double max) {
-                if (data == null) {
-                        throw new NullPointerException();
-                }
-
-                m_data = Arrays.copyOf(data, data.length);
-                m_minValue = min;
-                m_maxValue = max;
-
-                m_pos = findFirstLast(m_data);
-
-                m_frac = calcFractions(m_data, m_pos);
-        }
-
-        private double[] calcFractions(final int[] data, final int[] pos) {
-                assert data != null;
-                assert pos != null;
-
-                final double[] frac = new double[2];
-
-                frac[0] = (double) pos[0] / (double) data.length;
-                frac[1] = (double) pos[1] / (double) data.length;
-
-                return frac;
-        }
-
-        /**
-         * Make a deep copy of the histogram.
-         *
-         * @param the histogram to copy
-         */
-        public HistogramWithNormalization(final Histogram hist) {
-                this(hist.getData(), hist.getMinValue(), hist.getMaxValue());
-        }
-
-        /**
-         * Make a deep copy of this histogram.
-         *
-         * @return a copy of the histogram
-         */
-        public HistogramWithNormalization copy() {
-                return new HistogramWithNormalization(this);
-        }
-
-        /**
-         * Get a histogram of only the normalized data.
-         */
-        public Histogram getNormalizedHistogram() {
-                final double step = Math.abs(m_maxValue - m_minValue) / m_data.length;
-                final double min = m_pos[0] * step;
-                final double max = (m_pos[1] + 1) * step;
-
-                return new HistogramWithNormalization(getNormalizedData(), min, max);
-        }
-
-        private int[] findFirstLast(final int[] data) {
-
-                assert (data != null);
-
-                final int[] res = new int[2];
-
-                // find the min Position
-                for (int i = 0; i < data.length; i++) {
-                        if (data[i] != 0) {
-                                res[0] = i;
-                                break;
-                        }
-                }
-
-                // find the max Position
-                for (int i = data.length - 1; i >= 0; i--) {
-                        if (data[i] != 0) {
-                                res[1] = i;
-                                break;
-                        }
-                }
-
-                return res;
-        }
-
-        /**
-         * Get the first and last index where data[index] is not zero.
-         *
-         * @return positions
-         */
-        public int[] getPos() {
-                return m_pos.clone();
-        }
-
-        /**
-         * Same as {@link getPos()}, but returning the positions as a fraction
-         * of the lenght of the data array.<br>
-         *
-         * @return fractions
-         */
-        public double[] getFractions() {
-                return m_frac.clone();
+        public Iter(final int s, final int e) {
+            pos = s;
+            end = e;
         }
 
         @Override
-        public int[] getData() {
-                return Arrays.copyOf(m_data, m_data.length);
-        }
-
-        /**
-         * Get a copy of the part of the array that correspondes to the
-         * normalized part of the histogram.<br>
-         *
-         * @return the normalized part of the data
-         */
-        public int[] getNormalizedData() {
-                return Arrays.copyOfRange(m_data, m_pos[0], m_pos[1]);
-        }
-
-        /**
-         * Get the value of the histogram at the given index.<br>
-         *
-         * @param index
-         *
-         * @return value
-         */
-        public int get(final int index) {
-                return m_data[index];
-        }
-
-        /**
-         * Get an iterator over the complete data set.<br>
-         *
-         * @return iterator
-         */
-        public Iterator<Integer> iteratorFull() {
-                return new Iter(0, m_data.length);
-        }
-
-        /**
-         * Get an iterator that only iterates over the values that are within
-         * the normalization range.<br>
-         *
-         * @return iterator
-         */
-        public Iterator<Integer> iteratorNormalized() {
-                return new Iter(m_pos[0], m_pos[1] + 1);
+        public boolean hasNext() {
+            return pos < end;
         }
 
         @Override
-        public Iterator<Integer> iterator() {
-                return iteratorFull();
-        }
-
-        /**
-         * Get the size of the underlying data array.<br>
-         */
-        @Override
-        public int size() {
-                return m_data.length;
+        public Integer next() {
+            if (pos < end) {
+                return m_data[pos++];
+            } else {
+                throw new NoSuchElementException();
+            }
         }
 
         @Override
-        public double getMinValue() {
-                return m_minValue;
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private final int[] m_data;
+
+    /* The first and last occurence in m_data that is not null */
+    /* with [0] = fist and [1] = last */
+    private final int[] m_pos;
+
+    /* same as above, but as a fraction of the lenght of m_data */
+    private final double[] m_frac;
+
+    /* the min and max value of the represented data */
+    private final double m_minValue;
+    private final double m_maxValue;
+
+    /**
+     * Set up a new instance with the passed data.<br>
+     *
+     * @param data
+     *                the data to use for this histogram, a deep copy will
+     *                be made
+     *
+     * @param min the minimum value this histogram starts at
+     * @param max the maximum value this histogram ends at
+     */
+    public HistogramWithNormalization(final int[] data, final double min, final double max) {
+        if (data == null) {
+            throw new NullPointerException();
         }
 
-        @Override
-        public double getMaxValue() {
-                return m_maxValue;
+        m_data = Arrays.copyOf(data, data.length);
+        m_minValue = min;
+        m_maxValue = max;
+
+        m_pos = findFirstLast(m_data);
+
+        m_frac = calcFractions(m_data, m_pos);
+    }
+
+    private double[] calcFractions(final int[] data, final int[] pos) {
+        assert data != null;
+        assert pos != null;
+
+        final double[] frac = new double[2];
+
+        frac[0] = (double) pos[0] / (double) data.length;
+        frac[1] = (double) pos[1] / (double) data.length;
+
+        return frac;
+    }
+
+    /**
+     * Make a deep copy of the histogram.
+     *
+     * @param the histogram to copy
+     */
+    public HistogramWithNormalization(final Histogram hist) {
+        this(hist.getData(), hist.getMinValue(), hist.getMaxValue());
+    }
+
+    /**
+     * Make a deep copy of this histogram.
+     *
+     * @return a copy of the histogram
+     */
+    public HistogramWithNormalization copy() {
+        return new HistogramWithNormalization(this);
+    }
+
+    /**
+     * Get a histogram of only the normalized data.
+     */
+    public Histogram getNormalizedHistogram() {
+        final double step = Math.abs(m_maxValue - m_minValue) / m_data.length;
+        final double min = m_pos[0] * step;
+        final double max = (m_pos[1] + 1) * step;
+
+        return new HistogramWithNormalization(getNormalizedData(), min, max);
+    }
+
+    private int[] findFirstLast(final int[] data) {
+
+        assert (data != null);
+
+        final int[] res = new int[2];
+
+        // find the min Position
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != 0) {
+                res[0] = i;
+                break;
+            }
         }
 
-        @Override
-        public double[] values(int bin) {
-                bin = checkBinIndex(bin);
-
-                final double step = Math.abs(m_maxValue - m_minValue) / m_data.length;
-
-                final double[] result = new double[2];
-
-                result[0] = bin * step;
-                result[1] = (bin + 1) * step;
-
-                return result;
+        // find the max Position
+        for (int i = data.length - 1; i >= 0; i--) {
+            if (data[i] != 0) {
+                res[1] = i;
+                break;
+            }
         }
 
-        @Override
-        public int count(final int bin) {
-                return m_data[checkBinIndex(bin)];
-        }
+        return res;
+    }
 
-        private int checkBinIndex(int bin) {
-                bin = bin < 0 ? 0 : bin;
-                bin = bin >= m_data.length ? m_data.length - 1 : bin;
-                return bin;
-        }
+    /**
+     * Get the first and last index where data[index] is not zero.
+     *
+     * @return positions
+     */
+    public int[] getPos() {
+        return m_pos.clone();
+    }
+
+    /**
+     * Same as {@link getPos()}, but returning the positions as a fraction
+     * of the lenght of the data array.<br>
+     *
+     * @return fractions
+     */
+    public double[] getFractions() {
+        return m_frac.clone();
+    }
+
+    @Override
+    public int[] getData() {
+        return Arrays.copyOf(m_data, m_data.length);
+    }
+
+    /**
+     * Get a copy of the part of the array that correspondes to the
+     * normalized part of the histogram.<br>
+     *
+     * @return the normalized part of the data
+     */
+    public int[] getNormalizedData() {
+        return Arrays.copyOfRange(m_data, m_pos[0], m_pos[1]);
+    }
+
+    /**
+     * Get the value of the histogram at the given index.<br>
+     *
+     * @param index
+     *
+     * @return value
+     */
+    public int get(final int index) {
+        return m_data[index];
+    }
+
+    /**
+     * Get an iterator over the complete data set.<br>
+     *
+     * @return iterator
+     */
+    public Iterator<Integer> iteratorFull() {
+        return new Iter(0, m_data.length);
+    }
+
+    /**
+     * Get an iterator that only iterates over the values that are within
+     * the normalization range.<br>
+     *
+     * @return iterator
+     */
+    public Iterator<Integer> iteratorNormalized() {
+        return new Iter(m_pos[0], m_pos[1] + 1);
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return iteratorFull();
+    }
+
+    /**
+     * Get the size of the underlying data array.<br>
+     */
+    @Override
+    public int size() {
+        return m_data.length;
+    }
+
+    @Override
+    public double getMinValue() {
+        return m_minValue;
+    }
+
+    @Override
+    public double getMaxValue() {
+        return m_maxValue;
+    }
+
+    @Override
+    public double[] values(int bin) {
+        bin = checkBinIndex(bin);
+
+        final double step = Math.abs(m_maxValue - m_minValue) / m_data.length;
+
+        final double[] result = new double[2];
+
+        result[0] = bin * step;
+        result[1] = (bin + 1) * step;
+
+        return result;
+    }
+
+    @Override
+    public int count(final int bin) {
+        return m_data[checkBinIndex(bin)];
+    }
+
+    private int checkBinIndex(int bin) {
+        bin = bin < 0 ? 0 : bin;
+        bin = bin >= m_data.length ? m_data.length - 1 : bin;
+        return bin;
+    }
 
 }

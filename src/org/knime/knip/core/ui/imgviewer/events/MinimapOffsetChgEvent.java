@@ -58,31 +58,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class MinimapOffsetChgEvent implements KNIPEvent {
 
-        private final int[] m_offest;
+    private final int[] m_offest;
 
-        public MinimapOffsetChgEvent(final int[] offest) {
-                m_offest = offest;
+    public MinimapOffsetChgEvent(final int[] offest) {
+        m_offest = offest;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the offest
-         */
-        public int[] getOffest() {
-                return m_offest;
-        }
+    /**
+     * @return the offest
+     */
+    public int[] getOffest() {
+        return m_offest;
+    }
 
 }

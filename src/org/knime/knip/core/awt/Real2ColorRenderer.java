@@ -11,34 +11,34 @@ import org.knime.knip.core.awt.converter.RealColorARGBConverter;
 import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 
 public class Real2ColorRenderer<R extends RealType<R>> extends
-                ProjectingRenderer<R> implements RendererWithNormalization {
+ProjectingRenderer<R> implements RendererWithNormalization {
 
-        private RealColorARGBConverter<R> m_converter;
-        private final int m_projectedDimension;
+    private RealColorARGBConverter<R> m_converter;
+    private final int m_projectedDimension;
 
-        public Real2ColorRenderer(final int projectedDimension) {
-                m_projectedDimension = projectedDimension;
-                m_converter = new RealColorARGBConverter<R>(1.0, 0.0);
-        }
+    public Real2ColorRenderer(final int projectedDimension) {
+        m_projectedDimension = projectedDimension;
+        m_converter = new RealColorARGBConverter<R>(1.0, 0.0);
+    }
 
-        @Override
-        public String toString() {
-                return "RGB Image Renderer (RGB-Dim:" + m_projectedDimension
-                                + ")";
-        }
+    @Override
+    public String toString() {
+        return "RGB Image Renderer (RGB-Dim:" + m_projectedDimension
+                + ")";
+    }
 
-        @Override
-        public void setNormalizationParameters(final double factor, final double min) {
-                m_converter = new RealColorARGBConverter<R>(factor, min);
-        }
+    @Override
+    public void setNormalizationParameters(final double factor, final double min) {
+        m_converter = new RealColorARGBConverter<R>(factor, min);
+    }
 
-        @Override
-        protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
-                        final int dimY, final RandomAccessibleInterval<R> source,
-                        final ARGBScreenImage target) {
+    @Override
+    protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
+                                                            final int dimY, final RandomAccessibleInterval<R> source,
+                                                            final ARGBScreenImage target) {
 
-                return new DimProjector2D<R, ARGBType>(dimX, dimY, source,
-                                target, m_converter, m_projectedDimension);
-        }
+        return new DimProjector2D<R, ARGBType>(dimX, dimY, source,
+                target, m_converter, m_projectedDimension);
+    }
 
 }

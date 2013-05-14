@@ -32,111 +32,111 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
  * @author dietzc, hornm
  **/
 public class LabelingDependency<L extends Comparable<L>> implements
-                UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
+UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
 
-        private final RulebasedLabelFilter<L> m_leftFilter;
+    private final RulebasedLabelFilter<L> m_leftFilter;
 
-        private final RulebasedLabelFilter<L> m_rightFilter;
+    private final RulebasedLabelFilter<L> m_rightFilter;
 
-        private final boolean m_intersectionMode;
+    private final boolean m_intersectionMode;
 
-        public LabelingDependency(final RulebasedLabelFilter<L> leftFilter,
-                        final RulebasedLabelFilter<L> rightFilter,
-                        final boolean intersectionMode) {
-                m_leftFilter = leftFilter;
-                m_rightFilter = rightFilter;
-                m_intersectionMode = intersectionMode;
-        }
+    public LabelingDependency(final RulebasedLabelFilter<L> leftFilter,
+                              final RulebasedLabelFilter<L> rightFilter,
+                              final boolean intersectionMode) {
+        m_leftFilter = leftFilter;
+        m_rightFilter = rightFilter;
+        m_intersectionMode = intersectionMode;
+    }
 
-        @Override
-        public Map<L, List<L>> compute(final Labeling<L> op, final Map<L, List<L>> r) {
+    @Override
+    public Map<L, List<L>> compute(final Labeling<L> op, final Map<L, List<L>> r) {
 
-                final HashMap<L, HashMap<L, Integer>> labelMap = new HashMap<L, HashMap<L, Integer>>();
-                final HashMap<L, Integer> sizeMap = new HashMap<L, Integer>();
+        final HashMap<L, HashMap<L, Integer>> labelMap = new HashMap<L, HashMap<L, Integer>>();
+        final HashMap<L, Integer> sizeMap = new HashMap<L, Integer>();
 
-                final Cursor<LabelingType<L>> cursor = op.cursor();
+        final Cursor<LabelingType<L>> cursor = op.cursor();
 
-                while (cursor.hasNext()) {
-                        cursor.fwd();
+        while (cursor.hasNext()) {
+            cursor.fwd();
 
-                        if (cursor.get().getLabeling().isEmpty()) {
-                                continue;
-                        }
+            if (cursor.get().getLabeling().isEmpty()) {
+                continue;
+            }
 
-                        for (final L outerL : m_leftFilter.filterLabeling(cursor
-                                        .get().getLabeling())) {
+            for (final L outerL : m_leftFilter.filterLabeling(cursor
+                                                              .get().getLabeling())) {
 
-                                if (!labelMap.containsKey(outerL)) {
-                                        labelMap.put(outerL,
-                                                        new HashMap<L, Integer>());
-                                        sizeMap.put(outerL, 0);
-                                }
-
-                                for (final L innerL : m_rightFilter
-                                                .filterLabeling(cursor.get()
-                                                                .getLabeling())) {
-                                        if (outerL.equals(innerL)) {
-                                                continue;
-                                        }
-
-                                        if (!labelMap.get(outerL).containsKey(
-                                                        innerL)) {
-                                                labelMap.get(outerL).put(
-                                                                innerL, 0);
-                                        }
-
-                                        labelMap.get(outerL)
-                                                        .put(innerL,
-                                                                        labelMap.get(outerL)
-                                                                                        .get(innerL) + 1);
-                                }
-
-                                if (!m_intersectionMode) {
-                                        sizeMap.put(outerL,
-                                                        sizeMap.get(outerL) + 1);
-                                }
-                        }
+                if (!labelMap.containsKey(outerL)) {
+                    labelMap.put(outerL,
+                                 new HashMap<L, Integer>());
+                    sizeMap.put(outerL, 0);
                 }
 
-                for (final L l : labelMap.keySet()) {
-                        final List<L> members = new ArrayList<L>();
-                        if (sizeMap.get(l) > 0) {
-                                for (final L groupMember : labelMap.get(l).keySet()) {
-                                        if (labelMap.get(l).get(groupMember)
-                                                        .equals(sizeMap.get(l))) {
-                                                members.add(groupMember);
-                                        }
-                                }
+                for (final L innerL : m_rightFilter
+                        .filterLabeling(cursor.get()
+                                        .getLabeling())) {
+                    if (outerL.equals(innerL)) {
+                        continue;
+                    }
 
-                        } else {
-                                for (final L groupMember : labelMap.get(l).keySet()) {
-                                        members.add(groupMember);
-                                }
-                        }
+                    if (!labelMap.get(outerL).containsKey(
+                                                          innerL)) {
+                        labelMap.get(outerL).put(
+                                                 innerL, 0);
+                    }
 
-                        if (members.size() > 0
-                                        || m_rightFilter.getRules().size() == 0) {
-                                r.put(l, members);
-                        }
+                    labelMap.get(outerL)
+                    .put(innerL,
+                         labelMap.get(outerL)
+                         .get(innerL) + 1);
                 }
-                return r;
 
+                if (!m_intersectionMode) {
+                    sizeMap.put(outerL,
+                                sizeMap.get(outerL) + 1);
+                }
+            }
         }
 
-        @Override
-        public UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> copy() {
-                return new LabelingDependency<L>(m_leftFilter.copy(),
-                                m_leftFilter.copy(), m_intersectionMode);
-        }
+        for (final L l : labelMap.keySet()) {
+            final List<L> members = new ArrayList<L>();
+            if (sizeMap.get(l) > 0) {
+                for (final L groupMember : labelMap.get(l).keySet()) {
+                    if (labelMap.get(l).get(groupMember)
+                            .equals(sizeMap.get(l))) {
+                        members.add(groupMember);
+                    }
+                }
 
-        @Override
-        public UnaryObjectFactory<Labeling<L>, Map<L, List<L>>> bufferFactory() {
-                return new UnaryObjectFactory<Labeling<L>, Map<L, List<L>>>() {
+            } else {
+                for (final L groupMember : labelMap.get(l).keySet()) {
+                    members.add(groupMember);
+                }
+            }
 
-                        @Override
-                        public Map<L, List<L>> instantiate(final Labeling<L> a) {
-                                return new HashMap<L, List<L>>();
-                        }
-                };
+            if ((members.size() > 0)
+                    || (m_rightFilter.getRules().size() == 0)) {
+                r.put(l, members);
+            }
         }
+        return r;
+
+    }
+
+    @Override
+    public UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> copy() {
+        return new LabelingDependency<L>(m_leftFilter.copy(),
+                m_leftFilter.copy(), m_intersectionMode);
+    }
+
+    @Override
+    public UnaryObjectFactory<Labeling<L>, Map<L, List<L>>> bufferFactory() {
+        return new UnaryObjectFactory<Labeling<L>, Map<L, List<L>>>() {
+
+            @Override
+            public Map<L, List<L>> instantiate(final Labeling<L> a) {
+                return new HashMap<L, List<L>>();
+            }
+        };
+    }
 }

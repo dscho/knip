@@ -109,695 +109,695 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
  */
 @SuppressWarnings("serial")
 public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
-                ViewerComponent {
+ViewerComponent {
 
-        private final static int DEFAULT_X = 0;
+    private final static int DEFAULT_X = 0;
 
-        private final static int DEFAULT_Y = 1;
+    private final static int DEFAULT_Y = 1;
 
-        private JScrollBar[] m_scrollBars;
+    private JScrollBar[] m_scrollBars;
 
-        private JScrollBar m_totalSlider;
+    private JScrollBar m_totalSlider;
 
-        // private JComboBox[] m_planeFields;
-        private JCheckBox[] m_planeCheckBoxes;
+    // private JComboBox[] m_planeFields;
+    private JCheckBox[] m_planeCheckBoxes;
 
-        private JFormattedTextField[] m_coordinateTextFields;
+    private JFormattedTextField[] m_coordinateTextFields;
 
-        /* the plane dimension indices */
-        private int m_dim1 = DEFAULT_X;
+    /* the plane dimension indices */
+    private int m_dim1 = DEFAULT_X;
 
-        private int m_dim2 = DEFAULT_Y;
+    private int m_dim2 = DEFAULT_Y;
 
-        /* the steps to switch to the subsequent coordinate in one dimension */
-        private int[] m_steps;
+    /* the steps to switch to the subsequent coordinate in one dimension */
+    private int[] m_steps;
 
-        /* the dimension sizes */
-        private long[] m_dims;
+    /* the dimension sizes */
+    private long[] m_dims;
 
-        /* recognizes which dimension to alter next */
-        private int m_alterDim;
+    /* recognizes which dimension to alter next */
+    private int m_alterDim;
 
-        // private I m_img;
-        private AxisType[] m_axesLabels;
+    // private I m_img;
+    private AxisType[] m_axesLabels;
 
-        private EventService m_eventService;
+    private EventService m_eventService;
 
-        private boolean m_isAdjusting;
+    private boolean m_isAdjusting;
 
-        private boolean m_useCalibration = false;
+    private boolean m_useCalibration = false;
 
-        private long[] m_oldCoordinates;
+    private long[] m_oldCoordinates;
 
-        private JCheckBox m_calibrationCheckbox;
+    private JCheckBox m_calibrationCheckbox;
 
-        private CalibratedSpace m_calibratedSpace;
+    private CalibratedSpace m_calibratedSpace;
 
 
-        // private JTextField m_totalField;
+    // private JTextField m_totalField;
 
-        public PlaneSelectionPanel() {
-                super("Plane selection", false);
-                setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    public PlaneSelectionPanel() {
+        super("Plane selection", false);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-                // empty panel that ensures a minimum width
-                // setting the same thing on this has bad impacts on the
-                // component height
-                final JPanel wider = new JPanel();
-                wider.setMaximumSize(new Dimension(200,
-                                wider.getMaximumSize().height));
-                wider.setPreferredSize(new Dimension(200, wider
-                                .getPreferredSize().height));
-                wider.setMinimumSize(new Dimension(200,
-                                wider.getMinimumSize().height));
-                add(wider);
+        // empty panel that ensures a minimum width
+        // setting the same thing on this has bad impacts on the
+        // component height
+        final JPanel wider = new JPanel();
+        wider.setMaximumSize(new Dimension(200,
+                                           wider.getMaximumSize().height));
+        wider.setPreferredSize(new Dimension(200, wider
+                                             .getPreferredSize().height));
+        wider.setMinimumSize(new Dimension(200,
+                                           wider.getMinimumSize().height));
+        add(wider);
 
-                setMaximumSize(new Dimension(200, getMaximumSize().height));
+        setMaximumSize(new Dimension(200, getMaximumSize().height));
 
-        }
+    }
 
-        @EventListener
-        public void onClose(final ViewClosedEvent e) {
-                m_axesLabels = null;
-                m_dims = null;
-                m_oldCoordinates = null;
-                m_steps = null;
-                m_calibratedSpace = null;
-        }
+    @EventListener
+    public void onClose(final ViewClosedEvent e) {
+        m_axesLabels = null;
+        m_dims = null;
+        m_oldCoordinates = null;
+        m_steps = null;
+        m_calibratedSpace = null;
+    }
 
-        /**
-         * @param dimX
-         *                the first dimension index
-         * @param dimY
-         *                the second dimension index
-         */
-        private void setPlaneDimensionIndices(final int dimX, final int dimY) {
-                m_isAdjusting = true;
+    /**
+     * @param dimX
+     *                the first dimension index
+     * @param dimY
+     *                the second dimension index
+     */
+    private void setPlaneDimensionIndices(final int dimX, final int dimY) {
+        m_isAdjusting = true;
 
-                m_scrollBars[m_dim1].setEnabled(true);
-                m_scrollBars[m_dim2].setEnabled(true);
-                m_planeCheckBoxes[m_dim1].setSelected(false);
-                m_planeCheckBoxes[m_dim2].setSelected(false);
-                m_planeCheckBoxes[m_dim1].setEnabled(true);
-                m_planeCheckBoxes[m_dim2].setEnabled(true);
+        m_scrollBars[m_dim1].setEnabled(true);
+        m_scrollBars[m_dim2].setEnabled(true);
+        m_planeCheckBoxes[m_dim1].setSelected(false);
+        m_planeCheckBoxes[m_dim2].setSelected(false);
+        m_planeCheckBoxes[m_dim1].setEnabled(true);
+        m_planeCheckBoxes[m_dim2].setEnabled(true);
 
-                // m_planeFields[m_dimY].setEditable(false);
-                // m_planeFields[m_dimY].setEditable(false);
-                // m_planeFields[m_dimX].setEnabled(true);
-                // m_planeFields[m_dimY].setEnabled(true);
+        // m_planeFields[m_dimY].setEditable(false);
+        // m_planeFields[m_dimY].setEditable(false);
+        // m_planeFields[m_dimX].setEnabled(true);
+        // m_planeFields[m_dimY].setEnabled(true);
 
-                m_dim1 = dimX;
-                m_dim2 = dimY;
-                m_scrollBars[dimX].setEnabled(false);
-                m_scrollBars[dimY].setEnabled(false);
-                m_planeCheckBoxes[m_dim1].setSelected(true);
-                m_planeCheckBoxes[m_dim2].setSelected(true);
-                m_planeCheckBoxes[m_dim1].setEnabled(false);
-                m_planeCheckBoxes[m_dim2].setEnabled(false);
-                //
-                // m_planeFields[m_dimY].setEditable(true);
-                // m_planeFields[m_dimY].setEditable(true);
-                // m_planeFields[m_dimX].setEnabled(false);
-                // m_planeFields[m_dimY].setEnabled(false);
+        m_dim1 = dimX;
+        m_dim2 = dimY;
+        m_scrollBars[dimX].setEnabled(false);
+        m_scrollBars[dimY].setEnabled(false);
+        m_planeCheckBoxes[m_dim1].setSelected(true);
+        m_planeCheckBoxes[m_dim2].setSelected(true);
+        m_planeCheckBoxes[m_dim1].setEnabled(false);
+        m_planeCheckBoxes[m_dim2].setEnabled(false);
+        //
+        // m_planeFields[m_dimY].setEditable(true);
+        // m_planeFields[m_dimY].setEditable(true);
+        // m_planeFields[m_dimX].setEnabled(false);
+        // m_planeFields[m_dimY].setEnabled(false);
 
-                m_isAdjusting = false;
+        m_isAdjusting = false;
 
-                // calculate the steps to step forward in the linear array
-                boolean first = true;
-                int lasti = 0;
-                for (int i = 0; i < m_dims.length; i++) {
-                        if (i == dimX || i == dimY) {
-                                m_coordinateTextFields[i].setEnabled(false);
-                        } else {
-                                if (first) {
-                                        m_steps[i] = 1;
-                                        lasti = i;
-                                        first = false;
-                                } else {
-                                        m_steps[i] = m_steps[lasti]
-                                                        * (int) m_dims[lasti];
-                                        lasti = i;
-                                }
-                                m_coordinateTextFields[i].setEnabled(true);
-                        }
-                }
-
-                // maximum index
-                int max = 1;
-                for (int i = 0; i < m_dims.length; i++) {
-                        if (i == dimX || i == dimY) {
-                                continue;
-                        }
-                        max *= m_dims[i];
-                }
-
-                m_isAdjusting = true;
-
-                m_totalSlider.setMinimum(0);
-                m_totalSlider.setVisibleAmount(1);
-                m_totalSlider.setValue(m_totalSlider.getValue() <= max ? m_totalSlider
-                                .getValue() : 1);
-                m_totalSlider.setMaximum(max);
-                m_totalSlider.setEnabled(max > 1);
-
-                setEnabled(max > 1);
-                m_isAdjusting = false;
-        }
-
-        // -- ChangeListener API methods --
-
-        /** Handles slider events. */
-        private void onSliderChanged(final int id) {
-
-                if (m_isAdjusting) {
-                        return;
-                }
-
-                if (id == -1) {
-                        updateDimSliders();
+        // calculate the steps to step forward in the linear array
+        boolean first = true;
+        int lasti = 0;
+        for (int i = 0; i < m_dims.length; i++) {
+            if ((i == dimX) || (i == dimY)) {
+                m_coordinateTextFields[i].setEnabled(false);
+            } else {
+                if (first) {
+                    m_steps[i] = 1;
+                    lasti = i;
+                    first = false;
                 } else {
-                        updateTotalSlider();
+                    m_steps[i] = m_steps[lasti]
+                            * (int) m_dims[lasti];
+                    lasti = i;
                 }
+                m_coordinateTextFields[i].setEnabled(true);
+            }
+        }
 
-                // test if the slider positions changed
-                boolean change = false;
-                final long[] imgCoords = getImageCoordinate();
-                if (m_oldCoordinates != null
-                                && imgCoords.length == m_oldCoordinates.length) {
-                        for (int i = 0; i < imgCoords.length; i++) {
-                                if (imgCoords[i] != m_oldCoordinates[i]) {
-                                        change = true;
-                                        break;
-                                }
-                        }
+        // maximum index
+        int max = 1;
+        for (int i = 0; i < m_dims.length; i++) {
+            if ((i == dimX) || (i == dimY)) {
+                continue;
+            }
+            max *= m_dims[i];
+        }
+
+        m_isAdjusting = true;
+
+        m_totalSlider.setMinimum(0);
+        m_totalSlider.setVisibleAmount(1);
+        m_totalSlider.setValue(m_totalSlider.getValue() <= max ? m_totalSlider
+                .getValue() : 1);
+        m_totalSlider.setMaximum(max);
+        m_totalSlider.setEnabled(max > 1);
+
+        setEnabled(max > 1);
+        m_isAdjusting = false;
+    }
+
+    // -- ChangeListener API methods --
+
+    /** Handles slider events. */
+    private void onSliderChanged(final int id) {
+
+        if (m_isAdjusting) {
+            return;
+        }
+
+        if (id == -1) {
+            updateDimSliders();
+        } else {
+            updateTotalSlider();
+        }
+
+        // test if the slider positions changed
+        boolean change = false;
+        final long[] imgCoords = getImageCoordinate();
+        if ((m_oldCoordinates != null)
+                && (imgCoords.length == m_oldCoordinates.length)) {
+            for (int i = 0; i < imgCoords.length; i++) {
+                if (imgCoords[i] != m_oldCoordinates[i]) {
+                    change = true;
+                    break;
+                }
+            }
+        } else {
+            change = true;
+        }
+
+        m_oldCoordinates = imgCoords;
+
+        if (change) {
+            for (int i = 0; i < m_dims.length; i++) {
+                m_coordinateTextFields[i]
+                        .setValue(m_scrollBars[i]
+                                .getValue() + 1);
+            }
+
+            m_eventService.publish(new PlaneSelectionEvent(Math
+                                                           .min(m_dim1, m_dim2), Math.max(m_dim2,
+                                                                                          m_dim1), imgCoords));
+            fireCalibrationEvent();
+            m_eventService.publish(new ImgRedrawEvent());
+        }
+    }
+
+    /**
+     *
+     * @param e
+     * @param id
+     */
+    private void onCheckBoxChange(final ItemEvent e, final int id) {
+
+        if (m_isAdjusting) {
+            return;
+        }
+
+        final int idx = Integer.parseInt(((JCheckBox) e.getSource())
+                                         .getActionCommand());
+
+        if (m_alterDim == 0) {
+            setPlaneDimensionIndices(idx, m_dim2);
+        } else {
+            setPlaneDimensionIndices(m_dim1, idx);
+        }
+        m_alterDim = (m_alterDim + 1) % 2;
+        m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1,
+                                                                m_dim2), Math.max(m_dim2, m_dim1),
+                                                                getImageCoordinate()));
+        fireCalibrationEvent();
+        m_eventService.publish(new ImgRedrawEvent());
+
+    }
+
+    /* Gets the index of the currently displayed image. */
+    private void updateTotalSlider() {
+        // calc index
+        int index = 0;
+        for (int i = 0; i < m_steps.length; i++) {
+            if ((i == m_dim1) || (i == m_dim2)) {
+                continue;
+            }
+            index += m_steps[i] * (m_scrollBars[i].getValue());
+        }
+        // update index
+        if (index >= 0) {
+            m_isAdjusting = true;
+            m_totalSlider.setValue(index);
+            m_isAdjusting = false;
+        }
+    }
+
+    private void updateDimSliders() {
+        // calc logical coordinates
+        final int[] coords = new int[m_scrollBars.length];
+        int idx = m_totalSlider.getValue();
+
+        for (int i = coords.length - 1; i > -1; i--) {
+            if ((i == m_dim1) || (i == m_dim2)) {
+                continue;
+            }
+            coords[i] = idx / m_steps[i];
+            idx = idx % m_steps[i];
+        }
+        // update coordinates
+        for (int i = 0; i < coords.length; i++) {
+            if ((i == m_dim1) || (i == m_dim2)) {
+                continue;
+            }
+            m_isAdjusting = true;
+            m_scrollBars[i].setValue(coords[i]);
+            m_isAdjusting = false;
+        }
+    }
+
+    private void onCalibrationBoxChanged() {
+        if (m_calibrationCheckbox.isSelected() != m_useCalibration) {
+            m_useCalibration = m_calibrationCheckbox.isSelected();
+            fireCalibrationEvent();
+            m_eventService.publish(new ImgRedrawEvent());
+        }
+    }
+
+    private void fireCalibrationEvent() {
+        // calculate calibration values
+        final double[] scaleFactors = new double[m_dims.length];
+        for (int i = 0; i < scaleFactors.length; i++) {
+            // = don't scale as default
+            scaleFactors[i] = 1.0d;
+        }
+
+        if (m_useCalibration && (m_calibratedSpace != null)) {
+            final double[] tmpFactors = new double[scaleFactors.length];
+            m_calibratedSpace.calibration(tmpFactors);
+
+            double min = Double.MAX_VALUE;
+            boolean foundAFactor = false;
+
+            for (int i = 0; i < tmpFactors.length; i++) {
+                // clean up
+                if ((tmpFactors[i] > 0.0d)
+                        && !Double.isNaN(tmpFactors[i])) {
+                    foundAFactor = true;
                 } else {
-                        change = true;
+                    tmpFactors[i] = 1.0d;
                 }
 
-                m_oldCoordinates = imgCoords;
-
-                if (change) {
-                        for (int i = 0; i < m_dims.length; i++) {
-                                m_coordinateTextFields[i]
-                                                .setValue(m_scrollBars[i]
-                                                                .getValue() + 1);
-                        }
-
-                        m_eventService.publish(new PlaneSelectionEvent(Math
-                                        .min(m_dim1, m_dim2), Math.max(m_dim2,
-                                        m_dim1), imgCoords));
-                        fireCalibrationEvent();
-                        m_eventService.publish(new ImgRedrawEvent());
+                // get minimum
+                if (tmpFactors[i] < min) {
+                    min = tmpFactors[i];
                 }
-        }
+            }
 
-        /**
-         *
-         * @param e
-         * @param id
-         */
-        private void onCheckBoxChange(final ItemEvent e, final int id) {
+            if (foundAFactor) {
+                // normalize with min and scale
+                final double norm = 1.0d / min;
 
-                if (m_isAdjusting) {
-                        return;
-                }
-
-                final int idx = Integer.parseInt(((JCheckBox) e.getSource())
-                                .getActionCommand());
-
-                if (m_alterDim == 0) {
-                        setPlaneDimensionIndices(idx, m_dim2);
-                } else {
-                        setPlaneDimensionIndices(m_dim1, idx);
-                }
-                m_alterDim = (m_alterDim + 1) % 2;
-                m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1,
-                                m_dim2), Math.max(m_dim2, m_dim1),
-                                getImageCoordinate()));
-                fireCalibrationEvent();
-                m_eventService.publish(new ImgRedrawEvent());
-
-        }
-
-        /* Gets the index of the currently displayed image. */
-        private void updateTotalSlider() {
-                // calc index
-                int index = 0;
-                for (int i = 0; i < m_steps.length; i++) {
-                        if (i == m_dim1 || i == m_dim2) {
-                                continue;
-                        }
-                        index += m_steps[i] * (m_scrollBars[i].getValue());
-                }
-                // update index
-                if (index >= 0) {
-                        m_isAdjusting = true;
-                        m_totalSlider.setValue(index);
-                        m_isAdjusting = false;
-                }
-        }
-
-        private void updateDimSliders() {
-                // calc logical coordinates
-                final int[] coords = new int[m_scrollBars.length];
-                int idx = m_totalSlider.getValue();
-
-                for (int i = coords.length - 1; i > -1; i--) {
-                        if (i == m_dim1 || i == m_dim2) {
-                                continue;
-                        }
-                        coords[i] = idx / m_steps[i];
-                        idx = idx % m_steps[i];
-                }
-                // update coordinates
-                for (int i = 0; i < coords.length; i++) {
-                        if (i == m_dim1 || i == m_dim2) {
-                                continue;
-                        }
-                        m_isAdjusting = true;
-                        m_scrollBars[i].setValue(coords[i]);
-                        m_isAdjusting = false;
-                }
-        }
-
-        private void onCalibrationBoxChanged() {
-                if (m_calibrationCheckbox.isSelected() != m_useCalibration) {
-                        m_useCalibration = m_calibrationCheckbox.isSelected();
-                        fireCalibrationEvent();
-                        m_eventService.publish(new ImgRedrawEvent());
-                }
-        }
-
-        private void fireCalibrationEvent() {
-                // calculate calibration values
-                final double[] scaleFactors = new double[m_dims.length];
                 for (int i = 0; i < scaleFactors.length; i++) {
-                        // = don't scale as default
-                        scaleFactors[i] = 1.0d;
+                    scaleFactors[i] = (tmpFactors[i] * norm);
                 }
 
-                if (m_useCalibration && m_calibratedSpace != null) {
-                        final double[] tmpFactors = new double[scaleFactors.length];
-                        m_calibratedSpace.calibration(tmpFactors);
-
-                        double min = Double.MAX_VALUE;
-                        boolean foundAFactor = false;
-
-                        for (int i = 0; i < tmpFactors.length; i++) {
-                                // clean up
-                                if (tmpFactors[i] > 0.0d
-                                                && !Double.isNaN(tmpFactors[i])) {
-                                        foundAFactor = true;
-                                } else {
-                                        tmpFactors[i] = 1.0d;
-                                }
-
-                                // get minimum
-                                if (tmpFactors[i] < min) {
-                                        min = tmpFactors[i];
-                                }
-                        }
-
-                        if (foundAFactor) {
-                                // normalize with min and scale
-                                final double norm = 1.0d / min;
-
-                                for (int i = 0; i < scaleFactors.length; i++) {
-                                        scaleFactors[i] = (tmpFactors[i] * norm);
-                                }
-
-                        }
-                }
-
-                m_eventService.publish(new CalibrationUpdateEvent(scaleFactors,
-                                new int[] { Math.min(m_dim1, m_dim2),
-                                                Math.max(m_dim1, m_dim2) }));
+            }
         }
 
-        /**
-         *
-         * @return the coordinates of the currently selected image (a newly
-         *         generated array)
-         */
-        protected long[] getImageCoordinate() {
-                if (m_scrollBars == null) {
-                        return new long[m_dims.length];
-                }
-                final long[] res = new long[m_dims.length];
-                for (int i = 0; i < res.length; i++) {
-                        res[i] = m_scrollBars[i].getValue();
-                }
-                return res;
+        m_eventService.publish(new CalibrationUpdateEvent(scaleFactors,
+                                                          new int[] { Math.min(m_dim1, m_dim2),
+                Math.max(m_dim1, m_dim2) }));
+    }
+
+    /**
+     *
+     * @return the coordinates of the currently selected image (a newly
+     *         generated array)
+     */
+    protected long[] getImageCoordinate() {
+        if (m_scrollBars == null) {
+            return new long[m_dims.length];
+        }
+        final long[] res = new long[m_dims.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = m_scrollBars[i].getValue();
+        }
+        return res;
+    }
+
+    /**
+     * @param name
+     */
+    @EventListener
+    public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
+
+        if (m_dims == null) {
+            m_dims = new long[e.getCalibratedSpace()
+                              .numDimensions()];
         }
 
-        /**
-         * @param name
-         */
-        @EventListener
-        public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
-
-                if (m_dims == null) {
-                        m_dims = new long[e.getCalibratedSpace()
+        if ((m_axesLabels == null)
+                || (m_axesLabels.length != e
+                .getCalibratedSpace()
+                .numDimensions())) {
+            m_axesLabels = new AxisType[e.getCalibratedSpace()
                                         .numDimensions()];
-                }
-
-                if (m_axesLabels == null
-                                || m_axesLabels.length != e
-                                                .getCalibratedSpace()
-                                                .numDimensions()) {
-                        m_axesLabels = new AxisType[e.getCalibratedSpace()
-                                        .numDimensions()];
-                }
-
-
-
-
-                final long[] oldDims = m_dims.clone();
-                final AxisType[] oldAxes = m_axesLabels.clone();
-
-                // local dims //axes labels
-                e.getCalibratedSpace().axes(m_axesLabels);
-                m_dims = new long[e.getRandomAccessibleInterval()
-                                .numDimensions()];
-                e.getRandomAccessibleInterval().dimensions(m_dims);
-
-                if (!Arrays.equals(m_axesLabels, oldAxes)) {
-                        // reset m_dim1, m_dim2 before calibration
-                        m_dim1 = DEFAULT_X;
-                        m_dim2 = DEFAULT_Y;
-                }
-
-                m_calibratedSpace = e.getCalibratedSpace();
-                fireCalibrationEvent(); // update to new calibration values
-
-                if (!Arrays.equals(oldDims, m_dims)
-                                || !Arrays.equals(m_axesLabels, oldAxes)) {
-                        draw();
-
-                        for (int i = 0; i < m_dims.length; i++) {
-                                m_coordinateTextFields[i]
-                                                .setValue(m_scrollBars[i]
-                                                                .getValue() + 1);
-                        }
-                }
-
         }
 
-        @EventListener
-        public void onFocusLabel(final ForcePlanePosEvent e) {
-                m_isAdjusting = true;
-                for (int d = 0; d < e.getPosition().length; d++) {
 
-                        if (d == m_dim1 || d == m_dim2) {
-                                m_scrollBars[d].setValue(0);
-                        } else {
-                                m_scrollBars[d].setValue((int) e.getPosition()[d]);
-                        }
-                }
-                updateTotalSlider();
-                onSliderChanged(0);
+
+
+        final long[] oldDims = m_dims.clone();
+        final AxisType[] oldAxes = m_axesLabels.clone();
+
+        // local dims //axes labels
+        e.getCalibratedSpace().axes(m_axesLabels);
+        m_dims = new long[e.getRandomAccessibleInterval()
+                          .numDimensions()];
+        e.getRandomAccessibleInterval().dimensions(m_dims);
+
+        if (!Arrays.equals(m_axesLabels, oldAxes)) {
+            // reset m_dim1, m_dim2 before calibration
+            m_dim1 = DEFAULT_X;
+            m_dim2 = DEFAULT_Y;
         }
 
-        private void draw() {
+        m_calibratedSpace = e.getCalibratedSpace();
+        fireCalibrationEvent(); // update to new calibration values
 
-                if (m_dims != null && m_axesLabels != null) {
+        if (!Arrays.equals(oldDims, m_dims)
+                || !Arrays.equals(m_axesLabels, oldAxes)) {
+            draw();
 
-                        m_steps = new int[m_dims.length];
+            for (int i = 0; i < m_dims.length; i++) {
+                m_coordinateTextFields[i]
+                        .setValue(m_scrollBars[i]
+                                .getValue() + 1);
+            }
+        }
 
-                        removeAll();
-                        final JPanel nPanel = new JPanel();
-                        nPanel.setLayout(new BoxLayout(nPanel, BoxLayout.X_AXIS));
-                        add(nPanel);
-                        add(Box.createVerticalStrut(2));
-                        m_totalSlider = new JScrollBar(Adjustable.HORIZONTAL);
-                        Dimension dim = m_totalSlider.getPreferredSize();
-                        dim.width = 150;
-                        m_totalSlider.setPreferredSize(dim);
-                        m_totalSlider.addAdjustmentListener(new ChangeListenerWithId(
-                                        -1));
-                        nPanel.add(new JLabel("N"));
-                        nPanel.add(Box.createHorizontalStrut(3));
-                        nPanel.add(m_totalSlider);
+    }
 
-                        // add key bindings to the JTextArea
-                        final int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
-                        final InputMap inMap = getInputMap(condition);
-                        final ActionMap actMap = getActionMap();
+    @EventListener
+    public void onFocusLabel(final ForcePlanePosEvent e) {
+        m_isAdjusting = true;
+        for (int d = 0; d < e.getPosition().length; d++) {
 
-                        inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
-                                        "FORWARD");
-                        inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0),
-                                        "BACKWARD");
-                        actMap.put("FORWARD", new ForwardBackwardAction(
-                                        "FORWARD", m_totalSlider, 1));
-                        actMap.put("BACKWARD", new ForwardBackwardAction(
-                                        "BACKWARD", m_totalSlider, 1));
+            if ((d == m_dim1) || (d == m_dim2)) {
+                m_scrollBars[d].setValue(0);
+            } else {
+                m_scrollBars[d].setValue((int) e.getPosition()[d]);
+            }
+        }
+        updateTotalSlider();
+        onSliderChanged(0);
+    }
 
-                        final JPanel dimPanel = new JPanel();
-                        dimPanel.setLayout(new BoxLayout(dimPanel,
-                                        BoxLayout.Y_AXIS));
-                        add(dimPanel);
+    private void draw() {
 
-                        m_scrollBars = new JScrollBar[m_dims.length];
-                        m_planeCheckBoxes = new JCheckBox[m_dims.length];
-                        m_coordinateTextFields = new JFormattedTextField[m_dims.length];
+        if ((m_dims != null) && (m_axesLabels != null)) {
 
-                        // m_planeFields = new JComboBox[m_dimSizes.length];
-                        JPanel sliderPanel;
-                        for (int i = 0; i < m_dims.length; i++) {
-                                sliderPanel = new JPanel();
-                                sliderPanel.setLayout(new BoxLayout(
-                                                sliderPanel, BoxLayout.X_AXIS));
-                                m_scrollBars[i] = new JScrollBar(
-                                                Adjustable.HORIZONTAL);
-                                m_planeCheckBoxes[i] = new JCheckBox("", false);
-                                m_planeCheckBoxes[i]
-                                                .addItemListener(new ItemListenerWithId(
+            m_steps = new int[m_dims.length];
+
+            removeAll();
+            final JPanel nPanel = new JPanel();
+            nPanel.setLayout(new BoxLayout(nPanel, BoxLayout.X_AXIS));
+            add(nPanel);
+            add(Box.createVerticalStrut(2));
+            m_totalSlider = new JScrollBar(Adjustable.HORIZONTAL);
+            Dimension dim = m_totalSlider.getPreferredSize();
+            dim.width = 150;
+            m_totalSlider.setPreferredSize(dim);
+            m_totalSlider.addAdjustmentListener(new ChangeListenerWithId(
+                                                                         -1));
+            nPanel.add(new JLabel("N"));
+            nPanel.add(Box.createHorizontalStrut(3));
+            nPanel.add(m_totalSlider);
+
+            // add key bindings to the JTextArea
+            final int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+            final InputMap inMap = getInputMap(condition);
+            final ActionMap actMap = getActionMap();
+
+            inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
+                      "FORWARD");
+            inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0),
+                    "BACKWARD");
+            actMap.put("FORWARD", new ForwardBackwardAction(
+                                                            "FORWARD", m_totalSlider, 1));
+            actMap.put("BACKWARD", new ForwardBackwardAction(
+                                                             "BACKWARD", m_totalSlider, 1));
+
+            final JPanel dimPanel = new JPanel();
+            dimPanel.setLayout(new BoxLayout(dimPanel,
+                                             BoxLayout.Y_AXIS));
+            add(dimPanel);
+
+            m_scrollBars = new JScrollBar[m_dims.length];
+            m_planeCheckBoxes = new JCheckBox[m_dims.length];
+            m_coordinateTextFields = new JFormattedTextField[m_dims.length];
+
+            // m_planeFields = new JComboBox[m_dimSizes.length];
+            JPanel sliderPanel;
+            for (int i = 0; i < m_dims.length; i++) {
+                sliderPanel = new JPanel();
+                sliderPanel.setLayout(new BoxLayout(
+                                                    sliderPanel, BoxLayout.X_AXIS));
+                m_scrollBars[i] = new JScrollBar(
+                                                 Adjustable.HORIZONTAL);
+                m_planeCheckBoxes[i] = new JCheckBox("", false);
+                m_planeCheckBoxes[i]
+                        .addItemListener(new ItemListenerWithId(
                                                                 i));
-                                m_planeCheckBoxes[i].setActionCommand(i + "");
+                m_planeCheckBoxes[i].setActionCommand(i + "");
 
-                                dim = m_scrollBars[i].getPreferredSize();
-                                dim.width = 150;
-                                m_scrollBars[i].setPreferredSize(dim);
-                                m_scrollBars[i].setValue(m_scrollBars[i]
-                                                .getValue() < m_dims[i] ? m_scrollBars[i]
-                                                .getValue() : 0);
-                                m_scrollBars[i].setMinimum(0);
-                                m_scrollBars[i].setMaximum((int) m_dims[i]);
+                dim = m_scrollBars[i].getPreferredSize();
+                dim.width = 150;
+                m_scrollBars[i].setPreferredSize(dim);
+                m_scrollBars[i].setValue(m_scrollBars[i]
+                        .getValue() < m_dims[i] ? m_scrollBars[i]
+                                .getValue() : 0);
+                m_scrollBars[i].setMinimum(0);
+                m_scrollBars[i].setMaximum((int) m_dims[i]);
 
-                                m_scrollBars[i].setEnabled(m_dims[i] > 1);
-                                m_scrollBars[i].setVisibleAmount(1);
-                                m_scrollBars[i].addAdjustmentListener(new ChangeListenerWithId(
-                                                i));
+                m_scrollBars[i].setEnabled(m_dims[i] > 1);
+                m_scrollBars[i].setVisibleAmount(1);
+                m_scrollBars[i].addAdjustmentListener(new ChangeListenerWithId(
+                                                                               i));
 
-                                sliderPanel.add(m_axesLabels != null ? (new JLabel(
-                                                m_axesLabels[i].getLabel()))
-                                                : (new JLabel("" + i)));
+                sliderPanel.add(m_axesLabels != null ? (new JLabel(
+                                                                   m_axesLabels[i].getLabel()))
+                                                                   : (new JLabel("" + i)));
 
-                                sliderPanel.add(Box.createHorizontalStrut(3));
-                                sliderPanel.add(m_scrollBars[i]);
+                sliderPanel.add(Box.createHorizontalStrut(3));
+                sliderPanel.add(m_scrollBars[i]);
 
-                                // add coordinate text fields
-                                final NumberFormat nf = NumberFormat.getInstance();
-                                nf.setGroupingUsed(false);
-                                final JFormattedTextField tmp = new JFormattedTextField(
-                                                nf);
-                                tmp.setMinimumSize(new Dimension(40, tmp
-                                                .getMinimumSize().height));
-                                tmp.setPreferredSize(new Dimension(40, tmp
-                                                .getPreferredSize().height));
-                                tmp.setMaximumSize(new Dimension(40, tmp
-                                                .getPreferredSize().height));
+                // add coordinate text fields
+                final NumberFormat nf = NumberFormat.getInstance();
+                nf.setGroupingUsed(false);
+                final JFormattedTextField tmp = new JFormattedTextField(
+                                                                        nf);
+                tmp.setMinimumSize(new Dimension(40, tmp
+                                                 .getMinimumSize().height));
+                tmp.setPreferredSize(new Dimension(40, tmp
+                                                   .getPreferredSize().height));
+                tmp.setMaximumSize(new Dimension(40, tmp
+                                                 .getPreferredSize().height));
 
-                                final int index = i;
-                                tmp.addActionListener(new ActionListener() {
+                final int index = i;
+                tmp.addActionListener(new ActionListener() {
 
-                                        @Override
-                                        public void actionPerformed(
-                                                        final ActionEvent e) {
-                                                textCoordinatesChanged(index);
-                                        }
-                                });
+                    @Override
+                    public void actionPerformed(
+                                                final ActionEvent e) {
+                        textCoordinatesChanged(index);
+                    }
+                });
 
-                                tmp.addFocusListener(new FocusListener() {
+                tmp.addFocusListener(new FocusListener() {
 
-                                        @Override
-                                        public void focusLost(final FocusEvent arg0) {
-                                                textCoordinatesChanged(index);
-                                        }
+                    @Override
+                    public void focusLost(final FocusEvent arg0) {
+                        textCoordinatesChanged(index);
+                    }
 
-                                        @Override
-                                        public void focusGained(final FocusEvent e) {
-                                        }
+                    @Override
+                    public void focusGained(final FocusEvent e) {
+                    }
 
-                                });
+                });
 
-                                m_coordinateTextFields[i] = tmp;
-                                sliderPanel.add(m_coordinateTextFields[i]);
-                                sliderPanel.add(m_planeCheckBoxes[i]);
-                                sliderPanel.add(Box.createHorizontalStrut(7));
-                                dimPanel.add(sliderPanel);
+                m_coordinateTextFields[i] = tmp;
+                sliderPanel.add(m_coordinateTextFields[i]);
+                sliderPanel.add(m_planeCheckBoxes[i]);
+                sliderPanel.add(Box.createHorizontalStrut(7));
+                dimPanel.add(sliderPanel);
 
-                        }
+            }
 
-                        // add calibration checkbox
-                        m_calibrationCheckbox = new JCheckBox("use calibration");
-                        m_calibrationCheckbox.setSelected(m_useCalibration);
-                        m_calibrationCheckbox
-                                        .addActionListener(new ActionListener() {
-
-                                                @Override
-                                                public void actionPerformed(
-                                                                final ActionEvent e) {
-                                                        onCalibrationBoxChanged();
-                                                }
-                                        });
-
-                        add(m_calibrationCheckbox);
-
-                        setPlaneDimensionIndices(m_dim1, m_dim2);
-
-                        m_eventService.publish(new PlaneSelectionEvent(Math
-                                        .min(m_dim1, m_dim2), Math.max(m_dim2,
-                                        m_dim1), getImageCoordinate()));
-                        fireCalibrationEvent();
-                }
-
-                updateUI();
-        }
-
-        private void textCoordinatesChanged(final int fieldIndex) {
-                final int value = Integer.valueOf(m_coordinateTextFields[fieldIndex]
-                                .getText());
-                if (value != m_scrollBars[fieldIndex].getValue() + 1) {
-                        if (value < m_scrollBars[fieldIndex].getMinimum()) {
-                                m_coordinateTextFields[fieldIndex]
-                                                .setText(String.valueOf(m_scrollBars[fieldIndex]
-                                                                .getMinimum() + 1));
-                        } else if (value > m_scrollBars[fieldIndex]
-                                        .getMaximum()) {
-                                m_coordinateTextFields[fieldIndex]
-                                                .setText(String.valueOf(m_scrollBars[fieldIndex]
-                                                                .getMaximum()));
-                        }
-                        // triggers also the necessary events
-                        // set value -1 because internal model starts with 0
-                        m_scrollBars[fieldIndex].setValue(value - 1);
-                }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Position getPosition() {
-                return Position.SOUTH;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setEventService(final EventService eventService) {
-                m_eventService = eventService;
-                eventService.subscribe(this);
-        }
-
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                // Nothing to do here
-        }
-
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-                // Nothing to do here
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void reset() {
-                // Nothing to do here
-        }
-
-        @Override
-        public void setParent(final Component parent) {
-                // Nothing to do here
-        }
-
-        private class ItemListenerWithId implements ItemListener {
-
-                private final int m_id;
-
-                public ItemListenerWithId(final int id) {
-                        m_id = id;
-                }
+            // add calibration checkbox
+            m_calibrationCheckbox = new JCheckBox("use calibration");
+            m_calibrationCheckbox.setSelected(m_useCalibration);
+            m_calibrationCheckbox
+            .addActionListener(new ActionListener() {
 
                 @Override
-                public void itemStateChanged(final ItemEvent e) {
-                        onCheckBoxChange(e, m_id);
-
+                public void actionPerformed(
+                                            final ActionEvent e) {
+                    onCalibrationBoxChanged();
                 }
+            });
+
+            add(m_calibrationCheckbox);
+
+            setPlaneDimensionIndices(m_dim1, m_dim2);
+
+            m_eventService.publish(new PlaneSelectionEvent(Math
+                                                           .min(m_dim1, m_dim2), Math.max(m_dim2,
+                                                                                          m_dim1), getImageCoordinate()));
+            fireCalibrationEvent();
+        }
+
+        updateUI();
+    }
+
+    private void textCoordinatesChanged(final int fieldIndex) {
+        final int value = Integer.valueOf(m_coordinateTextFields[fieldIndex]
+                .getText());
+        if (value != (m_scrollBars[fieldIndex].getValue() + 1)) {
+            if (value < m_scrollBars[fieldIndex].getMinimum()) {
+                m_coordinateTextFields[fieldIndex]
+                        .setText(String.valueOf(m_scrollBars[fieldIndex]
+                                .getMinimum() + 1));
+            } else if (value > m_scrollBars[fieldIndex]
+                    .getMaximum()) {
+                m_coordinateTextFields[fieldIndex]
+                        .setText(String.valueOf(m_scrollBars[fieldIndex]
+                                .getMaximum()));
+            }
+            // triggers also the necessary events
+            // set value -1 because internal model starts with 0
+            m_scrollBars[fieldIndex].setValue(value - 1);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Position getPosition() {
+        return Position.SOUTH;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEventService(final EventService eventService) {
+        m_eventService = eventService;
+        eventService.subscribe(this);
+    }
+
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        // Nothing to do here
+    }
+
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException, ClassNotFoundException {
+        // Nothing to do here
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() {
+        // Nothing to do here
+    }
+
+    @Override
+    public void setParent(final Component parent) {
+        // Nothing to do here
+    }
+
+    private class ItemListenerWithId implements ItemListener {
+
+        private final int m_id;
+
+        public ItemListenerWithId(final int id) {
+            m_id = id;
+        }
+
+        @Override
+        public void itemStateChanged(final ItemEvent e) {
+            onCheckBoxChange(e, m_id);
 
         }
 
-        private class ChangeListenerWithId implements AdjustmentListener {
+    }
 
-                private final int m_id;
+    private class ChangeListenerWithId implements AdjustmentListener {
 
-                public ChangeListenerWithId(final int id) {
-                        m_id = id;
-                }
+        private final int m_id;
 
-                @Override
-                public void adjustmentValueChanged(final AdjustmentEvent e) {
-                        onSliderChanged(m_id);
-                }
-
+        public ChangeListenerWithId(final int id) {
+            m_id = id;
         }
 
-        // Action for our key binding to perform when bound event occurs
-        private class ForwardBackwardAction extends AbstractAction {
-                private final JScrollBar slider;
-
-                private final int scrollableIncrement;
-
-                public ForwardBackwardAction(final String name, final JScrollBar slider,
-                                final int scrollableIncrement) {
-                        super(name);
-                        this.slider = slider;
-                        this.scrollableIncrement = scrollableIncrement;
-                }
-
-                @Override
-                public void actionPerformed(final ActionEvent ae) {
-
-                        for (final JFormattedTextField field : m_coordinateTextFields) {
-                                if (field.hasFocus()) {
-                                        return;
-                                }
-                        }
-
-                        final String name = getValue(Action.NAME).toString();
-                        int value = slider.getValue();
-                        if (name.equals("FORWARD")) {
-                                value += scrollableIncrement;
-                                if (value >= m_totalSlider.getMaximum()) {
-                                        return;
-                                }
-
-                                slider.setValue(value);
-                        } else if (name.equals("BACKWARD")) {
-                                value -= scrollableIncrement;
-                                if (value < 0) {
-                                        return;
-                                }
-                                slider.setValue(value);
-                        }
-                }
+        @Override
+        public void adjustmentValueChanged(final AdjustmentEvent e) {
+            onSliderChanged(m_id);
         }
+
+    }
+
+    // Action for our key binding to perform when bound event occurs
+    private class ForwardBackwardAction extends AbstractAction {
+        private final JScrollBar slider;
+
+        private final int scrollableIncrement;
+
+        public ForwardBackwardAction(final String name, final JScrollBar slider,
+                                     final int scrollableIncrement) {
+            super(name);
+            this.slider = slider;
+            this.scrollableIncrement = scrollableIncrement;
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent ae) {
+
+            for (final JFormattedTextField field : m_coordinateTextFields) {
+                if (field.hasFocus()) {
+                    return;
+                }
+            }
+
+            final String name = getValue(Action.NAME).toString();
+            int value = slider.getValue();
+            if (name.equals("FORWARD")) {
+                value += scrollableIncrement;
+                if (value >= m_totalSlider.getMaximum()) {
+                    return;
+                }
+
+                slider.setValue(value);
+            } else if (name.equals("BACKWARD")) {
+                value -= scrollableIncrement;
+                if (value < 0) {
+                    return;
+                }
+                slider.setValue(value);
+            }
+        }
+    }
 
 }

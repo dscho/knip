@@ -59,90 +59,90 @@ import java.util.Arrays;
  */
 public class NeighborhoodUtils {
 
-        /**
-         * Return an array of offsets to the 8-connected (or N-d equivalent)
-         * structuring element for the dimension space. The structuring element
-         * is the list of offsets from the center to the pixels to be examined.
-         *
-         * @param dimensions
-         * @return the structuring element.
-         */
-        public static long[][] get8ConStructuringElement(final int dimensions) {
-                int nElements = 1;
-                for (int i = 0; i < dimensions; i++) {
-                        nElements *= 3;
-                }
-                nElements--;
-                final long[][] result = new long[nElements][dimensions];
-                final long[] position = new long[dimensions];
-                Arrays.fill(position, -1);
-                for (int i = 0; i < nElements; i++) {
-                        System.arraycopy(position, 0, result[i], 0, dimensions);
-                        /*
-                         * Special case - skip the center element.
-                         */
-                        if (i == nElements / 2 - 1) {
-                                position[0] += 2;
-                        } else {
-                                for (int j = 0; j < dimensions; j++) {
-                                        if (position[j] == 1) {
-                                                position[j] = -1;
-                                        } else {
-                                                position[j]++;
-                                                break;
-                                        }
-                                }
-                        }
-                }
-                return result;
+    /**
+     * Return an array of offsets to the 8-connected (or N-d equivalent)
+     * structuring element for the dimension space. The structuring element
+     * is the list of offsets from the center to the pixels to be examined.
+     *
+     * @param dimensions
+     * @return the structuring element.
+     */
+    public static long[][] get8ConStructuringElement(final int dimensions) {
+        int nElements = 1;
+        for (int i = 0; i < dimensions; i++) {
+            nElements *= 3;
         }
-
-        /**
-         * Return an array of offsets to the -connected (or N-d equivalent)
-         * structuring element for the dimension space. The structuring element
-         * is the list of offsets from the center to the pixels to be examined.
-         *
-         * @param dimensions
-         * @return the structuring element.
-         */
-        public static long[][] get4ConStructuringElement(final int dimensions) {
-                final int nElements = dimensions * 2;
-
-                final long[][] result = new long[nElements][dimensions];
-                for (int d = 0; d < dimensions; d++) {
-                        result[d * 2] = new long[dimensions];
-                        result[d * 2 + 1] = new long[dimensions];
-                        result[d * 2][d] = -1;
-                        result[d * 2 + 1][d] = 1;
-
+        nElements--;
+        final long[][] result = new long[nElements][dimensions];
+        final long[] position = new long[dimensions];
+        Arrays.fill(position, -1);
+        for (int i = 0; i < nElements; i++) {
+            System.arraycopy(position, 0, result[i], 0, dimensions);
+            /*
+             * Special case - skip the center element.
+             */
+            if (i == ((nElements / 2) - 1)) {
+                position[0] += 2;
+            } else {
+                for (int j = 0; j < dimensions; j++) {
+                    if (position[j] == 1) {
+                        position[j] = -1;
+                    } else {
+                        position[j]++;
+                        break;
+                    }
                 }
-                return result;
+            }
         }
+        return result;
+    }
 
-        /**
-         * Rework the structuring element into a series of consecutive offsets
-         * so we can use Positionable.move to scan the image array.
-         */
-        public static long[][] reworkStructuringElement(
-                        final long[][] structuringElement) {
+    /**
+     * Return an array of offsets to the -connected (or N-d equivalent)
+     * structuring element for the dimension space. The structuring element
+     * is the list of offsets from the center to the pixels to be examined.
+     *
+     * @param dimensions
+     * @return the structuring element.
+     */
+    public static long[][] get4ConStructuringElement(final int dimensions) {
+        final int nElements = dimensions * 2;
 
-                final int numDimensions = structuringElement[0].length;
-                final long[][] strelMoves = new long[structuringElement.length][];
-                final long[] currentOffset = new long[numDimensions];
-                for (int i = 0; i < structuringElement.length; i++) {
-                        strelMoves[i] = new long[numDimensions];
-                        for (int j = 0; j < numDimensions; j++) {
-                                strelMoves[i][j] = structuringElement[i][j]
-                                                - currentOffset[j];
-                                if (i > 0) {
-                                        currentOffset[j] += structuringElement[i][j]
-                                                        - structuringElement[i - 1][j];
-                                } else {
-                                        currentOffset[j] += structuringElement[i][j];
-                                }
-                        }
+        final long[][] result = new long[nElements][dimensions];
+        for (int d = 0; d < dimensions; d++) {
+            result[d * 2] = new long[dimensions];
+            result[(d * 2) + 1] = new long[dimensions];
+            result[d * 2][d] = -1;
+            result[(d * 2) + 1][d] = 1;
+
+        }
+        return result;
+    }
+
+    /**
+     * Rework the structuring element into a series of consecutive offsets
+     * so we can use Positionable.move to scan the image array.
+     */
+    public static long[][] reworkStructuringElement(
+                                                    final long[][] structuringElement) {
+
+        final int numDimensions = structuringElement[0].length;
+        final long[][] strelMoves = new long[structuringElement.length][];
+        final long[] currentOffset = new long[numDimensions];
+        for (int i = 0; i < structuringElement.length; i++) {
+            strelMoves[i] = new long[numDimensions];
+            for (int j = 0; j < numDimensions; j++) {
+                strelMoves[i][j] = structuringElement[i][j]
+                        - currentOffset[j];
+                if (i > 0) {
+                    currentOffset[j] += structuringElement[i][j]
+                            - structuringElement[i - 1][j];
+                } else {
+                    currentOffset[j] += structuringElement[i][j];
                 }
-                return strelMoves;
+            }
         }
+        return strelMoves;
+    }
 
 }

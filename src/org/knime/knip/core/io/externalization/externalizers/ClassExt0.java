@@ -61,50 +61,50 @@ import org.knime.knip.core.io.externalization.Externalizer;
  */
 public class ClassExt0 implements Externalizer<Class> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<Class> getType() {
-                return Class.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<Class> getType() {
+        return Class.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class read(final BufferedDataInputStream in) throws Exception {
-                final char[] chars = new char[in.readInt()];
-                in.read(chars);
-                return Class.forName(new String(chars));
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class read(final BufferedDataInputStream in) throws Exception {
+        final char[] chars = new char[in.readInt()];
+        in.read(chars);
+        return Class.forName(new String(chars));
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final Class obj)
-                        throws Exception {
-                final String className = obj.getCanonicalName();
-                out.writeInt(className.length());
-                out.writeChars(className);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final Class obj)
+            throws Exception {
+        final String className = obj.getCanonicalName();
+        out.writeInt(className.length());
+        out.writeChars(className);
 
-        }
+    }
 
 }

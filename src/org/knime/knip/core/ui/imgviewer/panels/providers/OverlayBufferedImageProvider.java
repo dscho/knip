@@ -39,224 +39,224 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
  * @author hornm, University of Konstanz
  */
 public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Comparable<L>>
-                extends AWTImageProvider<T> {
+extends AWTImageProvider<T> {
 
-        /**
-	 *
-	 */
-        private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-        private Overlay<L> m_overlay;
+    private Overlay<L> m_overlay;
 
-        private int m_transparency = 128;
+    private int m_transparency = 128;
 
-        private BufferedImage m_tmpRes;
+    private BufferedImage m_tmpRes;
 
-        private BufferedImage m_tmpCanvas;
+    private BufferedImage m_tmpCanvas;
 
-        private Graphics2D m_tmpCanvasGraphics;
+    private Graphics2D m_tmpCanvasGraphics;
 
-        private NormalizationParametersChgEvent<T> m_normalizationParameters;
+    private NormalizationParametersChgEvent<T> m_normalizationParameters;
 
-        private final GraphicsConfiguration m_config;
+    private final GraphicsConfiguration m_config;
 
-        private ColorTable[] m_colorTables;
+    private ColorTable[] m_colorTables;
 
-        public OverlayBufferedImageProvider() {
-                super(0);
-                m_renderer = new Real2GreyRenderer<T>();
-                m_normalizationParameters = new NormalizationParametersChgEvent<T>(
-                                -1, false);
-                m_config = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                                .getDefaultScreenDevice()
-                                .getDefaultConfiguration();
+    public OverlayBufferedImageProvider() {
+        super(0);
+        m_renderer = new Real2GreyRenderer<T>();
+        m_normalizationParameters = new NormalizationParametersChgEvent<T>(
+                -1, false);
+        m_config = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice()
+                .getDefaultConfiguration();
+    }
+
+    @Override
+    protected int generateHashCode() {
+        int hash = super.generateHashCode();
+
+        if (m_overlay != null) {
+            hash = (hash * 31) + m_overlay.hashCode();
         }
 
-        @Override
-        protected int generateHashCode() {
-                int hash = super.generateHashCode();
+        return hash;
+    }
 
-                if (m_overlay != null) {
-                        hash = hash * 31 + m_overlay.hashCode();
-                }
+    @Override
+    protected Image createImage() {
+        final double[] normParams = m_normalizationParameters
+                .getNormalizationParameters(m_src, m_sel);
 
-                return hash;
+        if (m_renderer instanceof RendererWithNormalization) {
+            ((RendererWithNormalization) m_renderer)
+            .setNormalizationParameters(
+                                        normParams[0],
+                                        normParams[1]);
         }
 
-        @Override
-        protected Image createImage() {
-                final double[] normParams = m_normalizationParameters
-                                .getNormalizationParameters(m_src, m_sel);
-
-                if (m_renderer instanceof RendererWithNormalization) {
-                        ((RendererWithNormalization) m_renderer)
-                                        .setNormalizationParameters(
-                                                        normParams[0],
-                                                        normParams[1]);
-                }
-
-                if (m_renderer instanceof RendererWithColorTable) {
-                        ((RendererWithColorTable) m_renderer)
-                                        .setColorTables(m_colorTables);
-                }
-
-                final ScreenImage res = ((ImageRenderer<T>) m_renderer).render(m_src,
-                                m_sel.getPlaneDimIndex1(),
-                                m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
-
-                m_tmpRes = loci.formats.gui.AWTImageTools.makeBuffered(res
-                                .image());
-
-                return writeOverlay(m_tmpRes);
-
+        if (m_renderer instanceof RendererWithColorTable) {
+            ((RendererWithColorTable) m_renderer)
+            .setColorTables(m_colorTables);
         }
 
-        private BufferedImage writeOverlay(final BufferedImage img) {
+        final ScreenImage res = ((ImageRenderer<T>) m_renderer).render(m_src,
+                                                                       m_sel.getPlaneDimIndex1(),
+                                                                       m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
-                if (m_overlay == null) {
-                        return img;
-                }
+        m_tmpRes = loci.formats.gui.AWTImageTools.makeBuffered(res
+                                                               .image());
 
-                if (m_tmpCanvas == null
-                                || m_tmpCanvas.getWidth() != img.getWidth()
-                                || m_tmpCanvas.getHeight() != img.getHeight()) {
-                        m_tmpCanvas = m_config.createCompatibleImage(
-                                        (int) m_src.dimension(m_sel
-                                                        .getPlaneDimIndex1()),
-                                        (int) m_src.dimension(m_sel
-                                                        .getPlaneDimIndex2()),
-                                        Transparency.TRANSLUCENT);
-                        m_tmpCanvasGraphics = m_tmpCanvas.createGraphics();
-                }
+        return writeOverlay(m_tmpRes);
 
-                m_tmpCanvasGraphics.drawImage(img, 0, 0, null);
+    }
 
-                m_overlay.renderBufferedImage(m_tmpCanvasGraphics,
-                                m_sel.getDimIndices(), m_sel.getPlanePos(),
-                                m_transparency);
+    private BufferedImage writeOverlay(final BufferedImage img) {
 
-                return m_tmpCanvas;
+        if (m_overlay == null) {
+            return img;
         }
 
-        @EventListener
-        public void onUpdated(final OverlayChgEvent e) {
-                m_overlay = e.getOverlay();
-                m_eventService.publish(new AWTImageChgEvent(
-                                writeOverlay(m_tmpRes)));
+        if ((m_tmpCanvas == null)
+                || (m_tmpCanvas.getWidth() != img.getWidth())
+                || (m_tmpCanvas.getHeight() != img.getHeight())) {
+            m_tmpCanvas = m_config.createCompatibleImage(
+                                                         (int) m_src.dimension(m_sel
+                                                                               .getPlaneDimIndex1()),
+                                                                               (int) m_src.dimension(m_sel
+                                                                                                     .getPlaneDimIndex2()),
+                                                                                                     Transparency.TRANSLUCENT);
+            m_tmpCanvasGraphics = m_tmpCanvas.createGraphics();
         }
 
-        @Override
-        public void onUpdated(final IntervalWithMetadataChgEvent<T> e) {
-                // Do nothing
+        m_tmpCanvasGraphics.drawImage(img, 0, 0, null);
+
+        m_overlay.renderBufferedImage(m_tmpCanvasGraphics,
+                                      m_sel.getDimIndices(), m_sel.getPlanePos(),
+                                      m_transparency);
+
+        return m_tmpCanvas;
+    }
+
+    @EventListener
+    public void onUpdated(final OverlayChgEvent e) {
+        m_overlay = e.getOverlay();
+        m_eventService.publish(new AWTImageChgEvent(
+                                                    writeOverlay(m_tmpRes)));
+    }
+
+    @Override
+    public void onUpdated(final IntervalWithMetadataChgEvent<T> e) {
+        // Do nothing
+    }
+
+    @EventListener
+    public void onUpdated(final AnnotatorImgAndOverlayChgEvent e) {
+        m_src = e.getImg();
+        m_overlay = e.getOverlay();
+
+        if ((m_sel == null)
+                || (m_sel.numDimensions() != m_src
+                .numDimensions())) {
+            m_sel = new PlaneSelectionEvent(0, 1,
+                                            new long[m_src.numDimensions()]);
         }
-
-        @EventListener
-        public void onUpdated(final AnnotatorImgAndOverlayChgEvent e) {
-                m_src = e.getImg();
-                m_overlay = e.getOverlay();
-
-                if (m_sel == null
-                                || m_sel.numDimensions() != m_src
-                                                .numDimensions()) {
-                        m_sel = new PlaneSelectionEvent(0, 1,
-                                        new long[m_src.numDimensions()]);
-                }
-                for (int d = 0; d < m_sel.numDimensions(); d++) {
-                        if (m_sel.getPlanePosAt(d) >= m_src.dimension(d)) {
-                                m_sel = new PlaneSelectionEvent(0, 1,
+        for (int d = 0; d < m_sel.numDimensions(); d++) {
+            if (m_sel.getPlanePosAt(d) >= m_src.dimension(d)) {
+                m_sel = new PlaneSelectionEvent(0, 1,
                                                 new long[m_src.numDimensions()]);
-                                break;
-                        }
+                break;
+            }
+        }
+
+        final ImageRenderer<T>[] renderers = RendererFactory
+                .createSuitableRenderer(m_src);
+        if (m_renderer != null) {
+            boolean contained = false;
+            for (final ImageRenderer<T> renderer : renderers) {
+                if (m_renderer.toString().equals(
+                                                 renderer.toString())) {
+                    m_renderer = renderer;
+                    contained = true;
+                    break;
                 }
-
-                final ImageRenderer<T>[] renderers = RendererFactory
-                                .createSuitableRenderer(m_src);
-                if (m_renderer != null) {
-                        boolean contained = false;
-                        for (final ImageRenderer<T> renderer : renderers) {
-                                if (m_renderer.toString().equals(
-                                                renderer.toString())) {
-                                        m_renderer = renderer;
-                                        contained = true;
-                                        break;
-                                }
-                        }
-                        if (!contained) {
-                                m_renderer = renderers[0];
-                        }
-                } else {
-                        m_renderer = renderers[0];
-                }
+            }
+            if (!contained) {
+                m_renderer = renderers[0];
+            }
+        } else {
+            m_renderer = renderers[0];
         }
+    }
 
-        @EventListener
-        public void onUpdate(final TransparencyPanelValueChgEvent e) {
-                if (m_src != null) {
-                        m_transparency = e.getTransparency();
-                        m_eventService.publish(new AWTImageChgEvent(
-                                        writeOverlay(m_tmpRes)));
-                }
+    @EventListener
+    public void onUpdate(final TransparencyPanelValueChgEvent e) {
+        if (m_src != null) {
+            m_transparency = e.getTransparency();
+            m_eventService.publish(new AWTImageChgEvent(
+                                                        writeOverlay(m_tmpRes)));
         }
+    }
 
-        /**
-         * {@link EventListener} for {@link NormalizationParametersChgEvent}
-         * events The {@link NormalizationParametersChgEvent} of the
-         * {@link AWTImageTools} will be updated
-         *
-         * @param normalizationParameters
-         */
-        @EventListener
-        public void onUpdated(
-                        final NormalizationParametersChgEvent<T> normalizationParameters) {
-                if (m_src != null) {
-                        m_normalizationParameters = normalizationParameters;
-                        // m_eventService.publish(new AWTImageChgEvent(
-                        // createImage()));
-                }
+    /**
+     * {@link EventListener} for {@link NormalizationParametersChgEvent}
+     * events The {@link NormalizationParametersChgEvent} of the
+     * {@link AWTImageTools} will be updated
+     *
+     * @param normalizationParameters
+     */
+    @EventListener
+    public void onUpdated(
+                          final NormalizationParametersChgEvent<T> normalizationParameters) {
+        if (m_src != null) {
+            m_normalizationParameters = normalizationParameters;
+            // m_eventService.publish(new AWTImageChgEvent(
+            // createImage()));
         }
+    }
 
-        @EventListener
-        public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
-                final int size = e.getImgMetaData().getColorTableCount();
-                m_colorTables = new ColorTable[size];
+    @EventListener
+    public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
+        final int size = e.getImgMetaData().getColorTableCount();
+        m_colorTables = new ColorTable[size];
 
-                for (int i = 0; i < size; i++) {
-                        m_colorTables[i] = e.getImgMetaData().getColorTable(i);
-                }
+        for (int i = 0; i < size; i++) {
+            m_colorTables[i] = e.getImgMetaData().getColorTable(i);
         }
+    }
 
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                super.saveComponentConfiguration(out);
-                m_overlay.writeExternal(out);
-                m_normalizationParameters.writeExternal(out);
-                out.writeInt(m_transparency);
-        }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        super.saveComponentConfiguration(out);
+        m_overlay.writeExternal(out);
+        m_normalizationParameters.writeExternal(out);
+        out.writeInt(m_transparency);
+    }
 
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-                super.loadComponentConfiguration(in);
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException, ClassNotFoundException {
+        super.loadComponentConfiguration(in);
 
-                m_overlay = new Overlay<L>();
-                m_overlay.readExternal(in);
-                m_normalizationParameters = new NormalizationParametersChgEvent<T>();
-                m_normalizationParameters.readExternal(in);
-                m_transparency = in.readInt();
+        m_overlay = new Overlay<L>();
+        m_overlay.readExternal(in);
+        m_normalizationParameters = new NormalizationParametersChgEvent<T>();
+        m_normalizationParameters.readExternal(in);
+        m_transparency = in.readInt();
 
-        }
+    }
 
-        @Override
-        public void reset() {
-                super.reset();
-                m_overlay = null;
-                m_src = null;
-        }
+    @Override
+    public void reset() {
+        super.reset();
+        m_overlay = null;
+        m_src = null;
+    }
 
-        @EventListener
-        public void onClose(final ViewClosedEvent event) {
-                m_src = null;
-                m_overlay = null;
-        }
+    @EventListener
+    public void onClose(final ViewClosedEvent event) {
+        m_src = null;
+        m_overlay = null;
+    }
 }

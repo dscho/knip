@@ -14,7 +14,7 @@ package org.knime.knip.core.algorithm;
  *	Minimization in Vision."
  *	Yuri Boykov and Vladimir Kolmogorov.
  *	In IEEE Transactions on Pattern Analysis and Machine Intelligence
- *	(PAMI), 
+ *	(PAMI),
  *	September 2004
  *
  *	This algorithm was developed by Yuri Boykov and Vladimir Kolmogorov
@@ -39,1030 +39,1030 @@ import org.knime.knip.core.data.graphtheory.Node;
  * Class implementing the grach cut algorithm.
  */
 public class GraphCutAlgorithm {
-        /**
-         * The two possible segments, represented as special terminal nodes in
-         * the graph.
-         */
-        public enum Terminal {
+    /**
+     * The two possible segments, represented as special terminal nodes in
+     * the graph.
+     */
+    public enum Terminal {
 
-                FOREGROUND, // a.k.a. the source
-                BACKGROUND; // a.k.a. the sink
+        FOREGROUND, // a.k.a. the source
+        BACKGROUND; // a.k.a. the sink
+    }
+
+    // number of nodes
+    private final int numNodes;
+
+    // maximum number of edges
+    private final int numEdges;
+
+    // list of all nodes in the graph
+    private final Node[] nodes;
+
+    // list of all edges in the graph
+    private final Edge[] edges;
+
+    // internal counter for edge creation
+    private int edgeNum;
+
+    // the total flow in the whole graph
+    private float totalFlow;
+
+    // counter for the numbers of iterations to maxflow
+    private int maxflowIteration;
+
+    // Lists of active nodes: activeQueueFirst points to first
+    // elements of the lists, activeQueueLast to the last ones.
+    // In between, nodes are connected via reference to next node
+    // in each node.
+    private final Node[] activeQueueFirst;
+
+    private final Node[] activeQueueLast;
+
+    // list of orphans
+    private final LinkedList<Node> orphans;
+
+    // counter for iterations of main loop
+    private int time;
+
+    /**
+     * Initialises the graph cut implementation and allocates the memory
+     * needed for the given number of nodes and edges.
+     * 
+     * @param numNodes
+     *                The number of nodes that should be created.
+     * @param numEdges
+     *                The number of edges that you can add. A directed edge
+     *                and its counterpart (i.e., the directed edge in the
+     *                other direction) count as one edge.
+     */
+    public GraphCutAlgorithm(final int numNodes, final int numEdges) {
+
+        this.numNodes = numNodes;
+        this.numEdges = numEdges;
+
+        this.nodes = new Node[numNodes];
+        this.edges = new Edge[2 * numEdges];
+
+        this.edgeNum = 0;
+
+        this.totalFlow = 0;
+
+        this.maxflowIteration = 0;
+
+        this.activeQueueFirst = new Node[2];
+        this.activeQueueLast = new Node[2];
+
+        this.orphans = new LinkedList<Node>();
+
+        assert (numNodes > 0) : "number of nodes must be > 0";
+
+        for (int i = 0; i < numNodes; i++) {
+            nodes[i] = new Node();
+        }
+    }
+
+    /**
+     * Set the affinity for one node to belong to the foreground (i.e.,
+     * source) or background (i.e., sink).
+     * 
+     * @param nodeId
+     *                The number of the node.
+     * @param source
+     *                The affinity of this node to the foreground (i.e.,
+     *                source)
+     * @param sink
+     *                The affinity of this node to the background (i.e.,
+     *                sink)
+     */
+    public void setTerminalWeights(final int nodeId, float source, float sink) {
+
+        assert ((nodeId >= 0) && (nodeId < numNodes)) : "nodeID out of Bounds";
+
+        final float delta = nodes[nodeId].getResidualCapacity();
+
+        if (delta > 0) {
+            source += delta;
+        } else {
+            sink -= delta;
         }
 
-        // number of nodes
-        private final int numNodes;
+        totalFlow += (source < sink) ? source : sink;
 
-        // maximum number of edges
-        private final int numEdges;
+        nodes[nodeId].setResidualCapacity(source - sink);
+    }
 
-        // list of all nodes in the graph
-        private final Node[] nodes;
+    /**
+     * Set the edge weight of an undirected edge between two nodes.
+     * 
+     * Please note that you cannot call any <tt>setEdgeWeight</tt> more
+     * often than the number of edges you specified at the time of
+     * construction!
+     * 
+     * @param nodeId1
+     *                The first node.
+     * @param nodeId2
+     *                The second node.
+     * @param weight
+     *                The weight (i.e., the cost) of the connecting edge.
+     */
+    public void setEdgeWeight(final int nodeId1, final int nodeId2, final float weight) {
 
-        // list of all edges in the graph
-        private final Edge[] edges;
+        setEdgeWeight(nodeId1, nodeId2, weight, weight);
+    }
 
-        // internal counter for edge creation
-        private int edgeNum;
+    /**
+     * Set the edge weight of a pair of directed edges between two nodes.
+     * 
+     * Please note that you cannot call any <tt>setEdgeWeight</tt> more
+     * often than the number of edges you specified at the time of
+     * construction!
+     * 
+     * @param nodeId1
+     *                The first node.
+     * @param nodeId2
+     *                The second node.
+     * @param weight1to2
+     *                The weight (i.e., the cost) of the directed edge from
+     *                node1 to node2.
+     * @param weight2to1
+     *                The weight (i.e., the cost) of the directed edge from
+     *                node2 to node1.
+     */
+    public void setEdgeWeight(final int nodeId1, final int nodeId2, final float weight1to2,
+                              final float weight2to1) {
 
-        // the total flow in the whole graph
-        private float totalFlow;
+        assert ((nodeId1 >= 0) && (nodeId1 < numNodes)) : "nodeID1 out of bounds";
+        assert ((nodeId2 >= 0) && (nodeId2 < numNodes)) : "nodeID2 out of bounds";
+        assert (nodeId1 != nodeId2) : "nodeID1 == nodeID is not allowed";
+        assert (weight1to2 >= 0) : " weight have to be >= 0";
+        assert (weight2to1 >= 0) : " weight have to be >= 0";
+        assert (edgeNum < (numEdges - 2)) : "max number of edges("
+        + numEdges + ") reached: " + edgeNum;
 
-        // counter for the numbers of iterations to maxflow
-        private int maxflowIteration;
+        // create new edges
+        final Edge edge = new Edge();
+        edges[edgeNum] = edge;
+        edgeNum++;
+        final Edge reverseEdge = new Edge();
+        edges[edgeNum] = reverseEdge;
+        edgeNum++;
 
-        // Lists of active nodes: activeQueueFirst points to first
-        // elements of the lists, activeQueueLast to the last ones.
-        // In between, nodes are connected via reference to next node
-        // in each node.
-        private final Node[] activeQueueFirst;
+        // get the nodes
+        final Node node1 = nodes[nodeId1];
+        final Node node2 = nodes[nodeId2];
 
-        private final Node[] activeQueueLast;
+        // link edges
+        edge.setSister(reverseEdge);
+        reverseEdge.setSister(edge);
 
-        // list of orphans
-        private final LinkedList<Node> orphans;
+        // add node1 to edge
+        edge.setNext(node1.getFirstOutgoing());
+        node1.setFirstOutgoing(edge);
 
-        // counter for iterations of main loop
-        private int time;
+        // add node2 to reverseEdge
+        reverseEdge.setNext(node2.getFirstOutgoing());
+        node2.setFirstOutgoing(reverseEdge);
 
-        /**
-         * Initialises the graph cut implementation and allocates the memory
-         * needed for the given number of nodes and edges.
-         * 
-         * @param numNodes
-         *                The number of nodes that should be created.
-         * @param numEdges
-         *                The number of edges that you can add. A directed edge
-         *                and its counterpart (i.e., the directed edge in the
-         *                other direction) count as one edge.
-         */
-        public GraphCutAlgorithm(final int numNodes, final int numEdges) {
+        // set targets of edges
+        edge.setHead(node2);
+        reverseEdge.setHead(node1);
 
-                this.numNodes = numNodes;
-                this.numEdges = numEdges;
+        // set residual capacities
+        edge.setResidualCapacity(weight1to2);
+        reverseEdge.setResidualCapacity(weight2to1);
+    }
 
-                this.nodes = new Node[numNodes];
-                this.edges = new Edge[2 * numEdges];
+    /**
+     * Performs the actual max-flow/min-cut computation.
+     * 
+     * @param reuseTrees
+     *                reuse trees of a previos call
+     * @param changedNodes
+     *                list of nodes that potentially changed their
+     *                segmentation compared to a previous call, can be set
+     *                to <tt>null</tt>
+     */
+    public float computeMaximumFlow(boolean reuseTrees,
+                                    final List<Integer> changedNodes) {
 
-                this.edgeNum = 0;
+        if (maxflowIteration == 0) {
+            reuseTrees = false;
+        }
 
-                this.totalFlow = 0;
+        if (reuseTrees) {
+            maxflowReuseTreesInit();
+        } else {
+            maxflowInit();
+        }
 
-                this.maxflowIteration = 0;
+        Node currentNode = null;
+        Edge edge = null;
 
-                this.activeQueueFirst = new Node[2];
-                this.activeQueueLast = new Node[2];
+        // main loop
+        while (true) {
 
-                this.orphans = new LinkedList<Node>();
+            Node activeNode = currentNode;
 
-                assert (numNodes > 0) : "number of nodes must be > 0";
-
-                for (int i = 0; i < numNodes; i++) {
-                        nodes[i] = new Node();
+            if (activeNode != null) {
+                // remove active flag
+                activeNode.setNext(null);
+                if (activeNode.getParent() == null) {
+                    activeNode = null;
                 }
-        }
-
-        /**
-         * Set the affinity for one node to belong to the foreground (i.e.,
-         * source) or background (i.e., sink).
-         * 
-         * @param nodeId
-         *                The number of the node.
-         * @param source
-         *                The affinity of this node to the foreground (i.e.,
-         *                source)
-         * @param sink
-         *                The affinity of this node to the background (i.e.,
-         *                sink)
-         */
-        public void setTerminalWeights(final int nodeId, float source, float sink) {
-
-                assert (nodeId >= 0 && nodeId < numNodes) : "nodeID out of Bounds";
-
-                final float delta = nodes[nodeId].getResidualCapacity();
-
-                if (delta > 0) {
-                        source += delta;
-                } else {
-                        sink -= delta;
+            }
+            if (activeNode == null) {
+                activeNode = getNextActiveNode();
+                if (activeNode == null) {
+                    // no more active nodes - we're done
+                    // here
+                    break;
                 }
+            }
 
-                totalFlow += (source < sink) ? source : sink;
+            // groth
+            if (!activeNode.isInSink()) {
+                // grow source tree
+                for (edge = activeNode.getFirstOutgoing(); edge != null; edge = edge
+                        .getNext()) {
+                    if (edge.getResidualCapacity() != 0) {
 
-                nodes[nodeId].setResidualCapacity(source - sink);
-        }
+                        final Node headNode = edge.getHead();
 
-        /**
-         * Set the edge weight of an undirected edge between two nodes.
-         * 
-         * Please note that you cannot call any <tt>setEdgeWeight</tt> more
-         * often than the number of edges you specified at the time of
-         * construction!
-         * 
-         * @param nodeId1
-         *                The first node.
-         * @param nodeId2
-         *                The second node.
-         * @param weight
-         *                The weight (i.e., the cost) of the connecting edge.
-         */
-        public void setEdgeWeight(final int nodeId1, final int nodeId2, final float weight) {
+                        if (headNode.getParent() == null) {
+                            // free node found, add
+                            // to source tree
+                            headNode.setInSink(false);
+                            headNode.setParent(edge
+                                               .getSister());
+                            headNode.setTimestamp(activeNode
+                                                  .getTimestamp());
+                            headNode.setDistance(activeNode
+                                                 .getDistance() + 1);
+                            setNodeActive(headNode);
+                            addToChangedList(headNode);
 
-                setEdgeWeight(nodeId1, nodeId2, weight, weight);
-        }
+                        } else if (headNode.isInSink()) {
+                            // node is not free and
+                            // belongs to other tree
+                            // - path
+                            // via edge found
+                            break;
 
-        /**
-         * Set the edge weight of a pair of directed edges between two nodes.
-         * 
-         * Please note that you cannot call any <tt>setEdgeWeight</tt> more
-         * often than the number of edges you specified at the time of
-         * construction!
-         * 
-         * @param nodeId1
-         *                The first node.
-         * @param nodeId2
-         *                The second node.
-         * @param weight1to2
-         *                The weight (i.e., the cost) of the directed edge from
-         *                node1 to node2.
-         * @param weight2to1
-         *                The weight (i.e., the cost) of the directed edge from
-         *                node2 to node1.
-         */
-        public void setEdgeWeight(final int nodeId1, final int nodeId2, final float weight1to2,
-                        final float weight2to1) {
-
-                assert (nodeId1 >= 0 && nodeId1 < numNodes) : "nodeID1 out of bounds";
-                assert (nodeId2 >= 0 && nodeId2 < numNodes) : "nodeID2 out of bounds";
-                assert (nodeId1 != nodeId2) : "nodeID1 == nodeID is not allowed";
-                assert (weight1to2 >= 0) : " weight have to be >= 0";
-                assert (weight2to1 >= 0) : " weight have to be >= 0";
-                assert (edgeNum < numEdges - 2) : "max number of edges("
-                                + numEdges + ") reached: " + edgeNum;
-
-                // create new edges
-                final Edge edge = new Edge();
-                edges[edgeNum] = edge;
-                edgeNum++;
-                final Edge reverseEdge = new Edge();
-                edges[edgeNum] = reverseEdge;
-                edgeNum++;
-
-                // get the nodes
-                final Node node1 = nodes[nodeId1];
-                final Node node2 = nodes[nodeId2];
-
-                // link edges
-                edge.setSister(reverseEdge);
-                reverseEdge.setSister(edge);
-
-                // add node1 to edge
-                edge.setNext(node1.getFirstOutgoing());
-                node1.setFirstOutgoing(edge);
-
-                // add node2 to reverseEdge
-                reverseEdge.setNext(node2.getFirstOutgoing());
-                node2.setFirstOutgoing(reverseEdge);
-
-                // set targets of edges
-                edge.setHead(node2);
-                reverseEdge.setHead(node1);
-
-                // set residual capacities
-                edge.setResidualCapacity(weight1to2);
-                reverseEdge.setResidualCapacity(weight2to1);
-        }
-
-        /**
-         * Performs the actual max-flow/min-cut computation.
-         * 
-         * @param reuseTrees
-         *                reuse trees of a previos call
-         * @param changedNodes
-         *                list of nodes that potentially changed their
-         *                segmentation compared to a previous call, can be set
-         *                to <tt>null</tt>
-         */
-        public float computeMaximumFlow(boolean reuseTrees,
-                        final List<Integer> changedNodes) {
-
-                if (maxflowIteration == 0) {
-                        reuseTrees = false;
+                        } else if ((headNode
+                                .getTimestamp() <= activeNode
+                                .getTimestamp())
+                                && (headNode.getDistance() > activeNode
+                                        .getDistance())) {
+                            // node is not free and
+                            // belongs to our tree -
+                            // try to
+                            // shorten its distance
+                            // to the source
+                            headNode.setParent(edge
+                                               .getSister());
+                            headNode.setTimestamp(activeNode
+                                                  .getTimestamp());
+                            headNode.setDistance(activeNode
+                                                 .getDistance() + 1);
+                        }
+                    }
                 }
+            } else {
+                // activeNode is in sink, grow sink tree
+                for (edge = activeNode.getFirstOutgoing(); edge != null; edge = edge
+                        .getNext()) {
+                    if (edge.getSister()
+                            .getResidualCapacity() != 0) {
 
-                if (reuseTrees) {
-                        maxflowReuseTreesInit();
-                } else {
-                        maxflowInit();
+                        final Node headNode = edge.getHead();
+
+                        if (headNode.getParent() == null) {
+                            // free node found, add
+                            // to sink tree
+                            headNode.setInSink(true);
+                            headNode.setParent(edge
+                                               .getSister());
+                            headNode.setTimestamp(activeNode
+                                                  .getTimestamp());
+                            headNode.setDistance(activeNode
+                                                 .getDistance() + 1);
+                            setNodeActive(headNode);
+                            addToChangedList(headNode);
+
+                        } else if (!headNode.isInSink()) {
+                            // node is not free and
+                            // belongs to other tree
+                            // - path
+                            // via edge's sister
+                            // found
+                            edge = edge.getSister();
+                            break;
+
+                        } else if ((headNode
+                                .getTimestamp() <= activeNode
+                                .getTimestamp())
+                                && (headNode.getDistance() > activeNode
+                                        .getDistance())) {
+                            // node is not free and
+                            // belongs to our tree -
+                            // try to
+                            // shorten its distance
+                            // to the sink
+                            headNode.setParent(edge
+                                               .getSister());
+                            headNode.setTimestamp(activeNode
+                                                  .getTimestamp());
+                            headNode.setDistance(activeNode
+                                                 .getDistance() + 1);
+                        }
+                    }
                 }
+            }
 
-                Node currentNode = null;
-                Edge edge = null;
+            time++;
 
-                // main loop
-                while (true) {
+            if (edge != null) {
+                // we found a path via edge
 
-                        Node activeNode = currentNode;
+                // set active flag
+                activeNode.setNext(activeNode);
+                currentNode = activeNode;
 
-                        if (activeNode != null) {
-                                // remove active flag
-                                activeNode.setNext(null);
-                                if (activeNode.getParent() == null) {
-                                        activeNode = null;
-                                }
-                        }
-                        if (activeNode == null) {
-                                activeNode = getNextActiveNode();
-                                if (activeNode == null) {
-                                        // no more active nodes - we're done
-                                        // here
-                                        break;
-                                }
-                        }
-
-                        // groth
-                        if (!activeNode.isInSink()) {
-                                // grow source tree
-                                for (edge = activeNode.getFirstOutgoing(); edge != null; edge = edge
-                                                .getNext()) {
-                                        if (edge.getResidualCapacity() != 0) {
-
-                                                final Node headNode = edge.getHead();
-
-                                                if (headNode.getParent() == null) {
-                                                        // free node found, add
-                                                        // to source tree
-                                                        headNode.setInSink(false);
-                                                        headNode.setParent(edge
-                                                                        .getSister());
-                                                        headNode.setTimestamp(activeNode
-                                                                        .getTimestamp());
-                                                        headNode.setDistance(activeNode
-                                                                        .getDistance() + 1);
-                                                        setNodeActive(headNode);
-                                                        addToChangedList(headNode);
-
-                                                } else if (headNode.isInSink()) {
-                                                        // node is not free and
-                                                        // belongs to other tree
-                                                        // - path
-                                                        // via edge found
-                                                        break;
-
-                                                } else if (headNode
-                                                                .getTimestamp() <= activeNode
-                                                                .getTimestamp()
-                                                                && headNode.getDistance() > activeNode
-                                                                                .getDistance()) {
-                                                        // node is not free and
-                                                        // belongs to our tree -
-                                                        // try to
-                                                        // shorten its distance
-                                                        // to the source
-                                                        headNode.setParent(edge
-                                                                        .getSister());
-                                                        headNode.setTimestamp(activeNode
-                                                                        .getTimestamp());
-                                                        headNode.setDistance(activeNode
-                                                                        .getDistance() + 1);
-                                                }
-                                        }
-                                }
-                        } else {
-                                // activeNode is in sink, grow sink tree
-                                for (edge = activeNode.getFirstOutgoing(); edge != null; edge = edge
-                                                .getNext()) {
-                                        if (edge.getSister()
-                                                        .getResidualCapacity() != 0) {
-
-                                                final Node headNode = edge.getHead();
-
-                                                if (headNode.getParent() == null) {
-                                                        // free node found, add
-                                                        // to sink tree
-                                                        headNode.setInSink(true);
-                                                        headNode.setParent(edge
-                                                                        .getSister());
-                                                        headNode.setTimestamp(activeNode
-                                                                        .getTimestamp());
-                                                        headNode.setDistance(activeNode
-                                                                        .getDistance() + 1);
-                                                        setNodeActive(headNode);
-                                                        addToChangedList(headNode);
-
-                                                } else if (!headNode.isInSink()) {
-                                                        // node is not free and
-                                                        // belongs to other tree
-                                                        // - path
-                                                        // via edge's sister
-                                                        // found
-                                                        edge = edge.getSister();
-                                                        break;
-
-                                                } else if (headNode
-                                                                .getTimestamp() <= activeNode
-                                                                .getTimestamp()
-                                                                && headNode.getDistance() > activeNode
-                                                                                .getDistance()) {
-                                                        // node is not free and
-                                                        // belongs to our tree -
-                                                        // try to
-                                                        // shorten its distance
-                                                        // to the sink
-                                                        headNode.setParent(edge
-                                                                        .getSister());
-                                                        headNode.setTimestamp(activeNode
-                                                                        .getTimestamp());
-                                                        headNode.setDistance(activeNode
-                                                                        .getDistance() + 1);
-                                                }
-                                        }
-                                }
-                        }
-
-                        time++;
-
-                        if (edge != null) {
-                                // we found a path via edge
-
-                                // set active flag
-                                activeNode.setNext(activeNode);
-                                currentNode = activeNode;
-
-                                // augmentation
-                                augment(edge);
-
-                                // adoption
-                                while (orphans.size() > 0) {
-                                        final Node orphan = orphans.poll();
-                                        if (orphan.isInSink()) {
-                                                processSinkOrphan(orphan);
-                                        } else {
-                                                processSourceOrphan(orphan);
-                                        }
-                                }
-                        } else {
-                                // no path found
-                                currentNode = null;
-                        }
-                }
-
-                maxflowIteration++;
-
-                // create list of changed nodes
-                if (changedNodes != null) {
-                        changedNodes.clear();
-                        for (int i = 0; i < nodes.length; i++) {
-                                if (nodes[i].isInChangedList()) {
-                                        changedNodes.add(i);
-                                }
-                        }
-                }
-
-                return totalFlow;
-        }
-
-        /**
-         * Get the segmentation, i.e., the terminal node that is connected to
-         * the specified node. If there are several min-cut solutions, free
-         * nodes are assigned to the background.
-         * 
-         * @param nodeId
-         *                the node to check
-         * @return Either <tt>Terminal.FOREGROUND</tt> or
-         *         <tt>Terminal.BACKGROUND</tt>
-         */
-        public Terminal getTerminal(final int nodeId) {
-
-                assert (nodeId >= 0 && nodeId < numNodes) : "nodeID out of Bounds";
-
-                final Node node = nodes[nodeId];
-
-                if (node.getParent() != null) {
-                        return node.isInSink() ? Terminal.BACKGROUND
-                                        : Terminal.FOREGROUND;
-                }
-
-                return Terminal.BACKGROUND;
-        }
-
-        /**
-         * Gets the number of nodes in this graph.
-         * 
-         * @return The number of nodes
-         */
-        public int getNumNodes() {
-                return this.numNodes;
-        }
-
-        /**
-         * Gets the number of edges in this graph.
-         * 
-         * @return The number of edges.
-         */
-        public int getNumEdges() {
-                return this.numEdges;
-        }
-
-        /**
-         * Mark a node as being changed.
-         * 
-         * Use this method if the graph weights changed after a previous
-         * computation of the max-flow. The next computation will be faster by
-         * just considering changed nodes.
-         * 
-         * A node has to be considered changed if any of its adjacent edges
-         * changed its weight.
-         * 
-         * @param nodeId
-         *                The node that changed.
-         */
-        public void markNode(final int nodeId) {
-
-                assert (nodeId >= 0 && nodeId < numNodes) : "nodeID out of Bounds";
-
-                final Node node = nodes[nodeId];
-
-                if (node.getNext() == null) {
-                        if (activeQueueLast[1] != null) {
-                                activeQueueLast[1].setNext(node);
-                        } else {
-                                activeQueueFirst[1] = node;
-                        }
-
-                        activeQueueLast[1] = node;
-                        node.setNext(node);
-                }
-
-                node.setMarked(true);
-        }
-
-        /*
-         * PRIVATE METHODS
-         */
-
-        /**
-         * Marks a node as being active and adds it to second queue of active
-         * nodes.
-         */
-        private void setNodeActive(final Node node) {
-
-                if (node.getNext() == null) {
-                        if (activeQueueLast[1] != null) {
-                                activeQueueLast[1].setNext(node);
-                        } else {
-                                activeQueueFirst[1] = node;
-                        }
-
-                        activeQueueLast[1] = node;
-                        node.setNext(node);
-                }
-        }
-
-        /**
-         * Gets the next active node, that is, the first node of the first queue
-         * of active nodes. If this queue is empty, the second queue is used.
-         * Returns <tt>nyll</tt>, if no active node is left.
-         */
-        private Node getNextActiveNode() {
-
-                Node node;
-
-                while (true) {
-
-                        node = activeQueueFirst[0];
-
-                        if (node == null) {
-                                // queue 0 was empty, try other one
-                                node = activeQueueFirst[1];
-
-                                // swap queues
-                                activeQueueFirst[0] = activeQueueFirst[1];
-                                activeQueueLast[0] = activeQueueLast[1];
-                                activeQueueFirst[1] = null;
-                                activeQueueLast[1] = null;
-
-                                // if other queue was emtpy as well, return null
-                                if (node == null) {
-                                        return null;
-                                }
-                        }
-
-                        // remove current node from active list
-                        if (node.getNext() == node) {
-                                // this was the last one
-                                activeQueueFirst[0] = null;
-                                activeQueueLast[0] = null;
-                        } else {
-                                activeQueueFirst[0] = node.getNext();
-                        }
-
-                        // not in any list anymore
-                        node.setNext(null);
-
-                        // return only if it has a parent and is therefore
-                        // active
-                        if (node.getParent() != null) {
-                                return node;
-                        }
-                }
-        }
-
-        /**
-         * Mark a node as orphan and add it to the front of the queue.
-         */
-        private void addOrphanAtFront(final Node node) {
-
-                node.setParent(Edge.ORPHAN);
-
-                orphans.addFirst(node);
-        }
-
-        /**
-         * Mark a node as orphan and add it to the back of the queue.
-         */
-        private void addOrphanAtBack(final Node node) {
-
-                node.setParent(Edge.ORPHAN);
-
-                orphans.addLast(node);
-        }
-
-        /**
-         * Add a node to the list of potentially changed nodes.
-         */
-        private void addToChangedList(final Node node) {
-
-                node.setInChangedList(true);
-        }
-
-        /**
-         * Initialise the algorithm.
-         * 
-         * Only called if <tt>reuseTrees</tt> is false.
-         */
-        private void maxflowInit() {
-
-                activeQueueFirst[0] = null;
-                activeQueueLast[0] = null;
-                activeQueueFirst[1] = null;
-                activeQueueLast[1] = null;
-
-                orphans.clear();
-
-                time = 0;
-
-                for (final Node node : nodes) {
-
-                        node.setNext(null);
-                        node.setMarked(false);
-                        node.setInChangedList(false);
-                        node.setTimestamp(time);
-
-                        if (node.getResidualCapacity() > 0) {
-                                // node is connected to source
-                                node.setInSink(false);
-                                node.setParent(Edge.TERMINAL);
-                                setNodeActive(node);
-                                node.setDistance(1);
-                        } else if (node.getResidualCapacity() < 0) {
-                                // node is connected to sink
-                                node.setInSink(true);
-                                node.setParent(Edge.TERMINAL);
-                                setNodeActive(node);
-                                node.setDistance(1);
-                        } else {
-                                node.setParent(null);
-                        }
-                }
-        }
-
-        /**
-         * Initialise the algorithm.
-         * 
-         * Only called if <tt>reuseTrees</tt> is true.
-         */
-        private void maxflowReuseTreesInit() {
-
-                Node node1;
-                Node node2;
-
-                Node queueStart = activeQueueFirst[1];
-
-                Edge edge;
-
-                activeQueueFirst[0] = null;
-                activeQueueLast[0] = null;
-                activeQueueFirst[1] = null;
-                activeQueueLast[1] = null;
-
-                orphans.clear();
-
-                time++;
-
-                while ((node1 = queueStart) != null) {
-
-                        queueStart = node1.getNext();
-
-                        if (queueStart == node1) {
-                                queueStart = null;
-                        }
-
-                        node1.setNext(null);
-                        node1.setMarked(false);
-                        setNodeActive(node1);
-
-                        if (node1.getResidualCapacity() == 0) {
-                                if (node1.getParent() != null) {
-                                        addOrphanAtBack(node1);
-                                }
-                                continue;
-                        }
-
-                        if (node1.getResidualCapacity() > 0) {
-
-                                if (node1.getParent() == null
-                                                || node1.isInSink()) {
-
-                                        node1.setInSink(false);
-                                        for (edge = node1.getFirstOutgoing(); edge != null; edge = edge
-                                                        .getNext()) {
-
-                                                node2 = edge.getHead();
-                                                if (!node2.isMarked()) {
-                                                        if (node2.getParent() == edge
-                                                                        .getSister()) {
-                                                                addOrphanAtBack(node2);
-                                                        }
-                                                        if (node2.getParent() != null
-                                                                        && node2.isInSink()
-                                                                        && edge.getResidualCapacity() > 0) {
-                                                                setNodeActive(node2);
-                                                        }
-                                                }
-                                        }
-                                        addToChangedList(node1);
-                                }
-                        } else {
-
-                                if (node1.getParent() == null
-                                                || !node1.isInSink()) {
-
-                                        node1.setInSink(true);
-                                        for (edge = node1.getFirstOutgoing(); edge != null; edge = edge
-                                                        .getNext()) {
-
-                                                node2 = edge.getHead();
-                                                if (!node2.isMarked()) {
-                                                        if (node2.getParent() == edge
-                                                                        .getSister()) {
-                                                                addOrphanAtBack(node2);
-                                                        }
-                                                        if (node2.getParent() != null
-                                                                        && !node2.isInSink()
-                                                                        && edge.getSister()
-                                                                                        .getResidualCapacity() > 0) {
-                                                                setNodeActive(node2);
-                                                        }
-                                                }
-                                        }
-                                        addToChangedList(node1);
-                                }
-                        }
-                        node1.setParent(Edge.TERMINAL);
-                        node1.setTimestamp(time);
-                        node1.setDistance(1);
-                }
+                // augmentation
+                augment(edge);
 
                 // adoption
                 while (orphans.size() > 0) {
-                        final Node orphan = orphans.poll();
-                        if (orphan.isInSink()) {
-                                processSinkOrphan(orphan);
-                        } else {
-                                processSourceOrphan(orphan);
-                        }
+                    final Node orphan = orphans.poll();
+                    if (orphan.isInSink()) {
+                        processSinkOrphan(orphan);
+                    } else {
+                        processSourceOrphan(orphan);
+                    }
                 }
+            } else {
+                // no path found
+                currentNode = null;
+            }
         }
 
-        /**
-         * Perform the augmentation step of the graph cut algorithm.
-         * 
-         * This is done whenever a path between the source and the sink was
-         * found.
-         */
-        private void augment(final Edge middle) {
+        maxflowIteration++;
 
-                Node node;
-                Edge edge;
+        // create list of changed nodes
+        if (changedNodes != null) {
+            changedNodes.clear();
+            for (int i = 0; i < nodes.length; i++) {
+                if (nodes[i].isInChangedList()) {
+                    changedNodes.add(i);
+                }
+            }
+        }
 
-                float bottleneck;
+        return totalFlow;
+    }
 
-                // 1. find bottleneck capacity
+    /**
+     * Get the segmentation, i.e., the terminal node that is connected to
+     * the specified node. If there are several min-cut solutions, free
+     * nodes are assigned to the background.
+     * 
+     * @param nodeId
+     *                the node to check
+     * @return Either <tt>Terminal.FOREGROUND</tt> or
+     *         <tt>Terminal.BACKGROUND</tt>
+     */
+    public Terminal getTerminal(final int nodeId) {
 
-                // 1a - the source tree
-                bottleneck = middle.getResidualCapacity();
-                for (node = middle.getSister().getHead();; node = edge
+        assert ((nodeId >= 0) && (nodeId < numNodes)) : "nodeID out of Bounds";
+
+        final Node node = nodes[nodeId];
+
+        if (node.getParent() != null) {
+            return node.isInSink() ? Terminal.BACKGROUND
+                    : Terminal.FOREGROUND;
+        }
+
+        return Terminal.BACKGROUND;
+    }
+
+    /**
+     * Gets the number of nodes in this graph.
+     * 
+     * @return The number of nodes
+     */
+    public int getNumNodes() {
+        return this.numNodes;
+    }
+
+    /**
+     * Gets the number of edges in this graph.
+     * 
+     * @return The number of edges.
+     */
+    public int getNumEdges() {
+        return this.numEdges;
+    }
+
+    /**
+     * Mark a node as being changed.
+     * 
+     * Use this method if the graph weights changed after a previous
+     * computation of the max-flow. The next computation will be faster by
+     * just considering changed nodes.
+     * 
+     * A node has to be considered changed if any of its adjacent edges
+     * changed its weight.
+     * 
+     * @param nodeId
+     *                The node that changed.
+     */
+    public void markNode(final int nodeId) {
+
+        assert ((nodeId >= 0) && (nodeId < numNodes)) : "nodeID out of Bounds";
+
+        final Node node = nodes[nodeId];
+
+        if (node.getNext() == null) {
+            if (activeQueueLast[1] != null) {
+                activeQueueLast[1].setNext(node);
+            } else {
+                activeQueueFirst[1] = node;
+            }
+
+            activeQueueLast[1] = node;
+            node.setNext(node);
+        }
+
+        node.setMarked(true);
+    }
+
+    /*
+     * PRIVATE METHODS
+     */
+
+    /**
+     * Marks a node as being active and adds it to second queue of active
+     * nodes.
+     */
+    private void setNodeActive(final Node node) {
+
+        if (node.getNext() == null) {
+            if (activeQueueLast[1] != null) {
+                activeQueueLast[1].setNext(node);
+            } else {
+                activeQueueFirst[1] = node;
+            }
+
+            activeQueueLast[1] = node;
+            node.setNext(node);
+        }
+    }
+
+    /**
+     * Gets the next active node, that is, the first node of the first queue
+     * of active nodes. If this queue is empty, the second queue is used.
+     * Returns <tt>nyll</tt>, if no active node is left.
+     */
+    private Node getNextActiveNode() {
+
+        Node node;
+
+        while (true) {
+
+            node = activeQueueFirst[0];
+
+            if (node == null) {
+                // queue 0 was empty, try other one
+                node = activeQueueFirst[1];
+
+                // swap queues
+                activeQueueFirst[0] = activeQueueFirst[1];
+                activeQueueLast[0] = activeQueueLast[1];
+                activeQueueFirst[1] = null;
+                activeQueueLast[1] = null;
+
+                // if other queue was emtpy as well, return null
+                if (node == null) {
+                    return null;
+                }
+            }
+
+            // remove current node from active list
+            if (node.getNext() == node) {
+                // this was the last one
+                activeQueueFirst[0] = null;
+                activeQueueLast[0] = null;
+            } else {
+                activeQueueFirst[0] = node.getNext();
+            }
+
+            // not in any list anymore
+            node.setNext(null);
+
+            // return only if it has a parent and is therefore
+            // active
+            if (node.getParent() != null) {
+                return node;
+            }
+        }
+    }
+
+    /**
+     * Mark a node as orphan and add it to the front of the queue.
+     */
+    private void addOrphanAtFront(final Node node) {
+
+        node.setParent(Edge.ORPHAN);
+
+        orphans.addFirst(node);
+    }
+
+    /**
+     * Mark a node as orphan and add it to the back of the queue.
+     */
+    private void addOrphanAtBack(final Node node) {
+
+        node.setParent(Edge.ORPHAN);
+
+        orphans.addLast(node);
+    }
+
+    /**
+     * Add a node to the list of potentially changed nodes.
+     */
+    private void addToChangedList(final Node node) {
+
+        node.setInChangedList(true);
+    }
+
+    /**
+     * Initialise the algorithm.
+     * 
+     * Only called if <tt>reuseTrees</tt> is false.
+     */
+    private void maxflowInit() {
+
+        activeQueueFirst[0] = null;
+        activeQueueLast[0] = null;
+        activeQueueFirst[1] = null;
+        activeQueueLast[1] = null;
+
+        orphans.clear();
+
+        time = 0;
+
+        for (final Node node : nodes) {
+
+            node.setNext(null);
+            node.setMarked(false);
+            node.setInChangedList(false);
+            node.setTimestamp(time);
+
+            if (node.getResidualCapacity() > 0) {
+                // node is connected to source
+                node.setInSink(false);
+                node.setParent(Edge.TERMINAL);
+                setNodeActive(node);
+                node.setDistance(1);
+            } else if (node.getResidualCapacity() < 0) {
+                // node is connected to sink
+                node.setInSink(true);
+                node.setParent(Edge.TERMINAL);
+                setNodeActive(node);
+                node.setDistance(1);
+            } else {
+                node.setParent(null);
+            }
+        }
+    }
+
+    /**
+     * Initialise the algorithm.
+     * 
+     * Only called if <tt>reuseTrees</tt> is true.
+     */
+    private void maxflowReuseTreesInit() {
+
+        Node node1;
+        Node node2;
+
+        Node queueStart = activeQueueFirst[1];
+
+        Edge edge;
+
+        activeQueueFirst[0] = null;
+        activeQueueLast[0] = null;
+        activeQueueFirst[1] = null;
+        activeQueueLast[1] = null;
+
+        orphans.clear();
+
+        time++;
+
+        while ((node1 = queueStart) != null) {
+
+            queueStart = node1.getNext();
+
+            if (queueStart == node1) {
+                queueStart = null;
+            }
+
+            node1.setNext(null);
+            node1.setMarked(false);
+            setNodeActive(node1);
+
+            if (node1.getResidualCapacity() == 0) {
+                if (node1.getParent() != null) {
+                    addOrphanAtBack(node1);
+                }
+                continue;
+            }
+
+            if (node1.getResidualCapacity() > 0) {
+
+                if ((node1.getParent() == null)
+                        || node1.isInSink()) {
+
+                    node1.setInSink(false);
+                    for (edge = node1.getFirstOutgoing(); edge != null; edge = edge
+                            .getNext()) {
+
+                        node2 = edge.getHead();
+                        if (!node2.isMarked()) {
+                            if (node2.getParent() == edge
+                                    .getSister()) {
+                                addOrphanAtBack(node2);
+                            }
+                            if ((node2.getParent() != null)
+                                    && node2.isInSink()
+                                    && (edge.getResidualCapacity() > 0)) {
+                                setNodeActive(node2);
+                            }
+                        }
+                    }
+                    addToChangedList(node1);
+                }
+            } else {
+
+                if ((node1.getParent() == null)
+                        || !node1.isInSink()) {
+
+                    node1.setInSink(true);
+                    for (edge = node1.getFirstOutgoing(); edge != null; edge = edge
+                            .getNext()) {
+
+                        node2 = edge.getHead();
+                        if (!node2.isMarked()) {
+                            if (node2.getParent() == edge
+                                    .getSister()) {
+                                addOrphanAtBack(node2);
+                            }
+                            if ((node2.getParent() != null)
+                                    && !node2.isInSink()
+                                    && (edge.getSister()
+                                            .getResidualCapacity() > 0)) {
+                                setNodeActive(node2);
+                            }
+                        }
+                    }
+                    addToChangedList(node1);
+                }
+            }
+            node1.setParent(Edge.TERMINAL);
+            node1.setTimestamp(time);
+            node1.setDistance(1);
+        }
+
+        // adoption
+        while (orphans.size() > 0) {
+            final Node orphan = orphans.poll();
+            if (orphan.isInSink()) {
+                processSinkOrphan(orphan);
+            } else {
+                processSourceOrphan(orphan);
+            }
+        }
+    }
+
+    /**
+     * Perform the augmentation step of the graph cut algorithm.
+     * 
+     * This is done whenever a path between the source and the sink was
+     * found.
+     */
+    private void augment(final Edge middle) {
+
+        Node node;
+        Edge edge;
+
+        float bottleneck;
+
+        // 1. find bottleneck capacity
+
+        // 1a - the source tree
+        bottleneck = middle.getResidualCapacity();
+        for (node = middle.getSister().getHead();; node = edge
+                .getHead()) {
+
+            edge = node.getParent();
+
+            if (edge == Edge.TERMINAL) {
+                break;
+            }
+            if (bottleneck > edge.getSister().getResidualCapacity()) {
+                bottleneck = edge.getSister()
+                        .getResidualCapacity();
+            }
+        }
+
+        if (bottleneck > node.getResidualCapacity()) {
+            bottleneck = node.getResidualCapacity();
+        }
+
+        // 1b - the sink tree
+        for (node = middle.getHead();; node = edge.getHead()) {
+
+            edge = node.getParent();
+
+            if (edge == Edge.TERMINAL) {
+                break;
+            }
+            if (bottleneck > edge.getResidualCapacity()) {
+                bottleneck = edge.getResidualCapacity();
+            }
+        }
+        if (bottleneck > -node.getResidualCapacity()) {
+            bottleneck = -node.getResidualCapacity();
+        }
+
+        // 2. augmenting
+
+        // 2a - the source tree
+        middle.getSister().setResidualCapacity(
+                                               middle.getSister().getResidualCapacity()
+                                               + bottleneck);
+        middle.setResidualCapacity(middle.getResidualCapacity()
+                                   - bottleneck);
+        for (node = middle.getSister().getHead();; node = edge
+                .getHead()) {
+
+            edge = node.getParent();
+
+            if (edge == Edge.TERMINAL) {
+                // end of path
+                break;
+            }
+            edge.setResidualCapacity(edge.getResidualCapacity()
+                                     + bottleneck);
+            edge.getSister().setResidualCapacity(
+                                                 edge.getSister().getResidualCapacity()
+                                                 - bottleneck);
+            if (edge.getSister().getResidualCapacity() == 0) {
+                addOrphanAtFront(node);
+            }
+        }
+        node.setResidualCapacity(node.getResidualCapacity()
+                                 - bottleneck);
+        if (node.getResidualCapacity() == 0) {
+            addOrphanAtFront(node);
+        }
+
+        // 2b - the sink tree
+        for (node = middle.getHead();; node = edge.getHead()) {
+
+            edge = node.getParent();
+
+            if (edge == Edge.TERMINAL) {
+                // end of path
+                break;
+            }
+            edge.getSister().setResidualCapacity(
+                                                 edge.getSister().getResidualCapacity()
+                                                 + bottleneck);
+            edge.setResidualCapacity(edge.getResidualCapacity()
+                                     - bottleneck);
+            if (edge.getResidualCapacity() == 0) {
+                addOrphanAtFront(node);
+            }
+        }
+        node.setResidualCapacity(node.getResidualCapacity()
+                                 + bottleneck);
+        if (node.getResidualCapacity() == 0) {
+            addOrphanAtFront(node);
+        }
+
+        totalFlow += bottleneck;
+    }
+
+    /**
+     * Adopt an orphan.
+     */
+    private void processSourceOrphan(final Node orphan) {
+
+        Edge bestEdge = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
+                .getNext()) {
+            if (orphanEdge.getSister().getResidualCapacity() != 0) {
+
+                Node node = orphanEdge.getHead();
+                Edge parentEdge = node.getParent();
+
+                if (!node.isInSink() && (parentEdge != null)) {
+
+                    // check the origin of node
+                    int distance = 0;
+                    while (true) {
+
+                        if (node.getTimestamp() == time) {
+                            distance += node.getDistance();
+                            break;
+                        }
+                        parentEdge = node.getParent();
+                        distance++;
+                        if (parentEdge == Edge.TERMINAL) {
+                            node.setTimestamp(time);
+                            node.setDistance(1);
+                            break;
+                        }
+                        if (parentEdge == Edge.ORPHAN) {
+                            distance = Integer.MAX_VALUE;
+                            break;
+                        }
+                        // otherwise, proceed to the
+                        // next node
+                        node = parentEdge.getHead();
+                    }
+                    if (distance < Integer.MAX_VALUE) { // node
+                        // originates
+                        // from
+                        // the source
+
+                        if (distance < minDistance) {
+                            bestEdge = orphanEdge;
+                            minDistance = distance;
+                        }
+                        // set marks along the path
+                        for (node = orphanEdge
+                                .getHead(); node
+                                .getTimestamp() != time; node = node
+                                .getParent()
                                 .getHead()) {
 
-                        edge = node.getParent();
-
-                        if (edge == Edge.TERMINAL) {
-                                break;
+                            node.setTimestamp(time);
+                            node.setDistance(distance);
+                            distance--;
                         }
-                        if (bottleneck > edge.getSister().getResidualCapacity()) {
-                                bottleneck = edge.getSister()
-                                                .getResidualCapacity();
+                    }
+                }
+            }
+        }
+
+        orphan.setParent(bestEdge);
+        if (bestEdge != null) {
+            orphan.setTimestamp(time);
+            orphan.setDistance(minDistance + 1);
+        } else {
+            // no parent found
+            addToChangedList(orphan);
+
+            // process neighbors
+            for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
+                    .getNext()) {
+
+                final Node node = orphanEdge.getHead();
+                final Edge parentEdge = node.getParent();
+                if (!node.isInSink() && (parentEdge != null)) {
+
+                    if (orphanEdge.getSister()
+                            .getResidualCapacity() != 0) {
+                        setNodeActive(node);
+                    }
+                    if ((parentEdge != Edge.TERMINAL)
+                            && (parentEdge != Edge.ORPHAN)
+                            && (parentEdge.getHead() == orphan)) {
+                        addOrphanAtBack(node);
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Adopt an orphan.
+     */
+    private void processSinkOrphan(final Node orphan) {
+
+        Edge bestEdge = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
+                .getNext()) {
+            if (orphanEdge.getResidualCapacity() != 0) {
+
+                Node node = orphanEdge.getHead();
+                Edge parentEdge = node.getParent();
+
+                if (node.isInSink() && (parentEdge != null)) {
+
+                    // check the origin of node
+                    int distance = 0;
+                    while (true) {
+
+                        if (node.getTimestamp() == time) {
+                            distance += node.getDistance();
+                            break;
                         }
-                }
-
-                if (bottleneck > node.getResidualCapacity()) {
-                        bottleneck = node.getResidualCapacity();
-                }
-
-                // 1b - the sink tree
-                for (node = middle.getHead();; node = edge.getHead()) {
-
-                        edge = node.getParent();
-
-                        if (edge == Edge.TERMINAL) {
-                                break;
+                        parentEdge = node.getParent();
+                        distance++;
+                        if (parentEdge == Edge.TERMINAL) {
+                            node.setTimestamp(time);
+                            node.setDistance(1);
+                            break;
                         }
-                        if (bottleneck > edge.getResidualCapacity()) {
-                                bottleneck = edge.getResidualCapacity();
+                        if (parentEdge == Edge.ORPHAN) {
+                            distance = Integer.MAX_VALUE;
+                            break;
                         }
-                }
-                if (bottleneck > -node.getResidualCapacity()) {
-                        bottleneck = -node.getResidualCapacity();
-                }
-
-                // 2. augmenting
-
-                // 2a - the source tree
-                middle.getSister().setResidualCapacity(
-                                middle.getSister().getResidualCapacity()
-                                                + bottleneck);
-                middle.setResidualCapacity(middle.getResidualCapacity()
-                                - bottleneck);
-                for (node = middle.getSister().getHead();; node = edge
+                        // otherwise, proceed to the
+                        // next node
+                        node = parentEdge.getHead();
+                    }
+                    if (distance < Integer.MAX_VALUE) {
+                        // node originates from the sink
+                        if (distance < minDistance) {
+                            bestEdge = orphanEdge;
+                            minDistance = distance;
+                        }
+                        // set marks along the path
+                        for (node = orphanEdge
+                                .getHead(); node
+                                .getTimestamp() != time; node = node
+                                .getParent()
                                 .getHead()) {
 
-                        edge = node.getParent();
-
-                        if (edge == Edge.TERMINAL) {
-                                // end of path
-                                break;
+                            node.setTimestamp(time);
+                            node.setDistance(distance);
+                            distance--;
                         }
-                        edge.setResidualCapacity(edge.getResidualCapacity()
-                                        + bottleneck);
-                        edge.getSister().setResidualCapacity(
-                                        edge.getSister().getResidualCapacity()
-                                                        - bottleneck);
-                        if (edge.getSister().getResidualCapacity() == 0) {
-                                addOrphanAtFront(node);
-                        }
+                    }
                 }
-                node.setResidualCapacity(node.getResidualCapacity()
-                                - bottleneck);
-                if (node.getResidualCapacity() == 0) {
-                        addOrphanAtFront(node);
-                }
-
-                // 2b - the sink tree
-                for (node = middle.getHead();; node = edge.getHead()) {
-
-                        edge = node.getParent();
-
-                        if (edge == Edge.TERMINAL) {
-                                // end of path
-                                break;
-                        }
-                        edge.getSister().setResidualCapacity(
-                                        edge.getSister().getResidualCapacity()
-                                                        + bottleneck);
-                        edge.setResidualCapacity(edge.getResidualCapacity()
-                                        - bottleneck);
-                        if (edge.getResidualCapacity() == 0) {
-                                addOrphanAtFront(node);
-                        }
-                }
-                node.setResidualCapacity(node.getResidualCapacity()
-                                + bottleneck);
-                if (node.getResidualCapacity() == 0) {
-                        addOrphanAtFront(node);
-                }
-
-                totalFlow += bottleneck;
+            }
         }
 
-        /**
-         * Adopt an orphan.
-         */
-        private void processSourceOrphan(final Node orphan) {
+        orphan.setParent(bestEdge);
+        if (bestEdge != null) {
+            orphan.setTimestamp(time);
+            orphan.setDistance(minDistance + 1);
+        } else {
+            // no parent found
+            addToChangedList(orphan);
 
-                Edge bestEdge = null;
-                int minDistance = Integer.MAX_VALUE;
+            // process neighbors
+            for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
+                    .getNext()) {
 
-                for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
-                                .getNext()) {
-                        if (orphanEdge.getSister().getResidualCapacity() != 0) {
+                final Node node = orphanEdge.getHead();
+                final Edge parentEdge = node.getParent();
+                if (node.isInSink() && (parentEdge != null)) {
 
-                                Node node = orphanEdge.getHead();
-                                Edge parentEdge = node.getParent();
-
-                                if (!node.isInSink() && parentEdge != null) {
-
-                                        // check the origin of node
-                                        int distance = 0;
-                                        while (true) {
-
-                                                if (node.getTimestamp() == time) {
-                                                        distance += node.getDistance();
-                                                        break;
-                                                }
-                                                parentEdge = node.getParent();
-                                                distance++;
-                                                if (parentEdge == Edge.TERMINAL) {
-                                                        node.setTimestamp(time);
-                                                        node.setDistance(1);
-                                                        break;
-                                                }
-                                                if (parentEdge == Edge.ORPHAN) {
-                                                        distance = Integer.MAX_VALUE;
-                                                        break;
-                                                }
-                                                // otherwise, proceed to the
-                                                // next node
-                                                node = parentEdge.getHead();
-                                        }
-                                        if (distance < Integer.MAX_VALUE) { // node
-                                                                            // originates
-                                                                            // from
-                                                // the source
-
-                                                if (distance < minDistance) {
-                                                        bestEdge = orphanEdge;
-                                                        minDistance = distance;
-                                                }
-                                                // set marks along the path
-                                                for (node = orphanEdge
-                                                                .getHead(); node
-                                                                .getTimestamp() != time; node = node
-                                                                .getParent()
-                                                                .getHead()) {
-
-                                                        node.setTimestamp(time);
-                                                        node.setDistance(distance);
-                                                        distance--;
-                                                }
-                                        }
-                                }
-                        }
+                    if (orphanEdge.getResidualCapacity() != 0) {
+                        setNodeActive(node);
+                    }
+                    if ((parentEdge != Edge.TERMINAL)
+                            && (parentEdge != Edge.ORPHAN)
+                            && (parentEdge.getHead() == orphan)) {
+                        addOrphanAtBack(node);
+                    }
                 }
-
-                orphan.setParent(bestEdge);
-                if (bestEdge != null) {
-                        orphan.setTimestamp(time);
-                        orphan.setDistance(minDistance + 1);
-                } else {
-                        // no parent found
-                        addToChangedList(orphan);
-
-                        // process neighbors
-                        for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
-                                        .getNext()) {
-
-                                final Node node = orphanEdge.getHead();
-                                final Edge parentEdge = node.getParent();
-                                if (!node.isInSink() && parentEdge != null) {
-
-                                        if (orphanEdge.getSister()
-                                                        .getResidualCapacity() != 0) {
-                                                setNodeActive(node);
-                                        }
-                                        if (parentEdge != Edge.TERMINAL
-                                                        && parentEdge != Edge.ORPHAN
-                                                        && parentEdge.getHead() == orphan) {
-                                                addOrphanAtBack(node);
-                                        }
-                                }
-                        }
-                }
-
+            }
         }
+    }
 
-        /**
-         * Adopt an orphan.
-         */
-        private void processSinkOrphan(final Node orphan) {
-
-                Edge bestEdge = null;
-                int minDistance = Integer.MAX_VALUE;
-
-                for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
-                                .getNext()) {
-                        if (orphanEdge.getResidualCapacity() != 0) {
-
-                                Node node = orphanEdge.getHead();
-                                Edge parentEdge = node.getParent();
-
-                                if (node.isInSink() && parentEdge != null) {
-
-                                        // check the origin of node
-                                        int distance = 0;
-                                        while (true) {
-
-                                                if (node.getTimestamp() == time) {
-                                                        distance += node.getDistance();
-                                                        break;
-                                                }
-                                                parentEdge = node.getParent();
-                                                distance++;
-                                                if (parentEdge == Edge.TERMINAL) {
-                                                        node.setTimestamp(time);
-                                                        node.setDistance(1);
-                                                        break;
-                                                }
-                                                if (parentEdge == Edge.ORPHAN) {
-                                                        distance = Integer.MAX_VALUE;
-                                                        break;
-                                                }
-                                                // otherwise, proceed to the
-                                                // next node
-                                                node = parentEdge.getHead();
-                                        }
-                                        if (distance < Integer.MAX_VALUE) {
-                                                // node originates from the sink
-                                                if (distance < minDistance) {
-                                                        bestEdge = orphanEdge;
-                                                        minDistance = distance;
-                                                }
-                                                // set marks along the path
-                                                for (node = orphanEdge
-                                                                .getHead(); node
-                                                                .getTimestamp() != time; node = node
-                                                                .getParent()
-                                                                .getHead()) {
-
-                                                        node.setTimestamp(time);
-                                                        node.setDistance(distance);
-                                                        distance--;
-                                                }
-                                        }
-                                }
-                        }
-                }
-
-                orphan.setParent(bestEdge);
-                if (bestEdge != null) {
-                        orphan.setTimestamp(time);
-                        orphan.setDistance(minDistance + 1);
-                } else {
-                        // no parent found
-                        addToChangedList(orphan);
-
-                        // process neighbors
-                        for (Edge orphanEdge = orphan.getFirstOutgoing(); orphanEdge != null; orphanEdge = orphanEdge
-                                        .getNext()) {
-
-                                final Node node = orphanEdge.getHead();
-                                final Edge parentEdge = node.getParent();
-                                if (node.isInSink() && parentEdge != null) {
-
-                                        if (orphanEdge.getResidualCapacity() != 0) {
-                                                setNodeActive(node);
-                                        }
-                                        if (parentEdge != Edge.TERMINAL
-                                                        && parentEdge != Edge.ORPHAN
-                                                        && parentEdge.getHead() == orphan) {
-                                                addOrphanAtBack(node);
-                                        }
-                                }
-                        }
-                }
+    /**
+     * returns the Edge weight between two nodes
+     * 
+     * @param nodeID1
+     *                first node
+     * @param nodeID2
+     *                second node
+     * @return the weight of the edge
+     * 
+     */
+    public float getEdgeWeight(final int nodeID1, final int nodeID2) {
+        final Node n1 = nodes[nodeID1];
+        final Node n2 = nodes[nodeID2];
+        Edge e;
+        for (int i = 0; i < edgeNum; i++) {
+            e = edges[i];
+            if (e.getHead().equals(n1)
+                    && e.getSister().getHead().equals(n2)) {
+                return e.getResidualCapacity();
+            }
         }
+        return 0;
 
-        /**
-         * returns the Edge weight between two nodes
-         * 
-         * @param nodeID1
-         *                first node
-         * @param nodeID2
-         *                second node
-         * @return the weight of the edge
-         * 
-         */
-        public float getEdgeWeight(final int nodeID1, final int nodeID2) {
-                final Node n1 = nodes[nodeID1];
-                final Node n2 = nodes[nodeID2];
-                Edge e;
-                for (int i = 0; i < edgeNum; i++) {
-                        e = edges[i];
-                        if (e.getHead().equals(n1)
-                                        && e.getSister().getHead().equals(n2)) {
-                                return e.getResidualCapacity();
-                        }
-                }
-                return 0;
-
-        }
+    }
 }

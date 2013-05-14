@@ -61,41 +61,41 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
  */
 public class LabelPanelVisibleLabelsChgEvent implements KNIPEvent {
 
-        private final Set<String> m_labels;
-        private final Operator m_operator;
+    private final Set<String> m_labels;
+    private final Operator m_operator;
 
-        public LabelPanelVisibleLabelsChgEvent(final Set<String> labels,
-                        final Operator operator) {
-                m_labels = labels;
-                m_operator = operator;
+    public LabelPanelVisibleLabelsChgEvent(final Set<String> labels,
+                                           final Operator operator) {
+        m_labels = labels;
+        m_operator = operator;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the labels
-         */
-        public Set<String> getLabels() {
-                return m_labels;
-        }
+    /**
+     * @return the labels
+     */
+    public Set<String> getLabels() {
+        return m_labels;
+    }
 
-        /**
-         * @return the operator
-         */
-        public Operator getOperator() {
-                return m_operator;
-        }
+    /**
+     * @return the operator
+     */
+    public Operator getOperator() {
+        return m_operator;
+    }
 
 }

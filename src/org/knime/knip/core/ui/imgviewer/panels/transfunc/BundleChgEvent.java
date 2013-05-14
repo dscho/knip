@@ -72,7 +72,7 @@ public class BundleChgEvent implements KNIPEvent {
     public TransferFunctionBundle getBundle() {
         return m_bundle;
     }
-    
+
     /**
      * {@inheritDoc}
      */

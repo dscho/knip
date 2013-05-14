@@ -63,60 +63,60 @@ import java.awt.image.RGBImageFilter;
  * @author hornm, University of Konstanz
  */
 public class Transparency {
-        @SuppressWarnings("static-access")
-        public static Image makeColorTransparent(final Image im,
-                        final Color color) {
-                final ImageFilter filter = new RGBImageFilter() {
-                        // the color we are looking for... Alpha bits are set to
-                        // opaque
-                        public int markerRGB = color.getRGB() | 0xFF000000;
+    @SuppressWarnings("static-access")
+    public static Image makeColorTransparent(final Image im,
+                                             final Color color) {
+        final ImageFilter filter = new RGBImageFilter() {
+            // the color we are looking for... Alpha bits are set to
+            // opaque
+            public int markerRGB = color.getRGB() | 0xFF000000;
 
-                        @Override
-                        public final int filterRGB(final int x, final int y,
-                                        final int rgb) {
-                                if ((rgb | 0xFF000000) == markerRGB) {
-                                        // Mark the alpha bits as zero -
-                                        // transparent
-                                        return 0x00FFFFFF & rgb;
-                                }
-                                // nothing to do
-                                return rgb;
-                        }
-                };
+            @Override
+            public final int filterRGB(final int x, final int y,
+                                       final int rgb) {
+                if ((rgb | 0xFF000000) == markerRGB) {
+                    // Mark the alpha bits as zero -
+                    // transparent
+                    return 0x00FFFFFF & rgb;
+                }
+                // nothing to do
+                return rgb;
+            }
+        };
 
-                final ImageProducer ip = new FilteredImageSource(im.getSource(),
-                                filter);
-                return Toolkit.getDefaultToolkit().getDefaultToolkit()
-                                .createImage(ip);
-        }
+        final ImageProducer ip = new FilteredImageSource(im.getSource(),
+                                                         filter);
+        return Toolkit.getDefaultToolkit().getDefaultToolkit()
+                .createImage(ip);
+    }
 
-        @SuppressWarnings("static-access")
-        public static Image makeColorTransparent(final Image im,
-                        final Color color, final int rest) {
-                final ImageFilter filter = new RGBImageFilter() {
+    @SuppressWarnings("static-access")
+    public static Image makeColorTransparent(final Image im,
+                                             final Color color, final int rest) {
+        final ImageFilter filter = new RGBImageFilter() {
 
-                        // the color we are looking for... Alpha bits are set to
-                        // opaque
-                        public int markerRGB = color.getRGB() | 0xFF000000;
+            // the color we are looking for... Alpha bits are set to
+            // opaque
+            public int markerRGB = color.getRGB() | 0xFF000000;
 
-                        @Override
-                        public final int filterRGB(final int x, final int y,
-                                        final int rgb) {
+            @Override
+            public final int filterRGB(final int x, final int y,
+                                       final int rgb) {
 
-                                if ((rgb | 0xFF000000) == markerRGB) {
-                                        // Mark the alpha bits as zero -
-                                        // transparent
-                                        return 0x00FFFFFF & rgb;
-                                }
+                if ((rgb | 0xFF000000) == markerRGB) {
+                    // Mark the alpha bits as zero -
+                    // transparent
+                    return 0x00FFFFFF & rgb;
+                }
 
-                                return (rest << 24) | (rgb & 0x00FFFFFF);
-                        }
-                };
+                return (rest << 24) | (rgb & 0x00FFFFFF);
+            }
+        };
 
-                final ImageProducer ip = new FilteredImageSource(im.getSource(),
-                                filter);
-                return Toolkit.getDefaultToolkit().getDefaultToolkit()
-                                .createImage(ip);
-        }
+        final ImageProducer ip = new FilteredImageSource(im.getSource(),
+                                                         filter);
+        return Toolkit.getDefaultToolkit().getDefaultToolkit()
+                .createImage(ip);
+    }
 
 }

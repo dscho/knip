@@ -59,37 +59,37 @@ import net.imglib2.util.ValuePair;
 import org.knime.knip.core.util.ImgPlusFactory;
 
 public class ImgPlusNormalize<T extends RealType<T>> implements
-                UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> {
+UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> {
 
-        private final ImgNormalize<T> m_op;
-        private final T m_val;
+    private final ImgNormalize<T> m_op;
+    private final T m_val;
 
-        public ImgPlusNormalize(final double saturation, final T val,
-                        final ValuePair<T, T> minmax,
-                        final boolean isTarget) {
-                m_val = val;
-                m_op = new ImgNormalize<T>(saturation, val, minmax, isTarget);
-        }
+    public ImgPlusNormalize(final double saturation, final T val,
+                            final ValuePair<T, T> minmax,
+                            final boolean isTarget) {
+        m_val = val;
+        m_op = new ImgNormalize<T>(saturation, val, minmax, isTarget);
+    }
 
-        protected ImgPlusNormalize(final ImgNormalize<T> op, final T val) {
-                m_op = op;
-                m_val = val;
-        }
+    protected ImgPlusNormalize(final ImgNormalize<T> op, final T val) {
+        m_op = op;
+        m_val = val;
+    }
 
-        @Override
-        public ImgPlus<T> compute(final ImgPlus<T> input, final ImgPlus<T> output) {
-                m_op.compute(input, output);
-                return output;
-        }
+    @Override
+    public ImgPlus<T> compute(final ImgPlus<T> input, final ImgPlus<T> output) {
+        m_op.compute(input, output);
+        return output;
+    }
 
-        @Override
-        public UnaryObjectFactory<ImgPlus<T>, ImgPlus<T>> bufferFactory() {
-                return new ImgPlusFactory<T, T>(m_val);
-        }
+    @Override
+    public UnaryObjectFactory<ImgPlus<T>, ImgPlus<T>> bufferFactory() {
+        return new ImgPlusFactory<T, T>(m_val);
+    }
 
-        @Override
-        public UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> copy() {
-                return new ImgPlusNormalize<T>((ImgNormalize<T>) m_op.copy(),
-                                m_val.createVariable());
-        }
+    @Override
+    public UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> copy() {
+        return new ImgPlusNormalize<T>((ImgNormalize<T>) m_op.copy(),
+                m_val.createVariable());
+    }
 }

@@ -65,37 +65,37 @@ import org.knime.knip.core.data.algebra.ExtendedPolygon;
 @Deprecated
 public class ExtendedPolygonDeSerializer {
 
-        private static final int CONTOUR_RESAMPLING_REATE = 1000;
+    private static final int CONTOUR_RESAMPLING_REATE = 1000;
 
-        public static void serialize(final ExtendedPolygon poly, final DataOutput out)
-                        throws IOException {
+    public static void serialize(final ExtendedPolygon poly, final DataOutput out)
+            throws IOException {
 
-                ExtendedPolygon resampledPoly;
-                // only save an approximation to avoid a to high memory
-                // consumption
-                if (poly.length() > CONTOUR_RESAMPLING_REATE) {
-                        resampledPoly = poly
-                                        .resamplePolygon(CONTOUR_RESAMPLING_REATE);
-                } else {
-                        resampledPoly = poly;
-                }
-
-                out.writeInt(poly.length());
-
-                for (final int[] p : resampledPoly) {
-                        out.writeInt(p[0]);
-                        out.writeInt(p[1]);
-                }
+        ExtendedPolygon resampledPoly;
+        // only save an approximation to avoid a to high memory
+        // consumption
+        if (poly.length() > CONTOUR_RESAMPLING_REATE) {
+            resampledPoly = poly
+                    .resamplePolygon(CONTOUR_RESAMPLING_REATE);
+        } else {
+            resampledPoly = poly;
         }
 
-        public static ExtendedPolygon deserialize(final DataInput in)
-                        throws IOException {
-                final int length = in.readInt();
-                final ExtendedPolygon res = new ExtendedPolygon();
-                for (int i = 0; i < length; i++) {
-                        res.addPoint(in.readInt(), in.readInt());
-                }
+        out.writeInt(poly.length());
 
-                return res;
+        for (final int[] p : resampledPoly) {
+            out.writeInt(p[0]);
+            out.writeInt(p[1]);
         }
+    }
+
+    public static ExtendedPolygon deserialize(final DataInput in)
+            throws IOException {
+        final int length = in.readInt();
+        final ExtendedPolygon res = new ExtendedPolygon();
+        for (int i = 0; i < length; i++) {
+            res.addPoint(in.readInt(), in.readInt());
+        }
+
+        return res;
+    }
 }

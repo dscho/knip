@@ -43,312 +43,312 @@ import net.imglib2.type.numeric.RealType;
  */
 public class Tamura<T extends RealType<T>> {
 
-        private int[][] m_greyValues;
+    private int[][] m_greyValues;
 
-        private double[] m_directionality;
+    private double[] m_directionality;
 
-        private int m_numPix;
+    private int m_numPix;
 
-        private double m_mean;
+    private double m_mean;
 
-        private final String[] m_enabledFeatureNames;
+    private final String[] m_enabledFeatureNames;
 
-        private final int m_dimX;
+    private final int m_dimX;
 
-        private final int m_dimY;
+    private final int m_dimY;
 
-        private static final double[][] filterH = { { -1, 0, 1 }, { -1, 0, 1 },
-                        { -1, 0, 1 } };
+    private static final double[][] filterH = { { -1, 0, 1 }, { -1, 0, 1 },
+        { -1, 0, 1 } };
 
-        private static final double[][] filterV = { { -1, -1, -1 },
-                        { 0, 0, 0 }, { 1, 1, 1 } };
+    private static final double[][] filterV = { { -1, -1, -1 },
+        { 0, 0, 0 }, { 1, 1, 1 } };
 
-        public Tamura(final int dimX, final int dimY, final String[] enabledFeatureNames) {
-                m_enabledFeatureNames = enabledFeatureNames;
-                m_dimX = dimX;
-                m_dimY = dimY;
+    public Tamura(final int dimX, final int dimY, final String[] enabledFeatureNames) {
+        m_enabledFeatureNames = enabledFeatureNames;
+        m_dimX = dimX;
+        m_dimY = dimY;
+    }
+
+    /**
+     * @return
+     */
+     private double coarseness() {
+        double result = 0;
+
+        for (int i = 1; i < (m_greyValues.length - 1); i++) {
+            for (int j = 1; j < (m_greyValues[i].length - 1); j++) {
+                result = result
+                        + Math.pow(2,
+                                   this.sizeLeadDiffValue(
+                                                          i,
+                                                          j));
+            }
         }
 
-        /**
-         * @return
-         */
-        private double coarseness() {
-                double result = 0;
+        result = (1.0 / m_numPix) * result;
+        return result;
+     }
 
-                for (int i = 1; i < m_greyValues.length - 1; i++) {
-                        for (int j = 1; j < m_greyValues[i].length - 1; j++) {
-                                result = result
-                                                + Math.pow(2,
-                                                                this.sizeLeadDiffValue(
-                                                                                i,
-                                                                                j));
-                        }
-                }
+     /**
+      * 1. For every point(x, y) calculate the average over neighborhoods.
+      *
+      * @param x
+      * @param y
+      * @return
+      */
+     private final double averageOverNeighborhoods(final int x, final int y, final int k) {
+         double result = 0, border;
+         border = Math.pow(2, 2 * k);
+         int x0 = 0, y0 = 0;
 
-                result = (1.0 / m_numPix) * result;
-                return result;
-        }
+         for (int i = 0; i < border; i++) {
+             for (int j = 0; j < border; j++) {
+                 x0 = (x - (int) Math.pow(2, k - 1)) + i;
+                 y0 = (y - (int) Math.pow(2, k - 1)) + j;
+                 if (x0 < 0) {
+                     x0 = 0;
+                 }
+                 if (y0 < 0) {
+                     y0 = 0;
+                 }
+                 if (x0 >= m_greyValues.length) {
+                     x0 = m_greyValues.length - 1;
+                 }
+                 if (y0 >= m_greyValues[0].length) {
+                     y0 = m_greyValues[0].length - 1;
+                 }
 
-        /**
-         * 1. For every point(x, y) calculate the average over neighborhoods.
-         *
-         * @param x
-         * @param y
-         * @return
-         */
-        private final double averageOverNeighborhoods(final int x, final int y, final int k) {
-                double result = 0, border;
-                border = Math.pow(2, 2 * k);
-                int x0 = 0, y0 = 0;
+                 result = result + m_greyValues[x0][y0];
+             }
+         }
+         result = (1 / Math.pow(2, 2 * k)) * result;
+         return result;
+     }
 
-                for (int i = 0; i < border; i++) {
-                        for (int j = 0; j < border; j++) {
-                                x0 = x - (int) Math.pow(2, k - 1) + i;
-                                y0 = y - (int) Math.pow(2, k - 1) + j;
-                                if (x0 < 0) {
-                                        x0 = 0;
-                                }
-                                if (y0 < 0) {
-                                        y0 = 0;
-                                }
-                                if (x0 >= m_greyValues.length) {
-                                        x0 = m_greyValues.length - 1;
-                                }
-                                if (y0 >= m_greyValues[0].length) {
-                                        y0 = m_greyValues[0].length - 1;
-                                }
+     /**
+      * 2. For every point (x, y) calculate differences between the not
+      * overlapping neighborhoods on opposite sides of the point in
+      * horizontal direction.
+      *
+      * @param x
+      * @param y
+      * @return
+      */
+     private final double differencesBetweenNeighborhoodsHorizontal(final int x,
+                                                                    final int y, final int k) {
+         double result = 0;
+         result = Math.abs(this.averageOverNeighborhoods(
+                                                         x + (int) Math.pow(2, k - 1), y, k)
+                                                         - this.averageOverNeighborhoods(
+                                                                                         x - (int) Math.pow(2, k - 1),
+                                                                                         y, k));
+         return result;
+     }
 
-                                result = result + m_greyValues[x0][y0];
-                        }
-                }
-                result = (1 / Math.pow(2, 2 * k)) * result;
-                return result;
-        }
+     /**
+      * 2. For every point (x, y) calculate differences between the not
+      * overlapping neighborhoods on opposite sides of the point in vertical
+      * direction.
+      *
+      * @param x
+      * @param y
+      * @return
+      */
+     private final double differencesBetweenNeighborhoodsVertical(final int x,
+                                                                  final int y, final int k) {
+         double result = 0;
+         result = Math.abs(this.averageOverNeighborhoods(x, y
+                                                         + (int) Math.pow(2, k - 1), k)
+                                                         - this.averageOverNeighborhoods(x, y
+                                                                                         - (int) Math.pow(2, k - 1), k));
+         return result;
+     }
 
-        /**
-         * 2. For every point (x, y) calculate differences between the not
-         * overlapping neighborhoods on opposite sides of the point in
-         * horizontal direction.
-         *
-         * @param x
-         * @param y
-         * @return
-         */
-        private final double differencesBetweenNeighborhoodsHorizontal(final int x,
-                        final int y, final int k) {
-                double result = 0;
-                result = Math.abs(this.averageOverNeighborhoods(
-                                x + (int) Math.pow(2, k - 1), y, k)
-                                - this.averageOverNeighborhoods(
-                                                x - (int) Math.pow(2, k - 1),
-                                                y, k));
-                return result;
-        }
+     /**
+      * 3. At each point (x, y) select the size leading to the highest
+      * difference value.
+      *
+      * @param x
+      * @param y
+      * @return
+      */
+     private final int sizeLeadDiffValue(final int x, final int y) {
+         double result = 0, tmp;
+         int maxK = 1;
 
-        /**
-         * 2. For every point (x, y) calculate differences between the not
-         * overlapping neighborhoods on opposite sides of the point in vertical
-         * direction.
-         *
-         * @param x
-         * @param y
-         * @return
-         */
-        private final double differencesBetweenNeighborhoodsVertical(final int x,
-                        final int y, final int k) {
-                double result = 0;
-                result = Math.abs(this.averageOverNeighborhoods(x, y
-                                + (int) Math.pow(2, k - 1), k)
-                                - this.averageOverNeighborhoods(x, y
-                                                - (int) Math.pow(2, k - 1), k));
-                return result;
-        }
+         for (int k = 0; k < 3; k++) {
+             tmp = Math.max(this
+                            .differencesBetweenNeighborhoodsHorizontal(
+                                                                       x, y, k),
+                                                                       this.differencesBetweenNeighborhoodsVertical(
+                                                                                                                    x, y, k));
+             if (result < tmp) {
+                 maxK = k;
+                 result = tmp;
+             }
+         }
+         return maxK;
+     }
 
-        /**
-         * 3. At each point (x, y) select the size leading to the highest
-         * difference value.
-         *
-         * @param x
-         * @param y
-         * @return
-         */
-        private final int sizeLeadDiffValue(final int x, final int y) {
-                double result = 0, tmp;
-                int maxK = 1;
+     /**
+      * Picture Quality.
+      *
+      * @return
+      */
+     private final double contrast() {
+         double result = 0, sigma, my4 = 0, alpha4 = 0;
 
-                for (int k = 0; k < 3; k++) {
-                        tmp = Math.max(this
-                                        .differencesBetweenNeighborhoodsHorizontal(
-                                                        x, y, k),
-                                        this.differencesBetweenNeighborhoodsVertical(
-                                                        x, y, k));
-                        if (result < tmp) {
-                                maxK = k;
-                                result = tmp;
-                        }
-                }
-                return maxK;
-        }
+         sigma = this.calculateSigma();
 
-        /**
-         * Picture Quality.
-         *
-         * @return
-         */
-        private final double contrast() {
-                double result = 0, sigma, my4 = 0, alpha4 = 0;
+         for (int x = 0; x < m_greyValues.length; x++) {
+             for (int y = 0; y < m_greyValues[x].length; y++) {
+                 my4 = my4
+                         + Math.pow(m_greyValues[x][y]
+                                 - m_mean, 4);
+             }
+         }
 
-                sigma = this.calculateSigma();
+         alpha4 = my4 / (Math.pow(sigma, 4));
+         result = sigma / (Math.pow(alpha4, 0.25));
+         return result;
+     }
 
-                for (int x = 0; x < m_greyValues.length; x++) {
-                        for (int y = 0; y < m_greyValues[x].length; y++) {
-                                my4 = my4
-                                                + Math.pow(m_greyValues[x][y]
-                                                                - m_mean, 4);
-                        }
-                }
+     /**
+      * @param mean
+      * @return
+      */
+     private final double calculateSigma() {
+         double result = 0;
 
-                alpha4 = my4 / (Math.pow(sigma, 4));
-                result = sigma / (Math.pow(alpha4, 0.25));
-                return result;
-        }
+         for (int x = 0; x < m_greyValues.length; x++) {
+             for (int y = 0; y < m_greyValues[x].length; y++) {
+                 result = result
+                         + Math.pow(m_greyValues[x][y]
+                                 - m_mean, 2);
 
-        /**
-         * @param mean
-         * @return
-         */
-        private final double calculateSigma() {
-                double result = 0;
+             }
+         }
+         result = result / m_numPix;
+         return Math.sqrt(result);
+     }
 
-                for (int x = 0; x < m_greyValues.length; x++) {
-                        for (int y = 0; y < m_greyValues[x].length; y++) {
-                                result = result
-                                                + Math.pow(m_greyValues[x][y]
-                                                                - m_mean, 2);
+     /**
+      * @return
+      */
+     private final double[] directionality() {
+         final double[] histogram = new double[16];
+         final double maxResult = 3;
+         final double binWindow = maxResult / (histogram.length - 1);
+         int bin = -1;
+         for (int x = 1; x < (m_greyValues.length - 1); x++) {
+             for (int y = 1; y < (m_greyValues[x].length - 1); y++) {
+                 bin = (int) (((Math.PI / 2) + Math.atan(this
+                                                         .calculateDeltaV(x, y)
+                                                         / this.calculateDeltaH(x, y))) / binWindow);
+                 histogram[bin]++;
+             }
+         }
+         return histogram;
+     }
 
-                        }
-                }
-                result = result / m_numPix;
-                return Math.sqrt(result);
-        }
+     /**
+      * @return
+      */
+     private final double calculateDeltaH(final int x, final int y) {
+         double result = 0;
 
-        /**
-         * @return
-         */
-        private final double[] directionality() {
-                final double[] histogram = new double[16];
-                final double maxResult = 3;
-                final double binWindow = maxResult / (histogram.length - 1);
-                int bin = -1;
-                for (int x = 1; x < m_greyValues.length - 1; x++) {
-                        for (int y = 1; y < m_greyValues[x].length - 1; y++) {
-                                bin = (int) ((Math.PI / 2 + Math.atan(this
-                                                .calculateDeltaV(x, y)
-                                                / this.calculateDeltaH(x, y))) / binWindow);
-                                histogram[bin]++;
-                        }
-                }
-                return histogram;
-        }
+         for (int i = 0; i < 3; i++) {
+             for (int j = 0; j < 3; j++) {
+                 result = result
+                         + (m_greyValues[(x - 1) + i][(y - 1)
+                                                      + j]
+                                                              * filterH[i][j]);
+             }
+         }
 
-        /**
-         * @return
-         */
-        private final double calculateDeltaH(final int x, final int y) {
-                double result = 0;
+         return result;
+     }
 
-                for (int i = 0; i < 3; i++) {
-                        for (int j = 0; j < 3; j++) {
-                                result = result
-                                                + m_greyValues[x - 1 + i][y - 1
-                                                                + j]
-                                                * filterH[i][j];
-                        }
-                }
+     /**
+      * @param x
+      * @param y
+      * @return
+      */
+     private final double calculateDeltaV(final int x, final int y) {
+         double result = 0;
 
-                return result;
-        }
+         for (int i = 0; i < 3; i++) {
+             for (int j = 0; j < 3; j++) {
+                 result = result
+                         + (m_greyValues[(x - 1) + i][(y - 1)
+                                                      + j]
+                                                              * filterV[i][j]);
+             }
+         }
+         return result;
+     }
 
-        /**
-         * @param x
-         * @param y
-         * @return
-         */
-        private final double calculateDeltaV(final int x, final int y) {
-                double result = 0;
+     /**
+      * @param img
+      * @param s
+      * @return
+      */
+     public final double[] updateROI(final IterableInterval<T> interval) {
 
-                for (int i = 0; i < 3; i++) {
-                        for (int j = 0; j < 3; j++) {
-                                result = result
-                                                + m_greyValues[x - 1 + i][y - 1
-                                                                + j]
-                                                * filterV[i][j];
-                        }
-                }
-                return result;
-        }
+         final Cursor<T> cursor = interval.localizingCursor();
+         final int minVal = (int) interval.firstElement().getMinValue();
 
-        /**
-         * @param img
-         * @param s
-         * @return
-         */
-        public final double[] updateROI(final IterableInterval<T> interval) {
+         m_greyValues = new int[(int) interval.dimension(m_dimX)][(int) interval
+                                                                  .dimension(m_dimY)];
+         m_numPix = (int) interval.size();
 
-                final Cursor<T> cursor = interval.localizingCursor();
-                final int minVal = (int) interval.firstElement().getMinValue();
+         while (cursor.hasNext()) {
+             cursor.fwd();
 
-                m_greyValues = new int[(int) interval.dimension(m_dimX)][(int) interval
-                                .dimension(m_dimY)];
-                m_numPix = (int) interval.size();
+             final int x = (int) (cursor.getIntPosition(m_dimX) - interval
+                     .min(m_dimX));
+             final int y = (int) (cursor.getIntPosition(m_dimY) - interval
+                     .min(m_dimY));
 
-                while (cursor.hasNext()) {
-                        cursor.fwd();
+             m_greyValues[x][y] = (int) cursor.get().getRealDouble()
+                     - minVal;
 
-                        final int x = (int) (cursor.getIntPosition(m_dimX) - interval
-                                        .min(m_dimX));
-                        final int y = (int) (cursor.getIntPosition(m_dimY) - interval
-                                        .min(m_dimY));
+             m_mean += m_greyValues[x][y];
+         }
 
-                        m_greyValues[x][y] = (int) cursor.get().getRealDouble()
-                                        - minVal;
+         m_mean /= m_numPix;
 
-                        m_mean += m_greyValues[x][y];
-                }
+         final double[] histogram = new double[18];
 
-                m_mean /= m_numPix;
+         if (isEnabled(TamuraFeatureSet.FEATURES[0])) {
+             histogram[0] = this.coarseness();
+         }
 
-                final double[] histogram = new double[18];
+         if (isEnabled(TamuraFeatureSet.FEATURES[1])) {
+             histogram[1] = this.contrast();
+         }
 
-                if (isEnabled(TamuraFeatureSet.FEATURES[0])) {
-                        histogram[0] = this.coarseness();
-                }
+         if (isEnabled(TamuraFeatureSet.FEATURES[2])
+                 || isEnabled(TamuraFeatureSet.FEATURES[3])
+                 || isEnabled(TamuraFeatureSet.FEATURES[4])
+                 || isEnabled(TamuraFeatureSet.FEATURES[5])) {
 
-                if (isEnabled(TamuraFeatureSet.FEATURES[1])) {
-                        histogram[1] = this.contrast();
-                }
+             m_directionality = this.directionality();
 
-                if (isEnabled(TamuraFeatureSet.FEATURES[2])
-                                || isEnabled(TamuraFeatureSet.FEATURES[3])
-                                || isEnabled(TamuraFeatureSet.FEATURES[4])
-                                || isEnabled(TamuraFeatureSet.FEATURES[5])) {
+             for (int i = 2; i < histogram.length; i++) {
+                 histogram[i] = m_directionality[i - 2];
+             }
+         }
 
-                        m_directionality = this.directionality();
+         return histogram;
+     }
 
-                        for (int i = 2; i < histogram.length; i++) {
-                                histogram[i] = m_directionality[i - 2];
-                        }
-                }
-
-                return histogram;
-        }
-
-        public boolean isEnabled(final String featureName) {
-                for (final String s : m_enabledFeatureNames) {
-                        if (s.equals(featureName)) {
-                                return true;
-                        }
-                }
-                return false;
-        }
+     public boolean isEnabled(final String featureName) {
+         for (final String s : m_enabledFeatureNames) {
+             if (s.equals(featureName)) {
+                 return true;
+             }
+         }
+         return false;
+     }
 }

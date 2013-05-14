@@ -56,20 +56,20 @@ import java.awt.Color;
  */
 public class TransferFunctionPainterFactory {
 
-        private TransferFunctionPainterFactory() {
-        };
+    private TransferFunctionPainterFactory() {
+    };
 
-        public static final TransferFunctionPainter create(
-                        final TransferFunction function, final Color color) {
-                if (function instanceof PolylineTransferFunction) {
+    public static final TransferFunctionPainter create(
+                                                       final TransferFunction function, final Color color) {
+        if (function instanceof PolylineTransferFunction) {
 
-                        return new PolylineTransferFunctionPainter(
-                                        (PolylineTransferFunction) function,
-                                        color);
-                }
-
-                throw new IllegalArgumentException(
-                                "not yet implemented for type "
-                                                + function.getClass());
+            return new PolylineTransferFunctionPainter(
+                                                       (PolylineTransferFunction) function,
+                                                       color);
         }
+
+        throw new IllegalArgumentException(
+                                           "not yet implemented for type "
+                                                   + function.getClass());
+    }
 }

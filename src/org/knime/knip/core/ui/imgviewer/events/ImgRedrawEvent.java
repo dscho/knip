@@ -11,21 +11,21 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class ImgRedrawEvent implements KNIPEvent {
 
-        /**
-         * should be executed after parameter changes => low priority
-         *
-         * {@inheritDoc}
-         */
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.LOW;
-        }
+    /**
+     * should be executed after parameter changes => low priority
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.LOW;
+    }
 
-        /**
-         * implements class equality (one redraw is enough)
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return (thatEvent instanceof ImgRedrawEvent);
-        }
+    /**
+     * implements class equality (one redraw is enough)
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return (thatEvent instanceof ImgRedrawEvent);
+    }
 }

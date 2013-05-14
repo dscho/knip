@@ -70,64 +70,64 @@ import org.knime.knip.core.data.LabelGenerator;
  * @author hornm, University of Konstanz
  */
 public class RandomSeeds<L extends Comparable<L>> implements
-                UnaryOperation<Interval, Labeling<L>> {
+UnaryOperation<Interval, Labeling<L>> {
 
-        private final int m_avgDistance;
-        private final LabelGenerator<L> m_seedGen;
+    private final int m_avgDistance;
+    private final LabelGenerator<L> m_seedGen;
 
-        public RandomSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
-                m_seedGen = seedGen;
-                m_avgDistance = avgDistance;
-        }
+    public RandomSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
+        m_seedGen = seedGen;
+        m_avgDistance = avgDistance;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Labeling<L> compute(final Interval input, final Labeling<L> output) {
-                m_seedGen.reset();
-                final Random rand = new Random();
-                final long[] currentGridPos = new long[output.numDimensions()];
-                final RandomAccess<LabelingType<L>> out = Views.extendValue(
-                                output, output.firstElement().createVariable())
-                                .randomAccess();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Labeling<L> compute(final Interval input, final Labeling<L> output) {
+        m_seedGen.reset();
+        final Random rand = new Random();
+        final long[] currentGridPos = new long[output.numDimensions()];
+        final RandomAccess<LabelingType<L>> out = Views.extendValue(
+                                                                    output, output.firstElement().createVariable())
+                                                                    .randomAccess();
 
-                while (currentGridPos[currentGridPos.length - 1] < input
-                                .dimension(currentGridPos.length - 1)) {
+        while (currentGridPos[currentGridPos.length - 1] < input
+                .dimension(currentGridPos.length - 1)) {
 
-                        /* regular grid */
+            /* regular grid */
 
-                        currentGridPos[0] += m_avgDistance;
+            currentGridPos[0] += m_avgDistance;
 
-                        // introduce randomness into the
-                        // grid position
-                        for (int i = 0; i < currentGridPos.length; i++) {
-                                out.setPosition(currentGridPos[i]
-                                                + rand.nextInt(m_avgDistance),
-                                                i);
+            // introduce randomness into the
+            // grid position
+            for (int i = 0; i < currentGridPos.length; i++) {
+                out.setPosition(currentGridPos[i]
+                        + rand.nextInt(m_avgDistance),
+                        i);
 
-                        }
-                        out.get().setLabel(m_seedGen.nextLabel());
+            }
+            out.get().setLabel(m_seedGen.nextLabel());
 
-                        // next position in the higher
-                        // dimensions than 0
-                        for (int i = 0; i < output.numDimensions() - 1; i++) {
-                                if (currentGridPos[i] > input.dimension(i)) {
-                                        currentGridPos[i] = 0;
-                                        currentGridPos[i + 1] += m_avgDistance;
-                                }
-                        }
-
+            // next position in the higher
+            // dimensions than 0
+            for (int i = 0; i < (output.numDimensions() - 1); i++) {
+                if (currentGridPos[i] > input.dimension(i)) {
+                    currentGridPos[i] = 0;
+                    currentGridPos[i + 1] += m_avgDistance;
                 }
-                return output;
-        }
+            }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public UnaryOperation<Interval, Labeling<L>> copy() {
-                return new RandomSeeds<L>(m_seedGen, m_avgDistance);
         }
+        return output;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UnaryOperation<Interval, Labeling<L>> copy() {
+        return new RandomSeeds<L>(m_seedGen, m_avgDistance);
+    }
 
 }

@@ -65,79 +65,79 @@ import org.knime.knip.core.features.SharesObjects;
  */
 public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
 
-        private final int m_numAngles;
-        private Signature m_signature;
-        private ObjectCalcAndCache m_ocac;
+    private final int m_numAngles;
+    private Signature m_signature;
+    private ObjectCalcAndCache m_ocac;
 
-        /**
-         * @param numAngles
-         * @param target
-         */
-        public CentralDistanceFeatureSet(final int numAngles) {
-                m_numAngles = numAngles;
-        }
+    /**
+     * @param numAngles
+     * @param target
+     */
+    public CentralDistanceFeatureSet(final int numAngles) {
+        m_numAngles = numAngles;
+    }
 
-        @FeatureTargetListener
-        public void iiUpdated(final IterableInterval<BitType> interval) {
-                m_signature = m_ocac.signature(interval, m_numAngles);
-        }
+    @FeatureTargetListener
+    public void iiUpdated(final IterableInterval<BitType> interval) {
+        m_signature = m_ocac.signature(interval, m_numAngles);
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double value(final int id) {
-                return m_signature.getPosAt(id);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double value(final int id) {
+        return m_signature.getPosAt(id);
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name(final int id) {
-                return "Abs:CentralDistance [" + id + "]";
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return "Abs:CentralDistance [" + id + "]";
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int numFeatures() {
-                return m_numAngles;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return m_numAngles;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String featureSetId() {
-                return "Central Distance Feature Factory";
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "Central Distance Feature Factory";
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void enable(final int id) {
-                // nothing to do
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        // nothing to do
 
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<?>[] getSharedObjectClasses() {
-                return new Class[] { ObjectCalcAndCache.class };
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?>[] getSharedObjectClasses() {
+        return new Class[] { ObjectCalcAndCache.class };
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setSharedObjectInstances(final Object[] instances) {
-                m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSharedObjectInstances(final Object[] instances) {
+        m_ocac = (ObjectCalcAndCache) instances[0];
 
-        }
+    }
 
 }

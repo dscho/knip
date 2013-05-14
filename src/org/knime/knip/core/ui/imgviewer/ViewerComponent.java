@@ -19,78 +19,78 @@ import org.knime.knip.core.ui.event.EventServiceClient;
  * @param <T>
  */
 public abstract class ViewerComponent extends JPanel implements
-                EventServiceClient {
+EventServiceClient {
 
-        protected enum Position {
-                CENTER, NORTH, SOUTH, WEST, EAST, HIDDEN;
+    protected enum Position {
+        CENTER, NORTH, SOUTH, WEST, EAST, HIDDEN;
 
+    }
+
+    /* def */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @param title
+     *                a unique title for this option panel
+     * @param isBorderHidden
+     *                if true, a border is drawn arround the component
+     */
+    public ViewerComponent(final String title, final boolean isBorderHidden) {
+
+        if (!isBorderHidden) {
+            setTitle(title);
+        } else {
+            setBorder(BorderFactory.createEmptyBorder());
         }
+    }
 
-        /* def */
-        private static final long serialVersionUID = 1L;
+    /**
+     * Set the title for the border of this component.
+     *
+     * @param title the title
+     */
+    public void setTitle(final String title) {
+        setBorder(BorderFactory.createTitledBorder(title));
+    }
 
-        /**
-         * @param title
-         *                a unique title for this option panel
-         * @param isBorderHidden
-         *                if true, a border is drawn arround the component
-         */
-        public ViewerComponent(final String title, final boolean isBorderHidden) {
+    /**
+     * Set the parent component of this viewer component
+     *
+     * @param parent
+     *                parent component
+     */
+    public abstract void setParent(Component parent);
 
-                if (!isBorderHidden) {
-                        setTitle(title);
-                } else {
-                        setBorder(BorderFactory.createEmptyBorder());
-                }
-        }
+    /**
+     * Returns the position in the BorderLayout. Possible values are
+     * {@link BorderLayout#NORTH}, {@link BorderLayout#SOUTH},
+     * {@link BorderLayout#WEST},{@link BorderLayout#EAST},
+     * {@link BorderLayout#CENTER},HIDDEN
+     *
+     * A component with hidden position will not be rendered
+     *
+     * @return position in {@link BorderLayout} as string
+     */
+    public abstract Position getPosition();
 
-        /**
-         * Set the title for the border of this component.
-         *
-         * @param title the title
-         */
-        public void setTitle(final String title) {
-            setBorder(BorderFactory.createTitledBorder(title));
-        }
+    /**
+     * Reset the component to a inital state
+     */
+    public abstract void reset();
 
-        /**
-         * Set the parent component of this viewer component
-         *
-         * @param parent
-         *                parent component
-         */
-        public abstract void setParent(Component parent);
+    /**
+     * Serialization
+     *
+     * @param out
+     * @throws IOException
+     */
+    public abstract void saveComponentConfiguration(ObjectOutput out)
+            throws IOException;
 
-        /**
-         * Returns the position in the BorderLayout. Possible values are
-         * {@link BorderLayout#NORTH}, {@link BorderLayout#SOUTH},
-         * {@link BorderLayout#WEST},{@link BorderLayout#EAST},
-         * {@link BorderLayout#CENTER},HIDDEN
-         *
-         * A component with hidden position will not be rendered
-         *
-         * @return position in {@link BorderLayout} as string
-         */
-        public abstract Position getPosition();
-
-        /**
-         * Reset the component to a inital state
-         */
-        public abstract void reset();
-
-        /**
-         * Serialization
-         *
-         * @param out
-         * @throws IOException
-         */
-        public abstract void saveComponentConfiguration(ObjectOutput out)
-                        throws IOException;
-
-        /**
-         * Deserialization
-         */
-        public abstract void loadComponentConfiguration(ObjectInput in)
-                        throws IOException, ClassNotFoundException;
+    /**
+     * Deserialization
+     */
+    public abstract void loadComponentConfiguration(ObjectInput in)
+            throws IOException, ClassNotFoundException;
 
 }

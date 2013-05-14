@@ -59,30 +59,30 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class FileChooserSelectedFilesChgEvent implements KNIPEvent {
 
-        private final String[] m_selectedFiles;
+    private final String[] m_selectedFiles;
 
-        public FileChooserSelectedFilesChgEvent(final String[] selectedFiles) {
-                m_selectedFiles = selectedFiles;
+    public FileChooserSelectedFilesChgEvent(final String[] selectedFiles) {
+        m_selectedFiles = selectedFiles;
 
-        }
+    }
 
-        /**
-         * @return the selectedFiles
-         */
-        public String[] getSelectedFiles() {
-                return m_selectedFiles;
-        }
+    /**
+     * @return the selectedFiles
+     */
+    public String[] getSelectedFiles() {
+        return m_selectedFiles;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 }

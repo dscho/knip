@@ -19,23 +19,23 @@ import java.util.Collection;
  */
 public class EnumListProvider {
 
-        public static String[] getStringList(final Enum<?>... enums) {
+    public static String[] getStringList(final Enum<?>... enums) {
 
-                final String[] s = new String[enums.length];
+        final String[] s = new String[enums.length];
 
-                int i = 0;
-                for (final Enum<?> e : enums) {
-                        s[i++] = e.name();
-                }
-
-                return s;
+        int i = 0;
+        for (final Enum<?> e : enums) {
+            s[i++] = e.name();
         }
 
-        public static Collection<String> getStringCollection(final Enum<?>[] enums) {
-                final ArrayList<String> s = new ArrayList<String>();
-                for (final Enum<?> e : enums) {
-                        s.add(e.name());
-                }
-                return s;
+        return s;
+    }
+
+    public static Collection<String> getStringCollection(final Enum<?>[] enums) {
+        final ArrayList<String> s = new ArrayList<String>();
+        for (final Enum<?> e : enums) {
+            s.add(e.name());
         }
+        return s;
+    }
 }

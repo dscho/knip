@@ -18,7 +18,7 @@
  */
 
 /*
- * copied by 
+ * copied by
  * Michael Zinsmaier, University of Konstanz
  * 
  * We use this class together with B3SplineUDWT because it is needed internally.
@@ -28,13 +28,13 @@ package org.knime.knip.core.ops.spotdetection.icybased;
 
 public class WaveletConfigException extends Exception {
 
-        /**
-	 * 
-	 */
-        private static final long serialVersionUID = 7526927005039578733L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7526927005039578733L;
 
-        public WaveletConfigException(final String message) {
-                super(message);
-        }
+    public WaveletConfigException(final String message) {
+        super(message);
+    }
 
 }

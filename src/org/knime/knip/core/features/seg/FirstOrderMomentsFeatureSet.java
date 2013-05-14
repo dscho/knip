@@ -67,174 +67,174 @@ import org.knime.knip.core.features.SharesObjects;
  *                image type
  */
 public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
-                FeatureSet, SharesObjects {
+FeatureSet, SharesObjects {
 
-        /**
-         * the feature names
-         */
-        public static final String[] FEATURES = new String[] { "Min", "Max",
-                        "Mean", "Geometric Mean", "Sum", "Squares of Sum",
-                        "Std Dev", "Variance", "Skewness", "Kurtosis",
-                        "Quantil 25", "Quantil 50", "Quantil 75",
-                        "Median absolute deviation (MAD)",
-                        "WeightedCentroid Dim 1", "WeightedCentroid Dim 2",
-                        "WeightedCentroid Dim 3", "WeightedCentroid Dim 4",
-                        "WeightedCentroid Dim 5", "Mass Displacement", };
+    /**
+     * the feature names
+     */
+    public static final String[] FEATURES = new String[] { "Min", "Max",
+        "Mean", "Geometric Mean", "Sum", "Squares of Sum",
+        "Std Dev", "Variance", "Skewness", "Kurtosis",
+        "Quantil 25", "Quantil 50", "Quantil 75",
+        "Median absolute deviation (MAD)",
+        "WeightedCentroid Dim 1", "WeightedCentroid Dim 2",
+        "WeightedCentroid Dim 3", "WeightedCentroid Dim 4",
+        "WeightedCentroid Dim 5", "Mass Displacement", };
 
-        private DescriptiveStatistics m_statistics;
+    private DescriptiveStatistics m_statistics;
 
-        private IterableInterval<T> m_interval;
+    private IterableInterval<T> m_interval;
 
-        private double[] m_weightedCentroid;
+    private double[] m_weightedCentroid;
 
-        private int m_massDisplacement;
+    private int m_massDisplacement;
 
-        private ObjectCalcAndCache m_ocac;
+    private ObjectCalcAndCache m_ocac;
 
-        @FeatureTargetListener
-        public final void iiUpdated(final IterableInterval<T> interval) {
-                m_interval = interval;
+    @FeatureTargetListener
+    public final void iiUpdated(final IterableInterval<T> interval) {
+        m_interval = interval;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final double value(final int id) {
+
+        m_statistics = m_ocac.descriptiveStatistics(m_interval);
+
+        if ((id > 12) && (id <= 19)) {
+            // update weighted centroid
+            m_weightedCentroid = m_ocac.weightedCentroid(
+                                                         m_interval, m_statistics,
+                                                         m_massDisplacement);
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public final double value(final int id) {
-
-                m_statistics = m_ocac.descriptiveStatistics(m_interval);
-
-                if (id > 12 && id <= 19) {
-                        // update weighted centroid
-                        m_weightedCentroid = m_ocac.weightedCentroid(
-                                        m_interval, m_statistics,
-                                        m_massDisplacement);
+        switch (id) {
+            case 0:
+                return m_statistics.getMin();
+            case 1:
+                return m_statistics.getMax();
+            case 2:
+                return m_statistics.getMean();
+            case 3:
+                return m_statistics.getGeometricMean();
+            case 4:
+                return m_statistics.getSum();
+            case 5:
+                return m_statistics.getSumsq();
+            case 6:
+                return m_statistics.getStandardDeviation();
+            case 7:
+                return m_statistics.getVariance();
+            case 8:
+                return m_statistics.getSkewness();
+            case 9:
+                return m_statistics.getKurtosis();
+            case 10:
+                return m_statistics.getPercentile(25);
+            case 11:
+                return m_statistics.getPercentile(50);
+            case 12:
+                return m_statistics.getPercentile(75);
+            case 13:
+                final double median = m_statistics.getPercentile(50);
+                final DescriptiveStatistics stats = new DescriptiveStatistics();
+                for (int i = 0; i < m_statistics.getN(); i++) {
+                    stats.addValue(Math.abs(median
+                                            - m_statistics.getElement(i)));
+                }
+                return stats.getPercentile(50);
+            case 14:
+                return m_weightedCentroid.length > 0 ? m_weightedCentroid[0]
+                        : 0;
+            case 15:
+                return m_weightedCentroid.length > 1 ? m_weightedCentroid[1]
+                        : 0;
+            case 16:
+                return m_weightedCentroid.length > 2 ? m_weightedCentroid[2]
+                        : 0;
+            case 17:
+                return m_weightedCentroid.length > 3 ? m_weightedCentroid[3]
+                        : 0;
+            case 18:
+                return m_weightedCentroid.length > 4 ? m_weightedCentroid[4]
+                        : 0;
+            case 19:
+                m_massDisplacement = 0;
+                final double[] centroid = new Centroid().compute(m_interval,
+                                                                 new double[m_interval.numDimensions()]);
+                for (int d = 0; d < m_interval.numDimensions(); d++) {
+                    m_weightedCentroid[d] /= m_statistics.getSum();
+                    // m_weightedCentroid[d] /= m_interval.size();
+                    centroid[d] /= m_interval.size();
+                    m_massDisplacement += Math.pow(
+                                                   m_weightedCentroid[d]
+                                                           - centroid[d],
+                                                           2);
                 }
 
-                switch (id) {
-                case 0:
-                        return m_statistics.getMin();
-                case 1:
-                        return m_statistics.getMax();
-                case 2:
-                        return m_statistics.getMean();
-                case 3:
-                        return m_statistics.getGeometricMean();
-                case 4:
-                        return m_statistics.getSum();
-                case 5:
-                        return m_statistics.getSumsq();
-                case 6:
-                        return m_statistics.getStandardDeviation();
-                case 7:
-                        return m_statistics.getVariance();
-                case 8:
-                        return m_statistics.getSkewness();
-                case 9:
-                        return m_statistics.getKurtosis();
-                case 10:
-                        return m_statistics.getPercentile(25);
-                case 11:
-                        return m_statistics.getPercentile(50);
-                case 12:
-                        return m_statistics.getPercentile(75);
-                case 13:
-                        final double median = m_statistics.getPercentile(50);
-                        final DescriptiveStatistics stats = new DescriptiveStatistics();
-                        for (int i = 0; i < m_statistics.getN(); i++) {
-                                stats.addValue(Math.abs(median
-                                                - m_statistics.getElement(i)));
-                        }
-                        return stats.getPercentile(50);
-                case 14:
-                        return m_weightedCentroid.length > 0 ? m_weightedCentroid[0]
-                                        : 0;
-                case 15:
-                        return m_weightedCentroid.length > 1 ? m_weightedCentroid[1]
-                                        : 0;
-                case 16:
-                        return m_weightedCentroid.length > 2 ? m_weightedCentroid[2]
-                                        : 0;
-                case 17:
-                        return m_weightedCentroid.length > 3 ? m_weightedCentroid[3]
-                                        : 0;
-                case 18:
-                        return m_weightedCentroid.length > 4 ? m_weightedCentroid[4]
-                                        : 0;
-                case 19:
-                        m_massDisplacement = 0;
-                        final double[] centroid = new Centroid().compute(m_interval,
-                                        new double[m_interval.numDimensions()]);
-                        for (int d = 0; d < m_interval.numDimensions(); d++) {
-                                m_weightedCentroid[d] /= m_statistics.getSum();
-                                // m_weightedCentroid[d] /= m_interval.size();
-                                centroid[d] /= m_interval.size();
-                                m_massDisplacement += Math.pow(
-                                                m_weightedCentroid[d]
-                                                                - centroid[d],
-                                                2);
-                        }
+                return Math.sqrt(m_massDisplacement);
 
-                        return Math.sqrt(m_massDisplacement);
-
-                default:
-                        return Double.NaN;
-
-                }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name(final int id) {
-                return FEATURES[id];
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void enable(final int id) {
-                // nothing to do
+            default:
+                return Double.NaN;
 
         }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int numFeatures() {
-                return FEATURES.length;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return FEATURES[id];
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String featureSetId() {
-                return "First Order Moments";
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        // nothing to do
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<?>[] getSharedObjectClasses() {
-                return new Class[] { ObjectCalcAndCache.class };
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setSharedObjectInstances(final Object[] instances) {
-                m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return FEATURES.length;
+    }
 
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "First Order Moments";
+    }
 
-        public ObjectCalcAndCache getCache() {
-                return m_ocac;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?>[] getSharedObjectClasses() {
+        return new Class[] { ObjectCalcAndCache.class };
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSharedObjectInstances(final Object[] instances) {
+        m_ocac = (ObjectCalcAndCache) instances[0];
+
+    }
+
+    public ObjectCalcAndCache getCache() {
+        return m_ocac;
+    }
 
 }

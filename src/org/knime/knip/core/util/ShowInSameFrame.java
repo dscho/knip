@@ -75,242 +75,242 @@ import net.imglib2.type.numeric.RealType;
  */
 public class ShowInSameFrame {
 
-        private ImagePlaneProducer m_planeProd = null;
+    private ImagePlaneProducer m_planeProd = null;
+
+    /**
+     * Shows the images (the first plane of dimensions 0 and 1) in the same
+     * frame. Only the first call of this method creates a new window,
+     * subsequent calls will show the images in the created window. The
+     * first call also defines the scaling factor and will be ignored in
+     * further calls.
+     *
+     * @param img
+     * @param scaleFactor
+     */
+    public <T extends RealType<T>> void show(final Img<T> img,
+                                             final double scaleFactor) {
+        if (m_planeProd != null) {
+            if ((img.dimension(0) == m_planeProd.getImage()
+                    .dimension(0))
+                    && (img.dimension(1) == m_planeProd
+                    .getImage()
+                    .dimension(1))) {
+                m_planeProd.updateConsumers(img);
+                return;
+            }
+
+            m_planeProd = null;
+        }
+        final JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        final JLabel label = new JLabel();
+        frame.getContentPane().add(label);
+        m_planeProd = new ImagePlaneProducer(img);
+        final String title = " (" + img.dimension(0) + "x" + img.dimension(1)
+                + ")";
+        frame.setTitle(title);
+        final java.awt.Image awtImage = Toolkit.getDefaultToolkit()
+                .createImage(m_planeProd);
+        label.setIcon(new ImageIcon(
+                                    awtImage.getScaledInstance((int) Math.round(img
+                                                                                .dimension(0) * scaleFactor),
+                                                                                (int) Math.round(img
+                                                                                                 .dimension(1)
+                                                                                                 * scaleFactor),
+                                                                                                 java.awt.Image.SCALE_DEFAULT)));
+        frame.setSize((int) img.dimension(0), (int) img.dimension(1));
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    public static class ImagePlaneProducer<T extends RealType<T>>
+    implements ImageProducer {
+
+        private final Set<ImageConsumer> m_consumers = new HashSet<ImageConsumer>();
+
+        private Img<T> m_img;
+
+        private final ColorModel m_cmodel;
+
+        private byte[] m_plane;
 
         /**
-         * Shows the images (the first plane of dimensions 0 and 1) in the same
-         * frame. Only the first call of this method creates a new window,
-         * subsequent calls will show the images in the created window. The
-         * first call also defines the scaling factor and will be ignored in
-         * further calls.
-         *
          * @param img
-         * @param scaleFactor
          */
-        public <T extends RealType<T>> void show(final Img<T> img,
-                        final double scaleFactor) {
-                if (m_planeProd != null) {
-                        if (img.dimension(0) == m_planeProd.getImage()
-                                        .dimension(0)
-                                        && img.dimension(1) == m_planeProd
-                                                        .getImage()
-                                                        .dimension(1)) {
-                                m_planeProd.updateConsumers(img);
-                                return;
-                        }
-
-                        m_planeProd = null;
-                }
-                final JFrame frame = new JFrame();
-                frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                final JLabel label = new JLabel();
-                frame.getContentPane().add(label);
-                m_planeProd = new ImagePlaneProducer(img);
-                final String title = " (" + img.dimension(0) + "x" + img.dimension(1)
-                                + ")";
-                frame.setTitle(title);
-                final java.awt.Image awtImage = Toolkit.getDefaultToolkit()
-                                .createImage(m_planeProd);
-                label.setIcon(new ImageIcon(
-                                awtImage.getScaledInstance((int) Math.round(img
-                                                .dimension(0) * scaleFactor),
-                                                (int) Math.round(img
-                                                                .dimension(1)
-                                                                * scaleFactor),
-                                                java.awt.Image.SCALE_DEFAULT)));
-                frame.setSize((int) img.dimension(0), (int) img.dimension(1));
-                frame.pack();
-                frame.setVisible(true);
+        public ImagePlaneProducer(final Img<T> img) {
+            m_img = img;
+            m_plane = new byte[(int) m_img.dimension(0)
+                               * (int) m_img.dimension(1)];
+            m_cmodel = new SimpleColorModel();
         }
 
-        public static class ImagePlaneProducer<T extends RealType<T>>
-                        implements ImageProducer {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void addConsumer(final ImageConsumer ic) {
+            if (ic == null) {
+                // I don't know why this should happen - but it
+                // does!!
+                return;
+            }
+            m_consumers.add(ic);
+            initConsumer(ic);
+            updateConsumer(ic);
+        }
 
-                private final Set<ImageConsumer> m_consumers = new HashSet<ImageConsumer>();
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean isConsumer(final ImageConsumer ic) {
+            return m_consumers.contains(ic);
+        }
 
-                private Img<T> m_img;
-
-                private final ColorModel m_cmodel;
-
-                private byte[] m_plane;
-
-                /**
-                 * @param img
-                 */
-                public ImagePlaneProducer(final Img<T> img) {
-                        m_img = img;
-                        m_plane = new byte[(int) m_img.dimension(0)
-                                        * (int) m_img.dimension(1)];
-                        m_cmodel = new SimpleColorModel();
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void addConsumer(final ImageConsumer ic) {
-                        if (ic == null) {
-                                // I don't know why this should happen - but it
-                                // does!!
-                                return;
-                        }
-                        m_consumers.add(ic);
-                        initConsumer(ic);
-                        updateConsumer(ic);
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public boolean isConsumer(final ImageConsumer ic) {
-                        return m_consumers.contains(ic);
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void removeConsumer(final ImageConsumer ic) {
-                        m_consumers.remove(ic);
-
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void requestTopDownLeftRightResend(final ImageConsumer ic) {
-                        startProduction(ic);
-
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void startProduction(final ImageConsumer ic) {
-                        addConsumer(ic);
-
-                }
-
-                /**
-                 * @param ip
-                 */
-                public void updateConsumers(final Img<T> ip) {
-                        m_img = ip;
-                        m_plane = new byte[(int) m_img.dimension(0)
-                                        * (int) m_img.dimension(1)];
-                        for (final ImageConsumer ic : m_consumers) {
-                                updateConsumer(ic);
-                        }
-                }
-
-                /* */
-                private void initConsumer(final ImageConsumer ic) {
-                        ic.setDimensions((int) m_img.dimension(0),
-                                        (int) m_img.dimension(1));
-                        ic.setColorModel(m_cmodel);
-                        final int hints = ImageConsumer.RANDOMPIXELORDER;
-                        ic.setHints(hints);
-                }
-
-                private void updateConsumer(final ImageConsumer ic) {
-                        if (m_img == null) {
-                                return;
-                        }
-
-                        try {
-                                // we send the first plane of the picture
-                                final OrthoSliceCursor<T> c = new OrthoSliceCursor<T>(
-                                                m_img, 0, 1,
-                                                new long[m_img.numDimensions()]);
-                                while (c.hasNext()) {
-                                        c.fwd();
-                                        m_plane[c.getIntPosition(0)
-                                                        + c.getIntPosition(1)
-                                                        * (int) m_img.dimension(0)] = (byte) Math
-                                                        .round(normRealType(c
-                                                                        .get()) * 255);
-                                }
-                                ic.setPixels(0, 0, (int) m_img.dimension(0),
-                                                (int) m_img.dimension(1),
-                                                m_cmodel, m_plane, 0,
-                                                (int) m_img.dimension(0));
-
-                                if (isConsumer(ic)) {
-                                        ic.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
-                                }
-                        } catch (final Exception e) {
-                                if (isConsumer(ic)) {
-                                        ic.imageComplete(ImageConsumer.IMAGEERROR);
-                                }
-                        }
-
-                }
-
-                /**
-                 * @return the source {@link Img}
-                 */
-                public Img<T> getImage() {
-                        return m_img;
-                }
-
-                private <T extends RealType<T>> double normRealType(final T type) {
-                        double value = (type.getRealDouble() - type
-                                        .getMinValue())
-                                        / (type.getMaxValue() - type
-                                                        .getMinValue());
-
-                        if (value < 0) {
-                                value = 0;
-                        } else if (value > 1) {
-                                value = 1;
-                        }
-
-                        return value;
-                }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void removeConsumer(final ImageConsumer ic) {
+            m_consumers.remove(ic);
 
         }
 
-        private static class SimpleColorModel extends ColorModel {
-
-                public SimpleColorModel() {
-                        super(8);
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public int getAlpha(final int pixel) {
-                        return 255;
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public int getBlue(final int pixel) {
-                        return pixel;
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public int getGreen(final int pixel) {
-                        return pixel;
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public int getRed(final int pixel) {
-                        return pixel;
-                }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void requestTopDownLeftRightResend(final ImageConsumer ic) {
+            startProduction(ic);
 
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void startProduction(final ImageConsumer ic) {
+            addConsumer(ic);
+
+        }
+
+        /**
+         * @param ip
+         */
+        public void updateConsumers(final Img<T> ip) {
+            m_img = ip;
+            m_plane = new byte[(int) m_img.dimension(0)
+                               * (int) m_img.dimension(1)];
+            for (final ImageConsumer ic : m_consumers) {
+                updateConsumer(ic);
+            }
+        }
+
+        /* */
+        private void initConsumer(final ImageConsumer ic) {
+            ic.setDimensions((int) m_img.dimension(0),
+                             (int) m_img.dimension(1));
+            ic.setColorModel(m_cmodel);
+            final int hints = ImageConsumer.RANDOMPIXELORDER;
+            ic.setHints(hints);
+        }
+
+        private void updateConsumer(final ImageConsumer ic) {
+            if (m_img == null) {
+                return;
+            }
+
+            try {
+                // we send the first plane of the picture
+                final OrthoSliceCursor<T> c = new OrthoSliceCursor<T>(
+                        m_img, 0, 1,
+                        new long[m_img.numDimensions()]);
+                while (c.hasNext()) {
+                    c.fwd();
+                    m_plane[c.getIntPosition(0)
+                            + (c.getIntPosition(1)
+                                    * (int) m_img.dimension(0))] = (byte) Math
+                                    .round(normRealType(c
+                                                        .get()) * 255);
+                }
+                ic.setPixels(0, 0, (int) m_img.dimension(0),
+                             (int) m_img.dimension(1),
+                             m_cmodel, m_plane, 0,
+                             (int) m_img.dimension(0));
+
+                if (isConsumer(ic)) {
+                    ic.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
+                }
+            } catch (final Exception e) {
+                if (isConsumer(ic)) {
+                    ic.imageComplete(ImageConsumer.IMAGEERROR);
+                }
+            }
+
+        }
+
+        /**
+         * @return the source {@link Img}
+         */
+        public Img<T> getImage() {
+            return m_img;
+        }
+
+        private <T extends RealType<T>> double normRealType(final T type) {
+            double value = (type.getRealDouble() - type
+                    .getMinValue())
+                    / (type.getMaxValue() - type
+                            .getMinValue());
+
+            if (value < 0) {
+                value = 0;
+            } else if (value > 1) {
+                value = 1;
+            }
+
+            return value;
+        }
+
+    }
+
+    private static class SimpleColorModel extends ColorModel {
+
+        public SimpleColorModel() {
+            super(8);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int getAlpha(final int pixel) {
+            return 255;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int getBlue(final int pixel) {
+            return pixel;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int getGreen(final int pixel) {
+            return pixel;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int getRed(final int pixel) {
+            return pixel;
+        }
+
+    }
 
 }

@@ -58,31 +58,31 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class ViewZoomfactorChgEvent implements KNIPEvent {
 
-        private final double m_zoomFactor;
+    private final double m_zoomFactor;
 
-        public ViewZoomfactorChgEvent(final double zoomFactor) {
-                m_zoomFactor = zoomFactor;
+    public ViewZoomfactorChgEvent(final double zoomFactor) {
+        m_zoomFactor = zoomFactor;
 
-        }
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
-        /**
-         * @return the zoomFactor
-         */
-        public double getZoomFactor() {
-                return m_zoomFactor;
-        }
+    /**
+     * @return the zoomFactor
+     */
+    public double getZoomFactor() {
+        return m_zoomFactor;
+    }
 
 }

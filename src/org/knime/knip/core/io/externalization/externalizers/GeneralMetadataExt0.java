@@ -67,53 +67,53 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<GeneralMetadata> getType() {
-                return GeneralMetadata.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<GeneralMetadata> getType() {
+        return GeneralMetadata.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public GeneralMetadata read(final BufferedDataInputStream in) throws Exception {
-                final CalibratedSpace cs = ExternalizerManager
-                                .<CalibratedSpace> read(in);
-                final Named name = ExternalizerManager.<Named> read(in);
-                final Sourced source = ExternalizerManager.<Sourced> read(in);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GeneralMetadata read(final BufferedDataInputStream in) throws Exception {
+        final CalibratedSpace cs = ExternalizerManager
+                .<CalibratedSpace> read(in);
+        final Named name = ExternalizerManager.<Named> read(in);
+        final Sourced source = ExternalizerManager.<Sourced> read(in);
 
-                return new GeneralMetadataImpl(cs, name, source);
-        }
+        return new GeneralMetadataImpl(cs, name, source);
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final GeneralMetadata obj)
-                        throws Exception {
-                ExternalizerManager.write(out, obj, CalibratedSpace.class);
-                ExternalizerManager.write(out, obj, Named.class);
-                ExternalizerManager.write(out, obj, Sourced.class);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final GeneralMetadata obj)
+            throws Exception {
+        ExternalizerManager.write(out, obj, CalibratedSpace.class);
+        ExternalizerManager.write(out, obj, Named.class);
+        ExternalizerManager.write(out, obj, Sourced.class);
 
-        }
+    }
 
 }

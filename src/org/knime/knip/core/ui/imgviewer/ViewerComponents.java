@@ -66,75 +66,75 @@ import org.knime.knip.core.ui.imgviewer.panels.RendererSelectionPanel;
  */
 public enum ViewerComponents {
 
-        /**
-	 *
-	 */
-        IMAGE_ENHANCE() {
-                @Override
-                public ViewerComponent createInstance() {
-                        return new ImgNormalizationPanel();
-                }
+    /**
+     *
+     */
+    IMAGE_ENHANCE() {
+        @Override
+        public ViewerComponent createInstance() {
+            return new ImgNormalizationPanel();
+        }
 
-        },
+    },
 
-        /**
-	 *
-	 */
-        PLANE_SELECTION() {
-                @Override
-                public ViewerComponent createInstance() {
-                        return new PlaneSelectionPanel();
-                }
-        },
-        /**
-	 *
-	 */
-        IMAGE_PROPERTIES() {
+    /**
+     *
+     */
+    PLANE_SELECTION() {
+        @Override
+        public ViewerComponent createInstance() {
+            return new PlaneSelectionPanel();
+        }
+    },
+    /**
+     *
+     */
+    IMAGE_PROPERTIES() {
 
-                @Override
-                public ViewerComponent createInstance() {
-                        return new ImagePropertiesPanel();
-                }
+        @Override
+        public ViewerComponent createInstance() {
+            return new ImagePropertiesPanel();
+        }
 
-        },
-        /**
-	 *
-	 */
-        RENDERER_SELECTION() {
-                @Override
-                public ViewerComponent createInstance() {
-                        return new RendererSelectionPanel();
-                }
+    },
+    /**
+     *
+     */
+    RENDERER_SELECTION() {
+        @Override
+        public ViewerComponent createInstance() {
+            return new RendererSelectionPanel();
+        }
 
-        },
-        /**
-	 *
-	 */
-        MINIMAP() {
-                @Override
-                public ViewerComponent createInstance() {
-                        return new MinimapPanel();
-                }
+    },
+    /**
+     *
+     */
+    MINIMAP() {
+        @Override
+        public ViewerComponent createInstance() {
+            return new MinimapPanel();
+        }
 
-        },
-        LABEL_FILTER() {
-                @Override
-                public ViewerComponent createInstance() {
-                        return new LabelFilterPanel();
-                }
-        },
-        SCREENSHOT() {
-                @Override
-                public ViewerComponent createInstance() {
-                        return new CaptureScreenshot();
-                }
-        };
+    },
+    LABEL_FILTER() {
+        @Override
+        public ViewerComponent createInstance() {
+            return new LabelFilterPanel();
+        }
+    },
+    SCREENSHOT() {
+        @Override
+        public ViewerComponent createInstance() {
+            return new CaptureScreenshot();
+        }
+    };
 
-        /**
-         * @param <T>
-         * @param <I>
-         * @return
-         */
-        public abstract ViewerComponent createInstance();
+    /**
+     * @param <T>
+     * @param <I>
+     * @return
+     */
+     public abstract ViewerComponent createInstance();
 
 }

@@ -76,130 +76,130 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
  * @author hornm, University of Konstanz
  */
 public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<T>>
-                extends ViewerComponent {
+extends ViewerComponent {
 
-        /**
-	 *
-	 */
-        private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-        private final JTable m_propertiesTable;
+    private final JTable m_propertiesTable;
 
-        public ImagePropertiesPanel() {
-                super("Image Properties", false);
+    public ImagePropertiesPanel() {
+        super("Image Properties", false);
 
-                setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-                setPreferredSize(new Dimension(100, getPreferredSize().height));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setPreferredSize(new Dimension(100, getPreferredSize().height));
 
-                m_propertiesTable = new JTable();
-                m_propertiesTable.setLayout(new BoxLayout(m_propertiesTable,
-                                BoxLayout.X_AXIS));
-                add(new JScrollPane(m_propertiesTable));
+        m_propertiesTable = new JTable();
+        m_propertiesTable.setLayout(new BoxLayout(m_propertiesTable,
+                                                  BoxLayout.X_AXIS));
+        add(new JScrollPane(m_propertiesTable));
+    }
+
+    /**
+     * @param axes
+     * @param name
+     */
+    @EventListener
+    public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
+        final String[][] properties = new String[2 + e.getRandomAccessibleInterval()
+                                                 .numDimensions()][2];
+        properties[0][0] = "Type";
+        properties[0][1] = e.getIterableInterval().firstElement()
+                .createVariable().getClass().getCanonicalName();
+        properties[1][0] = "Image type";
+        if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
+            properties[1][1] = ((ImgPlus<T>) e.getRandomAccessibleInterval())
+                    .getImg().getClass().getCanonicalName();
+        } else {
+            properties[1][1] = e.getRandomAccessibleInterval().getClass()
+                    .getCanonicalName();
         }
 
-        /**
-         * @param axes
-         * @param name
-         */
-        @EventListener
-        public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
-                final String[][] properties = new String[2 + e.getRandomAccessibleInterval()
-                                .numDimensions()][2];
-                properties[0][0] = "Type";
-                properties[0][1] = e.getIterableInterval().firstElement()
-                                .createVariable().getClass().getCanonicalName();
-                properties[1][0] = "Image type";
-                if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
-                        properties[1][1] = ((ImgPlus<T>) e.getRandomAccessibleInterval())
-                                        .getImg().getClass().getCanonicalName();
+        if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
+            for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
+                properties[2 + i][0] = "Size "
+                        + ((ImgPlus<T>) e.getRandomAccessibleInterval())
+                        .axis(i)
+                        .getLabel();
+                properties[2 + i][1] = ""
+                        + e.getRandomAccessibleInterval().dimension(i);
+            }
+        } else {
+            for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
+                properties[2 + i][0] = "Size "
+                        + e.getCalibratedSpace()
+                        .axis(i)
+                        .getLabel();
+                properties[2 + i][1] = ""
+                        + e.getRandomAccessibleInterval().dimension(i);
+            }
+        }
+        m_propertiesTable.setModel(new AbstractTableModel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public int getColumnCount() {
+                return properties[0].length;
+            }
+
+            @Override
+            public int getRowCount() {
+                return properties.length;
+            }
+
+            @Override
+            public Object getValueAt(final int rowIndex,
+                                     final int columnIndex) {
+                return properties[rowIndex][columnIndex];
+            }
+
+            @Override
+            public String getColumnName(final int index) {
+                if (index == 0) {
+                    return "prop";
                 } else {
-                        properties[1][1] = e.getRandomAccessibleInterval().getClass()
-                                        .getCanonicalName();
+                    return "value";
                 }
+            }
+        });
+    }
 
-                if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
-                        for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
-                                properties[2 + i][0] = "Size "
-                                                + ((ImgPlus<T>) e.getRandomAccessibleInterval())
-                                                                .axis(i)
-                                                                .getLabel();
-                                properties[2 + i][1] = ""
-                                                + e.getRandomAccessibleInterval().dimension(i);
-                        }
-                } else {
-                        for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
-                                properties[2 + i][0] = "Size "
-                                                + e.getCalibratedSpace()
-                                                                .axis(i)
-                                                                .getLabel();
-                                properties[2 + i][1] = ""
-                                                + e.getRandomAccessibleInterval().dimension(i);
-                        }
-                }
-                m_propertiesTable.setModel(new AbstractTableModel() {
-                        private static final long serialVersionUID = 1L;
+    @Override
+    public Position getPosition() {
+        return Position.SOUTH;
+    }
 
-                        @Override
-                        public int getColumnCount() {
-                                return properties[0].length;
-                        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEventService(final EventService eventService) {
+        eventService.subscribe(this);
 
-                        @Override
-                        public int getRowCount() {
-                                return properties.length;
-                        }
+    }
 
-                        @Override
-                        public Object getValueAt(final int rowIndex,
-                                        final int columnIndex) {
-                                return properties[rowIndex][columnIndex];
-                        }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        // Nothing to do here
+    }
 
-                        @Override
-                        public String getColumnName(final int index) {
-                                if (index == 0) {
-                                        return "prop";
-                                } else {
-                                        return "value";
-                                }
-                        }
-                });
-        }
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException {
+        // Nothing to do here
+    }
 
-        @Override
-        public Position getPosition() {
-                return Position.SOUTH;
-        }
+    @Override
+    public void reset() {
+        // Nothing to do here
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setEventService(final EventService eventService) {
-                eventService.subscribe(this);
-
-        }
-
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                // Nothing to do here
-        }
-
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException {
-                // Nothing to do here
-        }
-
-        @Override
-        public void reset() {
-                // Nothing to do here
-        }
-
-        @Override
-        public void setParent(final Component parent) {
-                // Nothing to do here
-        }
+    @Override
+    public void setParent(final Component parent) {
+        // Nothing to do here
+    }
 
 }

@@ -56,12 +56,12 @@ package org.knime.knip.core.ui.event;
  */
 public interface KNIPEvent {
 
-        enum ExecutionPriority {
-                NORMAL, LOW
-        };
+    enum ExecutionPriority {
+        NORMAL, LOW
+    };
 
-        ExecutionPriority getExecutionOrder();
+    ExecutionPriority getExecutionOrder();
 
-        <E extends KNIPEvent> boolean isRedundant(E thatEvent);
+    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
 
 }

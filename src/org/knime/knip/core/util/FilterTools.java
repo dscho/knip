@@ -67,142 +67,142 @@ import net.imglib2.type.numeric.real.DoubleType;
  */
 public final class FilterTools {
 
-        private FilterTools() {
-                //
+    private FilterTools() {
+        //
+    }
+
+    /**
+     * Creates a point support matrix. The top row consists of <tt>x</tt>
+     * coordinates, and the bottom row consists of <tt>y</tt> coordinates.
+     * The points range in a square where the origin is at the center.
+     *
+     * @param supportRadius
+     *                the support radius.
+     * @return the point support matrix.
+     */
+    final public static Img<DoubleType> createPointSupport(final int supportRadius) {
+
+        final int support = (supportRadius * 2) + 1;
+
+        final Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
+                                                                             new long[] { 2, support * support },
+                                                                             new DoubleType());
+
+        final Cursor<DoubleType> cur = res.localizingCursor();
+
+        while (cur.hasNext()) {
+            cur.fwd();
+            if (cur.getLongPosition(0) == 0) {
+                cur.get()
+                .set((cur.getLongPosition(1) / support)
+                     - supportRadius);
+            } else {
+                cur.get()
+                .set((cur.getLongPosition(1) % support)
+                     - supportRadius);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Creates the <tt>2&#215;2</tt> rotation matrix <br />
+     * <tt>-cos(theta) -sin(theta)</tt> <br />
+     * <tt>-sin(theta) cos(theta)</tt>. <br />
+     *
+     * @param theta
+     *                the angle of rotation.
+     * @return the rotation matrix.
+     */
+    final public static Img<DoubleType> createRotationMatrix(final double theta) {
+
+        final Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
+                                                                             new long[] { 2, 2 }, new DoubleType());
+
+        final RandomAccess2D<DoubleType> ra = new RandomAccess2D<DoubleType>(
+                res);
+
+        ra.get(0, 0).set((float) -Math.cos(theta));
+        ra.get(0, 1).set((float) -Math.sin(theta));
+        ra.get(1, 0).set((float) -Math.sin(theta));
+        ra.get(1, 1).set((float) Math.cos(theta));
+
+        return res;
+    }
+
+    final public static <T extends RealType<T> & NativeType<T>> Img<T> reshapeMatrix(
+                                                                                     final long stride, final Img<T> vector) {
+
+        final long yDim = vector.dimension(0) / stride;
+
+        final Img<T> res = new ArrayImgFactory<T>().create(new long[] {
+                stride, yDim }, vector.firstElement()
+                .createVariable());
+
+        final Cursor<T> vecCur = vector.localizingCursor();
+        final RandomAccess<T> resRA = res.randomAccess();
+
+        while (vecCur.hasNext()) {
+            vecCur.fwd();
+            resRA.setPosition(vecCur.getLongPosition(0) % stride, 1);
+            resRA.setPosition(vecCur.getLongPosition(0) / stride, 0);
+            resRA.get().set(vecCur.get());
+        }
+        return res;
+
+    }
+
+    public static <T extends RealType<T> & NativeType<T>> Img<T> getVector(
+                                                                           final Img<T> src, final int[] pos, final int vectorDim) {
+
+        final Img<T> vector = new ArrayImgFactory<T>().create(
+                                                              new long[] { src.dimension(vectorDim) }, src
+                                                              .firstElement()
+                                                              .createVariable());
+
+        final Cursor<T> vecCur = vector.localizingCursor();
+        final RandomAccess<T> srcRA = src.randomAccess();
+
+        srcRA.setPosition(pos);
+        while (vecCur.hasNext()) {
+            vecCur.fwd();
+            srcRA.setPosition(vecCur.getLongPosition(0), vectorDim);
+            vecCur.get().set(srcRA.get());
+        }
+        return vector;
+
+    }
+
+    private static class RandomAccess2D<T extends RealType<T>> {
+
+        private final RandomAccess<T> m_ra;
+
+        public RandomAccess2D(final Img<T> img) {
+            m_ra = img.randomAccess();
         }
 
-        /**
-         * Creates a point support matrix. The top row consists of <tt>x</tt>
-         * coordinates, and the bottom row consists of <tt>y</tt> coordinates.
-         * The points range in a square where the origin is at the center.
-         *
-         * @param supportRadius
-         *                the support radius.
-         * @return the point support matrix.
-         */
-        final public static Img<DoubleType> createPointSupport(final int supportRadius) {
-
-                final int support = supportRadius * 2 + 1;
-
-                final Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
-                                new long[] { 2, support * support },
-                                new DoubleType());
-
-                final Cursor<DoubleType> cur = res.localizingCursor();
-
-                while (cur.hasNext()) {
-                        cur.fwd();
-                        if (cur.getLongPosition(0) == 0) {
-                                cur.get()
-                                                .set((cur.getLongPosition(1) / support)
-                                                                - supportRadius);
-                        } else {
-                                cur.get()
-                                                .set((cur.getLongPosition(1) % support)
-                                                                - supportRadius);
-                        }
-                }
-                return res;
+        public T get(final int row, final int col) {
+            m_ra.setPosition(col, 1);
+            m_ra.setPosition(row, 0);
+            return m_ra.get();
         }
 
-        /**
-         * Creates the <tt>2&#215;2</tt> rotation matrix <br />
-         * <tt>-cos(theta) -sin(theta)</tt> <br />
-         * <tt>-sin(theta) cos(theta)</tt>. <br />
-         *
-         * @param theta
-         *                the angle of rotation.
-         * @return the rotation matrix.
-         */
-        final public static Img<DoubleType> createRotationMatrix(final double theta) {
+    }
 
-                final Img<DoubleType> res = new ArrayImgFactory<DoubleType>().create(
-                                new long[] { 2, 2 }, new DoubleType());
-
-                final RandomAccess2D<DoubleType> ra = new RandomAccess2D<DoubleType>(
-                                res);
-
-                ra.get(0, 0).set((float) -Math.cos(theta));
-                ra.get(0, 1).set((float) -Math.sin(theta));
-                ra.get(1, 0).set((float) -Math.sin(theta));
-                ra.get(1, 1).set((float) Math.cos(theta));
-
-                return res;
+    public static <T extends RealType<T>> void print2DMatrix(final Img<T> img) {
+        if (img.numDimensions() < 2) {
+            return;
         }
-
-        final public static <T extends RealType<T> & NativeType<T>> Img<T> reshapeMatrix(
-                        final long stride, final Img<T> vector) {
-
-                final long yDim = vector.dimension(0) / stride;
-
-                final Img<T> res = new ArrayImgFactory<T>().create(new long[] {
-                                stride, yDim }, vector.firstElement()
-                                .createVariable());
-
-                final Cursor<T> vecCur = vector.localizingCursor();
-                final RandomAccess<T> resRA = res.randomAccess();
-
-                while (vecCur.hasNext()) {
-                        vecCur.fwd();
-                        resRA.setPosition(vecCur.getLongPosition(0) % stride, 1);
-                        resRA.setPosition(vecCur.getLongPosition(0) / stride, 0);
-                        resRA.get().set(vecCur.get());
-                }
-                return res;
-
+        final RandomAccess<T> ra = img.randomAccess();
+        for (int x = 0; x < img.dimension(0); x++) {
+            System.out.println("");
+            ra.setPosition(x, 0);
+            for (int y = 0; y < img.dimension(1); y++) {
+                ra.setPosition(y, 1);
+                System.out.printf(" %+.4f", ra.get()
+                                  .getRealDouble());
+            }
         }
-
-        public static <T extends RealType<T> & NativeType<T>> Img<T> getVector(
-                        final Img<T> src, final int[] pos, final int vectorDim) {
-
-                final Img<T> vector = new ArrayImgFactory<T>().create(
-                                new long[] { src.dimension(vectorDim) }, src
-                                                .firstElement()
-                                                .createVariable());
-
-                final Cursor<T> vecCur = vector.localizingCursor();
-                final RandomAccess<T> srcRA = src.randomAccess();
-
-                srcRA.setPosition(pos);
-                while (vecCur.hasNext()) {
-                        vecCur.fwd();
-                        srcRA.setPosition(vecCur.getLongPosition(0), vectorDim);
-                        vecCur.get().set(srcRA.get());
-                }
-                return vector;
-
-        }
-
-        private static class RandomAccess2D<T extends RealType<T>> {
-
-                private final RandomAccess<T> m_ra;
-
-                public RandomAccess2D(final Img<T> img) {
-                        m_ra = img.randomAccess();
-                }
-
-                public T get(final int row, final int col) {
-                        m_ra.setPosition(col, 1);
-                        m_ra.setPosition(row, 0);
-                        return m_ra.get();
-                }
-
-        }
-
-        public static <T extends RealType<T>> void print2DMatrix(final Img<T> img) {
-                if (img.numDimensions() < 2) {
-                        return;
-                }
-                final RandomAccess<T> ra = img.randomAccess();
-                for (int x = 0; x < img.dimension(0); x++) {
-                        System.out.println("");
-                        ra.setPosition(x, 0);
-                        for (int y = 0; y < img.dimension(1); y++) {
-                                ra.setPosition(y, 1);
-                                System.out.printf(" %+.4f", ra.get()
-                                                .getRealDouble());
-                        }
-                }
-        }
+    }
 
 }

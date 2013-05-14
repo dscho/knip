@@ -56,11 +56,11 @@ package org.knime.knip.core.ui.imgviewer.annotator.events;
  */
 public class AnnotatorLabelsColResetEvent extends AnnotatorLabelsEvent {
 
-        /**
-         * @param labels
-         */
-        public AnnotatorLabelsColResetEvent(final String[] labels) {
-                super(labels);
-        }
+    /**
+     * @param labels
+     */
+    public AnnotatorLabelsColResetEvent(final String[] labels) {
+        super(labels);
+    }
 
 }

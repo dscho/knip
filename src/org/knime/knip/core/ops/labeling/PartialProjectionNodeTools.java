@@ -62,34 +62,34 @@ import net.imglib2.type.numeric.RealType;
  */
 public class PartialProjectionNodeTools {
 
-        public static <T extends RealType<T>> Img<T> partialMaximumProjection(
-                        final Img<T> img, final int projDim, final int steps) {
+    public static <T extends RealType<T>> Img<T> partialMaximumProjection(
+                                                                          final Img<T> img, final int projDim, final int steps) {
 
-                final Img<T> res = img.copy();
-                final Cursor<T> resCur = res.localizingCursor();
-                final RandomAccess<T> srcRA = img.randomAccess();
-                while (resCur.hasNext()) {
-                        resCur.fwd();
-                        srcRA.setPosition(resCur);
-                        for (int i = 1; i <= steps; i++) {
-                                srcRA.setPosition(
-                                                (resCur.getLongPosition(projDim) + i)
-                                                                % img.dimension(projDim),
-                                                projDim);
-                                if (srcRA.get().compareTo(resCur.get()) > 0) {
-                                        resCur.get().set(srcRA.get());
-                                }
-                                srcRA.setPosition(
-                                                (resCur.getLongPosition(projDim)
-                                                                + img.dimension(projDim) - i)
-                                                                % img.dimension(projDim),
-                                                projDim);
-                                if (srcRA.get().compareTo(resCur.get()) > 0) {
-                                        resCur.get().set(srcRA.get());
-                                }
-                        }
+        final Img<T> res = img.copy();
+        final Cursor<T> resCur = res.localizingCursor();
+        final RandomAccess<T> srcRA = img.randomAccess();
+        while (resCur.hasNext()) {
+            resCur.fwd();
+            srcRA.setPosition(resCur);
+            for (int i = 1; i <= steps; i++) {
+                srcRA.setPosition(
+                                  (resCur.getLongPosition(projDim) + i)
+                                  % img.dimension(projDim),
+                                  projDim);
+                if (srcRA.get().compareTo(resCur.get()) > 0) {
+                    resCur.get().set(srcRA.get());
                 }
-                return res;
+                srcRA.setPosition(
+                                  ((resCur.getLongPosition(projDim)
+                                          + img.dimension(projDim)) - i)
+                                          % img.dimension(projDim),
+                                          projDim);
+                if (srcRA.get().compareTo(resCur.get()) > 0) {
+                    resCur.get().set(srcRA.get());
+                }
+            }
         }
+        return res;
+    }
 
 }

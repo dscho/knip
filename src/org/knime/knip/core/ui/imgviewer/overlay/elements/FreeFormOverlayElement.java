@@ -60,73 +60,73 @@ import java.io.ObjectOutput;
  * @author dietc, hornm, schoenenbergerf University of Konstanz
  */
 public class FreeFormOverlayElement<L extends Comparable<L>> extends
-                AbstractPolygonOverlayElement<L> {
+AbstractPolygonOverlayElement<L> {
 
-        private boolean m_renderInterior;
+    private boolean m_renderInterior;
 
-        public FreeFormOverlayElement() {
-                //
+    public FreeFormOverlayElement() {
+        //
+    }
+
+    /**
+     * 
+     */
+    public FreeFormOverlayElement(final long[] pos, final int[] orientation,
+                                  final boolean renderInterior, final String... labels) {
+        super(pos, orientation, labels);
+        m_renderInterior = renderInterior;
+    }
+
+    @Override
+    public void renderInterior(final Graphics2D g) {
+        if (m_renderInterior) {
+            super.renderInterior(g);
         }
+    }
 
-        /**
-	 * 
-	 */
-        public FreeFormOverlayElement(final long[] pos, final int[] orientation,
-                        final boolean renderInterior, final String... labels) {
-                super(pos, orientation, labels);
-                m_renderInterior = renderInterior;
-        }
+    @Override
+    public void translate(final int m_selectedIndex, final long x, final long y) {
+        //
+    }
 
-        @Override
-        public void renderInterior(final Graphics2D g) {
-                if (m_renderInterior) {
-                        super.renderInterior(g);
+    @Override
+    protected void renderPointInterior(final Graphics2D g) {
+        // no points are rendered
+    }
+
+    @Override
+    protected void renderPointOutline(final Graphics2D g) {
+        // Nothing to do here
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+        super.writeExternal(out);
+        out.writeBoolean(m_renderInterior);
+    }
+
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException,
+    ClassNotFoundException {
+        super.readExternal(in);
+
+        m_renderInterior = in.readBoolean();
+    }
+
+    @Override
+    public boolean containsPoint(final long x, final long y) {
+
+        if (m_renderInterior) {
+            return super.containsPoint(x, y);
+        } else {
+            for (int n = 0; n < m_poly.xpoints.length; n++) {
+                if ((x == m_poly.xpoints[n])
+                        && (y == m_poly.ypoints[n])) {
+                    return true;
                 }
+            }
         }
 
-        @Override
-        public void translate(final int m_selectedIndex, final long x, final long y) {
-                //
-        }
-
-        @Override
-        protected void renderPointInterior(final Graphics2D g) {
-                // no points are rendered
-        }
-
-        @Override
-        protected void renderPointOutline(final Graphics2D g) {
-                // Nothing to do here
-        }
-
-        @Override
-        public void writeExternal(final ObjectOutput out) throws IOException {
-                super.writeExternal(out);
-                out.writeBoolean(m_renderInterior);
-        }
-
-        @Override
-        public void readExternal(final ObjectInput in) throws IOException,
-                        ClassNotFoundException {
-                super.readExternal(in);
-
-                m_renderInterior = in.readBoolean();
-        }
-
-        @Override
-        public boolean containsPoint(final long x, final long y) {
-
-                if (m_renderInterior) {
-                        return super.containsPoint(x, y);
-                } else {
-                        for (int n = 0; n < m_poly.xpoints.length; n++) {
-                                if (x == m_poly.xpoints[n]
-                                                && y == m_poly.ypoints[n]) {
-                                        return true;
-                                }
-                        }
-                }
-
-                return false;
-        }
+        return false;
+    }
 }

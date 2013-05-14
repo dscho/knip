@@ -6,11 +6,11 @@ import net.imglib2.type.Type;
 
 public interface ImageRenderer<T extends Type<T>> {
 
-        @Override
-        public String toString();
+    @Override
+    public String toString();
 
-        public ScreenImage render(RandomAccessibleInterval<T> source, int dimX,
-                        int dimY,
-                        long[] planePos);
+    public ScreenImage render(RandomAccessibleInterval<T> source, int dimX,
+                              int dimY,
+                              long[] planePos);
 
 }

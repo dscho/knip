@@ -66,71 +66,71 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class ArrayImgExt0 implements Externalizer<ArrayImg> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<ArrayImg> getType() {
+        return ArrayImg.class;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws Exception
+     */
+    @Override
+    public ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> read(
+                                                                                final BufferedDataInputStream in) throws Exception {
+        final long[] dims = new long[in.readInt()];
+        in.read(dims);
+
+        final NativeType<?> type = (NativeType<?>) ExternalizerManager
+                .<Class> read(in).newInstance();
+
+        final ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new ArrayImgFactory()
+        .create(dims, type);
+        in.readLArray(((ArrayDataAccess<?>) img.update(null))
+                      .getCurrentStorageArray());
+
+        return img;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws Exception
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final ArrayImg obj)
+            throws Exception {
+
+        // write dimensions
+        out.writeInt(obj.numDimensions());
+        for (int i = 0; i < obj.numDimensions(); i++) {
+            out.writeLong(obj.dimension(i));
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<ArrayImg> getType() {
-                return ArrayImg.class;
-        }
+        ExternalizerManager.<Class> write(out, obj.firstElement()
+                                          .getClass());
+        out.writeArray(((ArrayDataAccess) obj.update(null))
+                       .getCurrentStorageArray());
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @throws Exception
-         */
-        @Override
-        public ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> read(
-                        final BufferedDataInputStream in) throws Exception {
-                final long[] dims = new long[in.readInt()];
-                in.read(dims);
-
-                final NativeType<?> type = (NativeType<?>) ExternalizerManager
-                                .<Class> read(in).newInstance();
-
-                final ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new ArrayImgFactory()
-                                .create(dims, type);
-                in.readLArray(((ArrayDataAccess<?>) img.update(null))
-                                .getCurrentStorageArray());
-
-                return img;
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @throws Exception
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final ArrayImg obj)
-                        throws Exception {
-
-                // write dimensions
-                out.writeInt(obj.numDimensions());
-                for (int i = 0; i < obj.numDimensions(); i++) {
-                        out.writeLong(obj.dimension(i));
-                }
-
-                ExternalizerManager.<Class> write(out, obj.firstElement()
-                                .getClass());
-                out.writeArray(((ArrayDataAccess) obj.update(null))
-                                .getCurrentStorageArray());
-
-        }
+    }
 }

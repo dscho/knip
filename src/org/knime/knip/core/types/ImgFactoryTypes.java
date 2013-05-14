@@ -61,70 +61,70 @@ import net.imglib2.type.Type;
 
 public enum ImgFactoryTypes {
 
-        ARRAY_IMG_FACTORY, PLANAR_IMG_FACTORY, CELL_IMG_FACTORY, NTREE_IMG_FACTORY, SOURCE_FACTORY;
+    ARRAY_IMG_FACTORY, PLANAR_IMG_FACTORY, CELL_IMG_FACTORY, NTREE_IMG_FACTORY, SOURCE_FACTORY;
 
-        /**
-         * @return
-         */
-        @SuppressWarnings("rawtypes")
-        public static final <T extends NativeType<T>> ImgFactory getImgFactory(
-                        final ImgFactoryTypes facType, final Img img) {
+    /**
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    public static final <T extends NativeType<T>> ImgFactory getImgFactory(
+                                                                           final ImgFactoryTypes facType, final Img img) {
 
-                if (facType == SOURCE_FACTORY) {
-                        return img.factory();
-                } else {
-                        return ImgFactoryTypes.<T> getImgFactory(facType);
-                }
-
+        if (facType == SOURCE_FACTORY) {
+            return img.factory();
+        } else {
+            return ImgFactoryTypes.<T> getImgFactory(facType);
         }
 
-        public static final <T extends Type<T>> ImgFactoryTypes getImgFactoryType(
-                        final ImgFactory<T> factory) {
-                if (factory instanceof ArrayImgFactory) {
-                        return ARRAY_IMG_FACTORY;
-                } else if (factory instanceof PlanarImgFactory) {
-                        return PLANAR_IMG_FACTORY;
-                } else if (factory instanceof CellImgFactory) {
-                        return CELL_IMG_FACTORY;
-                } else if (factory instanceof NtreeImgFactory) {
-                        return NTREE_IMG_FACTORY;
-                } else {
-                        throw new UnsupportedOperationException(
-                                        "Serializing an image with the specified storage strategy isn't supported, yet.");
-                }
+    }
+
+    public static final <T extends Type<T>> ImgFactoryTypes getImgFactoryType(
+                                                                              final ImgFactory<T> factory) {
+        if (factory instanceof ArrayImgFactory) {
+            return ARRAY_IMG_FACTORY;
+        } else if (factory instanceof PlanarImgFactory) {
+            return PLANAR_IMG_FACTORY;
+        } else if (factory instanceof CellImgFactory) {
+            return CELL_IMG_FACTORY;
+        } else if (factory instanceof NtreeImgFactory) {
+            return NTREE_IMG_FACTORY;
+        } else {
+            throw new UnsupportedOperationException(
+                                                    "Serializing an image with the specified storage strategy isn't supported, yet.");
         }
+    }
 
-        /**
-         * @return
-         */
-        public static final <T extends NativeType<T>> ImgFactory<T> getImgFactory(
-                        final ImgFactoryTypes facType) {
+    /**
+     * @return
+     */
+    public static final <T extends NativeType<T>> ImgFactory<T> getImgFactory(
+                                                                              final ImgFactoryTypes facType) {
 
-                switch (facType) {
-                case ARRAY_IMG_FACTORY:
-                        return new ArrayImgFactory<T>();
-                case CELL_IMG_FACTORY:
-                        return new CellImgFactory<T>();
-                        // case LIST_IMG_FACTORY:
-                        // return new ListImgFactory<T>();
-                case PLANAR_IMG_FACTORY:
-                        return new PlanarImgFactory<T>();
-                case NTREE_IMG_FACTORY:
-                        return new NtreeImgFactory<T>();
-                default:
-                        return null;
-
-                }
-        }
-
-        /**
-         * @return
-         */
-        @SuppressWarnings("rawtypes")
-        public static final ImgFactory getImgFactory(final String facTypeAsString,
-                        final Img img) {
-
-                return getImgFactory(valueOf(facTypeAsString), img);
+        switch (facType) {
+            case ARRAY_IMG_FACTORY:
+                return new ArrayImgFactory<T>();
+            case CELL_IMG_FACTORY:
+                return new CellImgFactory<T>();
+                // case LIST_IMG_FACTORY:
+                // return new ListImgFactory<T>();
+            case PLANAR_IMG_FACTORY:
+                return new PlanarImgFactory<T>();
+            case NTREE_IMG_FACTORY:
+                return new NtreeImgFactory<T>();
+            default:
+                return null;
 
         }
+    }
+
+    /**
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    public static final ImgFactory getImgFactory(final String facTypeAsString,
+                                                 final Img img) {
+
+        return getImgFactory(valueOf(facTypeAsString), img);
+
+    }
 }

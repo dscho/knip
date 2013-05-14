@@ -19,115 +19,115 @@ import net.imglib2.ops.util.metadata.SourcedImpl;
  */
 public class GeneralMetadataImpl implements GeneralMetadata {
 
-        private final CalibratedSpace m_cs;
-        private final Named m_named;
-        private final Sourced m_sourced;
+    private final CalibratedSpace m_cs;
+    private final Named m_named;
+    private final Sourced m_sourced;
 
-        public GeneralMetadataImpl(final int numDimensions) {
-                this.m_cs = new CalibratedSpaceImpl(numDimensions);
-                this.m_named = new NamedImpl();
-                this.m_sourced = new SourcedImpl();
-        }
+    public GeneralMetadataImpl(final int numDimensions) {
+        this.m_cs = new CalibratedSpaceImpl(numDimensions);
+        this.m_named = new NamedImpl();
+        this.m_sourced = new SourcedImpl();
+    }
 
-        public GeneralMetadataImpl(final CalibratedSpace cs, final Named named,
-                        final Sourced sourced) {
-                this(cs.numDimensions());
+    public GeneralMetadataImpl(final CalibratedSpace cs, final Named named,
+                               final Sourced sourced) {
+        this(cs.numDimensions());
 
-                new CopyNamed<Named>().compute(named, m_named);
-                new CopySourced<Sourced>().compute(sourced, m_sourced);
-                new CopyCalibratedSpace<CalibratedSpace>().compute(cs, m_cs);
-        }
+        new CopyNamed<Named>().compute(named, m_named);
+        new CopySourced<Sourced>().compute(sourced, m_sourced);
+        new CopyCalibratedSpace<CalibratedSpace>().compute(cs, m_cs);
+    }
 
-        public GeneralMetadataImpl(final CalibratedSpace cs, final Metadata metadata) {
-                this(cs, metadata, metadata);
-        }
+    public GeneralMetadataImpl(final CalibratedSpace cs, final Metadata metadata) {
+        this(cs, metadata, metadata);
+    }
 
-        public GeneralMetadataImpl(final CalibratedSpace space,
-                        final GeneralMetadata metadata) {
-                this(space, metadata, metadata);
-        }
+    public GeneralMetadataImpl(final CalibratedSpace space,
+                               final GeneralMetadata metadata) {
+        this(space, metadata, metadata);
+    }
 
-        public GeneralMetadataImpl(final GeneralMetadata metadata) {
-                this(metadata, metadata, metadata);
-        }
+    public GeneralMetadataImpl(final GeneralMetadata metadata) {
+        this(metadata, metadata, metadata);
+    }
 
-        public GeneralMetadataImpl(final Metadata metadata) {
-                this(metadata, metadata, metadata);
-        }
+    public GeneralMetadataImpl(final Metadata metadata) {
+        this(metadata, metadata, metadata);
+    }
 
-        @Override
-        public int getAxisIndex(final AxisType axis) {
-                return m_cs.getAxisIndex(axis);
-        }
+    @Override
+    public int getAxisIndex(final AxisType axis) {
+        return m_cs.getAxisIndex(axis);
+    }
 
-        @Override
-        public AxisType axis(final int d) {
-                return m_cs.axis(d);
-        }
+    @Override
+    public AxisType axis(final int d) {
+        return m_cs.axis(d);
+    }
 
-        @Override
-        public void axes(final AxisType[] target) {
-                m_cs.axes(target);
-        }
+    @Override
+    public void axes(final AxisType[] target) {
+        m_cs.axes(target);
+    }
 
-        @Override
-        public void setAxis(final AxisType axis, final int d) {
-                m_cs.setAxis(axis, d);
-        }
+    @Override
+    public void setAxis(final AxisType axis, final int d) {
+        m_cs.setAxis(axis, d);
+    }
 
-        @Override
-        public double calibration(final int d) {
-                return m_cs.calibration(d);
-        }
+    @Override
+    public double calibration(final int d) {
+        return m_cs.calibration(d);
+    }
 
-        @Override
-        public void calibration(final double[] target) {
-                m_cs.calibration(target);
-        }
+    @Override
+    public void calibration(final double[] target) {
+        m_cs.calibration(target);
+    }
 
-        @Override
-        public void calibration(final float[] target) {
-                m_cs.calibration(target);
-        }
+    @Override
+    public void calibration(final float[] target) {
+        m_cs.calibration(target);
+    }
 
-        @Override
-        public void setCalibration(final double value, final int d) {
-                m_cs.setCalibration(value, d);
-        }
+    @Override
+    public void setCalibration(final double value, final int d) {
+        m_cs.setCalibration(value, d);
+    }
 
-        @Override
-        public void setCalibration(final double[] cal) {
-                m_cs.setCalibration(cal);
-        }
+    @Override
+    public void setCalibration(final double[] cal) {
+        m_cs.setCalibration(cal);
+    }
 
-        @Override
-        public void setCalibration(final float[] cal) {
-                m_cs.setCalibration(cal);
-        }
+    @Override
+    public void setCalibration(final float[] cal) {
+        m_cs.setCalibration(cal);
+    }
 
-        @Override
-        public String getName() {
-                return m_named.getName();
-        }
+    @Override
+    public String getName() {
+        return m_named.getName();
+    }
 
-        @Override
-        public void setName(final String name) {
-                m_named.setName(name);
-        }
+    @Override
+    public void setName(final String name) {
+        m_named.setName(name);
+    }
 
-        @Override
-        public String getSource() {
-                return m_sourced.getSource();
-        }
+    @Override
+    public String getSource() {
+        return m_sourced.getSource();
+    }
 
-        @Override
-        public void setSource(final String source) {
-                this.m_sourced.setSource(source);
-        }
+    @Override
+    public void setSource(final String source) {
+        this.m_sourced.setSource(source);
+    }
 
-        @Override
-        public int numDimensions() {
-                return m_cs.numDimensions();
-        }
+    @Override
+    public int numDimensions() {
+        return m_cs.numDimensions();
+    }
 
 }

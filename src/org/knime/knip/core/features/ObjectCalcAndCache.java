@@ -77,216 +77,216 @@ import org.knime.knip.core.data.labeling.Signature;
  */
 public class ObjectCalcAndCache {
 
-        public ObjectCalcAndCache() {
-        }
+    public ObjectCalcAndCache() {
+    }
 
-        private Img<BitType> binaryMask;
-        private IterableInterval<BitType> bmIterableInterval;
+    private Img<BitType> binaryMask;
+    private IterableInterval<BitType> bmIterableInterval;
 
-        public Img<BitType> binaryMask(final IterableInterval<BitType> ii) {
-                if (bmIterableInterval != ii) {
-                        bmIterableInterval = ii;
-                        binaryMask = new ArrayImgFactory<BitType>().create(ii,
-                                        new BitType());
-                        final RandomAccess<BitType> maskRA = binaryMask
-                                        .randomAccess();
+    public Img<BitType> binaryMask(final IterableInterval<BitType> ii) {
+        if (bmIterableInterval != ii) {
+            bmIterableInterval = ii;
+            binaryMask = new ArrayImgFactory<BitType>().create(ii,
+                                                               new BitType());
+            final RandomAccess<BitType> maskRA = binaryMask
+                    .randomAccess();
 
-                        final Cursor<BitType> cur = ii.localizingCursor();
-                        while (cur.hasNext()) {
-                                cur.fwd();
-                                for (int d = 0; d < cur.numDimensions(); d++) {
-                                        maskRA.setPosition(
-                                                        cur.getLongPosition(d)
-                                                                        - ii.min(d),
-                                                        d);
-                                }
-                                maskRA.get().set(true);
-
-                        }
+            final Cursor<BitType> cur = ii.localizingCursor();
+            while (cur.hasNext()) {
+                cur.fwd();
+                for (int d = 0; d < cur.numDimensions(); d++) {
+                    maskRA.setPosition(
+                                       cur.getLongPosition(d)
+                                       - ii.min(d),
+                                       d);
                 }
-                return binaryMask;
+                maskRA.get().set(true);
 
+            }
         }
+        return binaryMask;
 
-        private Img<BitType> binaryMask2D;
-        private IterableInterval<BitType> bm2dIterableInterval;
+    }
 
-        public Img<BitType> binaryMask2D(final IterableInterval<BitType> ii) {
-                if (bm2dIterableInterval != ii) {
-                        bm2dIterableInterval = ii;
-                        final long[] dims = new long[ii.numDimensions()];
-                        ii.dimensions(dims);
-                        for (int i = 0; i < 2; i++) {
-                                dims[i] += 2;
-                        }
-                        final Img<BitType> mask = new ArrayImgFactory<BitType>()
-                                        .create(dims, new BitType());
-                        final RandomAccess<BitType> maskRA = mask
-                                        .randomAccess();
-                        final Cursor<BitType> cur = ii.localizingCursor();
-                        while (cur.hasNext()) {
-                                cur.fwd();
-                                for (int d = 0; d < 2; d++) {
-                                        maskRA.setPosition(
-                                                        cur.getLongPosition(d)
-                                                                        - ii.min(d)
-                                                                        + 1, d);
-                                }
-                                maskRA.get().set(true);
-                        }
-                        binaryMask2D = new ImgView<BitType>(
-                                        SubsetOperations.subsetview(mask,
-                                                        new FinalInterval(dims)),
-                                        mask.factory());
+    private Img<BitType> binaryMask2D;
+    private IterableInterval<BitType> bm2dIterableInterval;
+
+    public Img<BitType> binaryMask2D(final IterableInterval<BitType> ii) {
+        if (bm2dIterableInterval != ii) {
+            bm2dIterableInterval = ii;
+            final long[] dims = new long[ii.numDimensions()];
+            ii.dimensions(dims);
+            for (int i = 0; i < 2; i++) {
+                dims[i] += 2;
+            }
+            final Img<BitType> mask = new ArrayImgFactory<BitType>()
+                    .create(dims, new BitType());
+            final RandomAccess<BitType> maskRA = mask
+                    .randomAccess();
+            final Cursor<BitType> cur = ii.localizingCursor();
+            while (cur.hasNext()) {
+                cur.fwd();
+                for (int d = 0; d < 2; d++) {
+                    maskRA.setPosition(
+                                       (cur.getLongPosition(d)
+                                               - ii.min(d))
+                                               + 1, d);
                 }
-                return binaryMask2D;
+                maskRA.get().set(true);
+            }
+            binaryMask2D = new ImgView<BitType>(
+                    SubsetOperations.subsetview(mask,
+                                                new FinalInterval(dims)),
+                                                mask.factory());
         }
+        return binaryMask2D;
+    }
 
-        private final DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
-        private IterableInterval<? extends RealType<?>> dsIterableInterval;
+    private final DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
+    private IterableInterval<? extends RealType<?>> dsIterableInterval;
 
-        public <T extends RealType<T>> DescriptiveStatistics descriptiveStatistics(
-                        final IterableInterval<T> ii) {
+    public <T extends RealType<T>> DescriptiveStatistics descriptiveStatistics(
+                                                                               final IterableInterval<T> ii) {
 
-                if (dsIterableInterval != ii) {
-                        dsIterableInterval = ii;
-                        descriptiveStatistics.clear();
-                        final Cursor<T> c = ii.cursor();
+        if (dsIterableInterval != ii) {
+            dsIterableInterval = ii;
+            descriptiveStatistics.clear();
+            final Cursor<T> c = ii.cursor();
 
-                        while (c.hasNext()) {
-                                c.fwd();
+            while (c.hasNext()) {
+                c.fwd();
 
-                                descriptiveStatistics.addValue(c.get()
-                                                .getRealDouble());
-                        }
+                descriptiveStatistics.addValue(c.get()
+                                               .getRealDouble());
+            }
+        }
+        return descriptiveStatistics;
+
+    }
+
+    private double[] centroid;
+    private IterableInterval<? extends RealType<?>> cIterableInterval;
+
+    public <T extends RealType<T>> double[] centroid(final IterableInterval<T> ii) {
+        if (cIterableInterval != ii) {
+            cIterableInterval = ii;
+            final Cursor<T> c = ii.cursor();
+            centroid = new double[ii.numDimensions()];
+
+            long count = 0;
+            while (c.hasNext()) {
+                c.fwd();
+                for (int i = 0; i < centroid.length; i++) {
+                    centroid[i] += c.getDoublePosition(i);
                 }
-                return descriptiveStatistics;
+                count++;
+            }
 
+            for (int i = 0; i < centroid.length; i++) {
+                centroid[i] /= count;
+            }
         }
+        return centroid;
+    }
 
-        private double[] centroid;
-        private IterableInterval<? extends RealType<?>> cIterableInterval;
+    private double[] weightedCentroid;
+    private IterableInterval<? extends RealType<?>> wcIterableInterval;
 
-        public <T extends RealType<T>> double[] centroid(final IterableInterval<T> ii) {
-                if (cIterableInterval != ii) {
-                        cIterableInterval = ii;
-                        final Cursor<T> c = ii.cursor();
-                        centroid = new double[ii.numDimensions()];
+    public <T extends RealType<T>> double[] weightedCentroid(
+                                                             final IterableInterval<T> ii, final DescriptiveStatistics ds,
+                                                             int massDisplacement) {
 
-                        long count = 0;
-                        while (c.hasNext()) {
-                                c.fwd();
-                                for (int i = 0; i < centroid.length; i++) {
-                                        centroid[i] += c.getDoublePosition(i);
-                                }
-                                count++;
-                        }
+        if (wcIterableInterval != ii) {
+            wcIterableInterval = ii;
+            weightedCentroid = new double[ii.numDimensions()];
+            final double[] centroid = new double[ii.numDimensions()];
 
-                        for (int i = 0; i < centroid.length; i++) {
-                                centroid[i] /= count;
-                        }
+            final Cursor<T> c = ii.localizingCursor();
+
+            final long[] pos = new long[c.numDimensions()];
+            while (c.hasNext()) {
+                c.fwd();
+                c.localize(pos);
+
+                final double val = c.get().getRealDouble();
+
+                for (int d = 0; d < ii.numDimensions(); d++) {
+                    weightedCentroid[d] += pos[d]
+                            * (val / ds.getSum());
+                    centroid[d] += pos[d];
                 }
-                return centroid;
-        }
+            }
 
-        private double[] weightedCentroid;
-        private IterableInterval<? extends RealType<?>> wcIterableInterval;
-
-        public <T extends RealType<T>> double[] weightedCentroid(
-                        final IterableInterval<T> ii, final DescriptiveStatistics ds,
-                        int massDisplacement) {
-
-                if (wcIterableInterval != ii) {
-                        wcIterableInterval = ii;
-                        weightedCentroid = new double[ii.numDimensions()];
-                        final double[] centroid = new double[ii.numDimensions()];
-
-                        final Cursor<T> c = ii.localizingCursor();
-
-                        final long[] pos = new long[c.numDimensions()];
-                        while (c.hasNext()) {
-                                c.fwd();
-                                c.localize(pos);
-
-                                final double val = c.get().getRealDouble();
-
-                                for (int d = 0; d < ii.numDimensions(); d++) {
-                                        weightedCentroid[d] += pos[d]
-                                                        * (val / ds.getSum());
-                                        centroid[d] += pos[d];
-                                }
-                        }
-
-                        massDisplacement = 0;
-                        for (int d = 0; d < ii.numDimensions(); d++) {
-                                // m_weightedCentroid[d] /= m_interval.size();
-                                centroid[d] /= ii.size();
-                                massDisplacement += Math.pow(
-                                                weightedCentroid[d]
-                                                                - centroid[d],
-                                                2);
-                        }
-
-                }
-                return weightedCentroid;
+            massDisplacement = 0;
+            for (int d = 0; d < ii.numDimensions(); d++) {
+                // m_weightedCentroid[d] /= m_interval.size();
+                centroid[d] /= ii.size();
+                massDisplacement += Math.pow(
+                                             weightedCentroid[d]
+                                                     - centroid[d],
+                                                     2);
+            }
 
         }
+        return weightedCentroid;
 
-        private IterableInterval<BitType> sIterableInterval;
-        private Signature signature;
+    }
 
-        public Signature signature(final IterableInterval<BitType> ii,
-                        final int samplingRate) {
+    private IterableInterval<BitType> sIterableInterval;
+    private Signature signature;
 
-                if (sIterableInterval != ii) {
-                        sIterableInterval = ii;
+    public Signature signature(final IterableInterval<BitType> ii,
+                               final int samplingRate) {
 
-                        final double[] centroid = centroid(ii);
-                        final long[] pos = new long[centroid.length];
-                        for (int i = 0; i < pos.length; i++) {
-                                pos[i] = Math.round(centroid[i]);
-                        }
+        if (sIterableInterval != ii) {
+            sIterableInterval = ii;
 
-                        signature = new Signature(binaryMask(ii), pos,
-                                        samplingRate);
-                }
+            final double[] centroid = centroid(ii);
+            final long[] pos = new long[centroid.length];
+            for (int i = 0; i < pos.length; i++) {
+                pos[i] = Math.round(centroid[i]);
+            }
 
-                return signature;
-
+            signature = new Signature(binaryMask(ii), pos,
+                                      samplingRate);
         }
 
-        private CooccurrenceMatrix coocMatrix;
-        private IterableInterval<? extends RealType<?>> coocII;
-        private int coocDist;
-        private int coocGrayLevels;
-        private MatrixOrientation coocOrientation;
-        private BitSet coocBitSet;
+        return signature;
 
-        public <T extends RealType<T>> CooccurrenceMatrix cooccurenceMatrix(
-                        final IterableInterval<T> ii, final int dimX, final int dimY,
-                        final int distance, final int nrGrayLevels,
-                        final MatrixOrientation matrixOrientation, final BitSet features) {
-                if (coocII != ii || coocDist != distance
-                                || coocGrayLevels != nrGrayLevels
-                                || coocOrientation != matrixOrientation
-                                || !features.equals(coocBitSet)) {
-                        final MakeCooccurrenceMatrix<T> matrixOp = new MakeCooccurrenceMatrix<T>(
-                                        dimX, dimY, distance, nrGrayLevels,
-                                        matrixOrientation, features);
-                        if (coocMatrix == null
-                                        || coocGrayLevels != nrGrayLevels) {
-                                // matrix still null or size must change
-                                coocMatrix = new CooccurrenceMatrix(
-                                                nrGrayLevels);
-                        }
-                        matrixOp.compute(ii, coocMatrix);
-                        coocII = ii;
-                        coocDist = distance;
-                        coocGrayLevels = nrGrayLevels;
-                        coocOrientation = matrixOrientation;
-                        coocBitSet = features;
-                }
-                return coocMatrix;
+    }
+
+    private CooccurrenceMatrix coocMatrix;
+    private IterableInterval<? extends RealType<?>> coocII;
+    private int coocDist;
+    private int coocGrayLevels;
+    private MatrixOrientation coocOrientation;
+    private BitSet coocBitSet;
+
+    public <T extends RealType<T>> CooccurrenceMatrix cooccurenceMatrix(
+                                                                        final IterableInterval<T> ii, final int dimX, final int dimY,
+                                                                        final int distance, final int nrGrayLevels,
+                                                                        final MatrixOrientation matrixOrientation, final BitSet features) {
+        if ((coocII != ii) || (coocDist != distance)
+                || (coocGrayLevels != nrGrayLevels)
+                || (coocOrientation != matrixOrientation)
+                || !features.equals(coocBitSet)) {
+            final MakeCooccurrenceMatrix<T> matrixOp = new MakeCooccurrenceMatrix<T>(
+                    dimX, dimY, distance, nrGrayLevels,
+                    matrixOrientation, features);
+            if ((coocMatrix == null)
+                    || (coocGrayLevels != nrGrayLevels)) {
+                // matrix still null or size must change
+                coocMatrix = new CooccurrenceMatrix(
+                                                    nrGrayLevels);
+            }
+            matrixOp.compute(ii, coocMatrix);
+            coocII = ii;
+            coocDist = distance;
+            coocGrayLevels = nrGrayLevels;
+            coocOrientation = matrixOrientation;
+            coocBitSet = features;
         }
+        return coocMatrix;
+    }
 
 }

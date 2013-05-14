@@ -65,48 +65,48 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class AbstractImgExt0 implements Externalizer<Img> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<? extends Img> getType() {
-                return AbstractImg.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends Img> getType() {
+        return AbstractImg.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public AbstractImg read(final BufferedDataInputStream in) throws Exception {
-                // delegate to the img externalizer
-                return ExternalizerManager.read(in);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractImg read(final BufferedDataInputStream in) throws Exception {
+        // delegate to the img externalizer
+        return ExternalizerManager.read(in);
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final Img obj)
-                        throws Exception {
-                // delegate to the img externalizer
-                ExternalizerManager.write(out, obj, Img.class);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final Img obj)
+            throws Exception {
+        // delegate to the img externalizer
+        ExternalizerManager.write(out, obj, Img.class);
 
-        }
+    }
 
 }

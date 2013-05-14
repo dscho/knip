@@ -65,129 +65,129 @@ import org.knime.knip.core.features.zernike.ZernikeFeatureComputer;
  */
 public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
 
-        private ZernikeFeatureComputer<T> m_comp = null;
+    private ZernikeFeatureComputer<T> m_comp = null;
 
-        private final String[] m_names;
+    private final String[] m_names;
 
-        private final int m_order;
+    private final int m_order;
 
-        private IterableInterval<T> m_interval;
+    private IterableInterval<T> m_interval;
 
-        private final boolean m_calcMagnitude;
+    private final boolean m_calcMagnitude;
 
-        /**
-         * @param order
-         */
-        public ZernikeFeatureSet(final int order, final boolean calcMagnitude) {
-                super();
-                m_order = order;
-                m_calcMagnitude = calcMagnitude;
-                int countFeatures = ZernikeFeatureComputer
-                                .countZernikeMoments(order);
-                if (!calcMagnitude) {
-                        countFeatures *= 2;
-                }
-                m_names = new String[countFeatures];
-                for (int j = 0; j < countFeatures; ++j) {
-                        final int newOrder = ZernikeFeatureComputer.giveZernikeOrder(
-                                        order, j);
-                        final int rep = ZernikeFeatureComputer.giveZernikeRepetition(
-                                        order, j);
+    /**
+     * @param order
+     */
+    public ZernikeFeatureSet(final int order, final boolean calcMagnitude) {
+        super();
+        m_order = order;
+        m_calcMagnitude = calcMagnitude;
+        int countFeatures = ZernikeFeatureComputer
+                .countZernikeMoments(order);
+        if (!calcMagnitude) {
+            countFeatures *= 2;
+        }
+        m_names = new String[countFeatures];
+        for (int j = 0; j < countFeatures; ++j) {
+            final int newOrder = ZernikeFeatureComputer.giveZernikeOrder(
+                                                                         order, j);
+            final int rep = ZernikeFeatureComputer.giveZernikeRepetition(
+                                                                         order, j);
 
-                        if (!calcMagnitude) {
-                                m_names[j] = "ZernikeReal[order=" + newOrder
-                                                + ";rep=" + rep + "]";
-                                j++;
-                                m_names[j++] = "ZernikeComplex[order="
-                                                + newOrder + ";rep=" + rep
-                                                + "]";
-                        } else {
-                                m_names[j] = "ZernikeMagn[order=" + newOrder
-                                                + ";rep=" + rep + "]";
-                        }
-                }
-
+            if (!calcMagnitude) {
+                m_names[j] = "ZernikeReal[order=" + newOrder
+                        + ";rep=" + rep + "]";
+                j++;
+                m_names[j++] = "ZernikeComplex[order="
+                        + newOrder + ";rep=" + rep
+                        + "]";
+            } else {
+                m_names[j] = "ZernikeMagn[order=" + newOrder
+                        + ";rep=" + rep + "]";
+            }
         }
 
-        @FeatureTargetListener
-        public final void iiUpdated(final IterableInterval<T> interval) {
-                m_interval = interval;
-                m_comp = null;
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public double value(final int id) {
+    @FeatureTargetListener
+    public final void iiUpdated(final IterableInterval<T> interval) {
+        m_interval = interval;
+        m_comp = null;
+    }
 
-                if (m_calcMagnitude) {
-                        // gives the magnitued of the result
-                        final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id);
-                        return Math.sqrt(res.getImaginary()
-                                        * res.getImaginary() + res.getReal()
-                                        * res.getReal());
-                } else {
-                        // TODO: cache the complex result!!
-                        final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id / 2);
-                        if (id % 2 == 0) {
-                                return res.getReal();
-                        } else {
-                                return res.getImaginary();
-                        }
-                }
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double value(final int id) {
 
-        /**
-         * @return the complex feature value
-         */
-        public ZernikeFeatureComputer.Complex getComplexFeatureValue(final int id) {
-                if (m_comp == null) {
-                        m_comp = new ZernikeFeatureComputer<T>(m_interval);
-                }
-                final ZernikeFeatureComputer.Complex result = m_comp
-                                .computeZernikeMoment(
-                                                ZernikeFeatureComputer
-                                                                .giveZernikeOrder(
-                                                                                m_order,
-                                                                                id),
-                                                ZernikeFeatureComputer
-                                                                .giveZernikeRepetition(
-                                                                                m_order,
-                                                                                id));
-                return result;
+        if (m_calcMagnitude) {
+            // gives the magnitued of the result
+            final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id);
+            return Math.sqrt((res.getImaginary()
+                    * res.getImaginary()) + (res.getReal()
+                            * res.getReal()));
+        } else {
+            // TODO: cache the complex result!!
+            final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id / 2);
+            if ((id % 2) == 0) {
+                return res.getReal();
+            } else {
+                return res.getImaginary();
+            }
         }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name(final int id) {
-                return m_names[id];
+    /**
+     * @return the complex feature value
+     */
+    public ZernikeFeatureComputer.Complex getComplexFeatureValue(final int id) {
+        if (m_comp == null) {
+            m_comp = new ZernikeFeatureComputer<T>(m_interval);
         }
+        final ZernikeFeatureComputer.Complex result = m_comp
+                .computeZernikeMoment(
+                                      ZernikeFeatureComputer
+                                      .giveZernikeOrder(
+                                                        m_order,
+                                                        id),
+                                                        ZernikeFeatureComputer
+                                                        .giveZernikeRepetition(
+                                                                               m_order,
+                                                                               id));
+        return result;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void enable(final int id) {
-                // nothing to do here
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return m_names[id];
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int numFeatures() {
-                return m_names.length;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        // nothing to do here
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String featureSetId() {
-                return "Zernike Feature Factory";
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return m_names.length;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "Zernike Feature Factory";
+    }
 
 }

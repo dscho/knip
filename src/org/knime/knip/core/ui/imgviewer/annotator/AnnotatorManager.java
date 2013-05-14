@@ -41,280 +41,280 @@ import org.knime.knip.core.ui.imgviewer.panels.HiddenViewerComponent;
  *
  */
 public class AnnotatorManager<T extends RealType<T>> extends
-                HiddenViewerComponent {
+HiddenViewerComponent {
 
-        /**
-	 *
-	 */
-        private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-        /* Are serialized */
-        private Map<String, Overlay<String>> m_overlayMap;
+    /* Are serialized */
+    private Map<String, Overlay<String>> m_overlayMap;
 
-        private String[] m_selectedLabels;
+    private String[] m_selectedLabels;
 
-        private PlaneSelectionEvent m_sel;
+    private PlaneSelectionEvent m_sel;
 
-        /* Are not serialized or calculated from serzalization values */
-        private EventService m_eventService;
+    /* Are not serialized or calculated from serzalization values */
+    private EventService m_eventService;
 
-        private List<OverlayElement2D<String>> m_removeList;
+    private List<OverlayElement2D<String>> m_removeList;
 
-        private Overlay<String> m_currentOverlay;
+    private Overlay<String> m_currentOverlay;
 
-        private AnnotatorTool<?> m_currentTool;
+    private AnnotatorTool<?> m_currentTool;
 
-        public AnnotatorManager() {
-                setOverlayMap(new HashMap<String, Overlay<String>>());
-                m_removeList = new ArrayList<OverlayElement2D<String>>();
-                m_selectedLabels = new String[] { "Unknown" };
+    public AnnotatorManager() {
+        setOverlayMap(new HashMap<String, Overlay<String>>());
+        m_removeList = new ArrayList<OverlayElement2D<String>>();
+        m_selectedLabels = new String[] { "Unknown" };
+    }
+
+    @Override
+    public void setEventService(final EventService eventService) {
+        m_eventService = eventService;
+        eventService.subscribe(this);
+    }
+
+    @EventListener
+    public void onLabelsColorReset(final AnnotatorLabelsColResetEvent e) {
+        for (final String label : e.getLabels()) {
+            SegmentColorTable.resetColor(label);
         }
 
-        @Override
-        public void setEventService(final EventService eventService) {
-                m_eventService = eventService;
-                eventService.subscribe(this);
+        m_eventService.publish(new OverlayChgEvent(m_currentOverlay));
+    }
+
+    @EventListener
+    public void onSetClassLabels(final AnnotatorLabelsSetEvent e) {
+        if (m_currentTool != null) {
+            m_currentTool.setLabelsCurrentElements(
+                                                   m_currentOverlay, e.getLabels());
+        }
+    }
+
+    @EventListener
+    public void onSelectedLabelsChg(final AnnotatorLabelsSelChgEvent e) {
+        m_selectedLabels = e.getLabels();
+    }
+
+    @EventListener
+    public void onToolChange(final AnnotatorToolChgEvent e) {
+        if (m_currentTool != null) {
+            m_currentTool.fireFocusLost(m_currentOverlay);
         }
 
-        @EventListener
-        public void onLabelsColorReset(final AnnotatorLabelsColResetEvent e) {
+        m_currentTool = e.getTool();
+
+    }
+
+    @EventListener
+    public void onFileListChange(final AnnotatorFilelistChgEvent e) {
+
+        for (final String key : new HashSet<String>(m_overlayMap.keySet())) {
+            // Switching systems
+            boolean contains = false;
+            for (final String file : e.getFileList()) {
+                // Exactly same path
+                if (key.equals(file)) {
+                    contains = true;
+                    break;
+                }
+            }
+            if (!contains) {
+                m_overlayMap.remove(key);
+            }
+
+        }
+
+    }
+
+    @EventListener
+    public void onLabelsDeleted(final AnnotatorLabelsDelEvent e) {
+        for (final Overlay<String> overlay : m_overlayMap.values()) {
+            for (final OverlayElement2D<String> element : overlay
+                    .getElements()) {
                 for (final String label : e.getLabels()) {
-                        SegmentColorTable.resetColor(label);
+                    element.getLabels().remove(label);
                 }
 
-                m_eventService.publish(new OverlayChgEvent(m_currentOverlay));
-        }
-
-        @EventListener
-        public void onSetClassLabels(final AnnotatorLabelsSetEvent e) {
-                if (m_currentTool != null) {
-                        m_currentTool.setLabelsCurrentElements(
-                                        m_currentOverlay, e.getLabels());
+                if (element.getLabels().size() == 0) {
+                    m_removeList.add(element);
                 }
+            }
+
+            overlay.removeAll(m_removeList);
+            m_removeList.clear();
+        }
+        if (m_currentOverlay != null) {
+            m_currentOverlay.fireOverlayChanged();
+        }
+    }
+
+    /**
+     * @param axes
+     */
+    @EventListener
+    public void onUpdate(final IntervalWithMetadataChgEvent<T> e) {
+
+        m_currentOverlay = getOverlayMap().get(
+                                               e.getSource().getSource());
+
+        if (m_currentOverlay == null) {
+            m_currentOverlay = new Overlay<String>(e.getRandomAccessibleInterval());
+            getOverlayMap().put(e.getSource().getSource(),
+                                m_currentOverlay);
+            m_currentOverlay.setEventService(m_eventService);
         }
 
-        @EventListener
-        public void onSelectedLabelsChg(final AnnotatorLabelsSelChgEvent e) {
-                m_selectedLabels = e.getLabels();
+        final long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
+        e.getRandomAccessibleInterval().dimensions(dims);
+
+        if ((m_sel == null) || !isInsideDims(m_sel.getPlanePos(), dims)) {
+            m_sel = new PlaneSelectionEvent(0, 1, new long[e
+                                                           .getRandomAccessibleInterval().numDimensions()]);
         }
 
-        @EventListener
-        public void onToolChange(final AnnotatorToolChgEvent e) {
-                if (m_currentTool != null) {
-                        m_currentTool.fireFocusLost(m_currentOverlay);
+        m_eventService.publish(new AnnotatorImgAndOverlayChgEvent(e
+                                                                  .getRandomAccessibleInterval(), m_currentOverlay));
+
+        m_eventService.publish(new ImgRedrawEvent());
+    }
+
+    private boolean isInsideDims(final long[] planePos, final long[] dims) {
+        if (planePos.length != dims.length) {
+            return false;
+        }
+
+        for (int d = 0; d < planePos.length; d++) {
+            if (planePos[d] >= dims[d]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @EventListener
+    public void onUpdate(final PlaneSelectionEvent sel) {
+        m_sel = sel;
+    }
+
+    @EventListener
+    public void onLabelEdit(final AnnotatorLabelEditEvent e) {
+        for (final Overlay<String> overlay : m_overlayMap.values()) {
+            for (final OverlayElement2D<String> element : overlay
+                    .getElements()) {
+                if (element.getLabels().remove(e.getOldLabel())) {
+                    element.getLabels()
+                    .add(e.getNewLabel());
                 }
-
-                m_currentTool = e.getTool();
-
+            }
         }
+        onSelectedLabelsChg(new AnnotatorLabelsSelChgEvent(
+                                                           e.getNewLabel()));
 
-        @EventListener
-        public void onFileListChange(final AnnotatorFilelistChgEvent e) {
+        SegmentColorTable.setColor(e.getNewLabel(),
+                                   SegmentColorTable.getColor(e.getOldLabel()));
+    }
 
-                for (final String key : new HashSet<String>(m_overlayMap.keySet())) {
-                        // Switching systems
-                        boolean contains = false;
-                        for (final String file : e.getFileList()) {
-                                // Exactly same path
-                                if (key.equals(file)) {
-                                        contains = true;
-                                        break;
-                                }
-                        }
-                        if (!contains) {
-                                m_overlayMap.remove(key);
-                        }
+    /*
+     * Handling mouse events
+     */
 
-                }
+     @EventListener
+     public void onMousePressed(final ImgViewerMousePressedEvent e) {
 
+        if ((m_currentOverlay != null) && (m_currentTool != null)) {
+            m_currentTool.onMousePressed(e, m_sel,
+                                         m_currentOverlay, m_selectedLabels);
         }
+     }
 
-        @EventListener
-        public void onLabelsDeleted(final AnnotatorLabelsDelEvent e) {
-                for (final Overlay<String> overlay : m_overlayMap.values()) {
-                        for (final OverlayElement2D<String> element : overlay
-                                        .getElements()) {
-                                for (final String label : e.getLabels()) {
-                                        element.getLabels().remove(label);
-                                }
+     @EventListener
+     public void onMouseDragged(final ImgViewerMouseDraggedEvent e) {
 
-                                if (element.getLabels().size() == 0) {
-                                        m_removeList.add(element);
-                                }
-                        }
+         if ((m_currentOverlay != null) && (m_currentTool != null)) {
+             m_currentTool.onMouseDragged(e, m_sel,
+                                          m_currentOverlay, m_selectedLabels);
+         }
+     }
 
-                        overlay.removeAll(m_removeList);
-                        m_removeList.clear();
-                }
-                if (m_currentOverlay != null) {
-                        m_currentOverlay.fireOverlayChanged();
-                }
-        }
+     @EventListener
+     public void onMouseReleased(final ImgViewerMouseReleasedEvent e) {
+         if ((m_currentOverlay != null) && (m_currentTool != null)) {
+             if (e.getClickCount() > 1) {
+                 m_currentTool.onMouseDoubleClick(e, m_sel,
+                                                  m_currentOverlay,
+                                                  m_selectedLabels);
+             } else {
+                 m_currentTool.onMouseReleased(e, m_sel,
+                                               m_currentOverlay,
+                                               m_selectedLabels);
+             }
 
-        /**
-         * @param axes
-         */
-        @EventListener
-        public void onUpdate(final IntervalWithMetadataChgEvent<T> e) {
+         }
+     }
 
-                m_currentOverlay = getOverlayMap().get(
-                                e.getSource().getSource());
+     @Override
+     public void saveComponentConfiguration(final ObjectOutput out)
+             throws IOException {
+         out.writeInt(getOverlayMap().size());
 
-                if (m_currentOverlay == null) {
-                        m_currentOverlay = new Overlay<String>(e.getRandomAccessibleInterval());
-                        getOverlayMap().put(e.getSource().getSource(),
-                                        m_currentOverlay);
-                        m_currentOverlay.setEventService(m_eventService);
-                }
+         for (final Entry<String, Overlay<String>> entry : getOverlayMap()
+                 .entrySet()) {
+             out.writeUTF(entry.getKey());
+             entry.getValue().writeExternal(out);
+         }
+         out.writeInt(m_selectedLabels.length);
 
-                final long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
-                e.getRandomAccessibleInterval().dimensions(dims);
+         for (final String s : m_selectedLabels) {
+             out.writeUTF(s);
+         }
 
-                if (m_sel == null || !isInsideDims(m_sel.getPlanePos(), dims)) {
-                        m_sel = new PlaneSelectionEvent(0, 1, new long[e
-                                        .getRandomAccessibleInterval().numDimensions()]);
-                }
+         // out.writeObject(m_sel);
 
-                m_eventService.publish(new AnnotatorImgAndOverlayChgEvent(e
-                                .getRandomAccessibleInterval(), m_currentOverlay));
+     }
 
-                m_eventService.publish(new ImgRedrawEvent());
-        }
+     @Override
+     public void loadComponentConfiguration(final ObjectInput in)
+             throws IOException, ClassNotFoundException {
 
-        private boolean isInsideDims(final long[] planePos, final long[] dims) {
-                if (planePos.length != dims.length) {
-                        return false;
-                }
+         getOverlayMap().clear();
+         final int num = in.readInt();
+         for (int i = 0; i < num; i++) {
+             final String key = in.readUTF();
+             final Overlay<String> o = new Overlay<String>();
+             o.readExternal(in);
+             o.setEventService(m_eventService);
+             getOverlayMap().put(key, o);
+         }
 
-                for (int d = 0; d < planePos.length; d++) {
-                        if (planePos[d] >= dims[d]) {
-                                return false;
-                        }
-                }
+         m_selectedLabels = new String[in.readInt()];
+         for (int i = 0; i < m_selectedLabels.length; i++) {
+             m_selectedLabels[i] = in.readUTF();
+         }
 
-                return true;
-        }
+         // m_sel = (PlaneSelection) in.readObject();
+     }
 
-        @EventListener
-        public void onUpdate(final PlaneSelectionEvent sel) {
-                m_sel = sel;
-        }
+     public Map<String, Overlay<String>> getOverlayMap() {
+         return m_overlayMap;
+     }
 
-        @EventListener
-        public void onLabelEdit(final AnnotatorLabelEditEvent e) {
-                for (final Overlay<String> overlay : m_overlayMap.values()) {
-                        for (final OverlayElement2D<String> element : overlay
-                                        .getElements()) {
-                                if (element.getLabels().remove(e.getOldLabel())) {
-                                        element.getLabels()
-                                                        .add(e.getNewLabel());
-                                }
-                        }
-                }
-                onSelectedLabelsChg(new AnnotatorLabelsSelChgEvent(
-                                e.getNewLabel()));
+     public void setOverlayMap(final Map<String, Overlay<String>> m_overlayMap) {
+         this.m_overlayMap = m_overlayMap;
+     }
 
-                SegmentColorTable.setColor(e.getNewLabel(),
-                                SegmentColorTable.getColor(e.getOldLabel()));
-        }
-
-        /*
-         * Handling mouse events
-         */
-
-        @EventListener
-        public void onMousePressed(final ImgViewerMousePressedEvent e) {
-
-                if (m_currentOverlay != null && m_currentTool != null) {
-                        m_currentTool.onMousePressed(e, m_sel,
-                                        m_currentOverlay, m_selectedLabels);
-                }
-        }
-
-        @EventListener
-        public void onMouseDragged(final ImgViewerMouseDraggedEvent e) {
-
-                if (m_currentOverlay != null && m_currentTool != null) {
-                        m_currentTool.onMouseDragged(e, m_sel,
-                                        m_currentOverlay, m_selectedLabels);
-                }
-        }
-
-        @EventListener
-        public void onMouseReleased(final ImgViewerMouseReleasedEvent e) {
-                if (m_currentOverlay != null && m_currentTool != null) {
-                        if (e.getClickCount() > 1) {
-                                m_currentTool.onMouseDoubleClick(e, m_sel,
-                                                m_currentOverlay,
-                                                m_selectedLabels);
-                        } else {
-                                m_currentTool.onMouseReleased(e, m_sel,
-                                                m_currentOverlay,
-                                                m_selectedLabels);
-                        }
-
-                }
-        }
-
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                out.writeInt(getOverlayMap().size());
-
-                for (final Entry<String, Overlay<String>> entry : getOverlayMap()
-                                .entrySet()) {
-                        out.writeUTF(entry.getKey());
-                        entry.getValue().writeExternal(out);
-                }
-                out.writeInt(m_selectedLabels.length);
-
-                for (final String s : m_selectedLabels) {
-                        out.writeUTF(s);
-                }
-
-                // out.writeObject(m_sel);
-
-        }
-
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-
-                getOverlayMap().clear();
-                final int num = in.readInt();
-                for (int i = 0; i < num; i++) {
-                        final String key = in.readUTF();
-                        final Overlay<String> o = new Overlay<String>();
-                        o.readExternal(in);
-                        o.setEventService(m_eventService);
-                        getOverlayMap().put(key, o);
-                }
-
-                m_selectedLabels = new String[in.readInt()];
-                for (int i = 0; i < m_selectedLabels.length; i++) {
-                        m_selectedLabels[i] = in.readUTF();
-                }
-
-                // m_sel = (PlaneSelection) in.readObject();
-        }
-
-        public Map<String, Overlay<String>> getOverlayMap() {
-                return m_overlayMap;
-        }
-
-        public void setOverlayMap(final Map<String, Overlay<String>> m_overlayMap) {
-                this.m_overlayMap = m_overlayMap;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void reset() {
-                m_currentOverlay = null;
-                m_overlayMap = new HashMap<String, Overlay<String>>();
-                m_removeList = new ArrayList<OverlayElement2D<String>>();
-                m_selectedLabels = new String[] { "Unknown" };
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public void reset() {
+         m_currentOverlay = null;
+         m_overlayMap = new HashMap<String, Overlay<String>>();
+         m_removeList = new ArrayList<OverlayElement2D<String>>();
+         m_selectedLabels = new String[] { "Unknown" };
+     }
 
 }

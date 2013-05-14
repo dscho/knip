@@ -59,30 +59,30 @@ import org.knime.knip.core.ui.imgviewer.annotator.AnnotatorTool;
  */
 public class AnnotatorToolChgEvent implements KNIPEvent {
 
-        private final AnnotatorTool m_tool;
+    private final AnnotatorTool m_tool;
 
-        public AnnotatorToolChgEvent(final AnnotatorTool tool) {
-                m_tool = tool;
+    public AnnotatorToolChgEvent(final AnnotatorTool tool) {
+        m_tool = tool;
 
-        }
+    }
 
-        /**
-         * @return the tool
-         */
-        public AnnotatorTool getTool() {
-                return m_tool;
-        }
+    /**
+     * @return the tool
+     */
+    public AnnotatorTool getTool() {
+        return m_tool;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 }

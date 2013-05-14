@@ -80,292 +80,292 @@ import net.imglib2.view.Views;
  *                The type of the integral image.
  */
 public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & NativeType<T>>
-                implements
-                UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
+implements
+UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
-        private final ImgFactory<T> m_factory;
-        private T m_type;
+    private final ImgFactory<T> m_factory;
+    private T m_type;
 
-        public IntegralImgND(final ImgFactory<T> factory, final T type) {
-                m_factory = factory;
-                m_type = type;
-        }
+    public IntegralImgND(final ImgFactory<T> factory, final T type) {
+        m_factory = factory;
+        m_type = type;
+    }
 
-        public IntegralImgND(final ImgFactory<T> factory) {
-                m_factory = factory;
-                m_type = null;
-        }
+    public IntegralImgND(final ImgFactory<T> factory) {
+        m_factory = factory;
+        m_type = null;
+    }
 
-        @Override
-        public UnaryObjectFactory<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> bufferFactory() {
-                return new UnaryObjectFactory<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>>() {
+    @Override
+    public UnaryObjectFactory<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> bufferFactory() {
+        return new UnaryObjectFactory<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>>() {
 
-                        @SuppressWarnings("unchecked")
-                        @Override
-                        public RandomAccessibleInterval<T> instantiate(
-                                        final RandomAccessibleInterval<R> input) {
+            @SuppressWarnings("unchecked")
+            @Override
+            public RandomAccessibleInterval<T> instantiate(
+                                                           final RandomAccessibleInterval<R> input) {
 
-                                final R probe = input.randomAccess().get()
-                                                .createVariable();
-                                if (m_type == null) {
-                                        if (probe instanceof LongType
-                                                        || probe instanceof Unsigned12BitType) {
-                                                m_type = (T) new LongType();
-                                        } else if (probe instanceof IntegerType) {
-                                                m_type = (T) new IntType();
-                                        } else {
-                                                m_type = (T) new DoubleType();
-                                        }
-                                }
-
-                                // the size of the first dimension is changed
-                                final int numDimensions = input.numDimensions();
-                                final long integralSize[] = new long[numDimensions];
-
-                                for (int d = 0; d < numDimensions; ++d) {
-                                        integralSize[d] = input.dimension(d) + 1;
-                                }
-
-                                return m_factory.create(integralSize, m_type);
-                        }
-                };
-        }
-
-        @Override
-        public UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> copy() {
-                return new IntegralImgND<R, T>(m_factory, m_type);
-        }
-
-        @Override
-        public RandomAccessibleInterval<T> compute(
-                        final RandomAccessibleInterval<R> input,
-                        final RandomAccessibleInterval<T> output) {
-
-                // the following methods alter output
-                if (output.numDimensions() == 1) {
-                        process_1D(input, output);
-                } else {
-                        process_nD_initialDimension(input, output);
-                        process_nD_remainingDimensions(input, output);
+                final R probe = input.randomAccess().get()
+                        .createVariable();
+                if (m_type == null) {
+                    if ((probe instanceof LongType)
+                            || (probe instanceof Unsigned12BitType)) {
+                        m_type = (T) new LongType();
+                    } else if (probe instanceof IntegerType) {
+                        m_type = (T) new IntType();
+                    } else {
+                        m_type = (T) new DoubleType();
+                    }
                 }
 
-                // iterate a 2nd time over the input for error testing
-                // this is expensive but we have to ensure that the
-                // bounds of the output type
-                // are big enough.
-                double errorSum = 0.0d;
+                // the size of the first dimension is changed
+                final int numDimensions = input.numDimensions();
+                final long integralSize[] = new long[numDimensions];
 
-                final Cursor<R> inputCursor = Views.iterable(input).cursor();
-                while (inputCursor.hasNext()) {
-                        errorSum += inputCursor.next().getRealDouble();
+                for (int d = 0; d < numDimensions; ++d) {
+                    integralSize[d] = input.dimension(d) + 1;
                 }
 
-                if (errorSum > output.randomAccess().get().createVariable()
-                                .getMaxValue()
-                                || Double.isInfinite(errorSum)) {
-                        throw new RuntimeException(
-                                        new IncompatibleTypeException(
-                                        output,
-                                                        "Integral image breaks type boundaries of the output image. (max value of "
-                                                        + errorSum
-                                                                        + " is too much)"));
-                }
+                return m_factory.create(integralSize, m_type);
+            }
+        };
+    }
 
-                return output;
+    @Override
+    public UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> copy() {
+        return new IntegralImgND<R, T>(m_factory, m_type);
+    }
+
+    @Override
+    public RandomAccessibleInterval<T> compute(
+                                               final RandomAccessibleInterval<R> input,
+                                               final RandomAccessibleInterval<T> output) {
+
+        // the following methods alter output
+        if (output.numDimensions() == 1) {
+            process_1D(input, output);
+        } else {
+            process_nD_initialDimension(input, output);
+            process_nD_remainingDimensions(input, output);
         }
 
-        public void process_1D(final RandomAccessibleInterval<R> input,
-                        final RandomAccessibleInterval<T> output) {
-                final T tmpVar = output.randomAccess().get().createVariable();
-                final T sum = output.randomAccess().get().createVariable();
+        // iterate a 2nd time over the input for error testing
+        // this is expensive but we have to ensure that the
+        // bounds of the output type
+        // are big enough.
+        double errorSum = 0.0d;
 
-                // the size of dimension 0
-                final long size = output.dimension(0);
-
-                final RandomAccess<R> cursorIn = input.randomAccess();
-                final RandomAccess<T> cursorOut = output.randomAccess();
-
-                cursorIn.setPosition(0, 0);
-                cursorOut.setPosition(1, 0);
-
-                // compute the first pixel
-                sum.setReal(cursorIn.get().getRealDouble());
-                cursorOut.get().set(sum);
-
-                for (long i = 2; i < size; ++i) {
-                        cursorIn.fwd(0);
-                        cursorOut.fwd(0);
-
-                        tmpVar.setReal(cursorIn.get().getRealDouble());
-                        sum.add(tmpVar);
-                        cursorOut.get().set(sum);
-                }
+        final Cursor<R> inputCursor = Views.iterable(input).cursor();
+        while (inputCursor.hasNext()) {
+            errorSum += inputCursor.next().getRealDouble();
         }
 
-        private void process_nD_initialDimension(
-                        final RandomAccessibleInterval<R> input,
-                        final RandomAccessibleInterval<T> output) {
-
-                final int numDimensions = output.numDimensions();
-                final long[] fakeSize = new long[numDimensions - 1];
-
-                // location for the input location
-                final long[] tmpIn = new long[numDimensions];
-
-                // location for the integral location
-                final long[] tmpOut = new long[numDimensions];
-
-                // the size of dimension 0
-                final long size = output.dimension(0);
-
-                for (int d = 1; d < numDimensions; ++d) {
-                        fakeSize[d - 1] = output.dimension(d);
-                }
-
-                final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
-                                fakeSize);
-
-                final RandomAccess<R> cursorIn = input.randomAccess();
-                final RandomAccess<T> cursorOut = output.randomAccess();
-
-                final T tmpVar = output.randomAccess().get().createVariable();
-                final T sum = output.randomAccess().get().createVariable();
-
-                // iterate over all dimensions except the one we are computing
-                // the
-                // integral in, which is dim=0 here
-                main: while (cursorDim.hasNext()) {
-                        cursorDim.fwd();
-
-                        // get all dimensions except the one we are currently
-                        // doing the
-                        // integral on
-                        cursorDim.localize(fakeSize);
-
-                        tmpIn[0] = 0;
-                        tmpOut[0] = 1;
-
-                        for (int d = 1; d < numDimensions; ++d) {
-                                tmpIn[d] = fakeSize[d - 1] - 1;
-                                tmpOut[d] = fakeSize[d - 1];
-
-                                // all entries of position 0 are 0
-                                if (tmpOut[d] == 0) {
-                                        continue main;
-                                }
-                        }
-
-                        // set the cursor to the beginning of the correct line
-                        cursorIn.setPosition(tmpIn);
-
-                        // set the cursor in the integral image to the right
-                        // position
-                        cursorOut.setPosition(tmpOut);
-
-                        // integrate over the line
-                        integrateLineDim0(cursorIn, cursorOut, sum, tmpVar,
-                                        size);
-                }
+        if ((errorSum > output.randomAccess().get().createVariable()
+                .getMaxValue())
+                || Double.isInfinite(errorSum)) {
+            throw new RuntimeException(
+                                       new IncompatibleTypeException(
+                                                                     output,
+                                                                     "Integral image breaks type boundaries of the output image. (max value of "
+                                                                             + errorSum
+                                                                             + " is too much)"));
         }
 
-        private void process_nD_remainingDimensions(
-                        final RandomAccessibleInterval<R> input,
-                        final RandomAccessibleInterval<T> output) {
+        return output;
+    }
 
-                final int numDimensions = output.numDimensions();
+    public void process_1D(final RandomAccessibleInterval<R> input,
+                           final RandomAccessibleInterval<T> output) {
+        final T tmpVar = output.randomAccess().get().createVariable();
+        final T sum = output.randomAccess().get().createVariable();
 
-                for (int d = 1; d < numDimensions; ++d) {
-                        final long[] fakeSize = new long[numDimensions - 1];
-                        final long[] tmp = new long[numDimensions];
+        // the size of dimension 0
+        final long size = output.dimension(0);
 
-                        // the size of dimension d
-                        final long size = output.dimension(d);
+        final RandomAccess<R> cursorIn = input.randomAccess();
+        final RandomAccess<T> cursorOut = output.randomAccess();
 
-                        // get all dimensions except the one we are currently
-                        // doing the
-                        // integral on
-                        int countDim = 0;
-                        for (int e = 0; e < numDimensions; ++e) {
-                                if (e != d) {
-                                        fakeSize[countDim++] = output
-                                                        .dimension(e);
-                                }
-                        }
+        cursorIn.setPosition(0, 0);
+        cursorOut.setPosition(1, 0);
 
-                        final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
-                                        fakeSize);
+        // compute the first pixel
+        sum.setReal(cursorIn.get().getRealDouble());
+        cursorOut.get().set(sum);
 
-                        final RandomAccess<T> cursor = output.randomAccess();
-                        final T sum = output.randomAccess().get()
-                                        .createVariable();
+        for (long i = 2; i < size; ++i) {
+            cursorIn.fwd(0);
+            cursorOut.fwd(0);
 
-                        while (cursorDim.hasNext()) {
-                                cursorDim.fwd();
+            tmpVar.setReal(cursorIn.get().getRealDouble());
+            sum.add(tmpVar);
+            cursorOut.get().set(sum);
+        }
+    }
 
-                                // get all dimensions except the one we are
-                                // currently doing the
-                                // integral on
-                                cursorDim.localize(fakeSize);
+    private void process_nD_initialDimension(
+                                             final RandomAccessibleInterval<R> input,
+                                             final RandomAccessibleInterval<T> output) {
 
-                                tmp[d] = 1;
-                                countDim = 0;
-                                for (int e = 0; e < numDimensions; ++e) {
-                                        if (e != d) {
-                                                tmp[e] = fakeSize[countDim++];
-                                        }
-                                }
+        final int numDimensions = output.numDimensions();
+        final long[] fakeSize = new long[numDimensions - 1];
 
-                                // update the cursor in the input image to the
-                                // current dimension
-                                // position
-                                cursor.setPosition(tmp);
+        // location for the input location
+        final long[] tmpIn = new long[numDimensions];
 
-                                // sum up line
-                                integrateLine(d, cursor, sum, size);
-                        }
+        // location for the integral location
+        final long[] tmpOut = new long[numDimensions];
+
+        // the size of dimension 0
+        final long size = output.dimension(0);
+
+        for (int d = 1; d < numDimensions; ++d) {
+            fakeSize[d - 1] = output.dimension(d);
+        }
+
+        final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
+                                                                                                  fakeSize);
+
+        final RandomAccess<R> cursorIn = input.randomAccess();
+        final RandomAccess<T> cursorOut = output.randomAccess();
+
+        final T tmpVar = output.randomAccess().get().createVariable();
+        final T sum = output.randomAccess().get().createVariable();
+
+        // iterate over all dimensions except the one we are computing
+        // the
+        // integral in, which is dim=0 here
+        main: while (cursorDim.hasNext()) {
+            cursorDim.fwd();
+
+            // get all dimensions except the one we are currently
+            // doing the
+            // integral on
+            cursorDim.localize(fakeSize);
+
+            tmpIn[0] = 0;
+            tmpOut[0] = 1;
+
+            for (int d = 1; d < numDimensions; ++d) {
+                tmpIn[d] = fakeSize[d - 1] - 1;
+                tmpOut[d] = fakeSize[d - 1];
+
+                // all entries of position 0 are 0
+                if (tmpOut[d] == 0) {
+                    continue main;
                 }
+            }
+
+            // set the cursor to the beginning of the correct line
+            cursorIn.setPosition(tmpIn);
+
+            // set the cursor in the integral image to the right
+            // position
+            cursorOut.setPosition(tmpOut);
+
+            // integrate over the line
+            integrateLineDim0(cursorIn, cursorOut, sum, tmpVar,
+                              size);
         }
+    }
 
-        protected void integrateLineDim0(final RandomAccess<R> cursorIn,
-                        final RandomAccess<T> cursorOut, final T sum,
-                        final T tmpVar, final long size) {
-                // compute the first pixel
-                sum.setReal(cursorIn.get().getRealDouble());
-                cursorOut.get().set(sum);
+    private void process_nD_remainingDimensions(
+                                                final RandomAccessibleInterval<R> input,
+                                                final RandomAccessibleInterval<T> output) {
 
-                for (long i = 2; i < size; ++i) {
-                        cursorIn.fwd(0);
-                        cursorOut.fwd(0);
+        final int numDimensions = output.numDimensions();
 
-                        tmpVar.setReal(cursorIn.get().getRealDouble());
-                        sum.add(tmpVar);
-                        cursorOut.get().set(sum);
+        for (int d = 1; d < numDimensions; ++d) {
+            final long[] fakeSize = new long[numDimensions - 1];
+            final long[] tmp = new long[numDimensions];
+
+            // the size of dimension d
+            final long size = output.dimension(d);
+
+            // get all dimensions except the one we are currently
+            // doing the
+            // integral on
+            int countDim = 0;
+            for (int e = 0; e < numDimensions; ++e) {
+                if (e != d) {
+                    fakeSize[countDim++] = output
+                            .dimension(e);
                 }
-        }
+            }
 
-        protected void integrateLine(final int d, final RandomAccess<T> cursor,
-                        final T sum, final long size) {
-                // init sum on first pixel that is not zero
-                sum.set(cursor.get());
+            final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
+                                                                                                      fakeSize);
 
-                for (long i = 2; i < size; ++i) {
-                        cursor.fwd(d);
+            final RandomAccess<T> cursor = output.randomAccess();
+            final T sum = output.randomAccess().get()
+                    .createVariable();
 
-                        sum.add(cursor.get());
-                        cursor.get().set(sum);
+            while (cursorDim.hasNext()) {
+                cursorDim.fwd();
+
+                // get all dimensions except the one we are
+                // currently doing the
+                // integral on
+                cursorDim.localize(fakeSize);
+
+                tmp[d] = 1;
+                countDim = 0;
+                for (int e = 0; e < numDimensions; ++e) {
+                    if (e != d) {
+                        tmp[e] = fakeSize[countDim++];
+                    }
                 }
-        }
 
-        // convenience method
-        /**
-         *
-         * @param integralImage
-         * @return a helper object that efficiently computes sums on the
-         *         provided integral image.
-         */
-        public final static <T extends RealType<T>> IntegralImgSumAgent<T> getSumAgent(
-                        final RandomAccessibleInterval<T> integralImage) {
-                return new IntegralImgSumAgent<T>(integralImage);
+                // update the cursor in the input image to the
+                // current dimension
+                // position
+                cursor.setPosition(tmp);
+
+                // sum up line
+                integrateLine(d, cursor, sum, size);
+            }
         }
+    }
+
+    protected void integrateLineDim0(final RandomAccess<R> cursorIn,
+                                     final RandomAccess<T> cursorOut, final T sum,
+                                     final T tmpVar, final long size) {
+        // compute the first pixel
+        sum.setReal(cursorIn.get().getRealDouble());
+        cursorOut.get().set(sum);
+
+        for (long i = 2; i < size; ++i) {
+            cursorIn.fwd(0);
+            cursorOut.fwd(0);
+
+            tmpVar.setReal(cursorIn.get().getRealDouble());
+            sum.add(tmpVar);
+            cursorOut.get().set(sum);
+        }
+    }
+
+    protected void integrateLine(final int d, final RandomAccess<T> cursor,
+                                 final T sum, final long size) {
+        // init sum on first pixel that is not zero
+        sum.set(cursor.get());
+
+        for (long i = 2; i < size; ++i) {
+            cursor.fwd(d);
+
+            sum.add(cursor.get());
+            cursor.get().set(sum);
+        }
+    }
+
+    // convenience method
+    /**
+     *
+     * @param integralImage
+     * @return a helper object that efficiently computes sums on the
+     *         provided integral image.
+     */
+    public final static <T extends RealType<T>> IntegralImgSumAgent<T> getSumAgent(
+                                                                                   final RandomAccessibleInterval<T> integralImage) {
+        return new IntegralImgSumAgent<T>(integralImage);
+    }
 
 }

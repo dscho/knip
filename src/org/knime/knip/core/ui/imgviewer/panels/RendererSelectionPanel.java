@@ -34,121 +34,121 @@ import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
  */
 public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
 
-        private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-        private JList m_rendList;
+    private JList m_rendList;
 
-        private EventService m_eventService;
+    private EventService m_eventService;
 
-        private boolean m_blockEvent = false;
+    private boolean m_blockEvent = false;
 
-        public RendererSelectionPanel() {
+    public RendererSelectionPanel() {
 
-                super("Renderering", false);
+        super("Renderering", false);
 
-                // renderer selection
-                setPreferredSize(new Dimension(200, getMinimumSize().height));
-                setMaximumSize(new Dimension(250, getMaximumSize().height));
-                setMinimumSize(new Dimension(100, getMinimumSize().height));
-                setLayout(new BorderLayout());
+        // renderer selection
+        setPreferredSize(new Dimension(200, getMinimumSize().height));
+        setMaximumSize(new Dimension(250, getMaximumSize().height));
+        setMinimumSize(new Dimension(100, getMinimumSize().height));
+        setLayout(new BorderLayout());
 
-                m_rendList = new JList();
-                m_rendList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        m_rendList = new JList();
+        m_rendList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-                m_rendList.setSelectedIndex(0);
+        m_rendList.setSelectedIndex(0);
 
-                m_rendList.addListSelectionListener(new ListSelectionListener() {
+        m_rendList.addListSelectionListener(new ListSelectionListener() {
 
-                        @Override
-                        public void valueChanged(final ListSelectionEvent e) {
-                                if (e.getValueIsAdjusting() || m_blockEvent) {
-                                        return;
-                                } else {
-                                        m_eventService.publish(new RendererSelectionChgEvent(
-                                                        (ImageRenderer) m_rendList
-                                                                        .getSelectedValue()));
-                                        m_eventService.publish(new ImgRedrawEvent());
-                                }
-
-                        }
-                });
-
-                add(new JScrollPane(m_rendList), BorderLayout.CENTER);
-        }
-
-        /**
-         * @param axes
-         * @param name
-         */
-        @EventListener
-        public void onIntervalUpdated(final IntervalWithMetadataChgEvent<T> e) {
-                if (e instanceof ImgWithMetadataChgEvent) {
-                        // event already processed
-                        return;
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() || m_blockEvent) {
+                    return;
+                } else {
+                    m_eventService.publish(new RendererSelectionChgEvent(
+                                                                         (ImageRenderer) m_rendList
+                                                                         .getSelectedValue()));
+                    m_eventService.publish(new ImgRedrawEvent());
                 }
-                final ImageRenderer<T>[] tmp = RendererFactory
-                                .createSuitableRenderer(e
-                                                .getRandomAccessibleInterval());
 
-                m_blockEvent = true;
-                m_rendList.setListData(tmp);
-                m_rendList.repaint();
-                m_blockEvent = false;
+            }
+        });
 
+        add(new JScrollPane(m_rendList), BorderLayout.CENTER);
+    }
+
+    /**
+     * @param axes
+     * @param name
+     */
+    @EventListener
+    public void onIntervalUpdated(final IntervalWithMetadataChgEvent<T> e) {
+        if (e instanceof ImgWithMetadataChgEvent) {
+            // event already processed
+            return;
         }
+        final ImageRenderer<T>[] tmp = RendererFactory
+                .createSuitableRenderer(e
+                                        .getRandomAccessibleInterval());
 
-        @EventListener
-        public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
-                final ImageRenderer<T>[] tmp = RendererFactory
-                                .createSuitableRenderer(
-                                                e.getRandomAccessibleInterval(),
-                                                e.getImgMetaData());
+        m_blockEvent = true;
+        m_rendList.setListData(tmp);
+        m_rendList.repaint();
+        m_blockEvent = false;
 
-                m_blockEvent = true;
-                m_rendList.setListData(tmp);
-                m_rendList.repaint();
-                m_blockEvent = false;
-        }
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Position getPosition() {
-                return Position.SOUTH;
-        }
+    @EventListener
+    public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
+        final ImageRenderer<T>[] tmp = RendererFactory
+                .createSuitableRenderer(
+                                        e.getRandomAccessibleInterval(),
+                                        e.getImgMetaData());
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setEventService(final EventService eventService) {
-                m_eventService = eventService;
-                eventService.subscribe(this);
-        }
+        m_blockEvent = true;
+        m_rendList.setListData(tmp);
+        m_rendList.repaint();
+        m_blockEvent = false;
+    }
 
-        @Override
-        public void saveComponentConfiguration(final ObjectOutput out)
-                        throws IOException {
-                out.writeInt(m_rendList.getSelectedIndex());
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Position getPosition() {
+        return Position.SOUTH;
+    }
 
-        @Override
-        public void loadComponentConfiguration(final ObjectInput in)
-                        throws IOException, ClassNotFoundException {
-                m_rendList.setSelectedIndex(in.readInt());
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEventService(final EventService eventService) {
+        m_eventService = eventService;
+        eventService.subscribe(this);
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void reset() {
-        }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out)
+            throws IOException {
+        out.writeInt(m_rendList.getSelectedIndex());
+    }
 
-        @Override
-        public void setParent(final Component parent) {
-                // Nothing to do here
-        }
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in)
+            throws IOException, ClassNotFoundException {
+        m_rendList.setSelectedIndex(in.readInt());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public void reset() {
+     }
+
+     @Override
+     public void setParent(final Component parent) {
+         // Nothing to do here
+     }
 
 }

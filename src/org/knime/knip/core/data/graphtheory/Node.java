@@ -28,217 +28,217 @@ package org.knime.knip.core.data.graphtheory;
 
 public class Node {
 
-        // first outgoing edge
-        private Edge firstOutgoing;
+    // first outgoing edge
+    private Edge firstOutgoing;
 
-        // parent (in the tree structure)
-        private Edge parent;
+    // parent (in the tree structure)
+    private Edge parent;
 
-        // next active node
-        private Node next;
+    // next active node
+    private Node next;
 
-        // timestamp indicating when distance was computed
-        private int timestamp;
+    // timestamp indicating when distance was computed
+    private int timestamp;
 
-        // distance to the terminal
-        private int distance;
+    // distance to the terminal
+    private int distance;
 
-        // indicates whether this node belongs to the sink or the source tree
-        private boolean inSink;
+    // indicates whether this node belongs to the sink or the source tree
+    private boolean inSink;
 
-        // indicates whether this node was changed
-        private boolean marked;
+    // indicates whether this node was changed
+    private boolean marked;
 
-        // indicates whether this node is in the changed list
-        private boolean inChangedList;
+    // indicates whether this node is in the changed list
+    private boolean inChangedList;
 
-        // the residual capacity of this node to the sink (<0) or from the
-        // source
-        // (>0)
-        private float residualCapacity;
+    // the residual capacity of this node to the sink (<0) or from the
+    // source
+    // (>0)
+    private float residualCapacity;
 
-        public Node() {
+    public Node() {
 
-                firstOutgoing = null;
-                parent = null;
-                next = null;
+        firstOutgoing = null;
+        parent = null;
+        next = null;
 
-                timestamp = 0;
-                distance = 0;
-                inSink = false;
-                marked = false;
+        timestamp = 0;
+        distance = 0;
+        inSink = false;
+        marked = false;
 
-                residualCapacity = 0;
-        }
+        residualCapacity = 0;
+    }
 
-        /**
-         * Gets the first outgoing node of this node.
-         * 
-         * @return The first outgoing node
-         */
-        public Edge getFirstOutgoing() {
-                return this.firstOutgoing;
-        }
+    /**
+     * Gets the first outgoing node of this node.
+     * 
+     * @return The first outgoing node
+     */
+    public Edge getFirstOutgoing() {
+        return this.firstOutgoing;
+    }
 
-        /**
-         * Sets the firstOutgoing for this instance.
-         * 
-         * @param firstOutgoing
-         *                The firstOutgoing.
-         */
-        public void setFirstOutgoing(final Edge firstOutgoing) {
-                this.firstOutgoing = firstOutgoing;
-        }
+    /**
+     * Sets the firstOutgoing for this instance.
+     * 
+     * @param firstOutgoing
+     *                The firstOutgoing.
+     */
+    public void setFirstOutgoing(final Edge firstOutgoing) {
+        this.firstOutgoing = firstOutgoing;
+    }
 
-        /**
-         * Gets the parent of this node in the tree structure
-         * 
-         * @return The parent of this node.
-         */
-        public Edge getParent() {
-                return this.parent;
-        }
+    /**
+     * Gets the parent of this node in the tree structure
+     * 
+     * @return The parent of this node.
+     */
+    public Edge getParent() {
+        return this.parent;
+    }
 
-        /**
-         * Sets the parent for this node.
-         * 
-         * @param parent
-         *                The new parent.
-         */
-        public void setParent(final Edge parent) {
-                this.parent = parent;
-        }
+    /**
+     * Sets the parent for this node.
+     * 
+     * @param parent
+     *                The new parent.
+     */
+    public void setParent(final Edge parent) {
+        this.parent = parent;
+    }
 
-        /**
-         * Gets the next active node.
-         * 
-         * @return The next active node.
-         */
-        public Node getNext() {
-                return this.next;
-        }
+    /**
+     * Gets the next active node.
+     * 
+     * @return The next active node.
+     */
+    public Node getNext() {
+        return this.next;
+    }
 
-        /**
-         * Sets the next node for this node.
-         * 
-         * @param next
-         *                The next node.
-         */
-        public void setNext(final Node next) {
-                this.next = next;
-        }
+    /**
+     * Sets the next node for this node.
+     * 
+     * @param next
+     *                The next node.
+     */
+    public void setNext(final Node next) {
+        this.next = next;
+    }
 
-        /**
-         * Gets the timestamp for this node.
-         * 
-         * @return The timestamp.
-         */
-        public int getTimestamp() {
-                return this.timestamp;
-        }
+    /**
+     * Gets the timestamp for this node.
+     * 
+     * @return The timestamp.
+     */
+    public int getTimestamp() {
+        return this.timestamp;
+    }
 
-        /**
-         * Sets the timestamp for this instance.
-         * 
-         * @param timestamp
-         *                The timestamp.
-         */
-        public void setTimestamp(final int timestamp) {
-                this.timestamp = timestamp;
-        }
+    /**
+     * Sets the timestamp for this instance.
+     * 
+     * @param timestamp
+     *                The timestamp.
+     */
+    public void setTimestamp(final int timestamp) {
+        this.timestamp = timestamp;
+    }
 
-        /**
-         * Gets the distance of this node to source/sink.
-         * 
-         * @return The distance.
-         */
-        public int getDistance() {
-                return this.distance;
-        }
+    /**
+     * Gets the distance of this node to source/sink.
+     * 
+     * @return The distance.
+     */
+    public int getDistance() {
+        return this.distance;
+    }
 
-        /**
-         * Sets the distance of this node to source/sink.
-         * 
-         * @param distance
-         *                The distance.
-         */
-        public void setDistance(final int distance) {
-                this.distance = distance;
-        }
+    /**
+     * Sets the distance of this node to source/sink.
+     * 
+     * @param distance
+     *                The distance.
+     */
+    public void setDistance(final int distance) {
+        this.distance = distance;
+    }
 
-        /**
-         * Determines if this node is connected to the sink.
-         * 
-         * @return <tt>true</tt>, if this node is connected to the sink.
-         */
-        public boolean isInSink() {
-                return this.inSink;
-        }
+    /**
+     * Determines if this node is connected to the sink.
+     * 
+     * @return <tt>true</tt>, if this node is connected to the sink.
+     */
+    public boolean isInSink() {
+        return this.inSink;
+    }
 
-        /**
-         * Sets whether or not this instance is connected to the sink.
-         * 
-         * @param inSink
-         *                <tt>true</tt>, if this node is connected to the sink.
-         */
-        public void setInSink(final boolean inSink) {
-                this.inSink = inSink;
-        }
+    /**
+     * Sets whether or not this instance is connected to the sink.
+     * 
+     * @param inSink
+     *                <tt>true</tt>, if this node is connected to the sink.
+     */
+    public void setInSink(final boolean inSink) {
+        this.inSink = inSink;
+    }
 
-        /**
-         * Determines if this node is marked.
-         * 
-         * @return <tt>true</tt>, if this node is marked.
-         */
-        public boolean isMarked() {
-                return this.marked;
-        }
+    /**
+     * Determines if this node is marked.
+     * 
+     * @return <tt>true</tt>, if this node is marked.
+     */
+    public boolean isMarked() {
+        return this.marked;
+    }
 
-        /**
-         * Sets whether or not this instance is marked.
-         * 
-         * @param marked
-         *                <tt>true</tt> to mark this node
-         */
-        public void setMarked(final boolean marked) {
-                this.marked = marked;
-        }
+    /**
+     * Sets whether or not this instance is marked.
+     * 
+     * @param marked
+     *                <tt>true</tt> to mark this node
+     */
+    public void setMarked(final boolean marked) {
+        this.marked = marked;
+    }
 
-        /**
-         * Sets the residualCapacity for this node.
-         * 
-         * @param residualCapacity
-         *                The residual capacity.
-         */
-        public void setResidualCapacity(final float residualCapacity) {
-                this.residualCapacity = residualCapacity;
-        }
+    /**
+     * Sets the residualCapacity for this node.
+     * 
+     * @param residualCapacity
+     *                The residual capacity.
+     */
+    public void setResidualCapacity(final float residualCapacity) {
+        this.residualCapacity = residualCapacity;
+    }
 
-        /**
-         * Determines if this instance is in changedNodes.
-         * 
-         * @return <tt>true</tt>, if this node is in changedNodes.
-         */
-        public boolean isInChangedList() {
-                return this.inChangedList;
-        }
+    /**
+     * Determines if this instance is in changedNodes.
+     * 
+     * @return <tt>true</tt>, if this node is in changedNodes.
+     */
+    public boolean isInChangedList() {
+        return this.inChangedList;
+    }
 
-        /**
-         * Sets whether or not this instance is in changedNodes.
-         * 
-         * @param inChangedList
-         *                <tt>true</tt>, if this node is in changedNodes
-         */
-        public void setInChangedList(final boolean inChangedList) {
-                this.inChangedList = inChangedList;
-        }
+    /**
+     * Sets whether or not this instance is in changedNodes.
+     * 
+     * @param inChangedList
+     *                <tt>true</tt>, if this node is in changedNodes
+     */
+    public void setInChangedList(final boolean inChangedList) {
+        this.inChangedList = inChangedList;
+    }
 
-        /**
-         * Gets the residual capacity for this node.
-         * 
-         * @return The residual capacity.
-         */
-        public float getResidualCapacity() {
-                return this.residualCapacity;
-        }
+    /**
+     * Gets the residual capacity for this node.
+     * 
+     * @return The residual capacity.
+     */
+    public float getResidualCapacity() {
+        return this.residualCapacity;
+    }
 }

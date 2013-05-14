@@ -58,40 +58,40 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  */
 public class AnnotatorLabelEditEvent implements KNIPEvent {
 
-        private final String m_oldLabel;
-        private final String m_newLabel;
+    private final String m_oldLabel;
+    private final String m_newLabel;
 
-        public AnnotatorLabelEditEvent(final String oldLabel, final String newLabel) {
-                m_oldLabel = oldLabel;
-                m_newLabel = newLabel;
+    public AnnotatorLabelEditEvent(final String oldLabel, final String newLabel) {
+        m_oldLabel = oldLabel;
+        m_newLabel = newLabel;
 
-        }
+    }
 
-        /**
-         * @return the oldLabel
-         */
-        public String getOldLabel() {
-                return m_oldLabel;
-        }
+    /**
+     * @return the oldLabel
+     */
+    public String getOldLabel() {
+        return m_oldLabel;
+    }
 
-        /**
-         * @return the newLabel
-         */
-        public String getNewLabel() {
-                return m_newLabel;
-        }
+    /**
+     * @return the newLabel
+     */
+    public String getNewLabel() {
+        return m_newLabel;
+    }
 
-        @Override
-        public ExecutionPriority getExecutionOrder() {
-                return ExecutionPriority.NORMAL;
-        }
+    @Override
+    public ExecutionPriority getExecutionOrder() {
+        return ExecutionPriority.NORMAL;
+    }
 
-        /**
-         * implements object equality {@inheritDoc}
-         */
-        @Override
-        public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
-                return this.equals(thatEvent);
-        }
+    /**
+     * implements object equality {@inheritDoc}
+     */
+    @Override
+    public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
+        return this.equals(thatEvent);
+    }
 
 }

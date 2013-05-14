@@ -20,43 +20,43 @@ import net.imglib2.type.logic.BitType;
  *
  */
 public class ExtractOutlineImg implements
-                UnaryOperation<Img<BitType>, Img<BitType>> {
+UnaryOperation<Img<BitType>, Img<BitType>> {
 
-        private final BinaryOperationAssignment<BitType, BitType, BitType> m_imgManWith;
+    private final BinaryOperationAssignment<BitType, BitType, BitType> m_imgManWith;
 
-        private final UnaryOperation<Img<BitType>, Img<BitType>> m_op;
+    private final UnaryOperation<Img<BitType>, Img<BitType>> m_op;
 
-        private final boolean m_outlineInsideSegment;
+    private final boolean m_outlineInsideSegment;
 
-        public ExtractOutlineImg(final boolean outlineInsideSegment) {
-                m_outlineInsideSegment = outlineInsideSegment;
-                m_imgManWith = new BinaryOperationAssignment<BitType, BitType, BitType>(
-                                new RealXor<BitType, BitType, BitType>());
-                m_op = m_outlineInsideSegment ? new Erode<Img<BitType>>(
-                                ConnectedType.EIGHT_CONNECTED, 1)
-                                : new Dilate<Img<BitType>>(
-                                                ConnectedType.FOUR_CONNECTED, 1);
+    public ExtractOutlineImg(final boolean outlineInsideSegment) {
+        m_outlineInsideSegment = outlineInsideSegment;
+        m_imgManWith = new BinaryOperationAssignment<BitType, BitType, BitType>(
+                new RealXor<BitType, BitType, BitType>());
+        m_op = m_outlineInsideSegment ? new Erode<Img<BitType>>(
+                ConnectedType.EIGHT_CONNECTED, 1)
+                : new Dilate<Img<BitType>>(
+                        ConnectedType.FOUR_CONNECTED, 1);
+    }
+
+    @Override
+    public Img<BitType> compute(final Img<BitType> op, final Img<BitType> r) {
+        if (op.numDimensions() != 2) {
+            throw new IllegalArgumentException(
+                                               "Operation only permitted on two dimensions");
         }
 
-        @Override
-        public Img<BitType> compute(final Img<BitType> op, final Img<BitType> r) {
-                if (op.numDimensions() != 2) {
-                        throw new IllegalArgumentException(
-                                        "Operation only permitted on two dimensions");
-                }
+        // This produces black results
+        // if (!m_outlineInsideSegment) {
+        // new ExpandAndCenterImg<BitType, K>(1).compute(op, op);
+        // }
 
-                // This produces black results
-                // if (!m_outlineInsideSegment) {
-                // new ExpandAndCenterImg<BitType, K>(1).compute(op, op);
-                // }
+        m_op.compute(op, r);
+        m_imgManWith.compute(op, r, r);
+        return r;
+    }
 
-                m_op.compute(op, r);
-                m_imgManWith.compute(op, r, r);
-                return r;
-        }
-
-        @Override
-        public UnaryOperation<Img<BitType>, Img<BitType>> copy() {
-                return new ExtractOutlineImg(m_outlineInsideSegment);
-        }
+    @Override
+    public UnaryOperation<Img<BitType>, Img<BitType>> copy() {
+        return new ExtractOutlineImg(m_outlineInsideSegment);
+    }
 }

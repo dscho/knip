@@ -63,136 +63,136 @@ import java.util.List;
  */
 public class PermutationSort {
 
-        private PermutationSort() {
-                // utility class
+    private PermutationSort() {
+        // utility class
+    }
+
+    /**
+     * Sorts an arbitrary array by given the permutation of the array
+     * elements.
+     * 
+     * @return the permutation of the positions
+     */
+    public static <T> int[] sort(final T[] a, final Comparator<? super T> c) {
+
+        final Integer[] perm = new Integer[a.length];
+        for (int i = 0; i < perm.length; i++) {
+            perm[i] = i;
         }
-
-        /**
-         * Sorts an arbitrary array by given the permutation of the array
-         * elements.
-         * 
-         * @return the permutation of the positions
-         */
-        public static <T> int[] sort(final T[] a, final Comparator<? super T> c) {
-
-                final Integer[] perm = new Integer[a.length];
-                for (int i = 0; i < perm.length; i++) {
-                        perm[i] = i;
-                }
-                Arrays.sort(perm, new Comparator<Integer>() {
-                        @Override
-                        public int compare(final Integer o1, final Integer o2) {
-                                return c.compare(a[o1], a[o2]);
-                        }
-                });
-                final int[] res = new int[perm.length];
-                for (int i = 0; i < res.length; i++) {
-                        res[i] = perm[i].intValue();
-                }
-                return res;
+        Arrays.sort(perm, new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer o1, final Integer o2) {
+                return c.compare(a[o1], a[o2]);
+            }
+        });
+        final int[] res = new int[perm.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = perm[i].intValue();
         }
+        return res;
+    }
 
-        /**
-         * Sorts an arbitrary list by given the permutation of the list
-         * elements.
-         * 
-         * @return the permutation of the positions
-         */
-        public static <T> int[] sort(final List<T> l,
-                        final Comparator<? super T> c) {
+    /**
+     * Sorts an arbitrary list by given the permutation of the list
+     * elements.
+     * 
+     * @return the permutation of the positions
+     */
+    public static <T> int[] sort(final List<T> l,
+                                 final Comparator<? super T> c) {
 
-                final Integer[] perm = new Integer[l.size()];
-                for (int i = 0; i < perm.length; i++) {
-                        perm[i] = i;
-                }
-                Arrays.sort(perm, new Comparator<Integer>() {
-                        @Override
-                        public int compare(final Integer o1, final Integer o2) {
-                                return c.compare(l.get(o1), l.get(o2));
-                        }
-                });
-                final int[] res = new int[perm.length];
-                for (int i = 0; i < res.length; i++) {
-                        res[i] = perm[i].intValue();
-                }
-                return res;
+        final Integer[] perm = new Integer[l.size()];
+        for (int i = 0; i < perm.length; i++) {
+            perm[i] = i;
         }
-
-        /**
-         * Sorts an double array by given the permutation of the array elements.
-         * 
-         * @return the permutation of the positions
-         */
-        public static int[] sort(final double[] a) {
-
-                final Integer[] perm = new Integer[a.length];
-                sortPermInPlace(a, perm);
-                final int[] res = new int[perm.length];
-                for (int i = 0; i < res.length; i++) {
-                        res[i] = perm[i].intValue();
-                }
-                return res;
+        Arrays.sort(perm, new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer o1, final Integer o2) {
+                return c.compare(l.get(o1), l.get(o2));
+            }
+        });
+        final int[] res = new int[perm.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = perm[i].intValue();
         }
+        return res;
+    }
 
-        public static void sortPermInPlace(final double[] a,
-                        final Integer[] permutation) {
-                for (int i = 0; i < permutation.length; i++) {
-                        permutation[i] = i;
-                }
-                Arrays.sort(permutation, new Comparator<Integer>() {
-                        @Override
-                        public int compare(final Integer o1, final Integer o2) {
-                                return Double.compare(a[o1], a[o2]);
-                        }
-                });
+    /**
+     * Sorts an double array by given the permutation of the array elements.
+     * 
+     * @return the permutation of the positions
+     */
+    public static int[] sort(final double[] a) {
+
+        final Integer[] perm = new Integer[a.length];
+        sortPermInPlace(a, perm);
+        final int[] res = new int[perm.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = perm[i].intValue();
         }
+        return res;
+    }
 
-        /**
-         * Sorts an double array by given the permutation of the array elements.
-         * 
-         * @return the permutation of the positions
-         */
-        public static int[] sort(final double[] a, final int from, final int to) {
-
-                final Integer[] perm = new Integer[to - from];
-                for (int i = 0; i < perm.length; i++) {
-                        perm[i] = i;
-                }
-                Arrays.sort(perm, new Comparator<Integer>() {
-                        @Override
-                        public int compare(final Integer o1, final Integer o2) {
-                                return Double.compare(a[from + o1],
-                                                a[from + o2]);
-                        }
-                });
-                final int[] res = new int[perm.length];
-                for (int i = 0; i < res.length; i++) {
-                        res[i] = perm[i].intValue();
-                }
-                return res;
+    public static void sortPermInPlace(final double[] a,
+                                       final Integer[] permutation) {
+        for (int i = 0; i < permutation.length; i++) {
+            permutation[i] = i;
         }
+        Arrays.sort(permutation, new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer o1, final Integer o2) {
+                return Double.compare(a[o1], a[o2]);
+            }
+        });
+    }
 
-        /**
-         * Sorts <code>perm</code> according to the given double array. without
-         * touching 'a'.
-         * 
-         * @return the permutation of the positions
-         */
-        public static void sort(final List<Integer> perm, final double[] a) {
-                Collections.sort(perm, new Comparator<Integer>() {
-                        @Override
-                        public int compare(final Integer o1, final Integer o2) {
-                                return Double.compare(a[o1], a[o2]);
-                        }
-                });
-        }
+    /**
+     * Sorts an double array by given the permutation of the array elements.
+     * 
+     * @return the permutation of the positions
+     */
+    public static int[] sort(final double[] a, final int from, final int to) {
 
-        public static <T> T[] reorder(final T[] a, final int[] permutation) {
-                final T[] res = a.clone();
-                for (int i = 0; i < res.length; i++) {
-                        res[i] = a[permutation[i]];
-                }
-                return res;
+        final Integer[] perm = new Integer[to - from];
+        for (int i = 0; i < perm.length; i++) {
+            perm[i] = i;
         }
+        Arrays.sort(perm, new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer o1, final Integer o2) {
+                return Double.compare(a[from + o1],
+                                      a[from + o2]);
+            }
+        });
+        final int[] res = new int[perm.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = perm[i].intValue();
+        }
+        return res;
+    }
+
+    /**
+     * Sorts <code>perm</code> according to the given double array. without
+     * touching 'a'.
+     * 
+     * @return the permutation of the positions
+     */
+    public static void sort(final List<Integer> perm, final double[] a) {
+        Collections.sort(perm, new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer o1, final Integer o2) {
+                return Double.compare(a[o1], a[o2]);
+            }
+        });
+    }
+
+    public static <T> T[] reorder(final T[] a, final int[] permutation) {
+        final T[] res = a.clone();
+        for (int i = 0; i < res.length; i++) {
+            res[i] = a[permutation[i]];
+        }
+        return res;
+    }
 
 }

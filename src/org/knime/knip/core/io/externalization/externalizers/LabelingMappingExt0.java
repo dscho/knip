@@ -67,72 +67,72 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  */
 public class LabelingMappingExt0 implements Externalizer<LabelingMapping> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<LabelingMapping> getType() {
-                return LabelingMapping.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<LabelingMapping> getType() {
+        return LabelingMapping.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public LabelingMapping read(final BufferedDataInputStream in)
-                        throws Exception {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LabelingMapping read(final BufferedDataInputStream in)
+            throws Exception {
 
-                final int numLabelComb = in.readInt();
+        final int numLabelComb = in.readInt();
 
-                final LabelingMapping map = new LabelingMapping(new IntType());
+        final LabelingMapping map = new LabelingMapping(new IntType());
 
-                for (int i = 0; i < numLabelComb; i++) {
-                        final int size = in.readInt();
-                        if (size != 0) {
-                                final List list = new ArrayList(size);
-                                for (int j = 0; j < size; j++) {
-                                        list.add(ExternalizerManager.read(in));
-                                }
-                                map.intern(list);
-                        }
+        for (int i = 0; i < numLabelComb; i++) {
+            final int size = in.readInt();
+            if (size != 0) {
+                final List list = new ArrayList(size);
+                for (int j = 0; j < size; j++) {
+                    list.add(ExternalizerManager.read(in));
                 }
-
-                return map;
+                map.intern(list);
+            }
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final LabelingMapping obj)
-                        throws Exception {
+        return map;
+    }
 
-                out.writeInt(obj.numLists());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final LabelingMapping obj)
+            throws Exception {
 
-                for (int i = 0; i < obj.numLists(); i++) {
-                        final List list = obj.listAtIndex(i);
-                        out.writeInt(list.size());
-                        for (final Object type : list) {
-                                ExternalizerManager.write(out, type);
-                        }
-                }
+        out.writeInt(obj.numLists());
 
+        for (int i = 0; i < obj.numLists(); i++) {
+            final List list = obj.listAtIndex(i);
+            out.writeInt(list.size());
+            for (final Object type : list) {
+                ExternalizerManager.write(out, type);
+            }
         }
+
+    }
 
 }

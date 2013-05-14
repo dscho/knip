@@ -63,48 +63,48 @@ import org.knime.knip.core.io.externalization.Externalizer;
  */
 public class ObjectExt0 implements Externalizer<Object> {
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getId() {
-                return this.getClass().getSimpleName();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<Object> getType() {
-                return Object.class;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<Object> getType() {
+        return Object.class;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getPriority() {
-                return 0;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Object read(final BufferedDataInputStream in) throws Exception {
-                final ObjectInputStream ois = new ObjectInputStream(in);
-                return ois.readObject();
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object read(final BufferedDataInputStream in) throws Exception {
+        final ObjectInputStream ois = new ObjectInputStream(in);
+        return ois.readObject();
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final BufferedDataOutputStream out, final Object obj)
-                        throws Exception {
-                final ObjectOutputStream oos = new ObjectOutputStream(out);
-                oos.writeObject(obj);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final Object obj)
+            throws Exception {
+        final ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(obj);
 
-        }
+    }
 
 }

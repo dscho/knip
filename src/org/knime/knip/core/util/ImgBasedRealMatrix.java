@@ -9,53 +9,53 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessibleInterval<T>>
-                extends AbstractRealMatrix {
+extends AbstractRealMatrix {
 
-        private final RandomAccess<T> m_rndAccess;
-        private final IN m_in;
+    private final RandomAccess<T> m_rndAccess;
+    private final IN m_in;
 
-        public ImgBasedRealMatrix(final IN in) {
-                if (in.numDimensions() != 2) {
-                        throw new IllegalArgumentException(
-                                        "In must have exact two dimensions to be handled as a matrix");
-                }
-                m_in = in;
-                m_rndAccess = in.randomAccess();
+    public ImgBasedRealMatrix(final IN in) {
+        if (in.numDimensions() != 2) {
+            throw new IllegalArgumentException(
+                                               "In must have exact two dimensions to be handled as a matrix");
         }
+        m_in = in;
+        m_rndAccess = in.randomAccess();
+    }
 
-        @Override
-        public RealMatrix createMatrix(final int rowDimension, final int columnDimension) {
-                return new Array2DRowRealMatrix(rowDimension, columnDimension);
-        }
+    @Override
+    public RealMatrix createMatrix(final int rowDimension, final int columnDimension) {
+        return new Array2DRowRealMatrix(rowDimension, columnDimension);
+    }
 
-        @Override
-        public RealMatrix copy() {
-                throw new UnsupportedOperationException("Unsupported");
-        }
+    @Override
+    public RealMatrix copy() {
+        throw new UnsupportedOperationException("Unsupported");
+    }
 
-        @Override
-        public double getEntry(final int row, final int column) {
-                m_rndAccess.setPosition(row, 1);
-                m_rndAccess.setPosition(column, 0);
+    @Override
+    public double getEntry(final int row, final int column) {
+        m_rndAccess.setPosition(row, 1);
+        m_rndAccess.setPosition(column, 0);
 
-                return m_rndAccess.get().getRealDouble();
-        }
+        return m_rndAccess.get().getRealDouble();
+    }
 
-        @Override
-        public void setEntry(final int row, final int column, final double value) {
-                m_rndAccess.setPosition(row, 1);
-                m_rndAccess.setPosition(column, 0);
-                m_rndAccess.get().setReal(value);
-        }
+    @Override
+    public void setEntry(final int row, final int column, final double value) {
+        m_rndAccess.setPosition(row, 1);
+        m_rndAccess.setPosition(column, 0);
+        m_rndAccess.get().setReal(value);
+    }
 
-        @Override
-        public int getRowDimension() {
-                return (int) m_in.dimension(0);
-        }
+    @Override
+    public int getRowDimension() {
+        return (int) m_in.dimension(0);
+    }
 
-        @Override
-        public int getColumnDimension() {
-                return (int) m_in.dimension(1);
-        }
+    @Override
+    public int getColumnDimension() {
+        return (int) m_in.dimension(1);
+    }
 
 }

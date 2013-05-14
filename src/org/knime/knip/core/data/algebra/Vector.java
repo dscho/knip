@@ -23,158 +23,158 @@ import net.imglib2.Point;
 
 public class Vector extends Point implements Cloneable {
 
-        public Vector(final int nDimensions) {
-                super(nDimensions);
-        }
+    public Vector(final int nDimensions) {
+        super(nDimensions);
+    }
 
-        public Vector(final long[] position) {
-                super(position);
-        }
+    public Vector(final long[] position) {
+        super(position);
+    }
 
-        public Vector(final int[] position) {
-                super(position);
-        }
+    public Vector(final int[] position) {
+        super(position);
+    }
 
-        public Vector(final Localizable localizable) {
-                super(localizable);
-        }
+    public Vector(final Localizable localizable) {
+        super(localizable);
+    }
 
-        // /**
-        // *
-        // * @param p
-        // * the point
-        // * @param round
-        // * true - p will be rounded, false - casted
-        // */
-        // @SuppressWarnings("cast")
-        // public IntPoint(RealPoint p, boolean round) {
-        // m_pos = new int[p.getNumDimensions()];
-        // if (round) {
-        // for (int i = 0; i < m_pos.length; i++) {
-        // m_pos[i] = (int) Math.round(p.getPos(i));
-        // }
-        // } else {
-        // for (int i = 0; i < m_pos.length; i++) {
-        // m_pos[i] = (int) p.getPos(i);
-        // }
-        // }
-        // }
+    // /**
+    // *
+    // * @param p
+    // * the point
+    // * @param round
+    // * true - p will be rounded, false - casted
+    // */
+    // @SuppressWarnings("cast")
+    // public IntPoint(RealPoint p, boolean round) {
+    // m_pos = new int[p.getNumDimensions()];
+    // if (round) {
+    // for (int i = 0; i < m_pos.length; i++) {
+    // m_pos[i] = (int) Math.round(p.getPos(i));
+    // }
+    // } else {
+    // for (int i = 0; i < m_pos.length; i++) {
+    // m_pos[i] = (int) p.getPos(i);
+    // }
+    // }
+    // }
 
-        /**
-         * Length (magnitude)
-         */
-        public long length() {
-                long l = 0;
-                // TODO overflows???
-                for (int i = 0; i < numDimensions(); i++) {
-                        l += getLongPosition(i) * getLongPosition(i);
-                }
-                return (long) Math.sqrt(l);
+    /**
+     * Length (magnitude)
+     */
+    public long length() {
+        long l = 0;
+        // TODO overflows???
+        for (int i = 0; i < numDimensions(); i++) {
+            l += getLongPosition(i) * getLongPosition(i);
         }
+        return (long) Math.sqrt(l);
+    }
 
-        public Vector norm1() {
-                long l = 0;
-                for (int i = 0; i < numDimensions(); i++) {
-                        l += Math.abs(getLongPosition(i));
-                }
-                return mapMultiply(1 / l);
+    public Vector norm1() {
+        long l = 0;
+        for (int i = 0; i < numDimensions(); i++) {
+            l += Math.abs(getLongPosition(i));
         }
+        return mapMultiply(1 / l);
+    }
 
-        /**
-         * Two norm.
-         * 
-         * @return normalized vector
-         */
-        public Vector norm2() {
-                return mapMultiply(1 / length());
-        }
+    /**
+     * Two norm.
+     * 
+     * @return normalized vector
+     */
+    public Vector norm2() {
+        return mapMultiply(1 / length());
+    }
 
-        /**
-         * Addition. The points must be of same dimensionality, no check is
-         * made.
-         * 
-         * @param p
-         * @return the resulting point
-         */
-        public Vector add(final Vector p) {
-                final Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++) {
-                        res.setPosition(getLongPosition(i)
-                                        + p.getLongPosition(i), i);
-                }
-                return res;
+    /**
+     * Addition. The points must be of same dimensionality, no check is
+     * made.
+     * 
+     * @param p
+     * @return the resulting point
+     */
+    public Vector add(final Vector p) {
+        final Vector res = new Vector(numDimensions());
+        for (int i = 0; i < numDimensions(); i++) {
+            res.setPosition(getLongPosition(i)
+                            + p.getLongPosition(i), i);
         }
+        return res;
+    }
 
-        public Vector subtract(final Vector p) {
-                final Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++) {
-                        res.setPosition(getLongPosition(i)
-                                        - p.getLongPosition(i), i);
-                }
-                return res;
+    public Vector subtract(final Vector p) {
+        final Vector res = new Vector(numDimensions());
+        for (int i = 0; i < numDimensions(); i++) {
+            res.setPosition(getLongPosition(i)
+                            - p.getLongPosition(i), i);
         }
+        return res;
+    }
 
-        /**
-         * Multiplies a point with a scalar.
-         * 
-         * @param scalar
-         * @return the resulting point
-         */
-        public Vector mapMultiply(final long scalar) {
-                final Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++) {
-                        res.setPosition(getLongPosition(i) * scalar, i);
-                }
-                return res;
+    /**
+     * Multiplies a point with a scalar.
+     * 
+     * @param scalar
+     * @return the resulting point
+     */
+    public Vector mapMultiply(final long scalar) {
+        final Vector res = new Vector(numDimensions());
+        for (int i = 0; i < numDimensions(); i++) {
+            res.setPosition(getLongPosition(i) * scalar, i);
         }
+        return res;
+    }
 
-        public Vector mapMultiply(final int scalar) {
-                final Vector res = new Vector(numDimensions());
-                for (int i = 0; i < numDimensions(); i++) {
-                        res.setPosition(getLongPosition(i) * scalar, i);
-                }
-                return res;
+    public Vector mapMultiply(final int scalar) {
+        final Vector res = new Vector(numDimensions());
+        for (int i = 0; i < numDimensions(); i++) {
+            res.setPosition(getLongPosition(i) * scalar, i);
         }
+        return res;
+    }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Vector clone() {
-                return new Vector(this);
-        }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public Vector clone() {
+         return new Vector(this);
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-                long l = getLongPosition(0);
-                int hash = (int) (l ^ (l >>> 32));
-                for (int i = 1; i < numDimensions(); i++) {
-                        l = getLongPosition(i);
-                        hash = 31 * hash + (int) (l ^ (l >>> 32));
-                }
-                return hash;
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public int hashCode() {
+         long l = getLongPosition(0);
+         int hash = (int) (l ^ (l >>> 32));
+         for (int i = 1; i < numDimensions(); i++) {
+             l = getLongPosition(i);
+             hash = (31 * hash) + (int) (l ^ (l >>> 32));
+         }
+         return hash;
+     }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean equals(final Object obj) {
-                if (!(obj instanceof Vector)) {
-                        return false;
-                }
-                final Vector other = (Vector) obj;
-                if (numDimensions() != other.numDimensions()) {
-                        return false;
-                }
-                for (int i = 0; i < numDimensions(); i++) {
-                        if (getLongPosition(i) != other.getLongPosition(i)) {
-                                return false;
-                        }
-                }
-                return true;
-        }
+     /**
+      * {@inheritDoc}
+      */
+     @Override
+     public boolean equals(final Object obj) {
+         if (!(obj instanceof Vector)) {
+             return false;
+         }
+         final Vector other = (Vector) obj;
+         if (numDimensions() != other.numDimensions()) {
+             return false;
+         }
+         for (int i = 0; i < numDimensions(); i++) {
+             if (getLongPosition(i) != other.getLongPosition(i)) {
+                 return false;
+             }
+         }
+         return true;
+     }
 }

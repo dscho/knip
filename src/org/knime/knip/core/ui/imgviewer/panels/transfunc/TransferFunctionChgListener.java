@@ -55,5 +55,5 @@ import java.util.EventListener;
  */
 public interface TransferFunctionChgListener extends EventListener {
 
-        public void transferFunctionChg(final TransferFunctionChgEvent event);
+    public void transferFunctionChg(final TransferFunctionChgEvent event);
 }

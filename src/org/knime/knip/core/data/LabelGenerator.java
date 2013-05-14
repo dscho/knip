@@ -56,8 +56,8 @@ package org.knime.knip.core.data;
  */
 public interface LabelGenerator<L extends Comparable<L>> {
 
-        void reset();
+    void reset();
 
-        L nextLabel();
+    L nextLabel();
 
 }
