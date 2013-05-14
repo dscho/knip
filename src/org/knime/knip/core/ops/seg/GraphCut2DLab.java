@@ -315,12 +315,12 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
                 sumValues += j * bins[j];
                 noPixels += bins[j];
             }
-            final double mean = sumValues / noPixels;
+            final double mean = sumValues / (double) noPixels;
             long sum = 0;
             for (int j = 0; j < bins.length; ++j) {
                 sum += bins[j] * (j - mean) * (j - mean);
             }
-            stdDev[i] = (float) Math.sqrt(sum / noPixels);
+            stdDev[i] = (float) Math.sqrt(sum / (double) noPixels);
         }
 
         // for the neighbor nodes we need the slower ByDim Cursor

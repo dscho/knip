@@ -83,12 +83,12 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
  * @param <T>
  * @param <I>
  */
-public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>>
-extends ViewerComponent {
+public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>> extends ViewerComponent {
 
     // 0..400 with steps of 1 <=> (0..50 with steps of 0.125) * 8
     private final int SATURATION_SLIDER_MAX = 400;
-    private final int SATURATION_SLIDER_FACTOR = 8;
+
+    private final float SATURATION_SLIDER_FACTOR = 8;
 
     /**
      *
@@ -114,15 +114,12 @@ extends ViewerComponent {
     }
 
     /**
-     * Creates {@link ImgNormalizationPanel} with the given default value
-     * for normalization.
+     * Creates {@link ImgNormalizationPanel} with the given default value for normalization.
      *
-     * @param saturation
-     *                the default saturation
+     * @param saturation the default saturation
      *
      *
-     * @param normalize
-     *                whether normalization should be enabled
+     * @param normalize whether normalization should be enabled
      */
     public ImgNormalizationPanel(final double sat, final boolean normalize) {
         super("Normalize", false);
@@ -137,12 +134,10 @@ extends ViewerComponent {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                m_saturationSlider.setEnabled(m_normalize
-                                              .isSelected());
+                m_saturationSlider.setEnabled(m_normalize.isSelected());
                 m_sat.setEnabled(m_normalize.isSelected());
                 m_eventService.publish(new NormalizationParametersChgEvent<T>(
-                        (m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR),
-                        m_normalize.isSelected()));
+                        (m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR), m_normalize.isSelected()));
                 m_eventService.publish(new ImgRedrawEvent());
             }
         });
@@ -153,20 +148,15 @@ extends ViewerComponent {
         add(saturation);
         // DO NOT CHANGE THE SLIDER W
         m_saturationSlider = new JSlider(0, SATURATION_SLIDER_MAX);
-        m_saturationSlider
-        .setValue((int) (sat * SATURATION_SLIDER_FACTOR));
+        m_saturationSlider.setValue((int)(sat * SATURATION_SLIDER_FACTOR));
         m_saturationSlider.setEnabled(false);
         m_saturationSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(final ChangeEvent e) {
-                m_eventService.publish(new NormalizationParametersChgEvent<T>(
-                        m_saturationSlider.getValue()
-                        / SATURATION_SLIDER_FACTOR,
-                        m_normalize.isSelected()));
+                m_eventService.publish(new NormalizationParametersChgEvent<T>(m_saturationSlider.getValue()
+                        / SATURATION_SLIDER_FACTOR, m_normalize.isSelected()));
                 m_eventService.publish(new ImgRedrawEvent());
-                final float percent = ((float) m_saturationSlider
-                        .getValue())
-                        / SATURATION_SLIDER_FACTOR;
+                final float percent = m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR;
                 m_sat.setText("             " + percent + "%");
             }
         });
@@ -192,21 +182,18 @@ extends ViewerComponent {
         m_eventService = eventService;
         eventService.subscribe(this);
         // inform everybody about our settings.
-        eventService.publish(new NormalizationParametersChgEvent<T>(
-                m_saturationSlider.getValue(), m_normalize
+        eventService.publish(new NormalizationParametersChgEvent<T>(m_saturationSlider.getValue(), m_normalize
                 .isSelected()));
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         out.writeInt(m_saturationSlider.getValue());
         out.writeBoolean(m_normalize.isSelected());
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException {
         m_saturationSlider.setValue(in.readInt());
         m_normalize.setSelected(in.readBoolean());
     }
