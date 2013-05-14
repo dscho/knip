@@ -33,8 +33,7 @@ import org.knime.knip.core.data.algebra.ExtendedPolygon;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a signature (i.e. a line in the polar space) of a polygon in the
- * cartesian space.
+ * Represents a signature (i.e. a line in the polar space) of a polygon in the cartesian space.
  *
  *
  * @author hornm
@@ -52,7 +51,7 @@ public class Signature {
     private final long m_length;
 
     /* the center of the signature */
-    private long[] m_center = new long[] { 0, 0 };
+    private long[] m_center = new long[]{0, 0};
 
     /* the score from the signature derivation */
     private double m_score;
@@ -60,15 +59,10 @@ public class Signature {
     /**
      * Builds a signature from an (polar) image.
      *
-     * @param interval
-     *                the source image
-     * @param maxVariance
-     *                the maximum the signature will vary in the x-direction
-     *                (corresponds to the radius)
+     * @param interval the source image
+     * @param maxVariance the maximum the signature will vary in the x-direction (corresponds to the radius)
      */
-    public Signature(
-                     final IterableInterval<? extends RealType<?>> interval,
-                             final int maxVariance) {
+    public Signature(final IterableInterval<? extends RealType<?>> interval, final int maxVariance) {
         m_width = interval.dimension(0);
         m_length = interval.dimension(1);
         m_sign = extractMaxLine(calcWeights(interval), maxVariance);
@@ -78,29 +72,23 @@ public class Signature {
     /**
      * Builds a signature from an (polar) image.
      *
-     * @param polarImage
-     *                the source image
-     * @param historyLength
-     *                the maximal depth to be looked back for the signature
-     *                retrieval
-     * @param maxVariance
-     *                the maximum the signature will vary in the x-direction
-     *                (corresponds to the radius)
+     * @param interval
+     *
+     * @param polarImage the source image
+     * @param historyLength the maximal depth to be looked back for the signature retrieval
+     * @param maxVariance the maximum the signature will vary in the x-direction (corresponds to the radius)
      */
-    public Signature(
-                     final IterableInterval<? extends RealType<?>> interval,
-                             final int historyLength, final int maxVariance) {
+    public Signature(final IterableInterval<? extends RealType<?>> interval, final int historyLength,
+                     final int maxVariance) {
 
-        m_sign = extractLine(calcWeights(interval), maxVariance,
-                             historyLength);
+        m_sign = extractLine(calcWeights(interval), maxVariance, historyLength);
         m_width = interval.dimension(0);
         m_length = interval.dimension(1);
     }
 
     /**
-     * Retrieves a signature from a bit mask. The first occurrence of the
-     * change from ON_VALUE to OFF_VALUE will used for the individual
-     * signature positions.
+     * Retrieves a signature from a bit mask. The first occurrence of the change from ON_VALUE to OFF_VALUE will used
+     * for the individual signature positions.
      *
      * @param mask
      * @param maskPosition
@@ -109,13 +97,12 @@ public class Signature {
      *
      */
 
-    public Signature(final Img<BitType> mask, final long[] maskPosition,
-                     final int signatureLength) {
+    public Signature(final Img<BitType> mask, final long[] maskPosition, final int signatureLength) {
 
         int tmpx, tmpy, pos;
         m_length = signatureLength;
         m_sign = new int[signatureLength];
-        m_center = maskPosition;
+        m_center = maskPosition.clone();
         final double step = (2 * Math.PI) / signatureLength;
 
         // calc the centroid
@@ -136,15 +123,11 @@ public class Signature {
         centerX = Math.round(centerX / count);
         centerY = Math.round(centerY / count);
 
-        final RandomAccess<BitType> ra = Views
-                .extend(mask,
-                        new OutOfBoundsConstantValueFactory<BitType, Img<BitType>>(
-                                new BitType(
-                                            false)))
-                                            .randomAccess();
-        final int rimWidth = (int) Math.round(Math.sqrt(Math.pow(
-                                                                 mask.dimension(0), 2)
-                                                                 + Math.pow(mask.dimension(1), 2)));
+        final RandomAccess<BitType> ra =
+                Views.extend(mask, new OutOfBoundsConstantValueFactory<BitType, Img<BitType>>(new BitType(false)))
+                        .randomAccess();
+        final int rimWidth =
+                (int)Math.round(Math.sqrt(Math.pow(mask.dimension(0), 2) + Math.pow(mask.dimension(1), 2)));
         m_width = rimWidth;
         // retrieve the signature from the mask, where the BinaryImage
         // changes
@@ -152,19 +135,18 @@ public class Signature {
         for (double a = 0; Math.round(a / step) < signatureLength; a += step) {
             for (int r = 0; r < rimWidth; r++) {
 
-                tmpx = (int) Math.round(r * Math.sin(a));
-                tmpy = (int) Math.round(r * Math.cos(a));
-                pos = (int) Math.round(a / step);
+                tmpx = (int)Math.round(r * Math.sin(a));
+                tmpy = (int)Math.round(r * Math.cos(a));
+                pos = (int)Math.round(a / step);
 
                 // tmpx = bi.getWidth() / 2 + tmpx;
                 // tmpy = bi.getHeight() / 2 + tmpy;
 
-                tmpx = (int) centerX + tmpx;
-                tmpy = (int) centerY + tmpy;
+                tmpx = (int)centerX + tmpx;
+                tmpy = (int)centerY + tmpy;
 
-                if ((tmpx >= (mask.dimension(0) - 1))
-                        || (tmpy >= (mask.dimension(1) - 1))
-                        || (tmpx <= 0) || (tmpy <= 0)) {
+                if ((tmpx >= (mask.dimension(0) - 1)) || (tmpy >= (mask.dimension(1) - 1)) || (tmpx <= 0)
+                        || (tmpy <= 0)) {
                     ra.setPosition(tmpx, 0);
                     ra.setPosition(tmpy, 1);
                     if (!ra.get().get()) {
@@ -176,14 +158,12 @@ public class Signature {
             }
         }
 
-        m_center = new long[] { maskPosition[0] + (int) centerX,
-                maskPosition[1] + (int) centerY };
+        m_center = new long[]{maskPosition[0] + (int)centerX, maskPosition[1] + (int)centerY};
     }
 
     /**
-     * Retrieves a signature from a bit mask. The first occurrence of the
-     * change from ON_VALUE to OFF_VALUE will used for the individual
-     * signature positions.
+     * Retrieves a signature from a bit mask. The first occurrence of the change from ON_VALUE to OFF_VALUE will used
+     * for the individual signature positions.
      *
      * @param mask
      * @param maskPosition
@@ -192,13 +172,12 @@ public class Signature {
      *
      */
 
-    public Signature(final IterableRegionOfInterest roi,
-                     final long[] maskPosition, final int signatureLength) {
+    public Signature(final IterableRegionOfInterest roi, final long[] maskPosition, final int signatureLength) {
 
         int tmpx, tmpy, pos;
         m_length = signatureLength;
         m_sign = new int[signatureLength];
-        m_center = maskPosition;
+        m_center = maskPosition.clone();
         final double step = (2 * Math.PI) / signatureLength;
 
         // calc the centroid
@@ -207,10 +186,8 @@ public class Signature {
 
         int count = 0;
 
-        final IterableInterval<BitType> ii = roi
-                .getIterableIntervalOverROI(new ConstantRandomAccessible<BitType>(
-                        new BitType(),
-                        roi.numDimensions()));
+        final IterableInterval<BitType> ii =
+                roi.getIterableIntervalOverROI(new ConstantRandomAccessible<BitType>(new BitType(), roi.numDimensions()));
 
         final Cursor<BitType> c = ii.localizingCursor();
         while (c.hasNext()) {
@@ -224,9 +201,8 @@ public class Signature {
         centerX = Math.round(centerX / count);
         centerY = Math.round(centerY / count);
 
-        final int rimWidth = (int) Math.round(Math.sqrt(Math.pow(
-                                                                 ii.dimension(0) / 2, 2)
-                                                                 + Math.pow(ii.dimension(1) / 2, 2)));
+        final int rimWidth =
+                (int)Math.round(Math.sqrt(Math.pow(ii.dimension(0) / 2, 2) + Math.pow(ii.dimension(1) / 2, 2)));
 
         final RealRandomAccess<BitType> ra = roi.realRandomAccess();
         m_width = rimWidth;
@@ -236,19 +212,17 @@ public class Signature {
         for (double a = 0; Math.round(a / step) < signatureLength; a += step) {
             for (int r = 0; r < rimWidth; r++) {
 
-                tmpx = (int) Math.round(r * Math.sin(a));
-                tmpy = (int) Math.round(r * Math.cos(a));
-                pos = (int) Math.round(a / step);
+                tmpx = (int)Math.round(r * Math.sin(a));
+                tmpy = (int)Math.round(r * Math.cos(a));
+                pos = (int)Math.round(a / step);
 
                 // tmpx = bi.getWidth() / 2 + tmpx;
                 // tmpy = bi.getHeight() / 2 + tmpy;
 
-                tmpx = (int) centerX + tmpx;
-                tmpy = (int) centerY + tmpy;
+                tmpx = (int)centerX + tmpx;
+                tmpy = (int)centerY + tmpy;
 
-                if ((tmpx >= (ii.dimension(0) - 1))
-                        || (tmpy >= (ii.dimension(1) - 1))
-                        || (tmpx <= 0) || (tmpy <= 0)) {
+                if ((tmpx >= (ii.dimension(0) - 1)) || (tmpy >= (ii.dimension(1) - 1)) || (tmpx <= 0) || (tmpy <= 0)) {
                     ra.setPosition(tmpx, 0);
                     ra.setPosition(tmpy, 1);
                     if (!ra.get().get()) {
@@ -260,18 +234,14 @@ public class Signature {
             }
         }
 
-        m_center = new long[] { maskPosition[0] + (int) centerX,
-                maskPosition[1] + (int) centerY };
+        m_center = new long[]{maskPosition[0] + (int)centerX, maskPosition[1] + (int)centerY};
     }
 
     /**
      * Creates a new signature.
      *
-     * @param sign
-     *                the 'radial' positions for each angle (polar space). A
-     *                copy will be made.
-     * @param width
-     *                the width of the signature, just for informal use
+     * @param sign the 'radial' positions for each angle (polar space). A copy will be made.
+     * @param width the width of the signature, just for informal use
      */
     public Signature(final int[] sign, final int width) {
         m_sign = sign.clone();
@@ -280,8 +250,7 @@ public class Signature {
     }
 
     /**
-     * The position (corresponds to the radius) of given index (corresponds
-     * to the angle).
+     * The position (corresponds to the radius) of given index (corresponds to the angle).
      *
      * @param index
      * @return
@@ -302,8 +271,7 @@ public class Signature {
     }
 
     /**
-     * The score of this signature. The sum of the weights (from the polar
-     * image) normalized by the signature length.
+     * The score of this signature. The sum of the weights (from the polar image) normalized by the signature length.
      *
      * @return a value between 0.0 and 1.0
      */
@@ -323,16 +291,14 @@ public class Signature {
     /**
      * Sets a new centre for the signature. No copy is made!
      *
-     * @param center
-     *                the new centre coordinates (2d)
+     * @param center the new centre coordinates (2d)
      */
     public void setCentre(final long[] center) {
         m_center = center.clone();
     }
 
     /**
-     * The width of the signature. It's simply the width of the polar image,
-     * where the signature stems from.
+     * The width of the signature. It's simply the width of the polar image, where the signature stems from.
      *
      * @return the width
      */
@@ -341,9 +307,8 @@ public class Signature {
     }
 
     /**
-     * The area of the signature, i.e. the number of pixels on the left-hand
-     * side. Might differ a little bit from the area of the contour in the
-     * Cartesian space.
+     * The area of the signature, i.e. the number of pixels on the left-hand side. Might differ a little bit from the
+     * area of the contour in the Cartesian space.
      *
      * @return
      */
@@ -375,13 +340,8 @@ public class Signature {
         for (int i = 0; i < m_sign.length; i++) {
 
             // cartesian coordinates
-            x = (m_sign[i]
-                    * Math.sin(((double) i / (double) m_sign.length)
-                               * 2 * Math.PI))
-                               + m_center[0];
-            y = ((m_sign[i]
-                    * Math.cos(((double) i / (double) m_sign.length)
-                               * 2 * Math.PI)) + m_center[1]);
+            x = (m_sign[i] * Math.sin(((double)i / (double)m_sign.length) * 2 * Math.PI)) + m_center[0];
+            y = ((m_sign[i] * Math.cos(((double)i / (double)m_sign.length) * 2 * Math.PI)) + m_center[1]);
 
             if ((Math.round(x) != oldx) || (Math.round(y) != oldy)) {
 
@@ -415,8 +375,8 @@ public class Signature {
         // y = avY / count;
 
         // set new center
-        m_center[0] = (int) Math.round(x);
-        m_center[1] = (int) Math.round(y);
+        m_center[0] = (int)Math.round(x);
+        m_center[1] = (int)Math.round(y);
 
         // test.showInFrame();
     }
@@ -445,31 +405,24 @@ public class Signature {
         for (int i = 0; i < m_sign.length; i++) {
 
             // cartesian coordinates
-            x = ((m_sign[i]
-                    * Math.sin(((double) i / (double) m_sign.length)
-                               * 2 * Math.PI)) + oldX);
+            x = ((m_sign[i] * Math.sin(((double)i / (double)m_sign.length) * 2 * Math.PI)) + oldX);
 
-            y = ((m_sign[i]
-                    * Math.cos(((double) i / (double) m_sign.length)
-                               * 2 * Math.PI)) + oldY);
+            y = ((m_sign[i] * Math.cos(((double)i / (double)m_sign.length) * 2 * Math.PI)) + oldY);
 
-            magn = Math.sqrt(Math.pow(x - m_center[0], 2)
-                             + Math.pow(y - m_center[1], 2));
+            magn = Math.sqrt(Math.pow(x - m_center[0], 2) + Math.pow(y - m_center[1], 2));
             // new centroid distance
             // ang = Math.atan2((y - avY), (x - avX));
             ang = Math.atan2((x - m_center[0]), (y - m_center[1]));
             if (ang < 0) {
                 ang += 2 * Math.PI;
             }
-            final int test = (int) Math.round((ang / (2 * Math.PI))
-                                              * ((double) m_sign.length - 1));
+            final int test = (int)Math.round((ang / (2 * Math.PI)) * ((double)m_sign.length - 1));
 
             // allocate some of the following array positions to
             // "interpolate"
             // missing values
             for (int j = 0; j < 5; j++) {
-                tmp[(test + j) % m_sign.length] = (int) Math
-                        .round(magn);
+                tmp[(test + j) % m_sign.length] = (int)Math.round(magn);
             }
 
         }
@@ -479,8 +432,7 @@ public class Signature {
     /**
      * Compares to signatures.
      *
-     * @param s
-     *                the signature to compare to
+     * @param s the signature to compare to
      * @return true, if the two signatures are exactly the same
      */
     public boolean equals(final Signature s) {
@@ -496,8 +448,7 @@ public class Signature {
     }
 
     /**
-     * Transforms the signature to the corresponding {@link Polygon} in the
-     * Cartesian space.
+     * Transforms the signature to the corresponding {@link Polygon} in the Cartesian space.
      *
      * @return the new contour
      */
@@ -510,18 +461,9 @@ public class Signature {
         for (int i = 0; i < m_sign.length; i++) {
 
             r = m_sign[i];
-            tmpx = (int) Math
-                    .round(r
-                           * Math.cos(((double) i / (double) m_sign.length)
-                                      * 2
-                                      * Math.PI));
-            tmpy = -(int) Math
-                    .round(r
-                           * Math.sin(((double) i / (double) m_sign.length)
-                                      * 2
-                                      * Math.PI));
-            rc.addPoint((int) m_center[0] + tmpx, (int) m_center[1]
-                    + tmpy);
+            tmpx = (int)Math.round(r * Math.cos(((double)i / (double)m_sign.length) * 2 * Math.PI));
+            tmpy = -(int)Math.round(r * Math.sin(((double)i / (double)m_sign.length) * 2 * Math.PI));
+            rc.addPoint((int)m_center[0] + tmpx, (int)m_center[1] + tmpy);
         }
         rc.setCenter(m_center);
 
@@ -529,11 +471,9 @@ public class Signature {
     }
 
     /**
-     * Transforms the signature to the corresponding {@link Polygon} in the
-     * Cartesian space.
+     * Transforms the signature to the corresponding {@link Polygon} in the Cartesian space.
      *
-     * @param offset
-     *                an offset for the polygon points
+     * @param offset an offset for the polygon points
      *
      * @return the new contour
      */
@@ -546,18 +486,9 @@ public class Signature {
         for (int i = 0; i < m_sign.length; i++) {
 
             r = m_sign[i] + offset;
-            tmpx = (int) Math
-                    .round(r
-                           * Math.cos(((double) i / (double) m_sign.length)
-                                      * 2
-                                      * Math.PI));
-            tmpy = -(int) Math
-                    .round(r
-                           * Math.sin(((double) i / (double) m_sign.length)
-                                      * 2
-                                      * Math.PI));
-            rc.addPoint((int) m_center[0] + tmpx, (int) m_center[1]
-                    + tmpy);
+            tmpx = (int)Math.round(r * Math.cos(((double)i / (double)m_sign.length) * 2 * Math.PI));
+            tmpy = -(int)Math.round(r * Math.sin(((double)i / (double)m_sign.length) * 2 * Math.PI));
+            rc.addPoint((int)m_center[0] + tmpx, (int)m_center[1] + tmpy);
         }
         rc.setCenter(m_center);
 
@@ -565,21 +496,15 @@ public class Signature {
     }
 
     /**
-     * Creates an image (width x length) from the signature, where all
-     * pixels from the signature are on, the rest off.
+     * Creates an image (width x length) from the signature, where all pixels from the signature are on, the rest off.
      *
      * @return the image
      */
     public Img<BitType> createImage() {
-        final Img<BitType> res = new ArrayImgFactory<BitType>()
-                .create(new long[] { m_width, m_length },
-                        new BitType());
-        final RandomAccess<BitType> c = Views
-                .extend(res,
-                        new OutOfBoundsConstantValueFactory<BitType, Img<BitType>>(
-                                new BitType(
-                                            false)))
-                                            .randomAccess();
+        final Img<BitType> res = new ArrayImgFactory<BitType>().create(new long[]{m_width, m_length}, new BitType());
+        final RandomAccess<BitType> c =
+                Views.extend(res, new OutOfBoundsConstantValueFactory<BitType, Img<BitType>>(new BitType(false)))
+                        .randomAccess();
         for (int i = 0; i < m_length; i++) {
             c.setPosition(m_sign[i], 0);
             c.setPosition(i, 1);
@@ -590,23 +515,17 @@ public class Signature {
 
     public Point getCartCoords(final int x, final int y) {
 
-        final int tmpx = (int) Math
-                .round(x
-                       * Math.cos(((double) y / (double) m_sign.length)
-                                  * 2 * Math.PI))
-                                  + (int) m_center[0];
-        final int tmpy = -(int) Math
-                .round(x
-                       * Math.sin(((double) y / (double) m_sign.length)
-                                  * 2 * Math.PI))
-                                  + (int) m_center[1];
+        final int tmpx =
+                (int)Math.round(x * Math.cos(((double)y / (double)m_sign.length) * 2 * Math.PI)) + (int)m_center[0];
+        final int tmpy =
+                -(int)Math.round(x * Math.sin(((double)y / (double)m_sign.length) * 2 * Math.PI)) + (int)m_center[1];
 
-        return new Point(new long[] { tmpx, tmpy });
+        return new Point(new long[]{tmpx, tmpy});
     }
 
     // public Point getCartCoords(final Point pol) {
-        // int tmpx = (int) Math.round(pol.getIntPosition(1)
-                                       // * Math.sin((double) pol.getIntPosition(0) / (double) length()
+    // int tmpx = (int) Math.round(pol.getIntPosition(1)
+    // * Math.sin((double) pol.getIntPosition(0) / (double) length()
     // * 2 * Math.PI))
     // + (int) m_center[0];
     // int tmpy = -(int) Math.round(pol.getIntPosition(1)
@@ -620,12 +539,10 @@ public class Signature {
     // --//
 
     /**
-     * Smoothes the signature by cutting the desired frequencies. This
-     * operation requires the signature to have a length of power of 2! If
-     * not, an exception will be thrown.
+     * Smoothes the signature by cutting the desired frequencies. This operation requires the signature to have a length
+     * of power of 2! If not, an exception will be thrown.
      *
-     * @param cutoff
-     *                the frequencies which should be kept
+     * @param cutoff the frequencies which should be kept
      */
     public void lowPassFilter(final int cutoff) {
 
@@ -642,25 +559,21 @@ public class Signature {
         // inverse fast fourier transformation
         final Complex[] res = InplaceFFT.ifft(G);
         for (int i = 0; i < res.length; i++) {
-            m_sign[i] = (int) Math.round(res[i].re());
+            m_sign[i] = (int)Math.round(res[i].re());
         }
     }
 
     /*
      * Retrieves the weights matrix from an (polar) image.
      */
-    protected double[][] calcWeights(
-                                     final IterableInterval<? extends RealType<?>> interval) {
-        final double[][] weights = new double[(int) interval.dimension(1)][(int) interval
-                                                                           .dimension(0)];
+    protected double[][] calcWeights(final IterableInterval<? extends RealType<?>> interval) {
+        final double[][] weights = new double[(int)interval.dimension(1)][(int)interval.dimension(0)];
         final Cursor<? extends RealType<?>> c = interval.cursor();
         final RealType<?> val = c.get();
         final double max = (val.getMaxValue() - val.getMinValue());
         while (c.hasNext()) {
             c.fwd();
-            weights[c.getIntPosition(1)][c.getIntPosition(0)] = (val
-                    .getRealDouble() - val.getMinValue())
-                    / max;
+            weights[c.getIntPosition(1)][c.getIntPosition(0)] = (val.getRealDouble() - val.getMinValue()) / max;
 
         }
         return weights;
@@ -693,9 +606,7 @@ public class Signature {
                 dir = 0;
 
                 for (int s = -maxLineVariance; s <= maxLineVariance; s++) {
-                    if ((s == 0)
-                            || ((j + s) < 0)
-                            || ((j + s) > (weights[0].length - 1))) {
+                    if ((s == 0) || ((j + s) < 0) || ((j + s) > (weights[0].length - 1))) {
                         continue;
                     }
                     if (scores[i - 1][j + s] > max) {
@@ -724,8 +635,7 @@ public class Signature {
                 break;
             }
         }
-        m_score = scores[scores.length - 1][res[res.length - 1]]
-                / scores.length;
+        m_score = scores[scores.length - 1][res[res.length - 1]] / scores.length;
 
         // if the found best path isn't closed, backtrack all possible
         // leaves
@@ -736,8 +646,7 @@ public class Signature {
             max = 0;
             final IndexedDouble[] leaves = new IndexedDouble[scores[0].length];
             for (int i = 0; i < weights[0].length; i++) {
-                leaves[i] = new IndexedDouble(
-                                              scores[scores.length - 1][i], i);
+                leaves[i] = new IndexedDouble(scores[scores.length - 1][i], i);
             }
 
             Arrays.sort(leaves);
@@ -755,11 +664,9 @@ public class Signature {
                 }
                 m_score = leaves[l].getVal() / scores.length;
                 if (Math.abs(res[0] - res[res.length - 1]) <= maxLineVariance) {
-                    LoggerFactory.getLogger(Signature.class)
-                    .debug("alternative backtrack: "
-                            + l);
+                    LoggerFactory.getLogger(Signature.class).debug("alternative backtrack: " + l);
                     // AWTImageTools.showInFrame(m_tmp,
-                                                 // "alt. backtrack");
+                    // "alt. backtrack");
                     break;
                 }
             }
@@ -772,8 +679,7 @@ public class Signature {
      * a arbitrary depth m_historyLength
      */
 
-    private int[] extractLine(final double[][] weights, final int maxLineVariance,
-                              final int historyLength) {
+    private int[] extractLine(final double[][] weights, final int maxLineVariance, final int historyLength) {
 
         // double[][] data = new
         // double[m_weights.length][m_weights[0].length];
@@ -785,8 +691,7 @@ public class Signature {
         double[] scores;
 
         for (int i = 0; i < pathes.length; i++) {
-            pathes[i] = new Path(weights, historyLength,
-                                 weights[0][i], i);
+            pathes[i] = new Path(weights, historyLength, weights[0][i], i);
         }
 
         double max;
@@ -808,8 +713,7 @@ public class Signature {
                 max = scores[j];
                 pos = j;
                 for (int s = -maxLineVariance; s <= maxLineVariance; s++) {
-                    if (((j + s) < 0)
-                            || ((j + s) > (weights[0].length - 1))) {
+                    if (((j + s) < 0) || ((j + s) > (weights[0].length - 1))) {
                         continue;
                     }
 
@@ -837,8 +741,7 @@ public class Signature {
         // find maximal closed path
         int i;
         for (i = 0; i < pathes.length; i++) {
-            if (Math.abs(pathes[i].m_pos[weights.length - 1]
-                    - pathes[i].m_pos[0]) < (maxLineVariance * 2)) {
+            if (Math.abs(pathes[i].m_pos[weights.length - 1] - pathes[i].m_pos[0]) < (maxLineVariance * 2)) {
                 break;
             }
 
@@ -902,10 +805,10 @@ public class Signature {
         /**
          * {@inheritDoc}
          */
-         @Override
-         public int compareTo(final IndexedDouble val2) {
-             return Double.compare(m_val, m_val);
-         }
+        @Override
+        public int compareTo(final IndexedDouble val2) {
+            return Double.compare(m_val, m_val);
+        }
     }
 
     /*
@@ -924,28 +827,27 @@ public class Signature {
 
         private final double[][] m_weights;
 
-        Path(final double[][] weights, final int historyLength,
-             final double score, final int index) {
+        Path(final double[][] weights, final int historyLength, final double score, final int index) {
             m_pos = new int[weights.length];
             m_h = historyLength;
             m_score = score;
             m_globalScore = score;
             m_pos[0] = index;
-            m_weights = weights;
+            m_weights = weights.clone();
         }
 
         void addPos(int index, final int pos) {
 
             if (index >= m_weights.length) {
-                m_globalScore -= m_weights[(index - m_weights.length)
-                                           % m_weights.length][m_pos[(index - m_weights.length)
-                                                                     % m_weights.length]];
+                m_globalScore -=
+                        m_weights[(index - m_weights.length) % m_weights.length][m_pos[(index - m_weights.length)
+                                % m_weights.length]];
             }
 
             if (index >= m_h) {
-                m_score -= m_weights[((index * 10) - m_h)
-                                     % m_weights.length][m_pos[((index * 10) - m_h)
-                                                               % m_weights.length]];
+                m_score -=
+                        m_weights[((index * 10) - m_h) % m_weights.length][m_pos[((index * 10) - m_h)
+                                % m_weights.length]];
             }
 
             index = index % m_weights.length;
@@ -956,8 +858,7 @@ public class Signature {
 
         @Override
         public int compareTo(final Path o) {
-            return (int) Math.round((o.m_globalScore * 1000)
-                                    - (m_globalScore * 1000));
+            return (int)Math.round((o.m_globalScore * 1000) - (m_globalScore * 1000));
         }
 
         @Override
