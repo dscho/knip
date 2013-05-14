@@ -72,7 +72,7 @@ public class IntegerLabelGenerator implements LabelGenerator<Integer> {
      */
     @Override
     public Integer nextLabel() {
-        return new Integer(label++);
+        return Integer.valueOf(label++);
     }
 
 }
