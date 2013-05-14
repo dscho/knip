@@ -55,7 +55,7 @@ import java.util.Set;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, dietzc University of Konstanz
  */
 public class HilitedLabelsChgEvent implements KNIPEvent {

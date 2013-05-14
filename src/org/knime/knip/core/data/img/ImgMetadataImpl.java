@@ -12,19 +12,17 @@ import net.imglib2.ops.util.metadata.NamedImpl;
 import net.imglib2.ops.util.metadata.SourcedImpl;
 
 /**
- *
+ * 
  * @author dietzc, University of Konstanz
  */
-public final class ImgMetadataImpl extends GeneralMetadataImpl implements
-ImgMetadata {
+public final class ImgMetadataImpl extends GeneralMetadataImpl implements ImgMetadata {
 
     private final ImageMetadata m_imgMetadata;
 
-    public ImgMetadataImpl(final CalibratedSpace cs, final Named named,
-                           final Sourced source, final ImageMetadata imageMetadata) {
+    public ImgMetadataImpl(final CalibratedSpace cs, final Named named, final Sourced source,
+                           final ImageMetadata imageMetadata) {
         super(cs, named, source);
-        m_imgMetadata = new CopyImageMetadata<ImageMetadata>().compute(
-                                                                       imageMetadata, new ImageMetadataImpl());
+        m_imgMetadata = new CopyImageMetadata<ImageMetadata>().compute(imageMetadata, new ImageMetadataImpl());
 
     }
 
@@ -41,10 +39,8 @@ ImgMetadata {
         this(cSpace, img, img, img);
     }
 
-    public ImgMetadataImpl(final GeneralMetadata generalMetadata,
-                           final ImageMetadata imageMetadata) {
-        this(generalMetadata, generalMetadata, generalMetadata,
-             imageMetadata);
+    public ImgMetadataImpl(final GeneralMetadata generalMetadata, final ImageMetadata imageMetadata) {
+        this(generalMetadata, generalMetadata, generalMetadata, imageMetadata);
     }
 
     public ImgMetadataImpl(final GeneralMetadata metadata) {
@@ -53,17 +49,13 @@ ImgMetadata {
 
     /**
      * Convenience constructor
-     *
-     * @param name
-     *                the name
-     * @param source
-     *                the source
-     * @param axes
-     *                the axes
+     * 
+     * @param name the name
+     * @param source the source
+     * @param axes the axes
      */
     public ImgMetadataImpl(final String name, final String source, final String... axes) {
-        super(new CalibratedSpaceImpl(axes), new NamedImpl(name),
-              new SourcedImpl(source));
+        super(new CalibratedSpaceImpl(axes), new NamedImpl(name), new SourcedImpl(source));
         m_imgMetadata = new ImageMetadataImpl();
     }
 

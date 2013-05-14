@@ -67,13 +67,12 @@ import org.knime.knip.core.ui.imgviewer.InputUtil;
 
 /**
  * @author muethingc
- *
+ * 
  */
 public class PolylineTransferFunctionPainter implements TransferFunctionPainter {
 
     /**
-     * Simple class to use if nothing is selected, so we don't need to null
-     * test on m_selected all the time.
+     * Simple class to use if nothing is selected, so we don't need to null test on m_selected all the time.
      */
     private class AlwaysUnequal {
 
@@ -93,10 +92,10 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
      */
     private class LineSegment {
         private final PolylineTransferFunction.Point p0;
+
         private final PolylineTransferFunction.Point p1;
 
-        public LineSegment(final PolylineTransferFunction.Point point0,
-                           final PolylineTransferFunction.Point point1) {
+        public LineSegment(final PolylineTransferFunction.Point point0, final PolylineTransferFunction.Point point1) {
             p0 = point0;
             p1 = point1;
         }
@@ -112,7 +111,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
             if (!(o instanceof LineSegment)) {
                 return false;
             } else {
-                final LineSegment l = (LineSegment) o;
+                final LineSegment l = (LineSegment)o;
                 boolean eq = true;
 
                 eq = p0.equals(l.p0) ? eq & true : eq & false;
@@ -123,23 +122,26 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         }
     }
 
-    private static final int MOVE_HORIZONTAL = MouseEvent.SHIFT_DOWN_MASK
-            | MouseEvent.BUTTON1_DOWN_MASK;
-    private static final int MOVE_VERTICAL = InputUtil.CTRL_DOWN_MASK
-            | MouseEvent.BUTTON1_DOWN_MASK;
-    private static final int ADD_POINT = MouseEvent.BUTTON1_DOWN_MASK;
+    private static final int MOVE_HORIZONTAL = MouseEvent.SHIFT_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
 
+    private static final int MOVE_VERTICAL = InputUtil.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+
+    private static final int ADD_POINT = MouseEvent.BUTTON1_DOWN_MASK;
 
     /* Some values that control how the lines look in the end */
     private final int m_pointSIZE = 10;
+
     private final int m_lineSIZE = 5;
+
     private final int m_selectionThickness = 2;
 
     private final EventListenerList m_listener = new EventListenerList();
 
     /* Stuff used for doing the backbuffer selection */
     private final ColorDispenser m_dispenser = ColorDispenser.INSTANCE;
+
     private final Map<Object, Color> m_backBufColors = new HashMap<Object, Color>();
+
     private final Map<Color, Object> m_colorToObject = new HashMap<Color, Object>();
 
     private final PolylineTransferFunction m_func;
@@ -152,23 +154,23 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /* some static colors that are always the same */
     private static final Color COLOR_BORDOR = Color.darkGray;
+
     private static final Color COLOR_HILITE = Color.lightGray;
 
     /* The cursor we use when highlighted, moving and otherwise */
-    private static final Cursor CURSOR_MOVE = new Cursor(
-                                                         Cursor.CROSSHAIR_CURSOR);
-    private static final Cursor CURSOR_DEFAULT = new Cursor(
-                                                            Cursor.DEFAULT_CURSOR);
+    private static final Cursor CURSOR_MOVE = new Cursor(Cursor.CROSSHAIR_CURSOR);
+
+    private static final Cursor CURSOR_DEFAULT = new Cursor(Cursor.DEFAULT_CURSOR);
 
     /* stores the info what object is currently selected */
     private Object m_selected = new AlwaysUnequal();
 
     /* the last point that the mouse was over */
     private int m_oldX = 0;
+
     private int m_oldY = 0;
 
-    public PolylineTransferFunctionPainter(
-                                           final PolylineTransferFunction func, final Color color) {
+    public PolylineTransferFunctionPainter(final PolylineTransferFunction func, final Color color) {
         if (func == null) {
             throw new NullPointerException();
         }
@@ -202,8 +204,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         m_paintArea = area;
 
         if (!backBufSel) {
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
         // first paint the lines so that the points will be on top
@@ -214,12 +215,11 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
     @Override
     public void mouseClicked(final MouseEvent event) {
 
-        if ((m_selected instanceof PolylineTransferFunction.Point)
-                && (event.getButton() == MouseEvent.BUTTON3)) {
+        if ((m_selected instanceof PolylineTransferFunction.Point) && (event.getButton() == MouseEvent.BUTTON3)) {
 
             m_colorToObject.remove(m_backBufColors.get(m_selected));
             m_backBufColors.remove(m_selected);
-            m_func.removePoint((PolylineTransferFunction.Point) m_selected);
+            m_func.removePoint((PolylineTransferFunction.Point)m_selected);
 
             fireTransferFunctionChgEvent(false);
         }
@@ -228,13 +228,11 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
     @Override
     public void mousePressed(final MouseEvent event) {
 
-        if ((m_selected instanceof LineSegment)
-                && (event.getModifiersEx() == ADD_POINT)) {
+        if ((m_selected instanceof LineSegment) && (event.getModifiersEx() == ADD_POINT)) {
             final double x = getXPointCoordinate(event.getX());
             final double y = getYPointCoordinate(event.getY());
 
-            final PolylineTransferFunction.Point p = m_func
-                    .addPoint(x, y);
+            final PolylineTransferFunction.Point p = m_func.addPoint(x, y);
             m_selected = p;
 
             fireTransferFunctionChgEvent(false);
@@ -243,20 +241,16 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         storeCoord(event);
     }
 
-    private boolean moveLineSegmentHorizontal(final LineSegment line,
-                                              final MouseEvent event) {
+    private boolean moveLineSegmentHorizontal(final LineSegment line, final MouseEvent event) {
 
-        final int x0 = (event.getX() - m_oldX)
-                + getXPanelCoordinate(line.p0.getX());
+        final int x0 = (event.getX() - m_oldX) + getXPanelCoordinate(line.p0.getX());
 
-        final int x1 = (event.getX() - m_oldX)
-                + getXPanelCoordinate(line.p1.getX());
+        final int x1 = (event.getX() - m_oldX) + getXPanelCoordinate(line.p1.getX());
 
         // make sure the ramp cannot be changed when hitting the borders
         // so that the gradient can not be altered
         // also do not move if one of the points is fixed
-        if ((x0 >= 0) && (x1 <= m_paintArea.getWidth())
-                && !line.p0.getFixed() && !line.p1.getFixed()) {
+        if ((x0 >= 0) && (x1 <= m_paintArea.getWidth()) && !line.p0.getFixed() && !line.p1.getFixed()) {
             moveControlPointX(line.p0, x0);
             moveControlPointX(line.p1, x1);
             return true;
@@ -265,19 +259,15 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         return false;
     }
 
-    private boolean moveLineSegmentVertical(final LineSegment line,
-                                            final MouseEvent event) {
+    private boolean moveLineSegmentVertical(final LineSegment line, final MouseEvent event) {
 
-        final int y0 = (event.getY() - m_oldY)
-                + getYPanelCoordinate(line.p0.getY());
+        final int y0 = (event.getY() - m_oldY) + getYPanelCoordinate(line.p0.getY());
 
-        final int y1 = (event.getY() - m_oldY)
-                + getYPanelCoordinate(line.p1.getY());
+        final int y1 = (event.getY() - m_oldY) + getYPanelCoordinate(line.p1.getY());
 
         // make sure the ramp cannot be changed when hitting the borders
         // so that the gradient can not be altered
-        if ((y0 >= 0) && (y0 <= m_paintArea.getHeight()) && (y1 >= 0)
-                && (y1 <= m_paintArea.getHeight())) {
+        if ((y0 >= 0) && (y0 <= m_paintArea.getHeight()) && (y1 >= 0) && (y1 <= m_paintArea.getHeight())) {
             moveControlPointY(line.p0, y0);
             moveControlPointY(line.p1, y1);
             return true;
@@ -293,11 +283,10 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
         if (m_selected instanceof LineSegment) {
 
-            final LineSegment line = (LineSegment) m_selected;
+            final LineSegment line = (LineSegment)m_selected;
 
             if (event.getModifiersEx() == MOVE_HORIZONTAL) {
-                emitEvent = moveLineSegmentHorizontal(line,
-                                                      event);
+                emitEvent = moveLineSegmentHorizontal(line, event);
             }
 
             if (event.getModifiersEx() == MOVE_VERTICAL) {
@@ -307,9 +296,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
         if (m_selected instanceof PolylineTransferFunction.Point) {
 
-            moveControlPoint(
-                             (PolylineTransferFunction.Point) m_selected,
-                             event.getX(), event.getY());
+            moveControlPoint((PolylineTransferFunction.Point)m_selected, event.getX(), event.getY());
             emitEvent = true;
         }
 
@@ -351,11 +338,9 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * Paint all lines of the transfer function.<br>
-     *
-     * @param g2
-     *                the graphics object to use
-     * @param backBufSel
-     *                wheter to paint for backbuffer selection or not
+     * 
+     * @param g2 the graphics object to use
+     * @param backBufSel wheter to paint for backbuffer selection or not
      */
     private void paintLines(final Graphics2D g2, final boolean backBufSel) {
         assert m_func != null;
@@ -382,13 +367,11 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
             if (backBufSel) {
                 c = getBackBufColor(line);
             } else {
-                c = m_selected.equals(line) ? COLOR_HILITE
-                        : COLOR_BORDOR;
+                c = m_selected.equals(line) ? COLOR_HILITE : COLOR_BORDOR;
             }
 
             // paint the outline
-            g2.setStroke(new BasicStroke(m_lineSIZE
-                                         + m_selectionThickness));
+            g2.setStroke(new BasicStroke(m_lineSIZE + m_selectionThickness));
             g2.setColor(c);
             g2.drawLine(x0, y0, x1, y1);
 
@@ -404,11 +387,9 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * Paint all control points of the transfer function.<br>
-     *
-     * @param g2
-     *                the graphics object to use
-     * @param backBufSel
-     *                wheter to paint for backbuffer selection or not
+     * 
+     * @param g2 the graphics object to use
+     * @param backBufSel wheter to paint for backbuffer selection or not
      */
     private void paintPoints(final Graphics2D g2, final boolean backBufSel) {
         assert m_func != null;
@@ -424,8 +405,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                 outer = getBackBufColor(p);
                 inner = outer;
             } else {
-                outer = m_selected == p ? COLOR_HILITE
-                        : COLOR_BORDOR;
+                outer = m_selected == p ? COLOR_HILITE : COLOR_BORDOR;
                 inner = m_color;
             }
 
@@ -435,19 +415,14 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * This method actually paints a point.<br>
-     *
-     * @param g2
-     *                graphics2d
-     * @param p
-     *                the point to paint
-     * @param outer
-     *                color to use for the highlighting/border painting
-     * @param inner
-     *                color to use for the acutal point
+     * 
+     * @param g2 graphics2d
+     * @param p the point to paint
+     * @param outer color to use for the highlighting/border painting
+     * @param inner color to use for the acutal point
      */
-    private void paintPoint(final Graphics2D g2,
-                            final PolylineTransferFunction.Point p,
-                            final Color outer, final Color inner) {
+    private void paintPoint(final Graphics2D g2, final PolylineTransferFunction.Point p, final Color outer,
+                            final Color inner) {
 
         // correct the frac to fit into the coordinate space of the
         // panel
@@ -459,11 +434,9 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
         Shape shape;
 
         if (p.getFixed()) {
-            shape = new Rectangle(x - half, y - half, m_pointSIZE,
-                                  m_pointSIZE);
+            shape = new Rectangle(x - half, y - half, m_pointSIZE, m_pointSIZE);
         } else {
-            shape = new Ellipse2D.Float(x - half, y - half,
-                                        m_pointSIZE, m_pointSIZE);
+            shape = new Ellipse2D.Float(x - half, y - half, m_pointSIZE, m_pointSIZE);
         }
 
         // first fill the shape
@@ -478,29 +451,26 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * Get the position of the point in the Panel.
-     *
-     * @param frac
-     *                the corresponding x Fraction
+     * 
+     * @param frac the corresponding x Fraction
      */
     private int getXPanelCoordinate(final double frac) {
-        return ((int) (frac * m_paintArea.getWidth()));
+        return ((int)(frac * m_paintArea.getWidth()));
     }
 
     /**
      * Get the position of the point in the Panel.
-     *
-     * @param frac
-     *                the corresponding y Fraction
+     * 
+     * @param frac the corresponding y Fraction
      */
     private int getYPanelCoordinate(final double frac) {
-        return ((int) ((1.0 - frac) * m_paintArea.height));
+        return ((int)((1.0 - frac) * m_paintArea.height));
     }
 
     /**
      * Get the fractional position of the given point relative in the panel.
-     *
-     * @param x
-     *                the x value
+     * 
+     * @param x the x value
      */
     private double getXPointCoordinate(final int x) {
         return x / m_paintArea.getWidth();
@@ -508,9 +478,8 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * Get the fractional position of the given point relative in the panel.
-     *
-     * @param y
-     *                the y value
+     * 
+     * @param y the y value
      */
     private double getYPointCoordinate(final int y) {
         return 1.0 - (y / m_paintArea.getHeight());
@@ -540,17 +509,12 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * Move a control point to a new position.
-     *
-     * @param point
-     *                the point to move
-     * @param x
-     *                the x value
-     * @param y
-     *                the y value
+     * 
+     * @param point the point to move
+     * @param x the x value
+     * @param y the y value
      */
-    private void moveControlPoint(
-                                  final PolylineTransferFunction.Point point,
-                                  final int x, final int y) {
+    private void moveControlPoint(final PolylineTransferFunction.Point point, final int x, final int y) {
         final double xp = getXPointCoordinate(x);
         final double yp = getYPointCoordinate(y);
         m_func.movePoint(point, xp, yp);
@@ -558,14 +522,11 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * Move a control point to a new x-position, but keep the y-position.
-     *
-     * @param point
-     *                the point to move
-     * @param x
-     *                the x value
+     * 
+     * @param point the point to move
+     * @param x the x value
      */
-    private void moveControlPointX(
-                                   final PolylineTransferFunction.Point point, final int x) {
+    private void moveControlPointX(final PolylineTransferFunction.Point point, final int x) {
         final double xp = getXPointCoordinate(x);
         final double yp = point.getY();
         m_func.movePoint(point, xp, yp);
@@ -573,14 +534,11 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     /**
      * Move a control point to a new y-position, but keep the x-position.
-     *
-     * @param point
-     *                the point to move
-     * @param y
-     *                the y value
+     * 
+     * @param point the point to move
+     * @param y the y value
      */
-    private void moveControlPointY(
-                                   final PolylineTransferFunction.Point point, final int y) {
+    private void moveControlPointY(final PolylineTransferFunction.Point point, final int y) {
         final double xp = point.getX();
         final double yp = getYPointCoordinate(y);
         m_func.movePoint(point, xp, yp);
@@ -594,8 +552,7 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
      * (org.knime.knip.core.ui.transfunc.TransferFunctionChgListener)
      */
     @Override
-    public void addTransferFunctionChgListener(
-                                               final TransferFunctionChgListener l) {
+    public void addTransferFunctionChgListener(final TransferFunctionChgListener l) {
         m_listener.add(TransferFunctionChgListener.class, l);
     }
 
@@ -607,16 +564,13 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
      * (org.knime.knip.core.ui.transfunc.TransferFunctionChgListener)
      */
     @Override
-    public void removeTransferFunctionChgListener(
-                                                  final TransferFunctionChgListener l) {
+    public void removeTransferFunctionChgListener(final TransferFunctionChgListener l) {
         m_listener.remove(TransferFunctionChgListener.class, l);
     }
 
     private void fireTransferFunctionChgEvent(final boolean adjusting) {
-        for (final TransferFunctionChgListener l : m_listener
-                .getListeners(TransferFunctionChgListener.class)) {
-            l.transferFunctionChg(new TransferFunctionChgEvent(
-                                                               this, m_func, adjusting));
+        for (final TransferFunctionChgListener l : m_listener.getListeners(TransferFunctionChgListener.class)) {
+            l.transferFunctionChg(new TransferFunctionChgEvent(this, m_func, adjusting));
         }
     }
 

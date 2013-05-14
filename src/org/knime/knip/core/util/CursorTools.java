@@ -59,30 +59,26 @@ import net.imglib2.ops.operation.subset.views.ImgPlusView;
 import net.imglib2.type.Type;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class CursorTools {
 
     /**
-     * Helper to set positions even though the position-array dimension and
-     * cursor dimension don't match.
-     *
+     * Helper to set positions even though the position-array dimension and cursor dimension don't match.
+     * 
      * @param pos
      * @param access
      */
-    public static <T extends Type<T>> void setPosition(
-                                                       final RandomAccess<T> access, final long[] pos) {
+    public static <T extends Type<T>> void setPosition(final RandomAccess<T> access, final long[] pos) {
 
-        for (int i = 0; i < Math
-                .min(pos.length, access.numDimensions()); i++) {
+        for (int i = 0; i < Math.min(pos.length, access.numDimensions()); i++) {
             access.setPosition(pos[i], i);
         }
 
     }
 
-    public static boolean equalIterationOrder(final IterableRealInterval<?> a,
-                                              final IterableRealInterval<?>... bs) {
+    public static boolean equalIterationOrder(final IterableRealInterval<?> a, final IterableRealInterval<?>... bs) {
         for (int i = 1; i < bs.length; i++) {
             if (!equalIterationOrder(a, bs[i])) {
                 return false;
@@ -91,8 +87,7 @@ public class CursorTools {
         return true;
     }
 
-    public static boolean equalIterationOrder(final IterableRealInterval<?> a,
-                                              final IterableRealInterval<?> b) {
+    public static boolean equalIterationOrder(final IterableRealInterval<?> a, final IterableRealInterval<?> b) {
         // If one is not an image
         if (!(a instanceof Img) || !(b instanceof Img)) {
             return a.iterationOrder().equals(b.iterationOrder());
@@ -102,22 +97,14 @@ public class CursorTools {
         // source images with equal iteration order
         if ((a instanceof ImgPlusView) && (b instanceof ImgPlusView)) {
             return equalInterval(a, b)
-                    && equalIterationOrder(
-                                           ((ImgPlusView<?>) a)
-                                           .getImg(),
-                                           ((ImgPlusView<?>) b)
-                                           .getImg());
+                    && equalIterationOrder(((ImgPlusView<?>)a).getImg(), ((ImgPlusView<?>)b).getImg());
         }
         // If not a pair of special types unpack the image plus type
         if (b instanceof ImgPlus) {
-            return a.iterationOrder().equals(
-                                             ((ImgPlus<?>) b).getImg()
-                                             .iterationOrder());
+            return a.iterationOrder().equals(((ImgPlus<?>)b).getImg().iterationOrder());
         }
         if (a instanceof ImgPlus) {
-            return b.iterationOrder().equals(
-                                             ((ImgPlus<?>) a).getImg()
-                                             .iterationOrder());
+            return b.iterationOrder().equals(((ImgPlus<?>)a).getImg().iterationOrder());
         }
         // Default image test
         return a.iterationOrder().equals(b.iterationOrder());

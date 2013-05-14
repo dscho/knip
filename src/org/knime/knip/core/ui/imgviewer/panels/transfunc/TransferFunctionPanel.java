@@ -62,7 +62,7 @@ import mpicbg.ij.integral.Scale;
 
 /**
  * This class displays and allows the manipulation of Transferfunctions.
- *
+ * 
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  */
 public class TransferFunctionPanel extends JPanel implements TransferFunctionChgListener {
@@ -78,21 +78,25 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
     /* the current histogram */
     private HistogramWithNormalization m_histogram;
+
     private Histogram m_histogramNormalized;
 
     /* controls wheter functions should be displayed normalized */
     private boolean m_normalize = false;
 
     private final HistogramPainter m_histogramPainter = new HistogramPainter();
+
     private final TransferFunctionBundlePainter m_tfPainter = new TransferFunctionBundlePainter();
+
     private final JLabel m_histInfoLabel = new JLabel(DEFAULT_MSG);
+
     private final JPanel m_tfPanel = new JPanel() {
         @Override
         public final void paintComponent(final Graphics g) {
 
             // call super for painting background etc
             super.paintComponent(g);
-            final Graphics2D g2 = (Graphics2D) g.create();
+            final Graphics2D g2 = (Graphics2D)g.create();
 
             m_histogramPainter.paint(g2);
             m_tfPainter.paint(g2);
@@ -139,11 +143,10 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
     /**
      * Set the new histogram that should be used for painting.<br>
-     *
+     * 
      * @param hist the new histogram
      */
     public final void setHistogram(final Histogram hist) {
-
 
         if (hist == null) {
             m_histogramNormalized = null;
@@ -162,7 +165,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
     private HistogramWithNormalization getHistogram(final Histogram hist) {
         if (hist instanceof HistogramWithNormalization) {
-            return (HistogramWithNormalization) hist;
+            return (HistogramWithNormalization)hist;
         } else {
             return new HistogramWithNormalization(hist);
         }
@@ -170,8 +173,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
     /**
      * @see HistogramPainter#setScale(Scale)
-     * @param scale
-     *                the new scale
+     * @param scale the new scale
      */
     public final void setScale(final HistogramPainter.Scale scale) {
         m_histogramPainter.setScale(scale);
@@ -180,8 +182,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
     /**
      * @see TransferFunctionBundlePainter#setTransferFocus(String)
-     * @param color
-     *                the color of the function to draw topmost
+     * @param color the color of the function to draw topmost
      */
     public final void setTransferFocus(final TransferFunctionColor color) {
         m_tfPainter.setTransferFocus(color);
@@ -190,8 +191,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
 
     /**
      * @see TransferFunctionBundlePainter#setFunctions(TransferFunctionBundle)
-     * @param bundle
-     *                the bundle of functions to display
+     * @param bundle the bundle of functions to display
      */
     public final void setBundle(final TransferFunctionBundle bundle) {
         if (bundle == null) {
@@ -214,7 +214,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
     }
 
     private void normalizeFunctions() {
-        double[] frac = new double[] {0, 1};
+        double[] frac = new double[]{0, 1};
 
         if (m_normalize && (m_histogram != null)) {
             frac = m_histogram.getFractions();
@@ -240,7 +240,6 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
         repaint();
     }
 
-
     @Override
     public void transferFunctionChg(final TransferFunctionChgEvent event) {
         for (final TransferFunctionChgListener l : m_listener.getListeners(TransferFunctionChgListener.class)) {
@@ -254,8 +253,7 @@ public class TransferFunctionPanel extends JPanel implements TransferFunctionChg
         m_listener.add(TransferFunctionChgListener.class, l);
     }
 
-    public void removeTransferFunctionChgListener(
-                                                  final TransferFunctionChgListener l) {
+    public void removeTransferFunctionChgListener(final TransferFunctionChgListener l) {
         m_listener.remove(TransferFunctionChgListener.class, l);
     }
 

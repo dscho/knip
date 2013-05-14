@@ -62,7 +62,7 @@ import org.knime.knip.core.io.externalization.Externalizer;
 import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class LabelingMappingExt0 implements Externalizer<LabelingMapping> {
@@ -95,8 +95,7 @@ public class LabelingMappingExt0 implements Externalizer<LabelingMapping> {
      * {@inheritDoc}
      */
     @Override
-    public LabelingMapping read(final BufferedDataInputStream in)
-            throws Exception {
+    public LabelingMapping read(final BufferedDataInputStream in) throws Exception {
 
         final int numLabelComb = in.readInt();
 
@@ -120,8 +119,7 @@ public class LabelingMappingExt0 implements Externalizer<LabelingMapping> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final LabelingMapping obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final LabelingMapping obj) throws Exception {
 
         out.writeInt(obj.numLists());
 

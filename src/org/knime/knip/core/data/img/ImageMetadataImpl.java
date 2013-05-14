@@ -46,8 +46,7 @@ public class ImageMetadataImpl implements ImageMetadata {
     @Override
     public void setChannelMinimum(final int c, final double min) {
         if (c < 0) {
-            throw new IllegalArgumentException("Invalid channel: "
-                    + c);
+            throw new IllegalArgumentException("Invalid channel: " + c);
         }
         if (c >= channelMin.size()) {
             channelMin.ensureCapacity(c + 1);
@@ -70,8 +69,7 @@ public class ImageMetadataImpl implements ImageMetadata {
     @Override
     public void setChannelMaximum(final int c, final double max) {
         if (c < 0) {
-            throw new IllegalArgumentException("Invalid channel: "
-                    + c);
+            throw new IllegalArgumentException("Invalid channel: " + c);
         }
         if (c >= channelMax.size()) {
             channelMax.ensureCapacity(c + 1);

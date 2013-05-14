@@ -19,12 +19,11 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramFactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
 
 /**
- *
- *
+ * 
+ * 
  * @author dietzc
  */
-public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>>
-extends ViewerComponent {
+public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>> extends ViewerComponent {
 
     private static final long serialVersionUID = 1L;
 
@@ -81,10 +80,8 @@ extends ViewerComponent {
         // create
         if ((m_binXPosition >= 0) && (m_binXPosition < m_hist.length)) {
             m_infoBuffer.append("value=");
-            m_infoBuffer.append(String.format(
-                                              "[from %.2f; to %.2f]", m_factor
-                                              * m_binXPosition,
-                                              m_factor * (m_binXPosition + 1)));
+            m_infoBuffer.append(String.format("[from %.2f; to %.2f]", m_factor * m_binXPosition, m_factor
+                                              * (m_binXPosition + 1)));
             m_infoBuffer.append("; count=");
             m_infoBuffer.append(m_hist[m_binXPosition]);
 
@@ -115,14 +112,12 @@ extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         // Nothing to do here
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException {
         // Nothing to do here
     }
 

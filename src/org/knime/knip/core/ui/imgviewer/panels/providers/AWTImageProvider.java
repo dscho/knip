@@ -81,19 +81,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf (University of Konstanz)
- *
+ * 
  *         Publishes {@link AWTImageChgEvent}.
- *
- * @param <T>
- *                The Type of the {@link Img} object
- * @param <I>
- *                The {@link Img} class which will be converted to a
- *                {@link BufferedImage}
+ * 
+ * @param <T> The Type of the {@link Img} object
+ * @param <I> The {@link Img} class which will be converted to a {@link BufferedImage}
  */
-public abstract class AWTImageProvider<T extends Type<T>> extends
-HiddenViewerComponent {
+public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerComponent {
 
     /**
      *
@@ -103,8 +99,7 @@ HiddenViewerComponent {
     /**
      * {@link Logger}
      */
-    public final static Logger LOGGER = LoggerFactory
-            .getLogger(AWTImageProvider.class);
+    public final static Logger LOGGER = LoggerFactory.getLogger(AWTImageProvider.class);
 
     /**
      * {@link Img} rendered as {@link BufferedImage}
@@ -112,8 +107,7 @@ HiddenViewerComponent {
     protected RandomAccessibleInterval<T> m_src;
 
     /**
-     * {@link PlaneSelectionEvent} indicating the current plane coordinates
-     * in the {@link Img} which will be rendered
+     * {@link PlaneSelectionEvent} indicating the current plane coordinates in the {@link Img} which will be rendered
      */
     protected PlaneSelectionEvent m_sel;
 
@@ -145,17 +139,14 @@ HiddenViewerComponent {
 
     /**
      * Constructor
-     *
-     * @param cacheSize
-     *                The number of {@link BufferedImage}s beeing cached
-     *                using the {@link LRUCache}. A cache size < 2
-     *                indicates, that caching is inactive
+     * 
+     * @param cacheSize The number of {@link BufferedImage}s beeing cached using the {@link LRUCache}. A cache size < 2
+     *            indicates, that caching is inactive
      */
     public AWTImageProvider(final int cacheSize) {
 
         if (cacheSize > 1) {
-            m_awtImageCache = new LRUCache<Integer, SoftReference<Image>>(
-                    cacheSize);
+            m_awtImageCache = new LRUCache<Integer, SoftReference<Image>>(cacheSize);
         }
 
         m_cache = cacheSize;
@@ -163,25 +154,21 @@ HiddenViewerComponent {
     }
 
     /**
-     * Renders the buffered image according to the parameters of
-     * {@link PlaneSelectionEvent}, {@link NormalizationParametersChgEvent},
-     * {@link Img} and {@link ImgRenderer}
-     *
+     * Renders the buffered image according to the parameters of {@link PlaneSelectionEvent},
+     * {@link NormalizationParametersChgEvent}, {@link Img} and {@link ImgRenderer}
+     * 
      * @return the rendererd {@link Image}
      */
     protected abstract Image createImage();
 
     /**
-     * {@link EventListener} for {@link PlaneSelectionEvent} events The
-     * {@link PlaneSelectionEvent} of the {@link AWTImageTools} will be
-     * updated
-     *
+     * {@link EventListener} for {@link PlaneSelectionEvent} events The {@link PlaneSelectionEvent} of the
+     * {@link AWTImageTools} will be updated
+     * 
      * Renders and caches the image
-     *
-     * @param img
-     *                {@link Img} to render
-     * @param sel
-     *                {@link PlaneSelectionEvent}
+     * 
+     * @param img {@link Img} to render
+     * @param sel {@link PlaneSelectionEvent}
      */
     @EventListener
     public void onPlaneSelectionUpdate(final PlaneSelectionEvent sel) {
@@ -189,13 +176,11 @@ HiddenViewerComponent {
     }
 
     /**
-     *
+     * 
      * Renders and caches the image
-     *
-     * @param renderer
-     *                {@link ImgRenderer} which will be used to render the
-     *                {@link BufferedImage}
-     *
+     * 
+     * @param renderer {@link ImgRenderer} which will be used to render the {@link BufferedImage}
+     * 
      */
     @EventListener
     public void onRendererUpdate(final RendererSelectionChgEvent e) {
@@ -203,45 +188,35 @@ HiddenViewerComponent {
     }
 
     /**
-     * {@link EventListener} for {@link Img} and it's
-     * {@link CalibratedSpace} {@link Img} and it's {@link CalibratedSpace}
-     * metadata will be updated.
-     *
-     * Creates a new suiteable {@link ImgRenderer} if the existing one
-     * doesn't fit with new {@link Img} Creates a new
-     * {@link PlaneSelectionEvent} if numDimensions of the existing
-     * {@link PlaneSelectionEvent} doesn't fit with new {@link Img}
-     *
+     * {@link EventListener} for {@link Img} and it's {@link CalibratedSpace} {@link Img} and it's
+     * {@link CalibratedSpace} metadata will be updated.
+     * 
+     * Creates a new suiteable {@link ImgRenderer} if the existing one doesn't fit with new {@link Img} Creates a new
+     * {@link PlaneSelectionEvent} if numDimensions of the existing {@link PlaneSelectionEvent} doesn't fit with new
+     * {@link Img}
+     * 
      * Renders and caches the image
-     *
-     * @param img
-     *                The {@link Img} to render. May also be a Labeling.
-     * @param axes
-     *                The axes of the img, currently not used
-     * @param name
-     *                The name of the img
+     * 
+     * @param img The {@link Img} to render. May also be a Labeling.
+     * @param axes The axes of the img, currently not used
+     * @param name The name of the img
      */
     @EventListener
     public void onUpdated(final IntervalWithMetadataChgEvent<T> e) {
         m_src = e.getRandomAccessibleInterval();
 
-        final long[] dims = new long[e.getRandomAccessibleInterval()
-                                     .numDimensions()];
+        final long[] dims = new long[e.getRandomAccessibleInterval().numDimensions()];
         e.getRandomAccessibleInterval().dimensions(dims);
 
         if ((m_sel == null) || !isInsideDims(m_sel.getPlanePos(), dims)) {
-            m_sel = new PlaneSelectionEvent(0, 1, new long[e
-                                                           .getRandomAccessibleInterval()
-                                                           .numDimensions()]);
+            m_sel = new PlaneSelectionEvent(0, 1, new long[e.getRandomAccessibleInterval().numDimensions()]);
         }
 
-        final ImageRenderer[] renderers = RendererFactory
-                .createSuitableRenderer(m_src);
+        final ImageRenderer[] renderers = RendererFactory.createSuitableRenderer(m_src);
         if (m_renderer != null) {
             boolean contained = false;
             for (final ImageRenderer renderer : renderers) {
-                if (m_renderer.toString().equals(
-                                                 renderer.toString())) {
+                if (m_renderer.toString().equals(renderer.toString())) {
                     m_renderer = renderer;
                     contained = true;
                     break;
@@ -257,7 +232,7 @@ HiddenViewerComponent {
 
     /**
      * Resets the image cache.
-     *
+     * 
      * @param e
      */
     @EventListener
@@ -269,10 +244,9 @@ HiddenViewerComponent {
     }
 
     /**
-     * Turns of the caching, e.g. the TransferFunctionRenderer creates
-     * different images all the time, it is not possible to store all of
-     * them.
-     *
+     * Turns of the caching, e.g. the TransferFunctionRenderer creates different images all the time, it is not possible
+     * to store all of them.
+     * 
      * @param e
      */
     @EventListener
@@ -281,12 +255,10 @@ HiddenViewerComponent {
     }
 
     /**
-     * triggers an actual redraw of the image. If a parameter changes the
-     * providers and additional components can first react to the parameter
-     * change event before the image is redrawn after the subsequent
-     * ImgRedrawEvent. Therefore chained parameters and parameter changes
-     * that trigger further changes are possible.
-     *
+     * triggers an actual redraw of the image. If a parameter changes the providers and additional components can first
+     * react to the parameter change event before the image is redrawn after the subsequent ImgRedrawEvent. Therefore
+     * chained parameters and parameter changes that trigger further changes are possible.
+     * 
      * @param e
      */
     @EventListener
@@ -309,13 +281,12 @@ HiddenViewerComponent {
     }
 
     /**
-     * Generates a hashcode according to the parameters of
-     * {@link PlaneSelectionEvent}, {@link NormalizationParametersChgEvent},
-     * {@link Img} and {@link ImgRenderer}. Override this method to add
+     * Generates a hashcode according to the parameters of {@link PlaneSelectionEvent},
+     * {@link NormalizationParametersChgEvent}, {@link Img} and {@link ImgRenderer}. Override this method to add
      * provider specific hashcode types.
-     *
+     * 
      * HashCode is generated as hash = hash*31 + object.hashCode().
-     *
+     * 
      * @return HashCode
      */
     protected int generateHashCode() {
@@ -347,16 +318,10 @@ HiddenViewerComponent {
             if (awtImage == null) {
                 awtImage = createImage();
 
-                m_awtImageCache.put(hash,
-                                    new SoftReference<Image>(
-                                            awtImage));
-                LOGGER.info("Caching Image ... ("
-                        + m_awtImageCache.usedEntries()
-                        + ")");
+                m_awtImageCache.put(hash, new SoftReference<Image>(awtImage));
+                LOGGER.info("Caching Image ... (" + m_awtImageCache.usedEntries() + ")");
             } else {
-                LOGGER.info("Image from Cache ... ("
-                        + m_awtImageCache.usedEntries()
-                        + ")");
+                LOGGER.info("Image from Cache ... (" + m_awtImageCache.usedEntries() + ")");
             }
 
         } else {
@@ -376,8 +341,7 @@ HiddenViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         out.writeBoolean(m_isCachingActive);
         out.writeInt(m_cache);
         out.writeUTF(m_renderer.getClass().getName());
@@ -385,14 +349,12 @@ HiddenViewerComponent {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_isCachingActive = in.readBoolean();
         m_cache = in.readInt();
 
         try {
-            m_renderer = (ImageRenderer) Class
-                    .forName(in.readUTF()).newInstance();
+            m_renderer = (ImageRenderer)Class.forName(in.readUTF()).newInstance();
         } catch (final InstantiationException e) {
             e.printStackTrace();
         } catch (final IllegalAccessException e) {

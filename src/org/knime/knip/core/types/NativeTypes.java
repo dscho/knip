@@ -64,7 +64,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
 
 /**
- *
+ * 
  * @author Christian Dietz, University of Konstanz
  */
 public enum NativeTypes {
@@ -188,8 +188,7 @@ public enum NativeTypes {
     }
 
     public static NativeTypes[] intTypeValues() {
-        return new NativeTypes[] { BITTYPE, BYTETYPE, SHORTTYPE,
-                INTTYPE, UNSIGNEDBYTETYPE, UNSIGNEDINTTYPE,
-                UNSIGNEDSHORTTYPE, LONGTYPE };
+        return new NativeTypes[]{BITTYPE, BYTETYPE, SHORTTYPE, INTTYPE, UNSIGNEDBYTETYPE, UNSIGNEDINTTYPE,
+                UNSIGNEDSHORTTYPE, LONGTYPE};
     }
 }

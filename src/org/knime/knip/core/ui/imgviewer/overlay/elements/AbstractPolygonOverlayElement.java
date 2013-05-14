@@ -19,8 +19,8 @@ import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
  * 
  * @author dietzc, fschoenenberger, hornm
  */
-public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>>
-extends OverlayElement2D<L> implements Externalizable {
+public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>> extends OverlayElement2D<L> implements
+Externalizable {
 
     protected static final int DRAWING_RADIUS = 2;
 
@@ -40,20 +40,17 @@ extends OverlayElement2D<L> implements Externalizable {
         super();
     }
 
-    public AbstractPolygonOverlayElement(final long[] planePos,
-                                         final int[] orientation, final String... labels) {
+    public AbstractPolygonOverlayElement(final long[] planePos, final int[] orientation, final String... labels) {
         this(new Polygon(), planePos, orientation, labels);
     }
 
-    public AbstractPolygonOverlayElement(final Polygon poly, final long[] planePos,
-                                         final int[] orientation, final String... labels) {
+    public AbstractPolygonOverlayElement(final Polygon poly, final long[] planePos, final int[] orientation,
+                                         final String... labels) {
         super(planePos, orientation, labels);
         m_poly = poly;
         m_roi = new PolygonRegionOfInterest();
         for (int i = 0; i < m_poly.npoints; i++) {
-            m_roi.addVertex(i, new RealPoint(
-                                             (double) m_poly.xpoints[i],
-                                             (double) m_poly.ypoints[i]));
+            m_roi.addVertex(i, new RealPoint((double)m_poly.xpoints[i], (double)m_poly.ypoints[i]));
         }
     }
 
@@ -75,9 +72,8 @@ extends OverlayElement2D<L> implements Externalizable {
             return false;
         }
 
-        m_poly.addPoint((int) x, (int) y);
-        m_roi.addVertex(m_roi.getVertexCount(), new RealPoint(
-                                                              (double) x, (double) y));
+        m_poly.addPoint((int)x, (int)y);
+        m_roi.addVertex(m_roi.getVertexCount(), new RealPoint((double)x, (double)y));
 
         return true;
     }
@@ -93,8 +89,7 @@ extends OverlayElement2D<L> implements Externalizable {
             g.fill(m_poly);
         }
 
-        if ((getStatus() == OverlayElementStatus.ACTIVE)
-                || (getStatus() == OverlayElementStatus.DRAWING)) {
+        if ((getStatus() == OverlayElementStatus.ACTIVE) || (getStatus() == OverlayElementStatus.DRAWING)) {
             renderPointInterior(g);
         }
     }
@@ -102,26 +97,22 @@ extends OverlayElement2D<L> implements Externalizable {
     @Override
     public void renderOutline(final Graphics2D g) {
 
-        if ((getStatus() == OverlayElementStatus.ACTIVE)
-                || (getStatus() == OverlayElementStatus.DRAWING)) {
+        if ((getStatus() == OverlayElementStatus.ACTIVE) || (getStatus() == OverlayElementStatus.DRAWING)) {
             renderPointOutline(g);
         }
 
         if (m_isClosed) {
             g.draw(m_poly);
         } else {
-            g.drawPolyline(m_poly.xpoints, m_poly.ypoints,
-                           m_poly.npoints);
+            g.drawPolyline(m_poly.xpoints, m_poly.ypoints, m_poly.npoints);
         }
     }
 
     public int getPointIndexByPosition(final int x, final int y, final int pickingDelta) {
 
         for (int i = 0; i < m_poly.npoints; i++) {
-            if (((m_poly.xpoints[i] - pickingDelta) < x)
-                    && (x < (m_poly.xpoints[i] + pickingDelta))
-                    && ((m_poly.ypoints[i] - pickingDelta) < y)
-                    && (y < (m_poly.ypoints[i] + pickingDelta))) {
+            if (((m_poly.xpoints[i] - pickingDelta) < x) && (x < (m_poly.xpoints[i] + pickingDelta))
+                    && ((m_poly.ypoints[i] - pickingDelta) < y) && (y < (m_poly.ypoints[i] + pickingDelta))) {
                 return i;
             }
         }
@@ -133,9 +124,7 @@ extends OverlayElement2D<L> implements Externalizable {
         for (int i = 0; i < m_poly.npoints; i++) {
             m_poly.xpoints[i] += x;
             m_poly.ypoints[i] += y;
-            m_roi.setVertexPosition(i, new RealPoint(
-                                                     (double) m_poly.xpoints[i],
-                                                     (double) m_poly.ypoints[i]));
+            m_roi.setVertexPosition(i, new RealPoint((double)m_poly.xpoints[i], (double)m_poly.ypoints[i]));
         }
         m_poly.invalidate();
     }
@@ -147,7 +136,7 @@ extends OverlayElement2D<L> implements Externalizable {
 
     @Override
     public boolean containsPoint(final long x, final long y) {
-        return m_poly.contains((int) x, (int) y);
+        return m_poly.contains((int)x, (int)y);
     }
 
     @Override
@@ -158,18 +147,15 @@ extends OverlayElement2D<L> implements Externalizable {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-    ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
-        m_poly = (Polygon) in.readObject();
+        m_poly = (Polygon)in.readObject();
         m_isClosed = in.readBoolean();
 
         m_roi = new PolygonRegionOfInterest();
 
         for (int n = 0; n < m_poly.npoints; n++) {
-            m_roi.addVertex(n, new RealPoint(
-                                             (double) m_poly.xpoints[n],
-                                             (double) m_poly.ypoints[n]));
+            m_roi.addVertex(n, new RealPoint((double)m_poly.xpoints[n], (double)m_poly.ypoints[n]));
         }
     }
 

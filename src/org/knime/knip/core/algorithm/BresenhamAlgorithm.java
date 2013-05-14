@@ -57,21 +57,17 @@ package org.knime.knip.core.algorithm;
 public class BresenhamAlgorithm {
 
     /**
-     * Rasterizes a line from Point P1 to Point P2 using the
-     * Bresenham-Algorithm.
+     * Rasterizes a line from Point P1 to Point P2 using the Bresenham-Algorithm.
      * 
      * @param x1
      * @param y1
      * @param x2
      * @param y2
-     * @return the rasterized line between the two given points, beginning
-     *         with point p1 including p1 put without p2!!
+     * @return the rasterized line between the two given points, beginning with point p1 including p1 put without p2!!
      */
-    public static int[][] rasterizeLine(final int[] point1,
-                                        final int[] point2) {
+    public static int[][] rasterizeLine(final int[] point1, final int[] point2) {
 
-        final int l = Math.max(Math.abs(point1[0] - point2[0]),
-                               Math.abs(point1[1] - point2[1]));
+        final int l = Math.max(Math.abs(point1[0] - point2[0]), Math.abs(point1[1] - point2[1]));
         final int[][] res = new int[l][2];
         int count = 0;
 
@@ -100,7 +96,7 @@ public class BresenhamAlgorithm {
             delta = 2 * Math.abs(dy);
             step = 2 * error;
             while (xtmp != point2[0]) {
-                res[count] = new int[] { xtmp, ytmp };
+                res[count] = new int[]{xtmp, ytmp};
                 count++;
                 xtmp += incx;
                 error = error + delta;
@@ -114,7 +110,7 @@ public class BresenhamAlgorithm {
             delta = 2 * Math.abs(dx);
             step = 2 * error;
             while (ytmp != point2[1]) {
-                res[count] = new int[] { xtmp, ytmp };
+                res[count] = new int[]{xtmp, ytmp};
                 count++;
                 ytmp += incy;
                 error = error + delta;

@@ -21,11 +21,11 @@ import net.imglib2.view.Views;
 
 /**
  * Image projection.
- *
+ * 
  * @author jmetzner, University of Konstanz
  */
 public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> & RandomAccessibleInterval<T>>
-        implements UnaryOperation<K, K> {
+implements UnaryOperation<K, K> {
 
     public final static int MIN_DIMS = 1;
 
@@ -112,7 +112,7 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
         try {
             temp =
                     new ArrayImgFactory().imgFactory(src.firstElement().createVariable())
-                            .create(dims, src.firstElement().createVariable());
+                    .create(dims, src.firstElement().createVariable());
             m_tempRandomAccess = temp.randomAccess();
         } catch (final IncompatibleTypeException e1) {
             throw new IllegalArgumentException("Cannot create temp img.");

@@ -8,9 +8,9 @@ import net.imglib2.meta.Sourced;
 
 /**
  * Any metadata {@link Labeling} and {@link Img} have as common Metadata
- *
+ * 
  * @author dietzc
- *
+ * 
  */
 public interface GeneralMetadata extends CalibratedSpace, Named, Sourced {
 

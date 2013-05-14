@@ -44,8 +44,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 /**
  * @author Christian Dietz (University of Konstanz)
  */
-public class MeanLocalThreshold<T extends RealType<T>> implements
-BinaryOperation<DoubleType, T, BitType> {
+public class MeanLocalThreshold<T extends RealType<T>> implements BinaryOperation<DoubleType, T, BitType> {
 
     private final double m_c;
 

@@ -51,7 +51,7 @@
 package org.knime.knip.core.ui.imgviewer.annotator.events;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class AnnotatorLabelsDelEvent extends AnnotatorLabelsEvent {

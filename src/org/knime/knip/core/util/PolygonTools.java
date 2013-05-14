@@ -72,17 +72,12 @@ public class PolygonTools {
     }
 
     /**
-     * Retrieves all positions of a line at the given position, specified
-     * direction and radius.
+     * Retrieves all positions of a line at the given position, specified direction and radius.
      * 
-     * @param pos
-     *                the center position (2 dim!)
-     * @param dir
-     *                the direction (2 dim!)
-     * @param radius
-     *                the radius
-     * @return the resulting positions, whereas the number of positions
-     *         equals 2*radius+1
+     * @param pos the center position (2 dim!)
+     * @param dir the direction (2 dim!)
+     * @param radius the radius
+     * @return the resulting positions, whereas the number of positions equals 2*radius+1
      */
     public static int[][] getLineAt(final int[] pos, final float[] dir, final int radius) {
         new RealVector(dir).norm2().mapMultiply(radius).localize(dir);
@@ -106,19 +101,17 @@ public class PolygonTools {
         // the radius (instead of the euclidean distance)
         if (x > y) {
             x += radius - x;
-            y += (int) Math.round((dir[1] / dir[0])
-                                  * (double) (radius - x));
+            y += (int)Math.round((dir[1] / dir[0]) * (double)(radius - x));
         } else if (x < y) {
             y += radius - y;
-            x += (int) Math.round((dir[0] / dir[1])
-                                  * (double) (radius - y));
+            x += (int)Math.round((dir[0] / dir[1]) * (double)(radius - y));
         } else {
             x += radius - x;
             y += radius - y;
         }
 
-        y *= (int) Math.signum(dir[1]);
-        x *= (int) Math.signum(dir[0]);
+        y *= (int)Math.signum(dir[1]);
+        x *= (int)Math.signum(dir[0]);
 
         // if (Math.abs(x) == Math.abs(y) && Math.abs(x) != radius) {
         // x = radius * x / Math.abs(x);
@@ -131,10 +124,8 @@ public class PolygonTools {
         // radius * y
         // / Math.abs(y) : y;
 
-        final int[][] dir1 = BresenhamAlgorithm.rasterizeLine(new int[] {
-                pos[0] - x, pos[1] - y }, pos);
-        final int[][] dir2 = BresenhamAlgorithm.rasterizeLine(new int[] {
-                pos[0] + x, pos[1] + y }, pos);
+        final int[][] dir1 = BresenhamAlgorithm.rasterizeLine(new int[]{pos[0] - x, pos[1] - y}, pos);
+        final int[][] dir2 = BresenhamAlgorithm.rasterizeLine(new int[]{pos[0] + x, pos[1] + y}, pos);
         final int[][] res = new int[(radius * 2) + 1][2];
         // System.arraycopy(dir1, 0, res, 0, dir1.length);
         // System.arraycopy(dir2, 0, res, radius + 1, dir2.length);
@@ -150,25 +141,18 @@ public class PolygonTools {
     }
 
     /**
-     * Extracts a polygon of a 2D binary image using the Square Tracing
-     * Algorithm (be aware of its drawbacks, e.g. if the pattern is
-     * 4-connected!)
+     * Extracts a polygon of a 2D binary image using the Square Tracing Algorithm (be aware of its drawbacks, e.g. if
+     * the pattern is 4-connected!)
      * 
-     * @param img
-     *                the image, note that only the first and second
-     *                dimension are taken into account
-     * @param offset
-     *                an offset for the points to be set in the new polygon
+     * @param img the image, note that only the first and second dimension are taken into account
+     * @param offset an offset for the points to be set in the new polygon
      * @return
      */
-    public static Polygon extractPolygon(
-                                         final RandomAccessibleInterval<BitType> img,
-                                         final int[] offset) {
-        final RandomAccess<BitType> cur = new ExtendedRandomAccessibleInterval<BitType, RandomAccessibleInterval<BitType>>(
-                img,
-                new OutOfBoundsConstantValueFactory<BitType, RandomAccessibleInterval<BitType>>(
-                        new BitType(false)))
-                        .randomAccess();
+    public static Polygon extractPolygon(final RandomAccessibleInterval<BitType> img, final int[] offset) {
+        final RandomAccess<BitType> cur =
+                new ExtendedRandomAccessibleInterval<BitType, RandomAccessibleInterval<BitType>>(img,
+                        new OutOfBoundsConstantValueFactory<BitType, RandomAccessibleInterval<BitType>>(new BitType(
+                                                                                                                    false))).randomAccess();
         boolean start = false;
         // find the starting point
         for (int i = 0; i < img.dimension(0); i++) {
@@ -188,27 +172,19 @@ public class PolygonTools {
         }
         int dir = 1;
         int dim = 0;
-        final int[] startPos = new int[] { cur.getIntPosition(0),
-                cur.getIntPosition(1) };
+        final int[] startPos = new int[]{cur.getIntPosition(0), cur.getIntPosition(1)};
         final Polygon p = new Polygon();
-        while (!((cur.getIntPosition(0) == startPos[0])
-                && (cur.getIntPosition(1) == startPos[1])
-                && (dim == 0) && (dir == 1) && !start)) {
+        while (!((cur.getIntPosition(0) == startPos[0]) && (cur.getIntPosition(1) == startPos[1]) && (dim == 0)
+                && (dir == 1) && !start)) {
             if (cur.get().get()) {
-                p.addPoint(offset[0] + cur.getIntPosition(0),
-                           offset[1]
-                                   + cur.getIntPosition(1));
-                cur.setPosition(cur.getIntPosition(dim) - dir,
-                                dim);
-                if (((dim == 1) && (dir == 1))
-                        || ((dim == 1) && (dir == -1))) {
+                p.addPoint(offset[0] + cur.getIntPosition(0), offset[1] + cur.getIntPosition(1));
+                cur.setPosition(cur.getIntPosition(dim) - dir, dim);
+                if (((dim == 1) && (dir == 1)) || ((dim == 1) && (dir == -1))) {
                     dir *= -1;
                 }
             } else {
-                cur.setPosition(cur.getIntPosition(dim) + dir,
-                                dim);
-                if (((dim == 0) && (dir == 1))
-                        || ((dim == 0) && (dir == -1))) {
+                cur.setPosition(cur.getIntPosition(dim) + dir, dim);
+                if (((dim == 0) && (dir == 1)) || ((dim == 0) && (dir == -1))) {
                     dir *= -1;
                 }
             }

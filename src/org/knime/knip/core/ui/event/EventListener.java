@@ -7,11 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a method as a listener for a certain event. This method must have one
- * parameter requesting a class derived from {@link KNIPEvent}. The respective
- * classed must be registered at the {@link EventService} (
+ * Marks a method as a listener for a certain event. This method must have one parameter requesting a class derived from
+ * {@link KNIPEvent}. The respective classed must be registered at the {@link EventService} (
  * {@link EventService#subscribe(Object)}).
- *
+ * 
  * @author hornm, University of Konstanz
  */
 @Inherited

@@ -11,8 +11,7 @@ public class StringTransformer {
 
     private final List<ValuePair<String, Boolean>> m_parsedList;
 
-    public StringTransformer(final String expression, final String delim)
-            throws IllegalArgumentException {
+    public StringTransformer(final String expression, final String delim) throws IllegalArgumentException {
         m_parsedList = parse(expression, delim);
     }
 
@@ -20,8 +19,8 @@ public class StringTransformer {
      * Pre-calculates the parsing of the expression, which can be used later
      * on
      */
-    private List<ValuePair<String, Boolean>> parse(final String expression,
-                                                   final String delim) throws IllegalArgumentException {
+    private List<ValuePair<String, Boolean>> parse(final String expression, final String delim)
+            throws IllegalArgumentException {
         int current = 0;
         final List<ValuePair<String, Boolean>> res = new ArrayList<ValuePair<String, Boolean>>();
 
@@ -30,19 +29,12 @@ public class StringTransformer {
             final int start = expression.indexOf(delim, current);
 
             if (start == -1) {
-                res.add(new ValuePair<String, Boolean>(
-                        expression
-                        .substring(current, expression
-                                   .length()),
-                                   true));
+                res.add(new ValuePair<String, Boolean>(expression.substring(current, expression.length()), true));
                 break;
             }
 
             if (start != current) {
-                res.add(new ValuePair<String, Boolean>(
-                        expression
-                        .substring(current, start),
-                        true));
+                res.add(new ValuePair<String, Boolean>(expression.substring(current, start), true));
                 current = start;
                 continue;
             }
@@ -50,35 +42,25 @@ public class StringTransformer {
             final int end = expression.indexOf(delim, start + 1);
 
             if (end < start) {
-                throw new IllegalArgumentException(
-                                                   "No closing $ for: \""
-                                                           + expression.substring(
-                                                                                  start,
-                                                                                  Math.max(expression
-                                                                                           .length(),
-                                                                                           start + 10))
-                                                                                           + "\"");
+                throw new IllegalArgumentException("No closing $ for: \""
+                        + expression.substring(start, Math.max(expression.length(), start + 10)) + "\"");
             }
 
             current = end + 1;
 
-            res.add(new ValuePair<String, Boolean>(expression
-                    .substring(
-                               start + 1, end), false));
+            res.add(new ValuePair<String, Boolean>(expression.substring(start + 1, end), false));
         }
         return res;
     }
 
     /**
-     * Given a map from String to Object, the resulting String is created,
-     * given the expression set in the constructor.
-     *
+     * Given a map from String to Object, the resulting String is created, given the expression set in the constructor.
+     * 
      * @param input
      * @return
      * @throws InvalidSettingsException
      */
-    public String transform(final Map<String, Object> input)
-            throws IllegalArgumentException {
+    public String transform(final Map<String, Object> input) throws IllegalArgumentException {
         final StringBuffer bf = new StringBuffer();
         for (final ValuePair<String, Boolean> ValuePair : m_parsedList) {
             if (ValuePair.b) {
@@ -97,8 +79,7 @@ public class StringTransformer {
         map.put("name", "Name");
         map.put("label", "myLabel");
 
-        System.out.println(new StringTransformer("$name$#_chrome", "$")
-        .transform(map).toString());
+        System.out.println(new StringTransformer("$name$#_chrome", "$").transform(map).toString());
     }
 
 }

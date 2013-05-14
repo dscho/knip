@@ -61,7 +61,7 @@ import org.knime.knip.core.io.externalization.Externalizer;
 import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ImgMetadataExt0 implements Externalizer<ImgMetadata> {
@@ -96,11 +96,9 @@ public class ImgMetadataExt0 implements Externalizer<ImgMetadata> {
     @Override
     public ImgMetadata read(final BufferedDataInputStream in) throws Exception {
 
-        final GeneralMetadata metadata = ExternalizerManager
-                .<GeneralMetadata> read(in);
+        final GeneralMetadata metadata = ExternalizerManager.<GeneralMetadata> read(in);
 
-        final ImageMetadata imgMetadata = ExternalizerManager
-                .<ImageMetadata> read(in);
+        final ImageMetadata imgMetadata = ExternalizerManager.<ImageMetadata> read(in);
 
         return new ImgMetadataImpl(metadata, imgMetadata);
     }
@@ -109,8 +107,7 @@ public class ImgMetadataExt0 implements Externalizer<ImgMetadata> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final ImgMetadata obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final ImgMetadata obj) throws Exception {
         ExternalizerManager.write(out, obj, GeneralMetadata.class);
         ExternalizerManager.write(out, obj, ImageMetadata.class);
     }

@@ -10,24 +10,25 @@ import net.imglib2.type.numeric.RealType;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 
-public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>>
-extends AbstractTFCDataProvider<T, Integer> {
-
+public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>> extends
+AbstractTFCDataProvider<T, Integer> {
 
     /** generated serial id. */
     private static final long serialVersionUID = -3481919617165973916L;
 
     private long[] m_pos = new long[0];
-    private final int[] m_indices = new int[] { 0, 1 };
+
+    private final int[] m_indices = new int[]{0, 1};
+
     private Interval m_src = new FinalInterval(new long[2], new long[2]);
+
     private Interval m_histogramInterval = new FinalInterval(new long[2], new long[2]);
 
     public PlaneSelectionTFCDataProvider() {
         this(new TransferFunctionControlPanel());
     }
 
-    public PlaneSelectionTFCDataProvider(
-                                         final TransferFunctionControlPanel panel) {
+    public PlaneSelectionTFCDataProvider(final TransferFunctionControlPanel panel) {
         super(panel);
     }
 
@@ -73,9 +74,7 @@ extends AbstractTFCDataProvider<T, Integer> {
         return hash(m_pos, m_indices, src);
     }
 
-
-    private int hash(final long[] pos, final int[] indices,
-                     final Interval src) {
+    private int hash(final long[] pos, final int[] indices, final Interval src) {
 
         // set the two indices to values that can not occur in
         // normal settings
@@ -86,7 +85,7 @@ extends AbstractTFCDataProvider<T, Integer> {
         int hash = 31;
 
         for (final long i : pos) {
-            hash = (hash * 31) + (int) i;
+            hash = (hash * 31) + (int)i;
         }
 
         hash += 31 * src.hashCode();

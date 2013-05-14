@@ -51,23 +51,21 @@
 package org.knime.knip.core.features;
 
 /**
- *
+ * 
  * Implementing class shares object instances with other classes.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public interface SharesObjects {
 
     /**
-     * @return the object classes this class wants to share. Note that the
-     *         provided classes need to have an empty contructor!
+     * @return the object classes this class wants to share. Note that the provided classes need to have an empty
+     *         contructor!
      */
     Class<?>[] getSharedObjectClasses();
 
     /**
-     * @param instances
-     *                the instances of the classes returned in
-     *                {@link SharesObjects#getSharedObjectClasses()}
+     * @param instances the instances of the classes returned in {@link SharesObjects#getSharedObjectClasses()}
      */
     void setSharedObjectInstances(Object[] instances);
 

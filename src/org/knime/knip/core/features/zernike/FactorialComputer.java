@@ -16,8 +16,7 @@ class FactorialComputer {
     /**
      * test for primality.
      * 
-     * @param n
-     *                the number to test
+     * @param n the number to test
      * @return is the number prime?
      */
     private boolean isPrime(final int n) {
@@ -32,8 +31,7 @@ class FactorialComputer {
     /**
      * default constructor.
      * 
-     * @param high
-     *                the highest number we want to handle
+     * @param high the highest number we want to handle
      */
     public FactorialComputer(final int high) {
         m_high = high;
@@ -48,17 +46,14 @@ class FactorialComputer {
     }
 
     /**
-     * multiply the result by a single number (the number given as
-     * parameter).
+     * multiply the result by a single number (the number given as parameter).
      * 
-     * @param nParam
-     *                the number
+     * @param nParam the number
      */
     public void multiplyBy(final int nParam) {
         int n = nParam;
         if ((nParam < 0) || (nParam > m_high)) {
-            throw new IllegalArgumentException(
-                                               "Multiplication with out of range number!");
+            throw new IllegalArgumentException("Multiplication with out of range number!");
         }
         for (int i = 0; i < m_primes.size(); ++i) {
             while ((n % m_primes.get(i)) == 0) {
@@ -71,14 +66,12 @@ class FactorialComputer {
     /**
      * divide the result by a single number (the number given as parameter).
      * 
-     * @param nParam
-     *                the number
+     * @param nParam the number
      */
     public void divideBy(final int nParam) {
         int n = nParam;
         if ((nParam < 0) || (nParam > m_high)) {
-            throw new IllegalArgumentException(
-                                               "Division with out of range number!");
+            throw new IllegalArgumentException("Division with out of range number!");
         }
         for (int i = 0; i < m_primes.size(); ++i) {
             while ((n % m_primes.get(i)) == 0) {
@@ -89,17 +82,13 @@ class FactorialComputer {
     }
 
     /**
-     * multiply the result by the factorial of the number given as
-     * parameter.
+     * multiply the result by the factorial of the number given as parameter.
      * 
-     * @param n
-     *                the factorial
+     * @param n the factorial
      */
     public void multiplyByFactorialOf(final int n) {
         if ((n < 0) || (n > m_high)) {
-            throw new IllegalArgumentException(
-                                               "Not able to handle multiplication by "
-                                                       + " factorial of " + n);
+            throw new IllegalArgumentException("Not able to handle multiplication by " + " factorial of " + n);
         }
         for (int i = 2; i <= n; ++i) {
             multiplyBy(i);
@@ -109,14 +98,11 @@ class FactorialComputer {
     /**
      * divide the result by the factorial of the number given as parameter.
      * 
-     * @param n
-     *                the factorial
+     * @param n the factorial
      */
     public void divideByFactorialOf(final int n) {
         if ((n < 0) || (n > m_high)) {
-            throw new IllegalArgumentException(
-                                               "Not able to handle division by factorial of "
-                                                       + n);
+            throw new IllegalArgumentException("Not able to handle division by factorial of " + n);
         }
         for (int i = 2; i <= n; ++i) {
             divideBy(i);
@@ -132,15 +118,13 @@ class FactorialComputer {
         int result = 1;
         for (int i = 0; i < m_primes.size(); ++i) {
             if (m_values[i] < 0) {
-                throw new IllegalArgumentException(
-                                                   "Result is not an integer");
+                throw new IllegalArgumentException("Result is not an integer");
             }
             for (int j = 0; j < m_values[i]; ++j) {
                 final int oldResult = result;
                 result *= m_primes.get(i);
                 if ((result / m_primes.get(i)) != oldResult) {
-                    throw new IllegalArgumentException(
-                                                       "Overflow while computing factorial!");
+                    throw new IllegalArgumentException("Overflow while computing factorial!");
                 }
             }
         }

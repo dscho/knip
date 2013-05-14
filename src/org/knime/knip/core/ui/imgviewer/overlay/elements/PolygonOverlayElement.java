@@ -7,20 +7,18 @@ import java.awt.Polygon;
  * 
  * @author dietzc, hornm, schoenenbergerf
  */
-public class PolygonOverlayElement<L extends Comparable<L>> extends
-AbstractPolygonOverlayElement<L> {
+public class PolygonOverlayElement<L extends Comparable<L>> extends AbstractPolygonOverlayElement<L> {
 
     public PolygonOverlayElement() {
         super();
     }
 
-    public PolygonOverlayElement(final long[] planePos, final int[] orientation,
-                                 final String... labels) {
+    public PolygonOverlayElement(final long[] planePos, final int[] orientation, final String... labels) {
         this(new Polygon(), planePos, orientation, labels);
     }
 
-    public PolygonOverlayElement(final Polygon poly, final long[] planePos,
-                                 final int[] orientation, final String... labels) {
+    public PolygonOverlayElement(final Polygon poly, final long[] planePos, final int[] orientation,
+                                 final String... labels) {
         super(poly, planePos, orientation, labels);
     }
 
@@ -34,9 +32,8 @@ AbstractPolygonOverlayElement<L> {
     @Override
     protected void renderPointInterior(final Graphics2D g) {
         for (int i = 0; i < m_poly.npoints; i++) {
-            g.fillOval(m_poly.xpoints[i] - DRAWING_RADIUS,
-                       m_poly.ypoints[i] - DRAWING_RADIUS,
-                       2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
+            g.fillOval(m_poly.xpoints[i] - DRAWING_RADIUS, m_poly.ypoints[i] - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
+                       2 * DRAWING_RADIUS);
         }
 
     }
@@ -44,9 +41,8 @@ AbstractPolygonOverlayElement<L> {
     @Override
     protected void renderPointOutline(final Graphics2D g) {
         for (int i = 0; i < m_poly.npoints; i++) {
-            g.drawOval(m_poly.xpoints[i] - DRAWING_RADIUS,
-                       m_poly.ypoints[i] - DRAWING_RADIUS,
-                       2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
+            g.drawOval(m_poly.xpoints[i] - DRAWING_RADIUS, m_poly.ypoints[i] - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
+                       2 * DRAWING_RADIUS);
         }
     }
 

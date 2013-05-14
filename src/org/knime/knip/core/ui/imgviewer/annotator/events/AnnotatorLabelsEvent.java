@@ -53,7 +53,7 @@ package org.knime.knip.core.ui.imgviewer.annotator.events;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class AnnotatorLabelsEvent implements KNIPEvent {

@@ -55,8 +55,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 /**
  * Published whenever the user switches the autoapply Checkbox.<br>
  * 
- * This event comes with one argument of type boolean, wheter the Checkbox is
- * currently enabled or disabled.
+ * This event comes with one argument of type boolean, wheter the Checkbox is currently enabled or disabled.
  */
 public class ApplyChgEvent implements KNIPEvent {
 

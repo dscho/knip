@@ -64,8 +64,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
  * 
  * @author dietc, hornm, schoenenbergerf University of Konstanz
  */
-public class RectangleOverlayElement<L extends Comparable<L>> extends
-AbstractPolygonOverlayElement<L> {
+public class RectangleOverlayElement<L extends Comparable<L>> extends AbstractPolygonOverlayElement<L> {
 
     private Rectangle m_rect;
 
@@ -73,8 +72,7 @@ AbstractPolygonOverlayElement<L> {
 
     private double[] m_extend;
 
-    public RectangleOverlayElement(final long[] planePos, final int[] orientation,
-                                   final String... labels) {
+    public RectangleOverlayElement(final long[] planePos, final int[] orientation, final String... labels) {
         this(new Rectangle(), planePos, orientation, labels);
     }
 
@@ -84,27 +82,23 @@ AbstractPolygonOverlayElement<L> {
         m_extend = new double[2];
     }
 
-    public RectangleOverlayElement(final Rectangle rect, final long[] planePos,
-                                   final int[] orientation, final String... labels) {
+    public RectangleOverlayElement(final Rectangle rect, final long[] planePos, final int[] orientation,
+                                   final String... labels) {
         super(planePos, orientation, labels);
         m_rect = rect;
         m_origin = new double[2];
         m_extend = new double[2];
     }
 
-    public RectangleOverlayElement(final long[] min, final long[] max, final long[] planePos,
-                                   final int[] orientation, final String... labels) {
-        this(new Rectangle((int) min[orientation[0]],
-                           (int) min[orientation[1]],
-                           (int) ((max[orientation[0]]
-                                   - min[orientation[0]]) + 1),
-                                   (int) ((max[orientation[1]]
-                                           - min[orientation[1]]) + 1)),
-                                           planePos, orientation, labels);
+    public RectangleOverlayElement(final long[] min, final long[] max, final long[] planePos, final int[] orientation,
+                                   final String... labels) {
+        this(new Rectangle((int)min[orientation[0]], (int)min[orientation[1]],
+                           (int)((max[orientation[0]] - min[orientation[0]]) + 1),
+                           (int)((max[orientation[1]] - min[orientation[1]]) + 1)), planePos, orientation, labels);
     }
 
-    public void setRectangle(final long minExtendX, final long minExtendY,
-                             final long maxExtendX, final long maxExtendY) {
+    public void
+    setRectangle(final long minExtendX, final long minExtendY, final long maxExtendX, final long maxExtendY) {
         m_poly.reset();
 
         add(minExtendX, minExtendY);
@@ -116,13 +110,12 @@ AbstractPolygonOverlayElement<L> {
 
     @Override
     public boolean containsPoint(final long x, final long y) {
-        return m_rect.contains((int) x, (int) y);
+        return m_rect.contains((int)x, (int)y);
     }
 
     @Override
     public void renderInterior(final Graphics2D g) {
-        if ((getStatus() == OverlayElementStatus.ACTIVE)
-                || (getStatus() == OverlayElementStatus.DRAWING)) {
+        if ((getStatus() == OverlayElementStatus.ACTIVE) || (getStatus() == OverlayElementStatus.DRAWING)) {
             renderPointInterior(g);
         }
 
@@ -132,8 +125,7 @@ AbstractPolygonOverlayElement<L> {
     @Override
     public void renderOutline(final Graphics2D g) {
 
-        if ((getStatus() == OverlayElementStatus.ACTIVE)
-                || (getStatus() == OverlayElementStatus.DRAWING)) {
+        if ((getStatus() == OverlayElementStatus.ACTIVE) || (getStatus() == OverlayElementStatus.DRAWING)) {
             renderPointOutline(g);
         }
 
@@ -176,9 +168,8 @@ AbstractPolygonOverlayElement<L> {
     @Override
     protected void renderPointInterior(final Graphics2D g) {
         for (int i = 0; i < m_poly.npoints; i++) {
-            g.fillOval(m_poly.xpoints[i] - DRAWING_RADIUS,
-                       m_poly.ypoints[i] - DRAWING_RADIUS,
-                       2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
+            g.fillOval(m_poly.xpoints[i] - DRAWING_RADIUS, m_poly.ypoints[i] - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
+                       2 * DRAWING_RADIUS);
         }
 
     }
@@ -186,15 +177,13 @@ AbstractPolygonOverlayElement<L> {
     @Override
     protected void renderPointOutline(final Graphics2D g) {
         for (int i = 0; i < m_poly.npoints; i++) {
-            g.drawOval(m_poly.xpoints[i] - DRAWING_RADIUS,
-                       m_poly.ypoints[i] - DRAWING_RADIUS,
-                       2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
+            g.drawOval(m_poly.xpoints[i] - DRAWING_RADIUS, m_poly.ypoints[i] - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
+                       2 * DRAWING_RADIUS);
         }
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-    ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
         m_rect = getBoundingBox();
     }

@@ -58,8 +58,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         setPreferredSize(new Dimension(PANEL_WIDTH, 200));
 
         final JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel,
-                                            BoxLayout.Y_AXIS));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         setLayout(new BorderLayout());
 
         m_labels = new Vector<String>();
@@ -85,8 +84,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                     return;
                 }
 
-                m_eventService.publish(new AnnotatorLabelsSelChgEvent(
-                                                                      objectArrayAsStringArray(m_jLabelList
+                m_eventService.publish(new AnnotatorLabelsSelChgEvent(objectArrayAsStringArray(m_jLabelList
                                                                                                .getSelectedValues())));
             }
         });
@@ -100,31 +98,23 @@ public class AnnotatorLabelPanel extends ViewerComponent {
             @Override
             public void actionPerformed(final ActionEvent e) {
 
-                if (JOptionPane.showConfirmDialog(
-                                                  m_parent,
+                if (JOptionPane.showConfirmDialog(m_parent,
                                                   "Do you really want to delete all selected labels selection?",
-                                                  "Confirm",
-                                                  JOptionPane.OK_CANCEL_OPTION) == 0) {
+                                                  "Confirm", JOptionPane.OK_CANCEL_OPTION) == 0) {
 
                     if (m_jLabelList.isSelectionEmpty()) {
                         return;
                     }
 
-                    if (JOptionPane.showConfirmDialog(
-                                                      m_parent,
+                    if (JOptionPane.showConfirmDialog(m_parent,
                                                       "Do you really want to delete your complete selection of the class(es)  \'"
-                                                              + Arrays.toString(m_jLabelList
-                                                                                .getSelectedValues())
-                                                                                + " \'?",
-                                                                                "Confirm",
-                                                                                JOptionPane.OK_CANCEL_OPTION) == 0) {
+                                                              + Arrays.toString(m_jLabelList.getSelectedValues())
+                                                              + " \'?", "Confirm", JOptionPane.OK_CANCEL_OPTION) == 0) {
 
-                        m_eventService.publish(new AnnotatorLabelsDelEvent(
-                                                                           objectArrayAsStringArray(m_jLabelList
+                        m_eventService.publish(new AnnotatorLabelsDelEvent(objectArrayAsStringArray(m_jLabelList
                                                                                                     .getSelectedValues())));
 
-                        for (final Object o : m_jLabelList
-                                .getSelectedValues()) {
+                        for (final Object o : m_jLabelList.getSelectedValues()) {
                             m_labels.remove(o);
                         }
 
@@ -133,9 +123,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
                         }
 
                         m_jLabelList.setListData(m_labels);
-                        m_jLabelList.setSelectedIndex(Math
-                                                      .max(0,
-                                                           m_labels.size() - 1));
+                        m_jLabelList.setSelectedIndex(Math.max(0, m_labels.size() - 1));
                     }
                 }
 
@@ -152,13 +140,11 @@ public class AnnotatorLabelPanel extends ViewerComponent {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final String name = JOptionPane.showInputDialog(
-                                                                m_parent, "Class name:");
+                final String name = JOptionPane.showInputDialog(m_parent, "Class name:");
                 if ((name != null) && (name.length() > 0)) {
                     m_labels.add(name);
                     m_jLabelList.setListData(m_labels);
-                    m_jLabelList.setSelectedIndex(m_labels
-                                                  .size() - 1);
+                    m_jLabelList.setSelectedIndex(m_labels.size() - 1);
                 }
             }
         });
@@ -173,8 +159,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                m_eventService.publish(new AnnotatorLabelsSetEvent(
-                                                                   objectArrayAsStringArray(m_jLabelList
+                m_eventService.publish(new AnnotatorLabelsSetEvent(objectArrayAsStringArray(m_jLabelList
                                                                                             .getSelectedValues())));
             }
         });
@@ -189,14 +174,11 @@ public class AnnotatorLabelPanel extends ViewerComponent {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 m_jLabelList.updateUI();
-                for (final Object o : m_jLabelList
-                        .getSelectedValues()) {
-                    SegmentColorTable
-                    .resetColor((String) o);
+                for (final Object o : m_jLabelList.getSelectedValues()) {
+                    SegmentColorTable.resetColor((String)o);
                 }
 
-                m_eventService.publish(new AnnotatorLabelsColResetEvent(
-                                                                        objectArrayAsStringArray(m_jLabelList
+                m_eventService.publish(new AnnotatorLabelsColResetEvent(objectArrayAsStringArray(m_jLabelList
                                                                                                  .getSelectedValues())));
 
             }
@@ -211,40 +193,27 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         jb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final String[] selectedLabels = objectArrayAsStringArray(m_jLabelList
-                                                                         .getSelectedValues());
-                if ((selectedLabels.length == 0)
-                        || (selectedLabels.length > 1)) {
-                    JOptionPane.showMessageDialog(
-                                                  m_parent,
-                                                  "Please select ONE label",
-                                                  "Wrong number of selected labels",
-                                                  JOptionPane.ERROR_MESSAGE);
+                final String[] selectedLabels = objectArrayAsStringArray(m_jLabelList.getSelectedValues());
+                if ((selectedLabels.length == 0) || (selectedLabels.length > 1)) {
+                    JOptionPane.showMessageDialog(m_parent, "Please select ONE label",
+                                                  "Wrong number of selected labels", JOptionPane.ERROR_MESSAGE);
                     return;
                 } else {
 
-                    final int selIndex = m_jLabelList
-                            .getSelectedIndex();
+                    final int selIndex = m_jLabelList.getSelectedIndex();
                     final String oldName = selectedLabels[0];
-                    final String res = JOptionPane
-                            .showInputDialog(
-                                             m_parent,
-                                             "New label name:",
-                                             selectedLabels[0]);
+                    final String res = JOptionPane.showInputDialog(m_parent, "New label name:", selectedLabels[0]);
 
                     if (res == null) {
                         return;
                     }
 
                     m_isAdjusting = true;
-                    m_labels.set(m_jLabelList
-                                 .getSelectedIndex(),
-                                 res);
+                    m_labels.set(m_jLabelList.getSelectedIndex(), res);
                     m_jLabelList.setListData(m_labels);
                     m_jLabelList.setSelectedIndex(selIndex);
                     m_isAdjusting = false;
-                    m_eventService.publish(new AnnotatorLabelEditEvent(
-                                                                       oldName, res));
+                    m_eventService.publish(new AnnotatorLabelEditEvent(oldName, res));
 
                 }
 
@@ -258,12 +227,10 @@ public class AnnotatorLabelPanel extends ViewerComponent {
 
     }
 
-    private final void setButtonIcon(final AbstractButton jb,
-                                     final String path) {
-        final URL icon = getClass().getClassLoader().getResource(
-                                                                 getClass().getPackage().getName()
-                                                                 .replace('.', '/')
-                                                                 + "/" + path);
+    private final void setButtonIcon(final AbstractButton jb, final String path) {
+        final URL icon =
+                getClass().getClassLoader().getResource(getClass().getPackage().getName().replace('.', '/') + "/"
+                        + path);
         jb.setHorizontalAlignment(SwingConstants.LEFT);
         if (icon != null) {
             jb.setIcon(new ImageIcon(icon));
@@ -284,15 +251,14 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         final String[] s = new String[o.length];
 
         for (int i = 0; i < o.length; i++) {
-            s[i] = (String) o[i];
+            s[i] = (String)o[i];
         }
 
         return s;
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         out.writeInt(m_labels.size());
         for (int s = 0; s < m_labels.size(); s++) {
             out.writeUTF(m_labels.get(s));
@@ -306,8 +272,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException {
         m_labels.clear();
 
         int num = in.readInt();
@@ -332,17 +297,17 @@ public class AnnotatorLabelPanel extends ViewerComponent {
     /**
      * {@inheritDoc}
      */
-     @Override
-     public void reset() {
-         // m_isAdjusting = true;
-         // m_labels.clear();
-         // m_labels.add("Unknown");
-         // m_jLabelList.setListData(m_labels);
-         // m_isAdjusting = false;
-     }
+    @Override
+    public void reset() {
+        // m_isAdjusting = true;
+        // m_labels.clear();
+        // m_labels.add("Unknown");
+        // m_jLabelList.setListData(m_labels);
+        // m_isAdjusting = false;
+    }
 
-     @Override
-     public void setParent(final Component parent) {
-         m_parent = parent;
-     }
+    @Override
+    public void setParent(final Component parent) {
+        m_parent = parent;
+    }
 }

@@ -8,25 +8,25 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
 /**
- * Takes a real and converts it into a pixel of an ARGB image using a color
- * table. If no color table is set using {@link #setColorTable(ColorTable16)} or
- * {@link #setColorTable(ColorTable8)} a linear ramp grey color table is used as
+ * Takes a real and converts it into a pixel of an ARGB image using a color table. If no color table is set using
+ * {@link #setColorTable(ColorTable16)} or {@link #setColorTable(ColorTable8)} a linear ramp grey color table is used as
  * default.
  * 
  * @author zinsmaie
  * 
  * @param <R>
  */
-public class RealTableColorARGBConverter<R extends RealType<R>> implements
-Converter<R, ARGBType> {
+public class RealTableColorARGBConverter<R extends RealType<R>> implements Converter<R, ARGBType> {
 
     private final double m_localMin;
+
     private final double m_normalizationFactor;
+
     private AbstractArrayColorTable<?> m_table;
+
     private int m_rangeFactor;
 
-    public RealTableColorARGBConverter(final double normalizationFactor,
-                                       final double localMin) {
+    public RealTableColorARGBConverter(final double normalizationFactor, final double localMin) {
 
         m_localMin = localMin;
         m_normalizationFactor = normalizationFactor;
@@ -52,17 +52,15 @@ Converter<R, ARGBType> {
         double val;
 
         if (m_normalizationFactor == 1) {
-            val = ((input.getRealDouble() - input.getMinValue()) / (input
-                    .getMaxValue() - input.getMinValue()));
+            val = ((input.getRealDouble() - input.getMinValue()) / (input.getMaxValue() - input.getMinValue()));
 
         } else {
-            val = (((input.getRealDouble() - m_localMin)
-                    / (input.getMaxValue() - input
-                            .getMinValue())) * m_normalizationFactor);
+            val =
+                    (((input.getRealDouble() - m_localMin) / (input.getMaxValue() - input.getMinValue())) * m_normalizationFactor);
 
         }
 
-        intVal = (int) Math.round(val * m_rangeFactor);
+        intVal = (int)Math.round(val * m_rangeFactor);
 
         if (intVal < 0) {
             intVal = 0;

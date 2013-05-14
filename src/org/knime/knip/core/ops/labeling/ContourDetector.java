@@ -66,7 +66,7 @@ import org.knime.knip.core.util.ImgUtils;
 import org.knime.knip.core.util.PermutationSort;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 @Deprecated
@@ -269,7 +269,7 @@ public class ContourDetector<T extends RealType<T>> {
     /**
      * Distributes a set of points over an area of the specified width and height as a regular lattice (with gaps-pixel
      * space in between).
-     *
+     * 
      * @param gaps
      * @param width
      * @param height

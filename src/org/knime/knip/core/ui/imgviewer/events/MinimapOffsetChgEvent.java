@@ -53,7 +53,7 @@ package org.knime.knip.core.ui.imgviewer.events;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author zinsmaierm, dietzc, hornm, University of Konstanz
  */
 public class MinimapOffsetChgEvent implements KNIPEvent {

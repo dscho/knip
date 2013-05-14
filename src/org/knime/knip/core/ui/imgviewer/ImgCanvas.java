@@ -45,18 +45,16 @@ import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
 
 /**
- *
+ * 
  * Panel to draw a BufferedImage.
- *
+ * 
  * Propagates {@link ImgViewerRectChgEvent}.
- *
+ * 
  * @author dietzc, hornm, fschoenenberer
  */
-public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & RandomAccessible<T>>
-extends ViewerComponent {
+public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & RandomAccessible<T>> extends ViewerComponent {
 
-    private static BufferedImage TEXTMSGIMG = new BufferedImage(100, 50,
-                                                                BufferedImage.TYPE_INT_RGB);
+    private static BufferedImage TEXTMSGIMG = new BufferedImage(100, 50, BufferedImage.TYPE_INT_RGB);
 
     /**
      *
@@ -73,14 +71,12 @@ extends ViewerComponent {
     private double m_zoomFactor;
 
     /**
-     * current calibration scale factors for x and y dimension (in the
-     * displayed image)
+     * current calibration scale factors for x and y dimension (in the displayed image)
      */
     private double[] m_scaleFactors;
 
     /**
-     * current combined factor for x and y dimension (in the displayed
-     * image)
+     * current combined factor for x and y dimension (in the displayed image)
      */
     private double[] m_factors;
 
@@ -118,9 +114,9 @@ extends ViewerComponent {
         super(name, isImageHidden);
 
         m_currentRectangle = new Rectangle();
-        m_oldFactors = new double[] { 1.0d, 1.0d };
-        m_factors = new double[] { 1.0d, 1.0d };
-        m_scaleFactors = new double[] { 1.0d, 1.0d };
+        m_oldFactors = new double[]{1.0d, 1.0d};
+        m_factors = new double[]{1.0d, 1.0d};
+        m_scaleFactors = new double[]{1.0d, 1.0d};
         m_zoomFactor = 1.0d;
 
         m_imageCanvas = new JPanel() {
@@ -135,12 +131,8 @@ extends ViewerComponent {
                 if (m_image == null) {
                     return;
                 }
-                g.drawImage(m_image,
-                            0,
-                            0,
-                            (int) (m_image.getWidth(null) * m_factors[0]),
-                            (int) (m_image.getHeight(null) * m_factors[1]),
-                            null);
+                g.drawImage(m_image, 0, 0, (int)(m_image.getWidth(null) * m_factors[0]),
+                            (int)(m_image.getHeight(null) * m_factors[1]), null);
             }
         };
 
@@ -181,16 +173,11 @@ extends ViewerComponent {
         m_imageCanvas.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(final MouseEvent e) {
-                if (m_keyDraggingEnabled
-                        || ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) == 1024)) {
+                if (m_keyDraggingEnabled || ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) == 1024)) {
                     if (!m_blockPanning) {
-                        m_currentRectangle
-                        .setBounds(m_dragRect);
-                        m_currentRectangle
-                        .translate((m_dragPoint.x - e
-                                .getXOnScreen()),
-                                (m_dragPoint.y - e
-                                        .getYOnScreen()));
+                        m_currentRectangle.setBounds(m_dragRect);
+                        m_currentRectangle.translate((m_dragPoint.x - e.getXOnScreen()),
+                                                     (m_dragPoint.y - e.getYOnScreen()));
                         m_imageCanvas.scrollRectToVisible(m_currentRectangle);
                     }
                 }
@@ -212,10 +199,9 @@ extends ViewerComponent {
                         direction = 1;
                     }
 
-                    final int oldValue = (int) (m_zoomFactor * 100.0);
+                    final int oldValue = (int)(m_zoomFactor * 100.0);
 
-                    final int change = (int) Math.sqrt(oldValue)
-                            * direction;
+                    final int change = (int)Math.sqrt(oldValue) * direction;
                     int newValue = oldValue + change;
 
                     if (newValue < MinimapPanel.ZOOM_MIN) {
@@ -224,8 +210,7 @@ extends ViewerComponent {
                         newValue = MinimapPanel.ZOOM_MAX;
                     }
 
-                    m_eventService.publish(new ViewZoomfactorChgEvent(
-                                                                      newValue / 100d));
+                    m_eventService.publish(new ViewZoomfactorChgEvent(newValue / 100d));
 
                 }
             }
@@ -233,34 +218,29 @@ extends ViewerComponent {
         });
         m_imageScrollPane = new JScrollPane(m_imageCanvas);
 
-        m_imageScrollPane.getHorizontalScrollBar()
-        .addAdjustmentListener(
-                               new AdjustmentListener() {
-                                   @Override
-                                   public void adjustmentValueChanged(
-                                                                      final AdjustmentEvent e) {
-                                       if (verScrollbarMoved) {
-                                           verScrollbarMoved = false;
-                                           return;
-                                       }
-                                       horScrollbarMoved = true;
-                                       handleScrollbarEvent();
-                                   }
-                               });
+        m_imageScrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(final AdjustmentEvent e) {
+                if (verScrollbarMoved) {
+                    verScrollbarMoved = false;
+                    return;
+                }
+                horScrollbarMoved = true;
+                handleScrollbarEvent();
+            }
+        });
 
-        m_imageScrollPane.getVerticalScrollBar().addAdjustmentListener(
-                                                                       new AdjustmentListener() {
-                                                                           @Override
-                                                                           public void adjustmentValueChanged(
-                                                                                                              final AdjustmentEvent e) {
-                                                                               if (horScrollbarMoved) {
-                                                                                   horScrollbarMoved = false;
-                                                                                   return;
-                                                                               }
-                                                                               verScrollbarMoved = true;
-                                                                               handleScrollbarEvent();
-                                                                           }
-                                                                       });
+        m_imageScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(final AdjustmentEvent e) {
+                if (horScrollbarMoved) {
+                    horScrollbarMoved = false;
+                    return;
+                }
+                verScrollbarMoved = true;
+                handleScrollbarEvent();
+            }
+        });
 
         setLayout(new GridBagLayout());
         final GridBagConstraints gc = new GridBagConstraints();
@@ -280,11 +260,8 @@ extends ViewerComponent {
     }
 
     private void handleScrollbarEvent() {
-        if ((m_currentRectangle == null)
-                || !m_currentRectangle.equals(m_imageCanvas
-                                              .getVisibleRect())) {
-            m_eventService.publish(new ImgViewerRectChgEvent(
-                                                             getVisibleImageRect()));
+        if ((m_currentRectangle == null) || !m_currentRectangle.equals(m_imageCanvas.getVisibleRect())) {
+            m_eventService.publish(new ImgViewerRectChgEvent(getVisibleImageRect()));
         }
 
     }
@@ -295,23 +272,22 @@ extends ViewerComponent {
 
     /**
      * Returns the visible bounding box in the image coordinate space.
-     *
+     * 
      * @return the visible bounding box.
      */
     public Rectangle getVisibleImageRect() {
         m_currentRectangle = m_imageCanvas.getVisibleRect();
-        m_currentRectangle.x = (int) (m_currentRectangle.x / m_factors[0]);
-        m_currentRectangle.y = (int) (m_currentRectangle.y / m_factors[1]);
-        m_currentRectangle.width = (int) (m_currentRectangle.width / m_factors[0]);
-        m_currentRectangle.height = (int) (m_currentRectangle.height / m_factors[1]);
+        m_currentRectangle.x = (int)(m_currentRectangle.x / m_factors[0]);
+        m_currentRectangle.y = (int)(m_currentRectangle.y / m_factors[1]);
+        m_currentRectangle.width = (int)(m_currentRectangle.width / m_factors[0]);
+        m_currentRectangle.height = (int)(m_currentRectangle.height / m_factors[1]);
         return m_currentRectangle;
     }
 
     private void fireImageCoordMousePressed(final MouseEvent e) {
         if (!isMouseEventBlocked()) {
-            m_eventService.publish(new ImgViewerMousePressedEvent(
-                                                                  e, m_factors, m_image.getWidth(),
-                                                                  m_image.getHeight()));
+            m_eventService
+            .publish(new ImgViewerMousePressedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
         }
 
     }
@@ -320,8 +296,7 @@ extends ViewerComponent {
         if (!isMouseEventBlocked()) {
             m_eventService.publish(
                                    // TODO CHANGE HERE TO FACTORS
-                                   new ImgViewerMouseReleasedEvent(e, m_factors, m_image
-                                                                   .getWidth(), m_image.getHeight()));
+                                   new ImgViewerMouseReleasedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
         }
 
     }
@@ -330,8 +305,7 @@ extends ViewerComponent {
         if (!isMouseEventBlocked()) {
             m_eventService.publish(
                                    // TODO CHANGE HERE TO FACTORS
-                                   new ImgViewerMouseDraggedEvent(e, m_factors, m_image
-                                                                  .getWidth(), m_image.getHeight()));
+                                   new ImgViewerMouseDraggedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
         }
 
     }
@@ -339,9 +313,7 @@ extends ViewerComponent {
     private void fireImageCoordMouseMoved(final MouseEvent e) {
         if (!isMouseEventBlocked()) {
             // TODO CHANGE HERE TO FACTORS
-            m_eventService.publish(new ImgViewerMouseMovedEvent(e,
-                                                                m_factors, m_image.getWidth(), m_image
-                                                                .getHeight()));
+            m_eventService.publish(new ImgViewerMouseMovedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
         }
 
     }
@@ -354,34 +326,32 @@ extends ViewerComponent {
 
     @EventListener
     public void onCalibrationUpdateEvent(final CalibrationUpdateEvent e) {
-        m_scaleFactors = new double[] {
-                e.getScaleFactors()[e.getSelectedDims()[0]],
-                e.getScaleFactors()[e.getSelectedDims()[1]], };
+        m_scaleFactors =
+                new double[]{e.getScaleFactors()[e.getSelectedDims()[0]], e.getScaleFactors()[e.getSelectedDims()[1]],};
         updateImageCanvas(false);
     }
 
     /**
      * Scrolls the image so the rectangle gets visible.
-     *
+     * 
      * @param rect
      */
     @EventListener
     public void onMinimapOffsetChanged(final MinimapOffsetChgEvent e) {
         m_currentRectangle = m_imageCanvas.getVisibleRect();
-        m_currentRectangle.x = (int) (e.getOffest()[0] * m_factors[0]);
-        m_currentRectangle.y = (int) (e.getOffest()[1] * m_factors[1]);
+        m_currentRectangle.x = (int)(e.getOffest()[0] * m_factors[0]);
+        m_currentRectangle.y = (int)(e.getOffest()[1] * m_factors[1]);
         m_imageCanvas.scrollRectToVisible(m_currentRectangle);
         updateImageCanvas(false);
     }
 
     @EventListener
     public void onBufferedImageChanged(final AWTImageChgEvent e) {
-        m_image = (BufferedImage) e.getImage();
+        m_image = (BufferedImage)e.getImage();
         m_blockMouseEvents = false;
 
         updateImageCanvas(true);
     }
-
 
     public void updateImageCanvas(final boolean enforceRecalculation) {
         if (m_image == null) {
@@ -392,8 +362,7 @@ extends ViewerComponent {
         m_factors[0] = m_scaleFactors[0] * m_zoomFactor;
         m_factors[1] = m_scaleFactors[1] * m_zoomFactor;
 
-        if (enforceRecalculation || (m_oldFactors[0] != m_factors[0])
-                || (m_oldFactors[1] != m_factors[1])) {
+        if (enforceRecalculation || (m_oldFactors[0] != m_factors[0]) || (m_oldFactors[1] != m_factors[1])) {
 
             // get old center of the image
 
@@ -402,9 +371,9 @@ extends ViewerComponent {
             final double imgCenterY = rect.getCenterY() / m_oldFactors[1];
 
             // enlarge canvas
-            final Dimension d = new Dimension(
-                                              (int) (m_image.getWidth(null) * m_factors[0]),
-                                              (int) (m_image.getHeight(null) * m_factors[1]));
+            final Dimension d =
+                    new Dimension((int)(m_image.getWidth(null) * m_factors[0]),
+                                  (int)(m_image.getHeight(null) * m_factors[1]));
             m_imageCanvas.setSize(d);
             m_imageCanvas.setPreferredSize(d);
 
@@ -412,12 +381,8 @@ extends ViewerComponent {
             final double yCorrect = getVisibleImageRect().height / 2.0;
 
             // apply old center
-            m_imageScrollPane
-            .getViewport()
-            .setViewPosition(
-                             new Point(
-                                       (int) (((imgCenterX - xCorrect) * m_factors[0])),
-                                       (int) (((imgCenterY - yCorrect) * m_factors[1]))));
+            m_imageScrollPane.getViewport().setViewPosition(new Point((int)(((imgCenterX - xCorrect) * m_factors[0])),
+                                                                      (int)(((imgCenterY - yCorrect) * m_factors[1]))));
 
             m_oldFactors = m_factors.clone();
 
@@ -428,17 +393,16 @@ extends ViewerComponent {
 
     /**
      * An image with the message.
-     *
+     * 
      * @param message
      */
     @EventListener
     public void onTextMessageChanged(final ImgViewerTextMessageChgEvent e) {
 
-        final Graphics2D g = (Graphics2D) m_imageCanvas.getGraphics();
+        final Graphics2D g = (Graphics2D)m_imageCanvas.getGraphics();
         if (g != null) {
             g.setBackground(Color.GRAY.darker());
-            g.clearRect(0, 0, m_imageCanvas.getWidth(),
-                        m_imageCanvas.getHeight());
+            g.clearRect(0, 0, m_imageCanvas.getWidth(), m_imageCanvas.getHeight());
             g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
             final int h = g.getFont().getSize();
             int y = h;
@@ -472,31 +436,29 @@ extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
     }
 
     /**
      * {@inheritDoc}
      */
-     @Override
-     public void reset() {
-         m_currentRectangle = new Rectangle();
-         m_factors = new double[] { 1.0d, 1.0d };
-         m_oldFactors = new double[] { 1.0d, 1.0d };
-         m_scaleFactors = new double[] {1.0d, 1.0d};
-         m_zoomFactor = 1.0d;
-         m_image = null;
-     }
+    @Override
+    public void reset() {
+        m_currentRectangle = new Rectangle();
+        m_factors = new double[]{1.0d, 1.0d};
+        m_oldFactors = new double[]{1.0d, 1.0d};
+        m_scaleFactors = new double[]{1.0d, 1.0d};
+        m_zoomFactor = 1.0d;
+        m_image = null;
+    }
 
-     @Override
-     public void setParent(final Component parent) {
-         // Nothing to do here
-     }
+    @Override
+    public void setParent(final Component parent) {
+        // Nothing to do here
+    }
 
 }

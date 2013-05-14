@@ -62,7 +62,7 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
 import org.knime.knip.core.io.externalization.PlanarImgContainerSamplerImpl;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class PlanarImgExt0 implements Externalizer<PlanarImg> {
@@ -99,18 +99,16 @@ public class PlanarImgExt0 implements Externalizer<PlanarImg> {
         final long[] dims = new long[in.readInt()];
         in.read(dims);
 
-        final NativeType<?> type = (NativeType<?>) ExternalizerManager
-                .<Class> read(in).newInstance();
+        final NativeType<?> type = (NativeType<?>)ExternalizerManager.<Class> read(in).newInstance();
 
         final PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
 
-        final PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new PlanarImgFactory()
-        .create(dims, type);
+        final PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img =
+                new PlanarImgFactory().create(dims, type);
 
         for (int i = 0; i < img.numSlices(); i++) {
             sampler.fwd();
-            in.readLArray(img.update(sampler)
-                          .getCurrentStorageArray());
+            in.readLArray(img.update(sampler).getCurrentStorageArray());
         }
 
         return img;
@@ -120,25 +118,21 @@ public class PlanarImgExt0 implements Externalizer<PlanarImg> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final PlanarImg obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final PlanarImg obj) throws Exception {
         // write dimensions
         out.writeInt(obj.numDimensions());
         for (int i = 0; i < obj.numDimensions(); i++) {
             out.writeLong(obj.dimension(i));
         }
 
-        ExternalizerManager.<Class> write(out, obj.firstElement()
-                                          .getClass());
+        ExternalizerManager.<Class> write(out, obj.firstElement().getClass());
 
         final PlanarImgContainerSamplerImpl sampler = new PlanarImgContainerSamplerImpl();
 
         final PlanarImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> planar = obj;
         for (int n = 0; n < planar.numSlices(); n++) {
             sampler.fwd();
-            out.writeArray(((ArrayDataAccess<?>) planar
-                    .update(sampler))
-                    .getCurrentStorageArray());
+            out.writeArray(((ArrayDataAccess<?>)planar.update(sampler)).getCurrentStorageArray());
         }
 
     }

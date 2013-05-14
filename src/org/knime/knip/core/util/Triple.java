@@ -50,25 +50,23 @@ package org.knime.knip.core.util;
 
 /**
  * This class is a simple pair of objects.
- *
- * @param <T>
- *                class of the first object
- * @param <M>
- *                class of the second object
+ * 
+ * @param <T> class of the first object
+ * @param <M> class of the second object
  * @author Thorsten Meinl, University of Konstanz
  */
 public final class Triple<F, S, T> {
     private final F m_first;
+
     private final S m_second;
+
     private final T m_third;
 
     /**
      * Creates a new pair.
-     *
-     * @param first
-     *                the first object
-     * @param second
-     *                the second object
+     * 
+     * @param first the first object
+     * @param second the second object
      */
     public Triple(final F first, final S second, final T third) {
         m_first = first;
@@ -78,7 +76,7 @@ public final class Triple<F, S, T> {
 
     /**
      * Returns the first object.
-     *
+     * 
      * @return the first object
      */
     public F getFirst() {
@@ -87,7 +85,7 @@ public final class Triple<F, S, T> {
 
     /**
      * Returns the second object.
-     *
+     * 
      * @return the second object
      */
     public S getSecond() {
@@ -96,7 +94,7 @@ public final class Triple<F, S, T> {
 
     /**
      * Returns the third object.
-     *
+     * 
      * @return the third object
      */
     public T getThird() {
@@ -112,7 +110,7 @@ public final class Triple<F, S, T> {
             return false;
         }
 
-        final Triple<?, ?, ?> p = (Triple<?, ?, ?>) o;
+        final Triple<?, ?, ?> p = (Triple<?, ?, ?>)o;
         if (!areEqual(m_first, p.m_first)) {
             return false;
         }
@@ -138,16 +136,12 @@ public final class Triple<F, S, T> {
     }
 
     /**
-     * Determines if both arguments are equal according to their equals
-     * method (assumed to be symmetric). This method handles null arguments.
-     *
-     * @param o1
-     *                First object for comparison, may be <code>null</code>.
-     * @param o2
-     *                Second object for comparison, may be <code>null</code>
-     *                .
-     * @return If both arguments are equal (if either one is null, so must
-     *         be the other one)
+     * Determines if both arguments are equal according to their equals method (assumed to be symmetric). This method
+     * handles null arguments.
+     * 
+     * @param o1 First object for comparison, may be <code>null</code>.
+     * @param o2 Second object for comparison, may be <code>null</code> .
+     * @return If both arguments are equal (if either one is null, so must be the other one)
      */
     private static boolean areEqual(final Object o1, final Object o2) {
         if (o1 == o2) {

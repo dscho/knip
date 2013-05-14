@@ -27,9 +27,9 @@ import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
 
 /**
  * Allows the user to select a certain renderer.
- *
+ * 
  * Publishes {@link RendererSelectionChgEvent}
- *
+ * 
  * @author dietzc, hornm, fschoenenberger
  */
 public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
@@ -64,9 +64,7 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
                 if (e.getValueIsAdjusting() || m_blockEvent) {
                     return;
                 } else {
-                    m_eventService.publish(new RendererSelectionChgEvent(
-                                                                         (ImageRenderer) m_rendList
-                                                                         .getSelectedValue()));
+                    m_eventService.publish(new RendererSelectionChgEvent((ImageRenderer)m_rendList.getSelectedValue()));
                     m_eventService.publish(new ImgRedrawEvent());
                 }
 
@@ -86,9 +84,7 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
             // event already processed
             return;
         }
-        final ImageRenderer<T>[] tmp = RendererFactory
-                .createSuitableRenderer(e
-                                        .getRandomAccessibleInterval());
+        final ImageRenderer<T>[] tmp = RendererFactory.createSuitableRenderer(e.getRandomAccessibleInterval());
 
         m_blockEvent = true;
         m_rendList.setListData(tmp);
@@ -99,10 +95,8 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
 
     @EventListener
     public void onImageUpdated(final ImgWithMetadataChgEvent<T> e) {
-        final ImageRenderer<T>[] tmp = RendererFactory
-                .createSuitableRenderer(
-                                        e.getRandomAccessibleInterval(),
-                                        e.getImgMetaData());
+        final ImageRenderer<T>[] tmp =
+                RendererFactory.createSuitableRenderer(e.getRandomAccessibleInterval(), e.getImgMetaData());
 
         m_blockEvent = true;
         m_rendList.setListData(tmp);
@@ -128,27 +122,25 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         out.writeInt(m_rendList.getSelectedIndex());
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_rendList.setSelectedIndex(in.readInt());
     }
 
     /**
      * {@inheritDoc}
      */
-     @Override
-     public void reset() {
-     }
+    @Override
+    public void reset() {
+    }
 
-     @Override
-     public void setParent(final Component parent) {
-         // Nothing to do here
-     }
+    @Override
+    public void setParent(final Component parent) {
+        // Nothing to do here
+    }
 
 }

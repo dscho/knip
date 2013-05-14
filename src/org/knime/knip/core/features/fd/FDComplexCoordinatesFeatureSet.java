@@ -62,11 +62,10 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author dietzc, University of Konstanz
  */
-public class FDComplexCoordinatesFeatureSet implements FeatureSet,
-SharesObjects {
+public class FDComplexCoordinatesFeatureSet implements FeatureSet, SharesObjects {
 
     /*
      * Complex array containing the current signature as complex values
@@ -101,8 +100,7 @@ SharesObjects {
     public void iiUpdated(final IterableInterval<BitType> interval) {
         m_signature = m_ocac.signature(interval, m_numAngles);
         for (int y = 0; y < m_signature.length(); y++) {
-            m_complexSignature[y] = new Complex(
-                                                m_signature.getPosAt(y), y);
+            m_complexSignature[y] = new Complex(m_signature.getPosAt(y), y);
         }
 
         m_transformed = InplaceFFT.fft(m_complexSignature);
@@ -115,58 +113,58 @@ SharesObjects {
     /**
      * {@inheritDoc}
      */
-     @Override
-     public double value(final int id) {
-         return m_descriptor[id];
-     }
+    @Override
+    public double value(final int id) {
+        return m_descriptor[id];
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String name(final int id) {
-         return "FD:ComplexCoordiates [" + id + "]";
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return "FD:ComplexCoordiates [" + id + "]";
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String featureSetId() {
-         return "FD Complex Coordinates Features Factory";
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "FD Complex Coordinates Features Factory";
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public void enable(final int id) {
-         // nothing to do here
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        // nothing to do here
 
-     }
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public int numFeatures() {
-         return m_numAngles;
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return m_numAngles;
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public Class<?>[] getSharedObjectClasses() {
-         return new Class[] { ObjectCalcAndCache.class };
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?>[] getSharedObjectClasses() {
+        return new Class[]{ObjectCalcAndCache.class};
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public void setSharedObjectInstances(final Object[] instances) {
-         m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSharedObjectInstances(final Object[] instances) {
+        m_ocac = (ObjectCalcAndCache)instances[0];
 
-     }
+    }
 }

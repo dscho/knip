@@ -17,7 +17,7 @@ import net.imglib2.labeling.LabelingType;
 import net.imglib2.roi.IterableRegionOfInterest;
 
 /**
- *
+ * 
  * @author dietzc, schoenenbergerf, hornm
  */
 public abstract class OverlayElement<L extends Comparable<L>> implements Externalizable {
@@ -86,7 +86,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
     }
 
     /**
-     *
+     * 
      * @return current {@link OverlayElementStatus} of the {@link OverlayElement}
      */
     public OverlayElementStatus getStatus() {
@@ -95,7 +95,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
 
     /**
      * Return the orientation of the {@link OverlayElement}
-     *
+     * 
      * @return
      */
     public int[] getOrientation() {
@@ -103,7 +103,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
     }
 
     /**
-     *
+     * 
      * @param status the new status
      */
     public void setStatus(final OverlayElementStatus status) {
@@ -111,11 +111,11 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
     }
 
     /**
-     *
+     * 
      * Number of dimensions of the given OverlayElement e.g. a plane has 2-Dimensions, cube 3-dimensions etc. There is
      * no relation between the labeled {@link Img} respec. the resulting {@link Labeling} and the dimensionality of the
      * {@link OverlayElement}
-     *
+     * 
      * @return
      */
     public int getNumDimensions() {
@@ -123,7 +123,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
     }
 
     /**
-     *
+     * 
      * @return labeling of the {@link OverlayElement}
      */
     public List<String> getLabels() {
@@ -132,7 +132,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
 
     /**
      * Removes on label from the given {@link OverlayElement}
-     *
+     * 
      * @param labels labels to remove
      */
     public void removeLabel(final String... labels) {
@@ -143,7 +143,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
 
     /**
      * Add labels to the current Labeling of the {@link OverlayElement}
-     *
+     * 
      * @param labels labels to add
      */
     public void addLabels(final String... labels) {
@@ -154,7 +154,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
 
     /**
      * Sets the labels of the {@link OverlayElement} and removes the previous
-     *
+     * 
      * @param selectedLabels the new labels of this {@link OverlayElement}
      * @return
      */
@@ -170,9 +170,9 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
 
     /**
      * Renders the {@link OverlayElement} into a given segmentation
-     *
+     * 
      * @param labeling the {@link Labeling} where the {@link OverlayElement} is rendered to
-     *
+     * 
      * @param internedList the labels as InternedList representation (given by the {@link LabelingMapping})
      */
     public void renderOnSegmentationImage(final Labeling<String> labeling, final List<String> internedList) {
@@ -212,7 +212,7 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
 
     /**
      * @return position of the upper left corner of the overlayelement in the dimensionality of the annotated img
-     *
+     * 
      */
     public long[] getPlanePos() {
         return m_planePos;
@@ -220,9 +220,9 @@ public abstract class OverlayElement<L extends Comparable<L>> implements Externa
 
     /**
      * Method to indicate weather the overlay element lies in one dimensions or not
-     *
+     * 
      * @param dim the dimension to check
-     *
+     * 
      * @return true if overlayelement lies in one dimension
      */
     public final boolean isOrientation(final int dim) {

@@ -64,12 +64,11 @@ import org.knime.knip.core.types.NativeTypes;
 
 /**
  * This class generates random Images.
- *
+ * 
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  * @author DietzC
- *
- * @param <T>
- *                the type of the image to create
+ * 
+ * @param <T> the type of the image to create
  */
 public class ImgGenerator {
 
@@ -105,47 +104,26 @@ public class ImgGenerator {
 
     /**
      * Set up a new generator with a lot of values.
-     *
-     * @param randomSize
-     *                if the size of ALL dimensions should be randomized
-     * @param randomFill
-     *                if the image should be filled with random values,
-     *                inside the bounds of the image type
-     * @param randomType
-     *                if a random type should be used
-     * @param randomFactory
-     *                if a random factory should be used
-     * @param type
-     *                the type to use for the image, null means choose
-     *                randomly the first time, regardless of the setting of
-     *                random type, after that always use the created type if
-     *                random factory is false
-     * @param factory
-     *                the factory to use for the image, null means choose
-     *                randomly the first time, regardless of the setting of
-     *                random factory, after that always use the created
-     *                factory if random factory is false
-     * @param value
-     *                the value to use for filling the image
-     * @param sizeX
-     *                the size of the x dimensions, min 1
-     * @param sizeY
-     *                the size of the y dimensions, min 1
-     * @param sizeZ
-     *                the size of the z dimensions, a value of 0 means
-     *                ignore this dimensions
-     * @param sizeC
-     *                the size of the c dimensions, a value of 0 means
-     *                ignore this dimensions
-     * @param sizeT
-     *                the size of the t dimensions, a value of 0 means
-     *                ignore this dimensions
+     * 
+     * @param randomSize if the size of ALL dimensions should be randomized
+     * @param randomFill if the image should be filled with random values, inside the bounds of the image type
+     * @param randomType if a random type should be used
+     * @param randomFactory if a random factory should be used
+     * @param type the type to use for the image, null means choose randomly the first time, regardless of the setting
+     *            of random type, after that always use the created type if random factory is false
+     * @param factory the factory to use for the image, null means choose randomly the first time, regardless of the
+     *            setting of random factory, after that always use the created factory if random factory is false
+     * @param value the value to use for filling the image
+     * @param sizeX the size of the x dimensions, min 1
+     * @param sizeY the size of the y dimensions, min 1
+     * @param sizeZ the size of the z dimensions, a value of 0 means ignore this dimensions
+     * @param sizeC the size of the c dimensions, a value of 0 means ignore this dimensions
+     * @param sizeT the size of the t dimensions, a value of 0 means ignore this dimensions
      */
-    public ImgGenerator(final boolean randomSize, final boolean randomFill,
-                        final boolean randomType, final boolean randomFactory,
-                        final NativeTypes type, final ImgFactoryTypes factory,
-                        final double value, final int sizeX, final int sizeY,
-                        final int sizeZ, final int sizeC, final int sizeT) {
+    public ImgGenerator(final boolean randomSize, final boolean randomFill, final boolean randomType,
+                        final boolean randomFactory, final NativeTypes type, final ImgFactoryTypes factory,
+                        final double value, final int sizeX, final int sizeY, final int sizeZ, final int sizeC,
+                        final int sizeT) {
         // use setters to ensure bounds
         setRandomSize(randomSize);
         setRandomFill(randomFill);
@@ -162,9 +140,8 @@ public class ImgGenerator {
     }
 
     /**
-     * A convenience constructor to set up an image with the following
-     * values.<br>
-     *
+     * A convenience constructor to set up an image with the following values.<br>
+     * 
      * randomSize = false<br>
      * randomFill = false<br>
      * randomType = true<br>
@@ -177,9 +154,9 @@ public class ImgGenerator {
      * sizeZ = 0<br>
      * sizeC = 0<br>
      * sizeT = 0<br>
-     *
+     * 
      * {@inheritDoc}
-     *
+     * 
      * @see Object#ImageGeneratorNodeGenerator()
      */
     public ImgGenerator() {
@@ -188,7 +165,7 @@ public class ImgGenerator {
 
     /**
      * Create a new imgage with using the current settings.
-     *
+     * 
      * @return the new image
      */
     @SuppressWarnings("unchecked")
@@ -203,13 +180,11 @@ public class ImgGenerator {
 
         // select a factory
         if (m_factory == null) {
-            m_factory = ImgFactoryTypes.values()[randomBoundedInt(ImgFactoryTypes
-                                                                  .values().length - 2)];
+            m_factory = ImgFactoryTypes.values()[randomBoundedInt(ImgFactoryTypes.values().length - 2)];
         }
 
         if (m_randomFactory) {
-            facType = ImgFactoryTypes.values()[randomBoundedInt(ImgFactoryTypes
-                                                                .values().length - 2)];
+            facType = ImgFactoryTypes.values()[randomBoundedInt(ImgFactoryTypes.values().length - 2)];
         } else {
             facType = m_factory;
         }
@@ -233,19 +208,17 @@ public class ImgGenerator {
         NativeTypes type;
 
         if (m_type == null) {
-            m_type = NativeTypes.values()[randomBoundedInt(NativeTypes
-                                                           .values().length - 1)];
+            m_type = NativeTypes.values()[randomBoundedInt(NativeTypes.values().length - 1)];
         }
 
         if (m_randomType) {
-            type = NativeTypes.values()[randomBoundedInt(NativeTypes
-                                                         .values().length - 1)];
+            type = NativeTypes.values()[randomBoundedInt(NativeTypes.values().length - 1)];
         } else {
             type = m_type;
         }
 
         // create the actual image
-        final T val = (T) NativeTypes.getTypeInstance(type);
+        final T val = (T)NativeTypes.getTypeInstance(type);
         final Img<T> img = imgFac.create(dims, val);
 
         // fill the image
@@ -255,14 +228,8 @@ public class ImgGenerator {
 
             // I bet that this will never pass the Checkstyle,
             // Christian :)
-            cursor.get()
-            .setReal(m_randomFill ? (Math.random()
-                    * val.getMaxValue() * (val
-                            .getMinValue() < 0 ? ((Math
-                                    .random() > 0.5 ? -1
-                                            : 1) * Math.signum(val
-                                                               .getMinValue())) : 1))
-                                                               : m_value);
+            cursor.get().setReal(m_randomFill ? (Math.random() * val.getMaxValue() * (val.getMinValue() < 0 ? ((Math
+                    .random() > 0.5 ? -1 : 1) * Math.signum(val.getMinValue())) : 1)) : m_value);
         }
 
         final ImgPlus<T> imgPlus = new ImgPlus<T>(img);
@@ -277,11 +244,9 @@ public class ImgGenerator {
 
     /**
      * Add this dimensions to the list of axes and dims.
-     *
-     * @param val
-     *                the value, 0 means ignore
-     * @param label
-     *                the label to use for the axis
+     * 
+     * @param val the value, 0 means ignore
+     * @param label the label to use for the axis
      */
     private void processDimension(final int val, final String label) {
 
@@ -299,7 +264,7 @@ public class ImgGenerator {
 
             // ignore empty dimensions
             if (dimVal != 0) {
-                m_dimList.add((long) dimVal);
+                m_dimList.add((long)dimVal);
                 m_axisList.add(Axes.get(label));
             }
         }
@@ -308,16 +273,15 @@ public class ImgGenerator {
     }
 
     private int randomBoundedInt(final int bound) {
-        return (int) Math.round(Math.random() * bound);
+        return (int)Math.round(Math.random() * bound);
     }
 
     /**
      * Sets the sizeX for this instance.
-     *
+     * 
      * All values below 1 will be set to 1.
-     *
-     * @param sizeX
-     *                The sizeX.
+     * 
+     * @param sizeX The sizeX.
      */
     public final void setSizeX(final int sizeX) {
         m_sizeX = sizeX;
@@ -328,11 +292,10 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeY for this instance.
-     *
+     * 
      * All values below 1 will be set to 1.
-     *
-     * @param sizeY
-     *                The sizeY.
+     * 
+     * @param sizeY The sizeY.
      */
     public final void setSizeY(final int sizeY) {
         m_sizeY = sizeY;
@@ -343,11 +306,10 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeZ for this instance.
-     *
+     * 
      * A value of 0 will mean do not create this dimension.
-     *
-     * @param sizeZ
-     *                The sizeZ.
+     * 
+     * @param sizeZ The sizeZ.
      */
     public final void setSizeZ(final int sizeZ) {
         m_sizeZ = sizeZ;
@@ -358,11 +320,10 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeC for this instance.
-     *
+     * 
      * A value of 0 will mean do not create this dimension.
-     *
-     * @param sizeChannel
-     *                The sizeC.
+     * 
+     * @param sizeChannel The sizeC.
      */
     public final void setSizeChannel(final int sizeChannel) {
         m_sizeChannel = sizeChannel;
@@ -373,11 +334,10 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeT for this instance.
-     *
+     * 
      * A value of 0 will mean do not create this dimension.
-     *
-     * @param sizeT
-     *                The sizeT.
+     * 
+     * @param sizeT The sizeT.
      */
     public final void setSizeT(final int sizeT) {
         m_sizeT = sizeT;
@@ -388,9 +348,8 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomSize.
-     *
-     * @param randomSize
-     *                The randomSize.
+     * 
+     * @param randomSize The randomSize.
      */
     public final void setRandomSize(final boolean randomSize) {
         m_randomSize = randomSize;
@@ -398,9 +357,8 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomFill.
-     *
-     * @param randomFill
-     *                The randomFill.
+     * 
+     * @param randomFill The randomFill.
      */
     public final void setRandomFill(final boolean randomFill) {
         m_randomFill = randomFill;
@@ -408,12 +366,10 @@ public class ImgGenerator {
 
     /**
      * Sets the type for this instance.
-     *
-     * A value of null means choose a random type, regardless of the
-     * randomType setting.
-     *
-     * @param type
-     *                The type.
+     * 
+     * A value of null means choose a random type, regardless of the randomType setting.
+     * 
+     * @param type The type.
      */
     public final void setType(final NativeTypes type) {
         m_type = type;
@@ -421,12 +377,10 @@ public class ImgGenerator {
 
     /**
      * Sets the factory for this instance.
-     *
-     * A value of null means choose a random factory, regardless of the
-     * randomFactory setting.
-     *
-     * @param factory
-     *                The factory.
+     * 
+     * A value of null means choose a random factory, regardless of the randomFactory setting.
+     * 
+     * @param factory The factory.
      */
     public final void setFactory(final ImgFactoryTypes factory) {
         m_factory = factory;
@@ -434,9 +388,8 @@ public class ImgGenerator {
 
     /**
      * Sets the value for this instance.
-     *
-     * @param value
-     *                The value.
+     * 
+     * @param value The value.
      */
     public final void setValue(final double value) {
         m_value = value;
@@ -444,9 +397,8 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomType.
-     *
-     * @param randomType
-     *                The randomType.
+     * 
+     * @param randomType The randomType.
      */
     public final void setRandomType(final boolean randomType) {
         m_randomType = randomType;
@@ -454,9 +406,8 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomFactory.
-     *
-     * @param randomFactory
-     *                The randomFactory.
+     * 
+     * @param randomFactory The randomFactory.
      */
     public final void setRandomFactory(final boolean randomFactory) {
         m_randomFactory = randomFactory;

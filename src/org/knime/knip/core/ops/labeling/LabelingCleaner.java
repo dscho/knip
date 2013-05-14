@@ -12,17 +12,13 @@ import net.imglib2.ops.operation.UnaryOperation;
  * 
  * @param <L>
  */
-public final class LabelingCleaner<L extends Comparable<L>> implements
-UnaryOperation<Labeling<L>, Labeling<L>> {
+public final class LabelingCleaner<L extends Comparable<L>> implements UnaryOperation<Labeling<L>, Labeling<L>> {
 
     @Override
-    public final Labeling<L> compute(final Labeling<L> op,
-                                     final Labeling<L> res) {
+    public final Labeling<L> compute(final Labeling<L> op, final Labeling<L> res) {
         for (final L l : op.getLabels()) {
-            final Cursor<LabelingType<L>> c = op
-                    .getIterableRegionOfInterest(l)
-                    .getIterableIntervalOverROI(res)
-                    .cursor();
+            final Cursor<LabelingType<L>> c =
+                    op.getIterableRegionOfInterest(l).getIterableIntervalOverROI(res).cursor();
             while (c.hasNext()) {
                 c.next().setLabel(l);
             }

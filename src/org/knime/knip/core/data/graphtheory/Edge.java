@@ -3,24 +3,21 @@ package org.knime.knip.core.data.graphtheory;
 /**
  * Class to represent pixel coherence as directed edges in the graph.
  * 
- * This implementation was <b>heavily</b> inspired by the implementation
- * provided by Kolmogorov and Boykov: MAXFLOW version 3.01.
+ * This implementation was <b>heavily</b> inspired by the implementation provided by Kolmogorov and Boykov: MAXFLOW
+ * version 3.01.
  * 
  * From the README of the library:
  * 
  * This software library implements the maxflow algorithm described in
  * 
- * "An Experimental Comparison of Min-Cut/Max-Flow Algorithms for Energy
- * Minimization in Vision." Yuri Boykov and Vladimir Kolmogorov. In IEEE
- * Transactions on Pattern Analysis and Machine Intelligence (PAMI), September
- * 2004
+ * "An Experimental Comparison of Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision." Yuri Boykov and
+ * Vladimir Kolmogorov. In IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI), September 2004
  * 
- * This algorithm was developed by Yuri Boykov and Vladimir Kolmogorov at
- * Siemens Corporate Research. To make it available for public use, it was later
- * reimplemented by Vladimir Kolmogorov based on open publications.
+ * This algorithm was developed by Yuri Boykov and Vladimir Kolmogorov at Siemens Corporate Research. To make it
+ * available for public use, it was later reimplemented by Vladimir Kolmogorov based on open publications.
  * 
- * If you use this software for research purposes, you should cite the
- * aforementioned paper in any resulting publication.
+ * If you use this software for research purposes, you should cite the aforementioned paper in any resulting
+ * publication.
  * 
  * @author Jan Funke <jan.funke@inf.tu-dresden.de>
  * @version 0.1
@@ -65,8 +62,7 @@ public class Edge {
     /**
      * Sets the head for this edge.
      * 
-     * @param head
-     *                The head, i.e., the node this edge shall point to.
+     * @param head The head, i.e., the node this edge shall point to.
      */
     public void setHead(final Node head) {
         this.head = head;
@@ -75,8 +71,7 @@ public class Edge {
     /**
      * Sets the next edge for this edge.
      * 
-     * @param next
-     *                The next edge.
+     * @param next The next edge.
      */
     public void setNext(final Edge next) {
         this.next = next;
@@ -85,8 +80,7 @@ public class Edge {
     /**
      * Sets the sister for this instance.
      * 
-     * @param sister
-     *                The sister.
+     * @param sister The sister.
      */
     public void setSister(final Edge sister) {
         this.sister = sister;
@@ -95,8 +89,7 @@ public class Edge {
     /**
      * Sets the residual capacity for this instance.
      * 
-     * @param residualCapacity
-     *                The residual capacity.
+     * @param residualCapacity The residual capacity.
      */
     public void setResidualCapacity(final float residualCapacity) {
         this.residualCapacity = residualCapacity;

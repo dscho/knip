@@ -8,16 +8,16 @@ import org.apache.commons.math3.linear.AbstractRealMatrix;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
-public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessibleInterval<T>>
-extends AbstractRealMatrix {
+public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessibleInterval<T>> extends
+AbstractRealMatrix {
 
     private final RandomAccess<T> m_rndAccess;
+
     private final IN m_in;
 
     public ImgBasedRealMatrix(final IN in) {
         if (in.numDimensions() != 2) {
-            throw new IllegalArgumentException(
-                                               "In must have exact two dimensions to be handled as a matrix");
+            throw new IllegalArgumentException("In must have exact two dimensions to be handled as a matrix");
         }
         m_in = in;
         m_rndAccess = in.randomAccess();
@@ -50,12 +50,12 @@ extends AbstractRealMatrix {
 
     @Override
     public int getRowDimension() {
-        return (int) m_in.dimension(0);
+        return (int)m_in.dimension(0);
     }
 
     @Override
     public int getColumnDimension() {
-        return (int) m_in.dimension(1);
+        return (int)m_in.dimension(1);
     }
 
 }

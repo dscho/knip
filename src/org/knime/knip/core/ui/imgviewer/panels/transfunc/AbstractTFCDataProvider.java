@@ -37,8 +37,7 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 /**
  * Class that wraps the panel and connects it to the knip event service.
  */
-public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY>
-extends ViewerComponent implements
+public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extends ViewerComponent implements
 TransferFunctionControlDataProvider<T> {
 
     /**
@@ -60,9 +59,7 @@ TransferFunctionControlDataProvider<T> {
                     m_onlyOne = m_tfc.isOnlyOneFunc();
                     break;
                 default:
-                    throw new RuntimeException(
-                                               "No action implemented for id "
-                                                       + e.getID());
+                    throw new RuntimeException("No action implemented for id " + e.getID());
             }
         }
     }
@@ -77,20 +74,21 @@ TransferFunctionControlDataProvider<T> {
 
     private int m_numBins = NUM_BINS;
 
-    private final Map<KEY, TransferFunctionControlPanel.Memento> m_mementos = new HashMap<KEY, TransferFunctionControlPanel.Memento>();
+    private final Map<KEY, TransferFunctionControlPanel.Memento> m_mementos =
+            new HashMap<KEY, TransferFunctionControlPanel.Memento>();
+
     private final Map<KEY, HistogramWithNormalization> m_histData = new HashMap<KEY, HistogramWithNormalization>();
 
     private boolean m_onlyOne = true;
 
     private TransferFunctionControlPanel.Memento m_currentMemento;
-    private HistogramWithNormalization m_currentHistogram = new HistogramWithNormalization(
-                                                                                           new int[] { 0, 1 }, 0, 1);
+
+    private HistogramWithNormalization m_currentHistogram = new HistogramWithNormalization(new int[]{0, 1}, 0, 1);
 
     /**
      * Set up a new instance and wrap the passed panel.
-     *
-     * @param panel
-     *                the panel that should be wrapped
+     * 
+     * @param panel the panel that should be wrapped
      */
     AbstractTFCDataProvider(final TransferFunctionControlPanel panel) {
         super("Transfer Function", false);
@@ -112,18 +110,14 @@ TransferFunctionControlDataProvider<T> {
     }
 
     /**
-     * Use this to calculate a new histogram for a given interval on the
-     * current source data.
+     * Use this to calculate a new histogram for a given interval on the current source data.
      */
-    private HistogramWithNormalization calcNewHistogram(
-                                                        final Interval interval) {
+    private HistogramWithNormalization calcNewHistogram(final Interval interval) {
         assert m_src != null;
         assert interval != null;
 
         // find min value
-        final Cursor<T> cur = Views.iterable(
-                                             SubsetOperations.subsetview(m_src, interval))
-                                             .cursor();
+        final Cursor<T> cur = Views.iterable(SubsetOperations.subsetview(m_src, interval)).cursor();
         cur.fwd();
         final T sample = cur.get().createVariable();
         cur.reset();
@@ -137,14 +131,12 @@ TransferFunctionControlDataProvider<T> {
             hist.incByValue(val);
         }
 
-        return new HistogramWithNormalization(hist.hist(),
-                                              sample.getMinValue(), sample.getMaxValue());
+        return new HistogramWithNormalization(hist.hist(), sample.getMinValue(), sample.getMaxValue());
     }
 
     /**
-     * This method is called everytime the src changes and must return the
-     * key that corresponds to the current settings.<br>
-     *
+     * This method is called everytime the src changes and must return the key that corresponds to the current settings.<br>
+     * 
      * @return the key to store the first memento.
      */
     protected abstract KEY updateKey(final Interval src);
@@ -152,14 +144,11 @@ TransferFunctionControlDataProvider<T> {
     protected abstract Interval currentHistogramInterval();
 
     /**
-     * Use this if the concrete base class has intercepted an event that
-     * needs to set a new Memento.<br>
-     *
-     * @param key
-     *                the key to look up or to save the new memento under
-     * @param interval
-     *                the interval to use for calculating the histogram if
-     *                the key is not yet saved in the map of mementos
+     * Use this if the concrete base class has intercepted an event that needs to set a new Memento.<br>
+     * 
+     * @param key the key to look up or to save the new memento under
+     * @param interval the interval to use for calculating the histogram if the key is not yet saved in the map of
+     *            mementos
      */
     protected final void setMementoToTFC(final KEY key) {
 
@@ -167,8 +156,7 @@ TransferFunctionControlDataProvider<T> {
         final HistogramWithNormalization hist = getHistogramData(key);
 
         if (m_onlyOne) {
-            newMemento = m_tfc
-                    .createMemento(m_currentMemento, hist);
+            newMemento = m_tfc.createMemento(m_currentMemento, hist);
         } else {
             newMemento = m_mementos.get(key);
 
@@ -198,8 +186,7 @@ TransferFunctionControlDataProvider<T> {
     }
 
     @EventListener
-    public final void onImgUpdated(
-                                   final IntervalWithMetadataChgEvent<T> event) {
+    public final void onImgUpdated(final IntervalWithMetadataChgEvent<T> event) {
 
         /*
          * because of the way the AWTImageProvider reacts to new images
@@ -218,8 +205,7 @@ TransferFunctionControlDataProvider<T> {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                m_eventService.publish(new RendererSelectionChgEvent(
-                                                                     new Real2ColorByLookupTableRenderer<T>()));
+                m_eventService.publish(new RendererSelectionChgEvent(new Real2ColorByLookupTableRenderer<T>()));
                 m_eventService.publish(new ImgRedrawEvent());
             }
         });
@@ -262,8 +248,7 @@ TransferFunctionControlDataProvider<T> {
         return bundles;
     }
 
-    private TransferFunctionControlPanel.Memento createStartingMemento(
-                                                                       final TransferFunctionControlPanel panel) {
+    private TransferFunctionControlPanel.Memento createStartingMemento(final TransferFunctionControlPanel panel) {
         assert panel != null;
 
         return panel.createMemento(createStartingBundle(), null);
@@ -276,11 +261,9 @@ TransferFunctionControlDataProvider<T> {
             hist = m_currentHistogram.getNormalizedHistogram();
         }
 
-        final LookupTable<T, ARGBType> table = new RealLookupTable<T>(
-                hist.getMinValue(), hist.getMaxValue(),
-                m_tfc.getCurrentBundle());
-        m_eventService.publish(new LookupTableChgEvent<T, ARGBType>(
-                table));
+        final LookupTable<T, ARGBType> table =
+                new RealLookupTable<T>(hist.getMinValue(), hist.getMaxValue(), m_tfc.getCurrentBundle());
+        m_eventService.publish(new LookupTableChgEvent<T, ARGBType>(table));
         m_eventService.publish(new ImgRedrawEvent());
     }
 
@@ -300,14 +283,12 @@ TransferFunctionControlDataProvider<T> {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         // ignore
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         // ignore
     }
 

@@ -11,45 +11,40 @@ import net.imglib2.type.numeric.RealType;
 
 public class OutOfBoundsStrategyFactory {
 
-    public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
-                                                                                                                        final String strategy, final T val) {
+    public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN>
+    getStrategy(final String strategy, final T val) {
         return getStrategy(strategy, val, val);
     }
 
-    public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
-                                                                                                                                               final String strategy, final T val, final O refType) {
-        return getStrategy(Enum.valueOf(OutOfBoundsStrategyEnum.class,
-                                        strategy), val, val);
+    public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>>
+    OutOfBoundsFactory<T, IN> getStrategy(final String strategy, final T val, final O refType) {
+        return getStrategy(Enum.valueOf(OutOfBoundsStrategyEnum.class, strategy), val, val);
     }
 
-    public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
-                                                                                                                        final OutOfBoundsStrategyEnum strategyEnum, final T val) {
+    public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN>
+    getStrategy(final OutOfBoundsStrategyEnum strategyEnum, final T val) {
         return getStrategy(strategyEnum, val, val);
     }
 
-    public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN> getStrategy(
-                                                                                                                                               final OutOfBoundsStrategyEnum strategyEnum, final T val, final O refType) {
+    public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>>
+    OutOfBoundsFactory<T, IN> getStrategy(final OutOfBoundsStrategyEnum strategyEnum, final T val,
+                                          final O refType) {
         final T inValue = val.createVariable();
 
         switch (strategyEnum) {
             case MIN_VALUE:
                 inValue.setReal(refType.getMinValue());
-                return new OutOfBoundsConstantValueFactory<T, IN>(
-                        inValue);
+                return new OutOfBoundsConstantValueFactory<T, IN>(inValue);
             case MAX_VALUE:
                 inValue.setReal(refType.getMaxValue());
-                return new OutOfBoundsConstantValueFactory<T, IN>(
-                        inValue);
+                return new OutOfBoundsConstantValueFactory<T, IN>(inValue);
             case ZERO_VALUE:
                 inValue.setReal(0.0);
-                return new OutOfBoundsConstantValueFactory<T, IN>(
-                        inValue);
+                return new OutOfBoundsConstantValueFactory<T, IN>(inValue);
             case MIRROR_SINGLE:
-                return new OutOfBoundsMirrorFactory<T, IN>(
-                        OutOfBoundsMirrorFactory.Boundary.SINGLE);
+                return new OutOfBoundsMirrorFactory<T, IN>(OutOfBoundsMirrorFactory.Boundary.SINGLE);
             case MIRROR_DOUBLE:
-                return new OutOfBoundsMirrorFactory<T, IN>(
-                        OutOfBoundsMirrorFactory.Boundary.DOUBLE);
+                return new OutOfBoundsMirrorFactory<T, IN>(OutOfBoundsMirrorFactory.Boundary.DOUBLE);
             case PERIODIC:
                 return new OutOfBoundsPeriodicFactory<T, IN>();
             case BORDER:
@@ -57,8 +52,7 @@ public class OutOfBoundsStrategyFactory {
             case FADE_OUT:
                 return new OutOfBoundsMirrorExpWindowingFactory<T, IN>();
             default:
-                throw new IllegalArgumentException(
-                                                   "Unknown OutOfBounds factory type");
+                throw new IllegalArgumentException("Unknown OutOfBounds factory type");
         }
     }
 }

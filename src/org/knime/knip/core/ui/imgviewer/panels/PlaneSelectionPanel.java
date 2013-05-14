@@ -99,17 +99,15 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  * Allows the user to select a plane in a multdimensional space.
- *
+ * 
  * Publishes {@link PlaneSelectionEvent}
- *
- *
+ * 
+ * 
  * @author dietzc, hornm
- * @param <T>
- *                image type
+ * @param <T> image type
  */
 @SuppressWarnings("serial")
-public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends
-ViewerComponent {
+public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends ViewerComponent {
 
     private final static int DEFAULT_X = 0;
 
@@ -153,7 +151,6 @@ ViewerComponent {
 
     private CalibratedSpace m_calibratedSpace;
 
-
     // private JTextField m_totalField;
 
     public PlaneSelectionPanel() {
@@ -164,12 +161,9 @@ ViewerComponent {
         // setting the same thing on this has bad impacts on the
         // component height
         final JPanel wider = new JPanel();
-        wider.setMaximumSize(new Dimension(200,
-                                           wider.getMaximumSize().height));
-        wider.setPreferredSize(new Dimension(200, wider
-                                             .getPreferredSize().height));
-        wider.setMinimumSize(new Dimension(200,
-                                           wider.getMinimumSize().height));
+        wider.setMaximumSize(new Dimension(200, wider.getMaximumSize().height));
+        wider.setPreferredSize(new Dimension(200, wider.getPreferredSize().height));
+        wider.setMinimumSize(new Dimension(200, wider.getMinimumSize().height));
         add(wider);
 
         setMaximumSize(new Dimension(200, getMaximumSize().height));
@@ -186,10 +180,8 @@ ViewerComponent {
     }
 
     /**
-     * @param dimX
-     *                the first dimension index
-     * @param dimY
-     *                the second dimension index
+     * @param dimX the first dimension index
+     * @param dimY the second dimension index
      */
     private void setPlaneDimensionIndices(final int dimX, final int dimY) {
         m_isAdjusting = true;
@@ -234,8 +226,7 @@ ViewerComponent {
                     lasti = i;
                     first = false;
                 } else {
-                    m_steps[i] = m_steps[lasti]
-                            * (int) m_dims[lasti];
+                    m_steps[i] = m_steps[lasti] * (int)m_dims[lasti];
                     lasti = i;
                 }
                 m_coordinateTextFields[i].setEnabled(true);
@@ -255,8 +246,7 @@ ViewerComponent {
 
         m_totalSlider.setMinimum(0);
         m_totalSlider.setVisibleAmount(1);
-        m_totalSlider.setValue(m_totalSlider.getValue() <= max ? m_totalSlider
-                .getValue() : 1);
+        m_totalSlider.setValue(m_totalSlider.getValue() <= max ? m_totalSlider.getValue() : 1);
         m_totalSlider.setMaximum(max);
         m_totalSlider.setEnabled(max > 1);
 
@@ -282,8 +272,7 @@ ViewerComponent {
         // test if the slider positions changed
         boolean change = false;
         final long[] imgCoords = getImageCoordinate();
-        if ((m_oldCoordinates != null)
-                && (imgCoords.length == m_oldCoordinates.length)) {
+        if ((m_oldCoordinates != null) && (imgCoords.length == m_oldCoordinates.length)) {
             for (int i = 0; i < imgCoords.length; i++) {
                 if (imgCoords[i] != m_oldCoordinates[i]) {
                     change = true;
@@ -298,21 +287,18 @@ ViewerComponent {
 
         if (change) {
             for (int i = 0; i < m_dims.length; i++) {
-                m_coordinateTextFields[i]
-                        .setValue(m_scrollBars[i]
-                                .getValue() + 1);
+                m_coordinateTextFields[i].setValue(m_scrollBars[i].getValue() + 1);
             }
 
-            m_eventService.publish(new PlaneSelectionEvent(Math
-                                                           .min(m_dim1, m_dim2), Math.max(m_dim2,
-                                                                                          m_dim1), imgCoords));
+            m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1, m_dim2), Math.max(m_dim2, m_dim1),
+                                                           imgCoords));
             fireCalibrationEvent();
             m_eventService.publish(new ImgRedrawEvent());
         }
     }
 
     /**
-     *
+     * 
      * @param e
      * @param id
      */
@@ -322,8 +308,7 @@ ViewerComponent {
             return;
         }
 
-        final int idx = Integer.parseInt(((JCheckBox) e.getSource())
-                                         .getActionCommand());
+        final int idx = Integer.parseInt(((JCheckBox)e.getSource()).getActionCommand());
 
         if (m_alterDim == 0) {
             setPlaneDimensionIndices(idx, m_dim2);
@@ -331,9 +316,8 @@ ViewerComponent {
             setPlaneDimensionIndices(m_dim1, idx);
         }
         m_alterDim = (m_alterDim + 1) % 2;
-        m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1,
-                                                                m_dim2), Math.max(m_dim2, m_dim1),
-                                                                getImageCoordinate()));
+        m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1, m_dim2), Math.max(m_dim2, m_dim1),
+                                                       getImageCoordinate()));
         fireCalibrationEvent();
         m_eventService.publish(new ImgRedrawEvent());
 
@@ -405,8 +389,7 @@ ViewerComponent {
 
             for (int i = 0; i < tmpFactors.length; i++) {
                 // clean up
-                if ((tmpFactors[i] > 0.0d)
-                        && !Double.isNaN(tmpFactors[i])) {
+                if ((tmpFactors[i] > 0.0d) && !Double.isNaN(tmpFactors[i])) {
                     foundAFactor = true;
                 } else {
                     tmpFactors[i] = 1.0d;
@@ -429,15 +412,13 @@ ViewerComponent {
             }
         }
 
-        m_eventService.publish(new CalibrationUpdateEvent(scaleFactors,
-                                                          new int[] { Math.min(m_dim1, m_dim2),
-                Math.max(m_dim1, m_dim2) }));
+        m_eventService.publish(new CalibrationUpdateEvent(scaleFactors, new int[]{Math.min(m_dim1, m_dim2),
+                Math.max(m_dim1, m_dim2)}));
     }
 
     /**
-     *
-     * @return the coordinates of the currently selected image (a newly
-     *         generated array)
+     * 
+     * @return the coordinates of the currently selected image (a newly generated array)
      */
     protected long[] getImageCoordinate() {
         if (m_scrollBars == null) {
@@ -457,28 +438,19 @@ ViewerComponent {
     public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
 
         if (m_dims == null) {
-            m_dims = new long[e.getCalibratedSpace()
-                              .numDimensions()];
+            m_dims = new long[e.getCalibratedSpace().numDimensions()];
         }
 
-        if ((m_axesLabels == null)
-                || (m_axesLabels.length != e
-                .getCalibratedSpace()
-                .numDimensions())) {
-            m_axesLabels = new AxisType[e.getCalibratedSpace()
-                                        .numDimensions()];
+        if ((m_axesLabels == null) || (m_axesLabels.length != e.getCalibratedSpace().numDimensions())) {
+            m_axesLabels = new AxisType[e.getCalibratedSpace().numDimensions()];
         }
-
-
-
 
         final long[] oldDims = m_dims.clone();
         final AxisType[] oldAxes = m_axesLabels.clone();
 
         // local dims //axes labels
         e.getCalibratedSpace().axes(m_axesLabels);
-        m_dims = new long[e.getRandomAccessibleInterval()
-                          .numDimensions()];
+        m_dims = new long[e.getRandomAccessibleInterval().numDimensions()];
         e.getRandomAccessibleInterval().dimensions(m_dims);
 
         if (!Arrays.equals(m_axesLabels, oldAxes)) {
@@ -490,14 +462,11 @@ ViewerComponent {
         m_calibratedSpace = e.getCalibratedSpace();
         fireCalibrationEvent(); // update to new calibration values
 
-        if (!Arrays.equals(oldDims, m_dims)
-                || !Arrays.equals(m_axesLabels, oldAxes)) {
+        if (!Arrays.equals(oldDims, m_dims) || !Arrays.equals(m_axesLabels, oldAxes)) {
             draw();
 
             for (int i = 0; i < m_dims.length; i++) {
-                m_coordinateTextFields[i]
-                        .setValue(m_scrollBars[i]
-                                .getValue() + 1);
+                m_coordinateTextFields[i].setValue(m_scrollBars[i].getValue() + 1);
             }
         }
 
@@ -511,7 +480,7 @@ ViewerComponent {
             if ((d == m_dim1) || (d == m_dim2)) {
                 m_scrollBars[d].setValue(0);
             } else {
-                m_scrollBars[d].setValue((int) e.getPosition()[d]);
+                m_scrollBars[d].setValue((int)e.getPosition()[d]);
             }
         }
         updateTotalSlider();
@@ -533,8 +502,7 @@ ViewerComponent {
             Dimension dim = m_totalSlider.getPreferredSize();
             dim.width = 150;
             m_totalSlider.setPreferredSize(dim);
-            m_totalSlider.addAdjustmentListener(new ChangeListenerWithId(
-                                                                         -1));
+            m_totalSlider.addAdjustmentListener(new ChangeListenerWithId(-1));
             nPanel.add(new JLabel("N"));
             nPanel.add(Box.createHorizontalStrut(3));
             nPanel.add(m_totalSlider);
@@ -544,18 +512,13 @@ ViewerComponent {
             final InputMap inMap = getInputMap(condition);
             final ActionMap actMap = getActionMap();
 
-            inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0),
-                      "FORWARD");
-            inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0),
-                    "BACKWARD");
-            actMap.put("FORWARD", new ForwardBackwardAction(
-                                                            "FORWARD", m_totalSlider, 1));
-            actMap.put("BACKWARD", new ForwardBackwardAction(
-                                                             "BACKWARD", m_totalSlider, 1));
+            inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0), "FORWARD");
+            inMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0), "BACKWARD");
+            actMap.put("FORWARD", new ForwardBackwardAction("FORWARD", m_totalSlider, 1));
+            actMap.put("BACKWARD", new ForwardBackwardAction("BACKWARD", m_totalSlider, 1));
 
             final JPanel dimPanel = new JPanel();
-            dimPanel.setLayout(new BoxLayout(dimPanel,
-                                             BoxLayout.Y_AXIS));
+            dimPanel.setLayout(new BoxLayout(dimPanel, BoxLayout.Y_AXIS));
             add(dimPanel);
 
             m_scrollBars = new JScrollBar[m_dims.length];
@@ -566,33 +529,24 @@ ViewerComponent {
             JPanel sliderPanel;
             for (int i = 0; i < m_dims.length; i++) {
                 sliderPanel = new JPanel();
-                sliderPanel.setLayout(new BoxLayout(
-                                                    sliderPanel, BoxLayout.X_AXIS));
-                m_scrollBars[i] = new JScrollBar(
-                                                 Adjustable.HORIZONTAL);
+                sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.X_AXIS));
+                m_scrollBars[i] = new JScrollBar(Adjustable.HORIZONTAL);
                 m_planeCheckBoxes[i] = new JCheckBox("", false);
-                m_planeCheckBoxes[i]
-                        .addItemListener(new ItemListenerWithId(
-                                                                i));
+                m_planeCheckBoxes[i].addItemListener(new ItemListenerWithId(i));
                 m_planeCheckBoxes[i].setActionCommand(i + "");
 
                 dim = m_scrollBars[i].getPreferredSize();
                 dim.width = 150;
                 m_scrollBars[i].setPreferredSize(dim);
-                m_scrollBars[i].setValue(m_scrollBars[i]
-                        .getValue() < m_dims[i] ? m_scrollBars[i]
-                                .getValue() : 0);
+                m_scrollBars[i].setValue(m_scrollBars[i].getValue() < m_dims[i] ? m_scrollBars[i].getValue() : 0);
                 m_scrollBars[i].setMinimum(0);
-                m_scrollBars[i].setMaximum((int) m_dims[i]);
+                m_scrollBars[i].setMaximum((int)m_dims[i]);
 
                 m_scrollBars[i].setEnabled(m_dims[i] > 1);
                 m_scrollBars[i].setVisibleAmount(1);
-                m_scrollBars[i].addAdjustmentListener(new ChangeListenerWithId(
-                                                                               i));
+                m_scrollBars[i].addAdjustmentListener(new ChangeListenerWithId(i));
 
-                sliderPanel.add(m_axesLabels != null ? (new JLabel(
-                                                                   m_axesLabels[i].getLabel()))
-                                                                   : (new JLabel("" + i)));
+                sliderPanel.add(m_axesLabels != null ? (new JLabel(m_axesLabels[i].getLabel())) : (new JLabel("" + i)));
 
                 sliderPanel.add(Box.createHorizontalStrut(3));
                 sliderPanel.add(m_scrollBars[i]);
@@ -600,21 +554,16 @@ ViewerComponent {
                 // add coordinate text fields
                 final NumberFormat nf = NumberFormat.getInstance();
                 nf.setGroupingUsed(false);
-                final JFormattedTextField tmp = new JFormattedTextField(
-                                                                        nf);
-                tmp.setMinimumSize(new Dimension(40, tmp
-                                                 .getMinimumSize().height));
-                tmp.setPreferredSize(new Dimension(40, tmp
-                                                   .getPreferredSize().height));
-                tmp.setMaximumSize(new Dimension(40, tmp
-                                                 .getPreferredSize().height));
+                final JFormattedTextField tmp = new JFormattedTextField(nf);
+                tmp.setMinimumSize(new Dimension(40, tmp.getMinimumSize().height));
+                tmp.setPreferredSize(new Dimension(40, tmp.getPreferredSize().height));
+                tmp.setMaximumSize(new Dimension(40, tmp.getPreferredSize().height));
 
                 final int index = i;
                 tmp.addActionListener(new ActionListener() {
 
                     @Override
-                    public void actionPerformed(
-                                                final ActionEvent e) {
+                    public void actionPerformed(final ActionEvent e) {
                         textCoordinatesChanged(index);
                     }
                 });
@@ -643,12 +592,10 @@ ViewerComponent {
             // add calibration checkbox
             m_calibrationCheckbox = new JCheckBox("use calibration");
             m_calibrationCheckbox.setSelected(m_useCalibration);
-            m_calibrationCheckbox
-            .addActionListener(new ActionListener() {
+            m_calibrationCheckbox.addActionListener(new ActionListener() {
 
                 @Override
-                public void actionPerformed(
-                                            final ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     onCalibrationBoxChanged();
                 }
             });
@@ -657,9 +604,8 @@ ViewerComponent {
 
             setPlaneDimensionIndices(m_dim1, m_dim2);
 
-            m_eventService.publish(new PlaneSelectionEvent(Math
-                                                           .min(m_dim1, m_dim2), Math.max(m_dim2,
-                                                                                          m_dim1), getImageCoordinate()));
+            m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1, m_dim2), Math.max(m_dim2, m_dim1),
+                                                           getImageCoordinate()));
             fireCalibrationEvent();
         }
 
@@ -667,18 +613,12 @@ ViewerComponent {
     }
 
     private void textCoordinatesChanged(final int fieldIndex) {
-        final int value = Integer.valueOf(m_coordinateTextFields[fieldIndex]
-                .getText());
+        final int value = Integer.valueOf(m_coordinateTextFields[fieldIndex].getText());
         if (value != (m_scrollBars[fieldIndex].getValue() + 1)) {
             if (value < m_scrollBars[fieldIndex].getMinimum()) {
-                m_coordinateTextFields[fieldIndex]
-                        .setText(String.valueOf(m_scrollBars[fieldIndex]
-                                .getMinimum() + 1));
-            } else if (value > m_scrollBars[fieldIndex]
-                    .getMaximum()) {
-                m_coordinateTextFields[fieldIndex]
-                        .setText(String.valueOf(m_scrollBars[fieldIndex]
-                                .getMaximum()));
+                m_coordinateTextFields[fieldIndex].setText(String.valueOf(m_scrollBars[fieldIndex].getMinimum() + 1));
+            } else if (value > m_scrollBars[fieldIndex].getMaximum()) {
+                m_coordinateTextFields[fieldIndex].setText(String.valueOf(m_scrollBars[fieldIndex].getMaximum()));
             }
             // triggers also the necessary events
             // set value -1 because internal model starts with 0
@@ -704,14 +644,12 @@ ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         // Nothing to do here
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         // Nothing to do here
     }
 
@@ -765,8 +703,7 @@ ViewerComponent {
 
         private final int scrollableIncrement;
 
-        public ForwardBackwardAction(final String name, final JScrollBar slider,
-                                     final int scrollableIncrement) {
+        public ForwardBackwardAction(final String name, final JScrollBar slider, final int scrollableIncrement) {
             super(name);
             this.slider = slider;
             this.scrollableIncrement = scrollableIncrement;

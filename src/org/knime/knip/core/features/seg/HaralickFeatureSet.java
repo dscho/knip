@@ -65,11 +65,10 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author dietzc, hornm, University of Konstanz
  */
-public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet,
-SharesObjects {
+public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet, SharesObjects {
 
     private final int m_distance;
 
@@ -96,8 +95,7 @@ SharesObjects {
      * @param distance
      * @param target
      */
-    public HaralickFeatureSet(final int nrGrayLevels, final int distance,
-                              final MatrixOrientation orientation) {
+    public HaralickFeatureSet(final int nrGrayLevels, final int distance, final MatrixOrientation orientation) {
         super();
         m_nrGrayLevels = nrGrayLevels;
         m_distance = distance;
@@ -115,10 +113,9 @@ SharesObjects {
             return Double.NaN;
         }
 
-        final CooccurrenceMatrix coocMat = m_ocac.cooccurenceMatrix(
-                                                                    m_interval, m_dimX, m_dimY, m_distance,
-                                                                    m_nrGrayLevels, m_matrixOrientation,
-                                                                    enabledFeatures);
+        final CooccurrenceMatrix coocMat =
+                m_ocac.cooccurenceMatrix(m_interval, m_dimX, m_dimY, m_distance, m_nrGrayLevels, m_matrixOrientation,
+                                         enabledFeatures);
 
         return coocMat.getFeature(id);
     }
@@ -171,8 +168,7 @@ SharesObjects {
 
     }
 
-    private ValuePair<Integer, Integer> getValidDims(
-                                                     final IterableInterval<T> interval) {
+    private ValuePair<Integer, Integer> getValidDims(final IterableInterval<T> interval) {
 
         int dimX = -1;
         int dimY = -1;
@@ -199,18 +195,18 @@ SharesObjects {
     /**
      * {@inheritDoc}
      */
-     @Override
-     public Class<?>[] getSharedObjectClasses() {
-         return new Class[] { ObjectCalcAndCache.class };
-     }
+    @Override
+    public Class<?>[] getSharedObjectClasses() {
+        return new Class[]{ObjectCalcAndCache.class};
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-      @Override
-      public void setSharedObjectInstances(final Object[] instances) {
-          m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSharedObjectInstances(final Object[] instances) {
+        m_ocac = (ObjectCalcAndCache)instances[0];
 
-      }
+    }
 
 }

@@ -17,17 +17,17 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 /**
  * Dependencies of labels to each other are computed. e.g. if one LabelingType contains two labels A and B, then A has
  * reflexive relation to B.
- *
+ * 
  * The node can be used in two modes:
- *
+ * 
  * a. Intersection mode: A must appear at least once together with B two have a relation to B.
- *
+ * 
  * b. Complete mode: A must always appear with B two have a relation to B.
- *
+ * 
  * Two filters are helping to reduce the amount of labels, for which the relations are computed. 1. The left one filters
  * the labels on the left left side of the relation 2. The right one filters the labels on the right side of the
  * relation. Both filters use the given Rules {@link RulebasedLabelFilter}.
- *
+ * 
  * @author dietzc, hornm
  **/
 public class LabelingDependency<L extends Comparable<L>> implements UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
@@ -93,7 +93,7 @@ public class LabelingDependency<L extends Comparable<L>> implements UnaryOutputO
         for (final L l : labelMap.keySet()) {
             final List<L> members = new ArrayList<L>();
             if (sizeMap.get(l) > 0) {
-                HashMap<L, Integer> hashMap = labelMap.get(l);
+                final HashMap<L, Integer> hashMap = labelMap.get(l);
                 for (final Entry<L, Integer> entry : hashMap.entrySet()) {
                     if (entry.getValue().equals(sizeMap.get(l))) {
                         members.add(entry.getKey());

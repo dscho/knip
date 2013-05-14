@@ -6,8 +6,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
 import org.knime.knip.core.ui.imgviewer.overlay.elements.PointOverlayElement;
 
-public class AnnotatorPointTool extends
-AnnotationDrawingTool<PointOverlayElement<String>> {
+public class AnnotatorPointTool extends AnnotationDrawingTool<PointOverlayElement<String>> {
 
     public AnnotatorPointTool() {
         super("Point", "tool-point.png");
@@ -27,16 +26,14 @@ AnnotationDrawingTool<PointOverlayElement<String>> {
                                    final PointOverlayElement<String> currentOverlayElement,
                                    final PlaneSelectionEvent selection, final Overlay<String> overlay,
                                    final String... labels) {
-        final PointOverlayElement<String> element = new PointOverlayElement<String>(
-                e.getPosX(),
-                e.getPosY(),
-                selection.getPlanePos(e.getPosX(), e.getPosY()),
-                selection.getDimIndices(), labels);
+        final PointOverlayElement<String> element =
+                new PointOverlayElement<String>(e.getPosX(), e.getPosY(), selection.getPlanePos(e.getPosX(),
+                                                                                                e.getPosY()),
+                                                                                                selection.getDimIndices(), labels);
 
         overlay.addElement(element);
 
-        if (setCurrentOverlayElement(OverlayElementStatus.ACTIVE,
-                                     element)) {
+        if (setCurrentOverlayElement(OverlayElementStatus.ACTIVE, element)) {
             fireStateChanged();
         }
     }

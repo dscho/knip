@@ -4,7 +4,7 @@ package org.knime.knip.core.ui.imgviewer.panels.transfunc;
  * A simple TransferFunction that maps values from the range [0, 1] to values in the range [0, 1].<br>
  * 
  * @author muethingc
- *
+ * 
  */
 public interface TransferFunction {
 
@@ -25,7 +25,7 @@ public interface TransferFunction {
 
     /**
      * Zoom into this function.<br>
-     *
+     * 
      * @param lower the new lower point
      * @param upper the new upper point
      */

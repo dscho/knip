@@ -59,7 +59,7 @@ import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class CalibratedSpaceExt0 implements Externalizer<CalibratedSpace> {
@@ -92,8 +92,7 @@ public class CalibratedSpaceExt0 implements Externalizer<CalibratedSpace> {
      * {@inheritDoc}
      */
     @Override
-    public CalibratedSpace read(final BufferedDataInputStream in)
-            throws Exception {
+    public CalibratedSpace read(final BufferedDataInputStream in) throws Exception {
         final int numDims = in.readInt();
         final CalibratedSpace res = new CalibratedSpaceImpl(numDims);
         for (int d = 0; d < numDims; d++) {
@@ -109,8 +108,7 @@ public class CalibratedSpaceExt0 implements Externalizer<CalibratedSpace> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final CalibratedSpace obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final CalibratedSpace obj) throws Exception {
         out.writeInt(obj.numDimensions());
         for (int d = 0; d < obj.numDimensions(); d++) {
             final char[] label = obj.axis(d).getLabel().toCharArray();

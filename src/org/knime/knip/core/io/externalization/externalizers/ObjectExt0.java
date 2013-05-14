@@ -58,7 +58,7 @@ import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ObjectExt0 implements Externalizer<Object> {
@@ -100,8 +100,7 @@ public class ObjectExt0 implements Externalizer<Object> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final Object obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final Object obj) throws Exception {
         final ObjectOutputStream oos = new ObjectOutputStream(out);
         oos.writeObject(obj);
 

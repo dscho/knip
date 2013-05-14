@@ -59,7 +59,7 @@ import org.knime.knip.core.data.algebra.ExtendedPolygon;
 
 /**
  * DeSerializes a {@link Polygon}-object.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 @Deprecated
@@ -67,15 +67,13 @@ public class ExtendedPolygonDeSerializer {
 
     private static final int CONTOUR_RESAMPLING_REATE = 1000;
 
-    public static void serialize(final ExtendedPolygon poly, final DataOutput out)
-            throws IOException {
+    public static void serialize(final ExtendedPolygon poly, final DataOutput out) throws IOException {
 
         ExtendedPolygon resampledPoly;
         // only save an approximation to avoid a to high memory
         // consumption
         if (poly.length() > CONTOUR_RESAMPLING_REATE) {
-            resampledPoly = poly
-                    .resamplePolygon(CONTOUR_RESAMPLING_REATE);
+            resampledPoly = poly.resamplePolygon(CONTOUR_RESAMPLING_REATE);
         } else {
             resampledPoly = poly;
         }
@@ -88,8 +86,7 @@ public class ExtendedPolygonDeSerializer {
         }
     }
 
-    public static ExtendedPolygon deserialize(final DataInput in)
-            throws IOException {
+    public static ExtendedPolygon deserialize(final DataInput in) throws IOException {
         final int length = in.readInt();
         final ExtendedPolygon res = new ExtendedPolygon();
         for (int i = 0; i < length; i++) {

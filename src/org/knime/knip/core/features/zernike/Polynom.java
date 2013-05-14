@@ -30,7 +30,7 @@ public class Polynom {
 
     /**
      * default constructor.
-     *
+     * 
      * @param degree the degree of the polynom
      */
     public Polynom(final int degree) {
@@ -43,7 +43,7 @@ public class Polynom {
 
     /**
      * set the coefficient at a position.
-     *
+     * 
      * @param pos the position (the power of the monom)
      * @param coef the coefficient
      */
@@ -53,7 +53,7 @@ public class Polynom {
 
     /**
      * return the coefficient at a given position.
-     *
+     * 
      * @param pos the position
      * @return the coefficient
      */
@@ -63,7 +63,7 @@ public class Polynom {
 
     /**
      * return the value of the polynom in a given point.
-     *
+     * 
      * @param x the point
      * @return the value of the polynom
      */
@@ -79,12 +79,12 @@ public class Polynom {
 
     /**
      * provide a String representation of this polynom. mostly for debugging purposes and for the JUnit test case
-     *
+     * 
      * @return the String representation
      */
     @Override
     public String toString() {
-        StringBuffer result = new StringBuffer();
+        final StringBuffer result = new StringBuffer();
         for (int i = 0; i <= m_degree; ++i) {
             if (m_coefficients[i] != 0) {
                 result.append(m_coefficients[i] + "X^" + i + "  ");

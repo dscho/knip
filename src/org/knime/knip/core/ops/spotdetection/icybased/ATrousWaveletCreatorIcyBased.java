@@ -15,13 +15,13 @@ import net.imglib2.view.Views;
 
 /**
  * Op to create a a trous wavelet decomposition of a 2D image as stack on the z axis.
- *
+ * 
  * @author zinsmaie
- *
+ * 
  * @param <T>
  */
 public class ATrousWaveletCreatorIcyBased<T extends RealType<T>> implements
-        UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>> {
+UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>> {
 
     private final Integer[] m_skipLevels;
 
@@ -74,14 +74,14 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>> implements
 
     /**
      * uses B3SplineUDWT from icy to generate the wavelet coefficients.
-     *
+     * 
      * @param input2D a 2d image slice
      * @return RandomAccessibleInterval with x,y dimension according to the input and i+1 slices in dimension unknown
      *         holding i wavelet coefficients and the residual level.
      */
     private RandomAccessibleInterval<FloatType>
-            createCoefficients(final RandomAccessibleInterval<T> input2D,
-                               final RandomAccessibleInterval<FloatType> outputStack) {
+    createCoefficients(final RandomAccessibleInterval<T> input2D,
+                       final RandomAccessibleInterval<FloatType> outputStack) {
 
         // make it 1D
         final int sizeX = (int)input2D.dimension(0);
@@ -104,10 +104,10 @@ public class ATrousWaveletCreatorIcyBased<T extends RealType<T>> implements
             // calculate coefficients (wavelet scaleX - wavelet scaleY)
             final float[][] coefficients =
                     waveletTransform
-                            .b3WaveletCoefficients2D(waveletTransform
-                                                             .b3WaveletScales2D(dataIn, sizeX, sizeY,
-                                                                                (int)(outputStack.dimension(2) - 1)),
-                                                     dataIn, (int)(outputStack.dimension(2) - 1), sizeX * sizeY);
+                    .b3WaveletCoefficients2D(waveletTransform
+                                             .b3WaveletScales2D(dataIn, sizeX, sizeY,
+                                                                (int)(outputStack.dimension(2) - 1)),
+                                                                dataIn, (int)(outputStack.dimension(2) - 1), sizeX * sizeY);
 
             // write it back into an image
             final RandomAccess<FloatType> ra = outputStack.randomAccess();

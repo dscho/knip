@@ -54,7 +54,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 import org.knime.knip.core.ui.imgviewer.annotator.AnnotatorTool;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class AnnotatorToolChgEvent implements KNIPEvent {

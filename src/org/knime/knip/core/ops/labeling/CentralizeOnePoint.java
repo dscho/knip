@@ -12,8 +12,7 @@ import org.knime.knip.core.algorithm.PolarImageFactory;
 import org.knime.knip.core.ops.filters.DirectionalGradient;
 import org.knime.knip.core.ops.filters.DirectionalGradient.GradientDirection;
 
-public class CentralizeOnePoint<T extends RealType<T>> implements
-UnaryOperation<long[], long[]> {
+public class CentralizeOnePoint<T extends RealType<T>> implements UnaryOperation<long[], long[]> {
 
     private final int m_maxIterations;
 
@@ -27,11 +26,10 @@ UnaryOperation<long[], long[]> {
 
     private final int m_radius;
 
-    public CentralizeOnePoint(final PolarImageFactory<T> factory,
-                              final int numMaxIterations, final int radius, final int samplingRate) {
+    public CentralizeOnePoint(final PolarImageFactory<T> factory, final int numMaxIterations, final int radius,
+                              final int samplingRate) {
         m_radius = radius;
-        m_directionGradientOp = new DirectionalGradient<T, Img<T>>(
-                GradientDirection.HORIZONTAL, false);
+        m_directionGradientOp = new DirectionalGradient<T, Img<T>>(GradientDirection.HORIZONTAL, false);
         m_maxIterations = numMaxIterations;
         m_factory = factory;
         m_samplingRate = samplingRate;
@@ -40,8 +38,7 @@ UnaryOperation<long[], long[]> {
     @Override
     public long[] compute(final long[] src, final long[] res) {
 
-        System.arraycopy(centralizeOnePoint(src, m_maxIterations), 0,
-                         res, 0, res.length);
+        System.arraycopy(centralizeOnePoint(src, m_maxIterations), 0, res, 0, res.length);
 
         return res;
     }
@@ -59,19 +56,16 @@ UnaryOperation<long[], long[]> {
     private long[] centralizeOnePoint(final long[] src, final int maxIterations) {
 
         if (src.length != 2) {
-            throw new IllegalArgumentException(
-                                               "Must be 2 dimensional");
+            throw new IllegalArgumentException("Must be 2 dimensional");
         }
 
         if (m_buffer == null) {
-            m_buffer = m_factory.createPolarImage(src, m_radius,
-                                                  m_samplingRate);
+            m_buffer = m_factory.createPolarImage(src, m_radius, m_samplingRate);
         }
 
         final long[] res = new long[src.length];
 
-        final Img<T> polarImg = m_factory.createPolarImage(src, m_radius,
-                                                           m_samplingRate);
+        final Img<T> polarImg = m_factory.createPolarImage(src, m_radius, m_samplingRate);
 
         // AWTImageTools.showInSameFrame(polarImg, 5);
 
@@ -90,20 +84,17 @@ UnaryOperation<long[], long[]> {
 
             for (int x = 0; x < m_buffer.dimension(0); x++) {
                 randomAccess.setPosition(x, 0);
-                baseVals.add(new BaseVals(x, type
-                                          .getRealDouble()));
+                baseVals.add(new BaseVals(x, type.getRealDouble()));
             }
 
             Collections.sort(baseVals);
 
-            randomAccess.setPosition(y
-                                     + (m_buffer.dimension(1) / 2), 1);
+            randomAccess.setPosition(y + (m_buffer.dimension(1) / 2), 1);
             final ArrayList<BaseVals> partnerVals = new ArrayList<BaseVals>();
 
             for (int x = 0; x < m_buffer.dimension(0); x++) {
                 randomAccess.setPosition(x, 0);
-                partnerVals.add(new BaseVals(x, type
-                                             .getRealDouble()));
+                partnerVals.add(new BaseVals(x, type.getRealDouble()));
             }
 
             Collections.sort(partnerVals);
@@ -111,21 +102,18 @@ UnaryOperation<long[], long[]> {
             double minDistBase = Double.MAX_VALUE;
             double minDistPartner = Double.MAX_VALUE;
 
-            for (int f = partnerVals.size() - 1; f > (partnerVals
-                    .size() - 5); f--) {
+            for (int f = partnerVals.size() - 1; f > (partnerVals.size() - 5); f--) {
                 if (baseVals.get(f).getX() < minDistBase) {
                     minDistBase = baseVals.get(f).getX();
                 }
 
                 if (partnerVals.get(f).getX() < minDistPartner) {
-                    minDistPartner = partnerVals.get(f)
-                            .getX();
+                    minDistPartner = partnerVals.get(f).getX();
                 }
             }
 
             // Calc
-            final double difference = Math.abs(minDistBase
-                                               - minDistPartner);
+            final double difference = Math.abs(minDistBase - minDistPartner);
             double relY = 0;
             if (minDistBase > minDistPartner) {
                 relY = y;
@@ -133,23 +121,16 @@ UnaryOperation<long[], long[]> {
                 relY = y + (m_buffer.dimension(1) / 2);
             }
 
-            res[0] += difference
-                    * (Math.cos((relY / m_buffer
-                            .dimension(1))
-                            * 2
-                            * Math.PI));
+            res[0] += difference * (Math.cos((relY / m_buffer.dimension(1)) * 2 * Math.PI));
 
-            res[1] += -(difference * Math.sin((relY / m_buffer
-                    .dimension(1)) * 2 * Math.PI));
+            res[1] += -(difference * Math.sin((relY / m_buffer.dimension(1)) * 2 * Math.PI));
         }
 
-        final double newX = Math
-                .round(res[0] / (m_buffer.dimension(1) / 2.0));
-        final double newY = Math
-                .round(res[1] / (m_buffer.dimension(1) / 2.0));
+        final double newX = Math.round(res[0] / (m_buffer.dimension(1) / 2.0));
+        final double newY = Math.round(res[1] / (m_buffer.dimension(1) / 2.0));
 
-        res[0] = (long) (src[0] + newX);
-        res[1] = (long) (src[1] + newY);
+        res[0] = (long)(src[0] + newX);
+        res[1] = (long)(src[1] + newY);
 
         if ((maxIterations > 0) && ((newX != 0) || (newY != 0))) {
             return centralizeOnePoint(res, maxIterations - 1);
@@ -161,14 +142,13 @@ UnaryOperation<long[], long[]> {
 
     @Override
     public UnaryOperation<long[], long[]> copy() {
-        return new CentralizeOnePoint<T>(m_factory, m_maxIterations,
-                m_radius, m_samplingRate);
+        return new CentralizeOnePoint<T>(m_factory, m_maxIterations, m_radius, m_samplingRate);
 
     }
 }
 
 /**
- *
+ * 
  * @author Christian Dietz, University of Konstanz
  */
 class BaseVals implements Comparable<BaseVals> {

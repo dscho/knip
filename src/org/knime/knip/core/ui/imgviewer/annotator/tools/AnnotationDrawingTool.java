@@ -6,38 +6,34 @@ import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElement2D;
 
-public abstract class AnnotationDrawingTool<O extends OverlayElement2D<String>>
-extends AnnotatorTool<O> {
+public abstract class AnnotationDrawingTool<O extends OverlayElement2D<String>> extends AnnotatorTool<O> {
 
     public AnnotationDrawingTool(final String name, final String iconPath) {
         super(name, iconPath);
     }
 
     @Override
-    public void onMouseDoubleClickRight(final ImgViewerMouseEvent e,
-                                        final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                        final Overlay<String> overlay, final String... labels) {
+    public void onMouseDoubleClickRight(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                        final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                        final String... labels) {
         // Nothing to do here
 
     }
 
     @Override
-    public void onMousePressedRight(final ImgViewerMouseEvent e,
-                                    final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                    final Overlay<String> overlay, final String... labels) {
+    public void onMousePressedRight(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                    final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                    final String... labels) {
         // Nothing to do here
     }
 
     @Override
-    public void onMouseReleasedRight(final ImgViewerMouseEvent e,
-                                     final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                     final Overlay<String> overlay, final String... labels) {
-        for (final OverlayElement2D<String> element : overlay
-                .getElementsByPosition(
-                                       selection.getPlanePos(
-                                                             e.getPosX(),
-                                                             e.getPosY()),
-                                                             selection.getDimIndices())) {
+    public void onMouseReleasedRight(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                     final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                     final String... labels) {
+        for (final OverlayElement2D<String> element : overlay.getElementsByPosition(selection.getPlanePos(e.getPosX(),
+                                                                                                          e.getPosY()),
+                                                                                                          selection.getDimIndices())) {
             if (overlay.removeElement(element)) {
                 fireStateChanged();
             }
@@ -46,41 +42,41 @@ extends AnnotatorTool<O> {
     }
 
     @Override
-    public void onMouseDraggedRight(final ImgViewerMouseEvent e,
-                                    final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                    final Overlay<String> overlay, final String... labels) {
+    public void onMouseDraggedRight(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                    final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                    final String... labels) {
         // Nothing to do here
 
     }
 
     @Override
-    public void onMouseDoubleClickMid(final ImgViewerMouseEvent e,
-                                      final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                      final Overlay<String> overlay, final String... labels) {
+    public void onMouseDoubleClickMid(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                      final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                      final String... labels) {
         // Nothing to do here
 
     }
 
     @Override
-    public void onMousePressedMid(final ImgViewerMouseEvent e,
-                                  final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                  final Overlay<String> overlay, final String... labels) {
+    public void onMousePressedMid(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                  final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                  final String... labels) {
         // Nothing to do here
 
     }
 
     @Override
-    public void onMouseDraggedMid(final ImgViewerMouseEvent e,
-                                  final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                  final Overlay<String> overlay, final String... labels) {
+    public void onMouseDraggedMid(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                  final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                  final String... labels) {
         // Nothing to do here
 
     }
 
     @Override
-    public void onMouseReleasedMid(final ImgViewerMouseEvent e,
-                                   final O currentOverlayElement, final PlaneSelectionEvent selection,
-                                   final Overlay<String> overlay, final String... labels) {
+    public void onMouseReleasedMid(final ImgViewerMouseEvent e, final O currentOverlayElement,
+                                   final PlaneSelectionEvent selection, final Overlay<String> overlay,
+                                   final String... labels) {
         // Nothing to do here
     }
 

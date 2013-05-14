@@ -20,13 +20,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Renders the real values of a X,Y slice as ScreenImage. The position in the colorDim defines which of the provided
  * color tables is used.
- *
+ * 
  * @author zinsmaie
- *
+ * 
  * @param <R>
  */
 public class Real2TableColorRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
-        RendererWithNormalization, RendererWithColorTable {
+RendererWithNormalization, RendererWithColorTable {
 
     public final static Logger LOGGER = LoggerFactory.getLogger(Real2TableColorRenderer.class);
 

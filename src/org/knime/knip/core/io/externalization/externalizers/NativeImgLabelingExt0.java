@@ -61,7 +61,7 @@ import org.knime.knip.core.io.externalization.Externalizer;
 import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
@@ -94,14 +94,12 @@ public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
      * {@inheritDoc}
      */
     @Override
-    public NativeImgLabeling read(final BufferedDataInputStream in)
-            throws Exception {
+    public NativeImgLabeling read(final BufferedDataInputStream in) throws Exception {
         // Create Labeling
         final Img img = ExternalizerManager.<Img> read(in);
-        final LabelingMapping mapping = ExternalizerManager
-                .<LabelingMapping> read(in);
-        final NativeImgLabeling<? extends Comparable<?>, ? extends IntegerType<?>> res = new ExtNativeImgLabeling(
-                                                                                                                  img, mapping);
+        final LabelingMapping mapping = ExternalizerManager.<LabelingMapping> read(in);
+        final NativeImgLabeling<? extends Comparable<?>, ? extends IntegerType<?>> res =
+                new ExtNativeImgLabeling(img, mapping);
         return res;
     }
 
@@ -109,8 +107,7 @@ public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final NativeImgLabeling obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final NativeImgLabeling obj) throws Exception {
 
         // write the backed image
         ExternalizerManager.write(out, obj.getStorageImg());
@@ -120,8 +117,8 @@ public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
 
     }
 
-    private class ExtNativeImgLabeling<T extends Comparable<T>, I extends IntegerType<I>>
-    extends NativeImgLabeling<T, I> {
+    private class ExtNativeImgLabeling<T extends Comparable<T>, I extends IntegerType<I>> extends
+    NativeImgLabeling<T, I> {
         /**
          * @param img
          */

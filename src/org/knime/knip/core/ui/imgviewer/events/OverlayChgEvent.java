@@ -54,7 +54,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class OverlayChgEvent implements KNIPEvent {

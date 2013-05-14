@@ -27,24 +27,19 @@ import org.knime.knip.core.ui.imgviewer.panels.transfunc.LookupTableChgEvent;
 
 /**
  * Converts an {@link Img} to a {@link BufferedImage}.
- *
- * It creates an image from a plane selection, image, image renderer, and
- * normalization parameters. Propagates {@link AWTImageChgEvent}.
- *
+ * 
+ * It creates an image from a plane selection, image, image renderer, and normalization parameters. Propagates
+ * {@link AWTImageChgEvent}.
+ * 
  * @author dietzc, hornm, schonenbergerf University of Konstanz
- *
- * @param <T>
- *                the {@link Type} of the {@link Img} converted to a
- *                {@link BufferedImage}
- * @param <I>
- *                the {@link Img} converted to a {@link BufferedImage}
+ * 
+ * @param <T> the {@link Type} of the {@link Img} converted to a {@link BufferedImage}
+ * @param <I> the {@link Img} converted to a {@link BufferedImage}
  */
-public class BufferedImageProvider<T extends RealType<T>> extends
-AWTImageProvider<T> {
+public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvider<T> {
 
     /**
-     * A simple class that can be injected in the converter so that we will
-     * always get some result.
+     * A simple class that can be injected in the converter so that we will always get some result.
      */
     private class SimpleTable implements LookupTable<T, ARGBType> {
 
@@ -63,77 +58,64 @@ AWTImageProvider<T> {
 
     protected LookupTable<T, ARGBType> m_lookupTable = new SimpleTable();
 
-    private ColorTable[] m_colorTables = new ColorTable[] {};
+    private ColorTable[] m_colorTables = new ColorTable[]{};
 
     /**
-     * @param cacheSize
-     *                The size of the cache beeing used in
-     *                {@link AWTImageProvider}
+     * @param cacheSize The size of the cache beeing used in {@link AWTImageProvider}
      */
     public BufferedImageProvider(final int cacheSize) {
         super(cacheSize);
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>(
-                0, false);
+        m_normalizationParameters = new NormalizationParametersChgEvent<T>(0, false);
     }
 
     /**
      * Render an image of
-     *
+     * 
      * @return
      */
     @SuppressWarnings("unchecked")
     @Override
     protected Image createImage() {
-        final double[] normParams = m_normalizationParameters
-                .getNormalizationParameters(m_src, m_sel);
+        final double[] normParams = m_normalizationParameters.getNormalizationParameters(m_src, m_sel);
 
         if (m_renderer instanceof RendererWithNormalization) {
-            ((RendererWithNormalization) m_renderer)
-            .setNormalizationParameters(
-                                        normParams[0],
-                                        normParams[1]);
+            ((RendererWithNormalization)m_renderer).setNormalizationParameters(normParams[0], normParams[1]);
         }
 
         if (m_renderer instanceof RendererWithLookupTable) {
-            ((RendererWithLookupTable<T, ARGBType>) m_renderer)
-            .setLookupTable(m_lookupTable);
+            ((RendererWithLookupTable<T, ARGBType>)m_renderer).setLookupTable(m_lookupTable);
         }
 
         if (m_renderer instanceof RendererWithColorTable) {
-            ((RendererWithColorTable) m_renderer)
-            .setColorTables(m_colorTables);
+            ((RendererWithColorTable)m_renderer).setColorTables(m_colorTables);
         }
 
-        final ScreenImage ret = m_renderer.render(m_src,
-                                                  m_sel.getPlaneDimIndex1(),
-                                                  m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
+        final ScreenImage ret =
+                m_renderer.render(m_src, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
         return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
     }
 
     /**
-     * {@link EventListener} for {@link NormalizationParametersChgEvent}
-     * events The {@link NormalizationParametersChgEvent} of the
-     * {@link AWTImageTools} will be updated
-     *
+     * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
+     * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
+     * 
      * @param normalizationParameters
      */
     @EventListener
-    public void onUpdated(
-                          final NormalizationParametersChgEvent<T> normalizationParameters) {
+    public void onUpdated(final NormalizationParametersChgEvent<T> normalizationParameters) {
         m_normalizationParameters = normalizationParameters;
     }
 
     /**
-     *
-     * {@link EventListener} for {@link BundleChgEvent}. A new lookup table
-     * will be constructed using the given transfer function bundle.
-     *
+     * 
+     * {@link EventListener} for {@link BundleChgEvent}. A new lookup table will be constructed using the given transfer
+     * function bundle.
+     * 
      * @param event
      */
     @EventListener
-    public void onLookupTableChgEvent(
-                                      final LookupTableChgEvent<T, ARGBType> event) {
+    public void onLookupTableChgEvent(final LookupTableChgEvent<T, ARGBType> event) {
         m_lookupTable = event.getTable();
 
     }
@@ -151,22 +133,19 @@ AWTImageProvider<T> {
     @Override
     protected int generateHashCode() {
 
-        return (super.generateHashCode() * 31)
-                + m_normalizationParameters.hashCode();
+        return (super.generateHashCode() * 31) + m_normalizationParameters.hashCode();
 
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         super.saveComponentConfiguration(out);
         m_normalizationParameters.writeExternal(out);
 
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.loadComponentConfiguration(in);
         m_normalizationParameters = new NormalizationParametersChgEvent<T>();
         m_normalizationParameters.readExternal(in);

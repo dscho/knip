@@ -13,14 +13,12 @@ package org.knime.knip.core.algorithm;
 import org.knime.knip.core.data.algebra.Complex;
 
 /*************************************************************************
- * Compilation: javac InplaceFFT.java Execution: java InplaceFFT N Dependencies:
- * Complex.java
+ * Compilation: javac InplaceFFT.java Execution: java InplaceFFT N Dependencies: Complex.java
  * 
- * Compute the FFT of a length N complex sequence in-place. Uses a non-recursive
- * version of the Cooley-Tukey FFT. Runs in O(N log N) time.
+ * Compute the FFT of a length N complex sequence in-place. Uses a non-recursive version of the Cooley-Tukey FFT. Runs
+ * in O(N log N) time.
  * 
- * Reference: Algorithm 1.6.1 in Computational Frameworks for the Fast Fourier
- * Transform by Charles Van Loan.
+ * Reference: Algorithm 1.6.1 in Computational Frameworks for the Fast Fourier Transform by Charles Van Loan.
  * 
  * 
  * Limitations ----------- - assumes N is a power of 2
@@ -54,13 +52,10 @@ public class InplaceFFT {
         for (int L = 2; L <= N; L = L + L) {
             for (int k = 0; k < (L / 2); k++) {
                 final double kth = (-2 * k * Math.PI) / L;
-                final Complex w = new Complex(Math.cos(kth),
-                                              Math.sin(kth));
+                final Complex w = new Complex(Math.cos(kth), Math.sin(kth));
                 for (int j = 0; j < (N / L); j++) {
-                    final Complex tao = w.times(x[(j * L) + k + (L
-                            / 2)]);
-                    x[(j * L) + k + (L / 2)] = x[(j * L) + k]
-                            .minus(tao);
+                    final Complex tao = w.times(x[(j * L) + k + (L / 2)]);
+                    x[(j * L) + k + (L / 2)] = x[(j * L) + k].minus(tao);
                     x[(j * L) + k] = x[(j * L) + k].plus(tao);
                 }
             }

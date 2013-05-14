@@ -67,8 +67,8 @@ public enum ImgFactoryTypes {
      * @return
      */
     @SuppressWarnings("rawtypes")
-    public static final <T extends NativeType<T>> ImgFactory getImgFactory(
-                                                                           final ImgFactoryTypes facType, final Img img) {
+    public static final <T extends NativeType<T>> ImgFactory
+    getImgFactory(final ImgFactoryTypes facType, final Img img) {
 
         if (facType == SOURCE_FACTORY) {
             return img.factory();
@@ -78,8 +78,7 @@ public enum ImgFactoryTypes {
 
     }
 
-    public static final <T extends Type<T>> ImgFactoryTypes getImgFactoryType(
-                                                                              final ImgFactory<T> factory) {
+    public static final <T extends Type<T>> ImgFactoryTypes getImgFactoryType(final ImgFactory<T> factory) {
         if (factory instanceof ArrayImgFactory) {
             return ARRAY_IMG_FACTORY;
         } else if (factory instanceof PlanarImgFactory) {
@@ -90,15 +89,14 @@ public enum ImgFactoryTypes {
             return NTREE_IMG_FACTORY;
         } else {
             throw new UnsupportedOperationException(
-                                                    "Serializing an image with the specified storage strategy isn't supported, yet.");
+                    "Serializing an image with the specified storage strategy isn't supported, yet.");
         }
     }
 
     /**
      * @return
      */
-    public static final <T extends NativeType<T>> ImgFactory<T> getImgFactory(
-                                                                              final ImgFactoryTypes facType) {
+    public static final <T extends NativeType<T>> ImgFactory<T> getImgFactory(final ImgFactoryTypes facType) {
 
         switch (facType) {
             case ARRAY_IMG_FACTORY:
@@ -121,8 +119,7 @@ public enum ImgFactoryTypes {
      * @return
      */
     @SuppressWarnings("rawtypes")
-    public static final ImgFactory getImgFactory(final String facTypeAsString,
-                                                 final Img img) {
+    public static final ImgFactory getImgFactory(final String facTypeAsString, final Img img) {
 
         return getImgFactory(valueOf(facTypeAsString), img);
 

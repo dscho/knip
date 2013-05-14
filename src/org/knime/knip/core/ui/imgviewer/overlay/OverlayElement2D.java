@@ -15,8 +15,7 @@ import net.imglib2.Interval;
  * 
  * @author dietzc, fschoenenberger, hornm
  */
-public abstract class OverlayElement2D<L extends Comparable<L>> extends
-OverlayElement<L> implements Externalizable {
+public abstract class OverlayElement2D<L extends Comparable<L>> extends OverlayElement<L> implements Externalizable {
 
     private Rectangle m_boundingBox;
 
@@ -24,8 +23,7 @@ OverlayElement<L> implements Externalizable {
 
     private long[] m_maxExtend;
 
-    public OverlayElement2D(final long[] planePos, final int[] orientation,
-                            final String... labels) {
+    public OverlayElement2D(final long[] planePos, final int[] orientation, final String... labels) {
         super(planePos, orientation, labels);
         m_minExtend = new long[2];
         m_maxExtend = new long[2];
@@ -45,8 +43,7 @@ OverlayElement<L> implements Externalizable {
                 return false;
             }
         }
-        return containsPoint(pos[getOrientation()[0]],
-                             pos[getOrientation()[1]]);
+        return containsPoint(pos[getOrientation()[0]], pos[getOrientation()[1]]);
     }
 
     @Override
@@ -62,18 +59,17 @@ OverlayElement<L> implements Externalizable {
     @Override
     public void renderBoundingBox(final Graphics g) {
         m_boundingBox = getBoundingBox();
-        g.drawRect(m_boundingBox.x, m_boundingBox.y,
-                   m_boundingBox.width, m_boundingBox.height);
+        g.drawRect(m_boundingBox.x, m_boundingBox.y, m_boundingBox.width, m_boundingBox.height);
     }
 
     @Override
     public void renderInterior(final Graphics g, final int[] dims) {
-        renderInterior((Graphics2D) g);
+        renderInterior((Graphics2D)g);
     }
 
     @Override
     public void renderOutline(final Graphics g) {
-        renderOutline((Graphics2D) g);
+        renderOutline((Graphics2D)g);
     }
 
     public abstract Rectangle getBoundingBox();
@@ -113,8 +109,7 @@ OverlayElement<L> implements Externalizable {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-    ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
 
         final int num = in.readInt();
@@ -125,6 +120,6 @@ OverlayElement<L> implements Externalizable {
             m_minExtend[i] = in.readLong();
             m_maxExtend[i] = in.readLong();
         }
-        m_boundingBox = (Rectangle) in.readObject();
+        m_boundingBox = (Rectangle)in.readObject();
     }
 }

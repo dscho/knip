@@ -56,7 +56,7 @@ public interface Histogram extends Iterable<Integer> {
 
     /**
      * Equal to {@link getData()}.length.
-     *
+     * 
      * @return the length of the data array
      */
     public int size();
@@ -66,43 +66,43 @@ public interface Histogram extends Iterable<Integer> {
 
     /**
      * Get the value that the histogram starts binning at.
-     *
+     * 
      * @return the minimum value
      */
     public double getMinValue();
 
     /**
      * Get the value the histogram stops to bin.
-     *
+     * 
      * @return the maximum value
      */
     public double getMaxValue();
 
     /**
      * Get the histogram count at the bin.<br>
-     *
+     * 
      * This method is allowed to alter be bin to a fitting value if bin is too large or too small.
-     *
+     * 
      * @param bin the bin number
-     *
+     * 
      * @return the count
      */
     public int count(int bin);
 
     /**
      * Get the min and max value that are counted for the given bin number.<br>
-     *
+     * 
      * This method is allowed to alter be bin to a fitting value if bin is too large or too small.
-     *
+     * 
      * @param the bin number
-     *
+     * 
      * @return value[0] = lower threshold, value[1] = upper threshold
      */
     public double[] values(int bin);
 
     /**
      * Get a deep copy of the underlying data array.
-     *
+     * 
      * @return the data
      */
     public int[] getData();

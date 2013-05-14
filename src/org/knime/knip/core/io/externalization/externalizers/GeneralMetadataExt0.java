@@ -62,7 +62,7 @@ import org.knime.knip.core.io.externalization.Externalizer;
 import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
- *
+ * 
  * @author dietzc, University of Konstanz
  */
 public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
@@ -96,8 +96,7 @@ public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
      */
     @Override
     public GeneralMetadata read(final BufferedDataInputStream in) throws Exception {
-        final CalibratedSpace cs = ExternalizerManager
-                .<CalibratedSpace> read(in);
+        final CalibratedSpace cs = ExternalizerManager.<CalibratedSpace> read(in);
         final Named name = ExternalizerManager.<Named> read(in);
         final Sourced source = ExternalizerManager.<Sourced> read(in);
 
@@ -108,8 +107,7 @@ public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final GeneralMetadata obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final GeneralMetadata obj) throws Exception {
         ExternalizerManager.write(out, obj, CalibratedSpace.class);
         ExternalizerManager.write(out, obj, Named.class);
         ExternalizerManager.write(out, obj, Sourced.class);

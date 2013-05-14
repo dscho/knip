@@ -59,8 +59,7 @@ import java.io.ObjectOutput;
  * 
  * @author dietc, hornm, schoenenbergerf University of Konstanz
  */
-public class FreeFormOverlayElement<L extends Comparable<L>> extends
-AbstractPolygonOverlayElement<L> {
+public class FreeFormOverlayElement<L extends Comparable<L>> extends AbstractPolygonOverlayElement<L> {
 
     private boolean m_renderInterior;
 
@@ -71,8 +70,8 @@ AbstractPolygonOverlayElement<L> {
     /**
      * 
      */
-    public FreeFormOverlayElement(final long[] pos, final int[] orientation,
-                                  final boolean renderInterior, final String... labels) {
+    public FreeFormOverlayElement(final long[] pos, final int[] orientation, final boolean renderInterior,
+                                  final String... labels) {
         super(pos, orientation, labels);
         m_renderInterior = renderInterior;
     }
@@ -106,8 +105,7 @@ AbstractPolygonOverlayElement<L> {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-    ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
 
         m_renderInterior = in.readBoolean();
@@ -120,8 +118,7 @@ AbstractPolygonOverlayElement<L> {
             return super.containsPoint(x, y);
         } else {
             for (int n = 0; n < m_poly.xpoints.length; n++) {
-                if ((x == m_poly.xpoints[n])
-                        && (y == m_poly.ypoints[n])) {
+                if ((x == m_poly.xpoints[n]) && (y == m_poly.ypoints[n])) {
                     return true;
                 }
             }

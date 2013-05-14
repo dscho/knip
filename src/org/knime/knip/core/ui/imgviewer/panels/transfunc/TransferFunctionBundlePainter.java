@@ -67,22 +67,22 @@ import org.knime.knip.core.ui.imgviewer.ColorDispenser;
 
 /**
  * This class is used to paint a bundle of transfer functions.
- *
+ * 
  * @author muethingc
  */
-public class TransferFunctionBundlePainter implements MouseListener,
-MouseMotionListener, TransferFunctionChgListener {
+public class TransferFunctionBundlePainter implements MouseListener, MouseMotionListener, TransferFunctionChgListener {
 
     /* The bundle we are currently working on */
     private TransferFunctionBundle m_bundle = null;
 
     /* All painters used in the current bundle */
     private final LinkedList<TransferFunctionPainter> m_painters = new LinkedList<TransferFunctionPainter>();
-    private final Map<TransferFunctionColor, TransferFunctionPainter> m_color2Painter = new HashMap<TransferFunctionColor, TransferFunctionPainter>();
+
+    private final Map<TransferFunctionColor, TransferFunctionPainter> m_color2Painter =
+            new HashMap<TransferFunctionColor, TransferFunctionPainter>();
 
     /* the image used for the backbuffer selection */
-    private BufferedImage m_backBuffer = new BufferedImage(10, 10,
-                                                           BufferedImage.TYPE_INT_ARGB);
+    private BufferedImage m_backBuffer = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 
     /* all listeners */
     private final EventListenerList m_listener = new EventListenerList();
@@ -102,24 +102,21 @@ MouseMotionListener, TransferFunctionChgListener {
 
     /**
      * Create a new instance.
-     *
-     * @param bundle
-     *                the bundle of functions to use
+     * 
+     * @param bundle the bundle of functions to use
      */
     public TransferFunctionBundlePainter(final TransferFunctionBundle bundle) {
         setBundle(bundle);
     }
 
     private void repaintBackBuffer() {
-        final Graphics2D g2 = (Graphics2D) m_backBuffer.getGraphics();
+        final Graphics2D g2 = (Graphics2D)m_backBuffer.getGraphics();
 
         // paint the background
         g2.setColor(ColorDispenser.BACKGROUND_COLOR);
-        g2.fillRect(0, 0, m_backBuffer.getWidth(),
-                    m_backBuffer.getHeight());
+        g2.fillRect(0, 0, m_backBuffer.getWidth(), m_backBuffer.getHeight());
 
-        g2.setClip(0, 0, m_backBuffer.getWidth(),
-                   m_backBuffer.getHeight());
+        g2.setClip(0, 0, m_backBuffer.getWidth(), m_backBuffer.getHeight());
         paint(g2, true);
     }
 
@@ -127,16 +124,12 @@ MouseMotionListener, TransferFunctionChgListener {
 
         // check if the size of the painting area changed, and if yes
         // create a new fitting backbuffer and paint it
-        final Dimension d = new Dimension(
-                                          (int) g2.getClipBounds().getWidth(), (int) g2
-                                          .getClipBounds().getHeight());
+        final Dimension d = new Dimension((int)g2.getClipBounds().getWidth(), (int)g2.getClipBounds().getHeight());
 
         if (!d.equals(m_area)) {
             m_area = d;
-            m_backBuffer = new BufferedImage(
-                                             (int) m_area.getWidth(),
-                                             (int) m_area.getHeight(),
-                                             BufferedImage.TYPE_INT_ARGB);
+            m_backBuffer =
+                    new BufferedImage((int)m_area.getWidth(), (int)m_area.getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
 
         paint(g2, false);
@@ -155,9 +148,8 @@ MouseMotionListener, TransferFunctionChgListener {
 
     /**
      * Used to set the currently topmost drawn Tranfer function.<br>
-     *
-     * @param color
-     *                the name of the function to draw
+     * 
+     * @param color the name of the function to draw
      */
     public final void setTransferFocus(final TransferFunctionColor color) {
         final TransferFunctionPainter p = m_color2Painter.get(color);
@@ -168,9 +160,8 @@ MouseMotionListener, TransferFunctionChgListener {
 
     /**
      * Set the functions to paint.<br>
-     *
-     * @param bundle
-     *                the bundle of functions
+     * 
+     * @param bundle the bundle of functions
      */
     public final void setBundle(final TransferFunctionBundle bundle) {
 
@@ -190,9 +181,8 @@ MouseMotionListener, TransferFunctionChgListener {
     private void addPainter(final TransferFunction func) {
         assert m_bundle != null;
 
-        final TransferFunctionPainter p = TransferFunctionPainterFactory
-                .create(func, m_bundle.getColorOfFunction(func)
-                        .getColor());
+        final TransferFunctionPainter p =
+                TransferFunctionPainterFactory.create(func, m_bundle.getColorOfFunction(func).getColor());
 
         p.addTransferFunctionChgListener(this);
 
@@ -226,20 +216,16 @@ MouseMotionListener, TransferFunctionChgListener {
         fireTransferFunctionChgEvent(event);
     }
 
-    public void addTransferFunctionChgListener(
-                                               final TransferFunctionChgListener l) {
+    public void addTransferFunctionChgListener(final TransferFunctionChgListener l) {
         m_listener.add(TransferFunctionChgListener.class, l);
     }
 
-    public void removeTransferFunctionChgListener(
-                                                  final TransferFunctionChgListener l) {
+    public void removeTransferFunctionChgListener(final TransferFunctionChgListener l) {
         m_listener.remove(TransferFunctionChgListener.class, l);
     }
 
-    private void fireTransferFunctionChgEvent(
-                                              final TransferFunctionChgEvent event) {
-        for (final TransferFunctionChgListener l : m_listener
-                .getListeners(TransferFunctionChgListener.class)) {
+    private void fireTransferFunctionChgEvent(final TransferFunctionChgEvent event) {
+        for (final TransferFunctionChgListener l : m_listener.getListeners(TransferFunctionChgListener.class)) {
             l.transferFunctionChg(event);
         }
     }
@@ -253,16 +239,14 @@ MouseMotionListener, TransferFunctionChgListener {
     }
 
     private void fireChangeEvent() {
-        for (final ChangeListener l : m_listener
-                .getListeners(ChangeListener.class)) {
+        for (final ChangeListener l : m_listener.getListeners(ChangeListener.class)) {
             l.stateChanged(new ChangeEvent(this));
         }
     }
 
     @Override
     public void mouseDragged(final MouseEvent e) {
-        for (final MouseMotionListener l : m_listener
-                .getListeners(MouseMotionListener.class)) {
+        for (final MouseMotionListener l : m_listener.getListeners(MouseMotionListener.class)) {
             l.mouseDragged(e);
         }
     }
@@ -288,8 +272,7 @@ MouseMotionListener, TransferFunctionChgListener {
 
         m_cursor = cur;
 
-        for (final MouseMotionListener l : m_listener
-                .getListeners(MouseMotionListener.class)) {
+        for (final MouseMotionListener l : m_listener.getListeners(MouseMotionListener.class)) {
             l.mouseMoved(e);
         }
 
@@ -298,40 +281,35 @@ MouseMotionListener, TransferFunctionChgListener {
 
     @Override
     public void mouseClicked(final MouseEvent e) {
-        for (final MouseListener l : m_listener
-                .getListeners(MouseListener.class)) {
+        for (final MouseListener l : m_listener.getListeners(MouseListener.class)) {
             l.mouseClicked(e);
         }
     }
 
     @Override
     public void mouseEntered(final MouseEvent e) {
-        for (final MouseListener l : m_listener
-                .getListeners(MouseListener.class)) {
+        for (final MouseListener l : m_listener.getListeners(MouseListener.class)) {
             l.mouseEntered(e);
         }
     }
 
     @Override
     public void mouseExited(final MouseEvent e) {
-        for (final MouseListener l : m_listener
-                .getListeners(MouseListener.class)) {
+        for (final MouseListener l : m_listener.getListeners(MouseListener.class)) {
             l.mouseExited(e);
         }
     }
 
     @Override
     public void mousePressed(final MouseEvent e) {
-        for (final MouseListener l : m_listener
-                .getListeners(MouseListener.class)) {
+        for (final MouseListener l : m_listener.getListeners(MouseListener.class)) {
             l.mousePressed(e);
         }
     }
 
     @Override
     public void mouseReleased(final MouseEvent e) {
-        for (final MouseListener l : m_listener
-                .getListeners(MouseListener.class)) {
+        for (final MouseListener l : m_listener.getListeners(MouseListener.class)) {
             l.mouseReleased(e);
         }
     }

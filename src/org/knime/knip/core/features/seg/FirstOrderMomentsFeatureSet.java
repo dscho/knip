@@ -61,25 +61,19 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
- * @param <T>
- *                image type
+ * @param <T> image type
  */
-public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements
-FeatureSet, SharesObjects {
+public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements FeatureSet, SharesObjects {
 
     /**
      * the feature names
      */
-    public static final String[] FEATURES = new String[] { "Min", "Max",
-        "Mean", "Geometric Mean", "Sum", "Squares of Sum",
-        "Std Dev", "Variance", "Skewness", "Kurtosis",
-        "Quantil 25", "Quantil 50", "Quantil 75",
-        "Median absolute deviation (MAD)",
-        "WeightedCentroid Dim 1", "WeightedCentroid Dim 2",
-        "WeightedCentroid Dim 3", "WeightedCentroid Dim 4",
-        "WeightedCentroid Dim 5", "Mass Displacement", };
+    public static final String[] FEATURES = new String[]{"Min", "Max", "Mean", "Geometric Mean", "Sum",
+        "Squares of Sum", "Std Dev", "Variance", "Skewness", "Kurtosis", "Quantil 25", "Quantil 50", "Quantil 75",
+        "Median absolute deviation (MAD)", "WeightedCentroid Dim 1", "WeightedCentroid Dim 2",
+        "WeightedCentroid Dim 3", "WeightedCentroid Dim 4", "WeightedCentroid Dim 5", "Mass Displacement",};
 
     private DescriptiveStatistics m_statistics;
 
@@ -106,9 +100,7 @@ FeatureSet, SharesObjects {
 
         if ((id > 12) && (id <= 19)) {
             // update weighted centroid
-            m_weightedCentroid = m_ocac.weightedCentroid(
-                                                         m_interval, m_statistics,
-                                                         m_massDisplacement);
+            m_weightedCentroid = m_ocac.weightedCentroid(m_interval, m_statistics, m_massDisplacement);
         }
 
         switch (id) {
@@ -142,37 +134,27 @@ FeatureSet, SharesObjects {
                 final double median = m_statistics.getPercentile(50);
                 final DescriptiveStatistics stats = new DescriptiveStatistics();
                 for (int i = 0; i < m_statistics.getN(); i++) {
-                    stats.addValue(Math.abs(median
-                                            - m_statistics.getElement(i)));
+                    stats.addValue(Math.abs(median - m_statistics.getElement(i)));
                 }
                 return stats.getPercentile(50);
             case 14:
-                return m_weightedCentroid.length > 0 ? m_weightedCentroid[0]
-                        : 0;
+                return m_weightedCentroid.length > 0 ? m_weightedCentroid[0] : 0;
             case 15:
-                return m_weightedCentroid.length > 1 ? m_weightedCentroid[1]
-                        : 0;
+                return m_weightedCentroid.length > 1 ? m_weightedCentroid[1] : 0;
             case 16:
-                return m_weightedCentroid.length > 2 ? m_weightedCentroid[2]
-                        : 0;
+                return m_weightedCentroid.length > 2 ? m_weightedCentroid[2] : 0;
             case 17:
-                return m_weightedCentroid.length > 3 ? m_weightedCentroid[3]
-                        : 0;
+                return m_weightedCentroid.length > 3 ? m_weightedCentroid[3] : 0;
             case 18:
-                return m_weightedCentroid.length > 4 ? m_weightedCentroid[4]
-                        : 0;
+                return m_weightedCentroid.length > 4 ? m_weightedCentroid[4] : 0;
             case 19:
                 m_massDisplacement = 0;
-                final double[] centroid = new Centroid().compute(m_interval,
-                                                                 new double[m_interval.numDimensions()]);
+                final double[] centroid = new Centroid().compute(m_interval, new double[m_interval.numDimensions()]);
                 for (int d = 0; d < m_interval.numDimensions(); d++) {
                     m_weightedCentroid[d] /= m_statistics.getSum();
                     // m_weightedCentroid[d] /= m_interval.size();
                     centroid[d] /= m_interval.size();
-                    m_massDisplacement += Math.pow(
-                                                   m_weightedCentroid[d]
-                                                           - centroid[d],
-                                                           2);
+                    m_massDisplacement += Math.pow(m_weightedCentroid[d] - centroid[d], 2);
                 }
 
                 return Math.sqrt(m_massDisplacement);
@@ -221,7 +203,7 @@ FeatureSet, SharesObjects {
      */
     @Override
     public Class<?>[] getSharedObjectClasses() {
-        return new Class[] { ObjectCalcAndCache.class };
+        return new Class[]{ObjectCalcAndCache.class};
     }
 
     /**
@@ -229,7 +211,7 @@ FeatureSet, SharesObjects {
      */
     @Override
     public void setSharedObjectInstances(final Object[] instances) {
-        m_ocac = (ObjectCalcAndCache) instances[0];
+        m_ocac = (ObjectCalcAndCache)instances[0];
 
     }
 

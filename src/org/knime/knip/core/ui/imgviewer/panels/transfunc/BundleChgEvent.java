@@ -52,7 +52,6 @@ package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
 
-
 /**
  * Published whenever the mode changes.<br>
  * 

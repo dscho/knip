@@ -33,9 +33,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * A utility class with convenience methods for reading, writing and decoding
- * words.
- *
+ * A utility class with convenience methods for reading, writing and decoding words.
+ * 
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  */
@@ -56,8 +55,7 @@ public final class DataTools {
     // -- Static fields --
 
     /**
-     * Persistent byte array for calling
-     * {@link java.io.DataInput#readFully(byte[], int, int)} efficiently.
+     * Persistent byte array for calling {@link java.io.DataInput#readFully(byte[], int, int)} efficiently.
      */
     private static ThreadLocal<Object> eightBytes = new ThreadLocal<Object>() {
         @Override
@@ -75,7 +73,7 @@ public final class DataTools {
 
     /** Reads 1 signed byte [-128, 127]. */
     public static byte readSignedByte(final DataInput in) throws IOException {
-        final byte[] b = (byte[]) eightBytes.get();
+        final byte[] b = (byte[])eightBytes.get();
         in.readFully(b, 0, 1);
         return b[0];
     }
@@ -90,16 +88,14 @@ public final class DataTools {
     }
 
     /** Reads 2 signed bytes [-32768, 32767]. */
-    public static short read2SignedBytes(final DataInput in, final boolean little)
-            throws IOException {
-        final byte[] b = (byte[]) eightBytes.get();
+    public static short read2SignedBytes(final DataInput in, final boolean little) throws IOException {
+        final byte[] b = (byte[])eightBytes.get();
         in.readFully(b, 0, 2);
         return bytesToShort(b, little);
     }
 
     /** Reads 2 unsigned bytes [0, 65535]. */
-    public static int read2UnsignedBytes(final DataInput in, final boolean little)
-            throws IOException {
+    public static int read2UnsignedBytes(final DataInput in, final boolean little) throws IOException {
         int q = read2SignedBytes(in, little);
         if (q < 0) {
             q += 65536;
@@ -108,16 +104,14 @@ public final class DataTools {
     }
 
     /** Reads 4 signed bytes [-2147483648, 2147483647]. */
-    public static int read4SignedBytes(final DataInput in, final boolean little)
-            throws IOException {
-        final byte[] b = (byte[]) eightBytes.get();
+    public static int read4SignedBytes(final DataInput in, final boolean little) throws IOException {
+        final byte[] b = (byte[])eightBytes.get();
         in.readFully(b, 0, 4);
         return bytesToInt(b, little);
     }
 
     /** Reads 4 unsigned bytes [0, 4294967296]. */
-    public static long read4UnsignedBytes(final DataInput in, final boolean little)
-            throws IOException {
+    public static long read4UnsignedBytes(final DataInput in, final boolean little) throws IOException {
         long q = read4SignedBytes(in, little);
         if (q < 0) {
             q += 4294967296L;
@@ -126,37 +120,32 @@ public final class DataTools {
     }
 
     /** Reads 8 signed bytes [-9223372036854775808, 9223372036854775807]. */
-    public static long read8SignedBytes(final DataInput in, final boolean little)
-            throws IOException {
-        final byte[] b = (byte[]) eightBytes.get();
+    public static long read8SignedBytes(final DataInput in, final boolean little) throws IOException {
+        final byte[] b = (byte[])eightBytes.get();
         in.readFully(b, 0, 8);
         return bytesToLong(b, little);
     }
 
     /** Reads 4 bytes in single precision IEEE format. */
-    public static float readFloat(final DataInput in, final boolean little)
-            throws IOException {
+    public static float readFloat(final DataInput in, final boolean little) throws IOException {
         return Float.intBitsToFloat(read4SignedBytes(in, little));
     }
 
     /** Reads 8 bytes in double precision IEEE format. */
-    public static double readDouble(final DataInput in, final boolean little)
-            throws IOException {
+    public static double readDouble(final DataInput in, final boolean little) throws IOException {
         return Double.longBitsToDouble(read8SignedBytes(in, little));
     }
 
     // -- Data writing --
 
     /** Writes a string to the given data output destination. */
-    public static void writeString(final DataOutput out, final String s)
-            throws IOException {
+    public static void writeString(final DataOutput out, final String s) throws IOException {
         final byte[] b = s.getBytes("UTF-8");
         out.write(b);
     }
 
     /** Writes an integer to the given data output destination. */
-    public static void writeInt(final DataOutput out, final int v, final boolean little)
-            throws IOException {
+    public static void writeInt(final DataOutput out, final int v, final boolean little) throws IOException {
         if (little) {
             out.write(v & 0xFF);
             out.write((v >>> 8) & 0xFF);
@@ -171,8 +160,7 @@ public final class DataTools {
     }
 
     /** Writes a short to the given data output destination. */
-    public static void writeShort(final DataOutput out, final int v, final boolean little)
-            throws IOException {
+    public static void writeShort(final DataOutput out, final int v, final boolean little) throws IOException {
         if (little) {
             out.write(v & 0xFF);
             out.write((v >>> 8) & 0xFF);
@@ -185,49 +173,41 @@ public final class DataTools {
     // -- Word decoding --
 
     /**
-     * Translates up to the first len bytes of a byte array beyond the given
-     * offset to a short. If there are fewer than 2 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first len bytes of a byte array beyond the given offset to a short. If there are fewer than
+     * 2 bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
-    public static short bytesToShort(final byte[] bytes, final int off, int len,
-                                     final boolean little) {
+    public static short bytesToShort(final byte[] bytes, final int off, int len, final boolean little) {
         if ((bytes.length - off) < len) {
             len = bytes.length - off;
         }
         short total = 0;
         for (int i = 0, ndx = off; i < len; i++, ndx++) {
-            total |= (bytes[ndx] < 0 ? 256 + bytes[ndx]
-                    : (int) bytes[ndx]) << ((little ? i
-                            : len - i - 1) * 8);
+            total |= (bytes[ndx] < 0 ? 256 + bytes[ndx] : (int)bytes[ndx]) << ((little ? i : len - i - 1) * 8);
         }
         return total;
     }
 
     /**
-     * Translates up to the first 2 bytes of a byte array beyond the given
-     * offset to a short. If there are fewer than 2 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first 2 bytes of a byte array beyond the given offset to a short. If there are fewer than 2
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
     public static short bytesToShort(final byte[] bytes, final int off, final boolean little) {
         return bytesToShort(bytes, off, 2, little);
     }
 
     /**
-     * Translates up to the first 2 bytes of a byte array to a short. If
-     * there are fewer than 2 bytes in the array, the MSBs are all assumed
-     * to be zero (regardless of endianness).
+     * Translates up to the first 2 bytes of a byte array to a short. If there are fewer than 2 bytes in the array, the
+     * MSBs are all assumed to be zero (regardless of endianness).
      */
     public static short bytesToShort(final byte[] bytes, final boolean little) {
         return bytesToShort(bytes, 0, 2, little);
     }
 
     /**
-     * Translates up to the first len bytes of a byte array byond the given
-     * offset to a short. If there are fewer than 2 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first len bytes of a byte array byond the given offset to a short. If there are fewer than 2
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
-    public static short bytesToShort(final short[] bytes, final int off, int len,
-                                     final boolean little) {
+    public static short bytesToShort(final short[] bytes, final int off, int len, final boolean little) {
         if ((bytes.length - off) < len) {
             len = bytes.length - off;
         }
@@ -239,67 +219,57 @@ public final class DataTools {
     }
 
     /**
-     * Translates up to the first 2 bytes of a byte array byond the given
-     * offset to a short. If there are fewer than 2 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first 2 bytes of a byte array byond the given offset to a short. If there are fewer than 2
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
     public static short bytesToShort(final short[] bytes, final int off, final boolean little) {
         return bytesToShort(bytes, off, 2, little);
     }
 
     /**
-     * Translates up to the first 2 bytes of a byte array to a short. If
-     * there are fewer than 2 bytes in the array, the MSBs are all assumed
-     * to be zero (regardless of endianness).
+     * Translates up to the first 2 bytes of a byte array to a short. If there are fewer than 2 bytes in the array, the
+     * MSBs are all assumed to be zero (regardless of endianness).
      */
     public static short bytesToShort(final short[] bytes, final boolean little) {
         return bytesToShort(bytes, 0, 2, little);
     }
 
     /**
-     * Translates up to the first len bytes of a byte array beyond the given
-     * offset to an int. If there are fewer than 4 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first len bytes of a byte array beyond the given offset to an int. If there are fewer than 4
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
-    public static int bytesToInt(final byte[] bytes, final int off, int len,
-                                 final boolean little) {
+    public static int bytesToInt(final byte[] bytes, final int off, int len, final boolean little) {
         if ((bytes.length - off) < len) {
             len = bytes.length - off;
         }
         int total = 0;
         for (int i = 0, ndx = off; i < len; i++, ndx++) {
-            total |= (bytes[ndx] < 0 ? 256 + bytes[ndx]
-                    : (int) bytes[ndx]) << ((little ? i
-                            : len - i - 1) * 8);
+            total |= (bytes[ndx] < 0 ? 256 + bytes[ndx] : (int)bytes[ndx]) << ((little ? i : len - i - 1) * 8);
         }
         return total;
     }
 
     /**
-     * Translates up to the first 4 bytes of a byte array beyond the given
-     * offset to an int. If there are fewer than 4 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first 4 bytes of a byte array beyond the given offset to an int. If there are fewer than 4
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
     public static int bytesToInt(final byte[] bytes, final int off, final boolean little) {
         return bytesToInt(bytes, off, 4, little);
     }
 
     /**
-     * Translates up to the first 4 bytes of a byte array to an int. If
-     * there are fewer than 4 bytes in the array, the MSBs are all assumed
-     * to be zero (regardless of endianness).
+     * Translates up to the first 4 bytes of a byte array to an int. If there are fewer than 4 bytes in the array, the
+     * MSBs are all assumed to be zero (regardless of endianness).
      */
     public static int bytesToInt(final byte[] bytes, final boolean little) {
         return bytesToInt(bytes, 0, 4, little);
     }
 
     /**
-     * Translates up to the first len bytes of a byte array beyond the given
-     * offset to an int. If there are fewer than 4 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first len bytes of a byte array beyond the given offset to an int. If there are fewer than 4
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
-    public static int bytesToInt(final short[] bytes, final int off, int len,
-                                 final boolean little) {
+    public static int bytesToInt(final short[] bytes, final int off, int len, final boolean little) {
         if ((bytes.length - off) < len) {
             len = bytes.length - off;
         }
@@ -311,91 +281,78 @@ public final class DataTools {
     }
 
     /**
-     * Translates up to the first 4 bytes of a byte array beyond the given
-     * offset to an int. If there are fewer than 4 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first 4 bytes of a byte array beyond the given offset to an int. If there are fewer than 4
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
     public static int bytesToInt(final short[] bytes, final int off, final boolean little) {
         return bytesToInt(bytes, off, 4, little);
     }
 
     /**
-     * Translates up to the first 4 bytes of a byte array to an int. If
-     * there are fewer than 4 bytes in the array, the MSBs are all assumed
-     * to be zero (regardless of endianness).
+     * Translates up to the first 4 bytes of a byte array to an int. If there are fewer than 4 bytes in the array, the
+     * MSBs are all assumed to be zero (regardless of endianness).
      */
     public static int bytesToInt(final short[] bytes, final boolean little) {
         return bytesToInt(bytes, 0, 4, little);
     }
 
     /**
-     * Translates up to the first len bytes of a byte array beyond the given
-     * offset to a long. If there are fewer than 8 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first len bytes of a byte array beyond the given offset to a long. If there are fewer than 8
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
-    public static long bytesToLong(final byte[] bytes, final int off, int len,
-                                   final boolean little) {
+    public static long bytesToLong(final byte[] bytes, final int off, int len, final boolean little) {
         if ((bytes.length - off) < len) {
             len = bytes.length - off;
         }
         long total = 0;
         for (int i = 0, ndx = off; i < len; i++, ndx++) {
-            total |= (bytes[ndx] < 0 ? 256L + bytes[ndx]
-                    : (long) bytes[ndx]) << ((little ? i
-                            : len - i - 1) * 8);
+            total |= (bytes[ndx] < 0 ? 256L + bytes[ndx] : (long)bytes[ndx]) << ((little ? i : len - i - 1) * 8);
         }
         return total;
     }
 
     /**
-     * Translates up to the first 8 bytes of a byte array beyond the given
-     * offset to a long. If there are fewer than 8 bytes in the array, the
-     * MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first 8 bytes of a byte array beyond the given offset to a long. If there are fewer than 8
+     * bytes in the array, the MSBs are all assumed to be zero (regardless of endianness).
      */
     public static long bytesToLong(final byte[] bytes, final int off, final boolean little) {
         return bytesToLong(bytes, off, 8, little);
     }
 
     /**
-     * Translates up to the first 8 bytes of a byte array to a long. If
-     * there are fewer than 8 bytes in the array, the MSBs are all assumed
-     * to be zero (regardless of endianness).
+     * Translates up to the first 8 bytes of a byte array to a long. If there are fewer than 8 bytes in the array, the
+     * MSBs are all assumed to be zero (regardless of endianness).
      */
     public static long bytesToLong(final byte[] bytes, final boolean little) {
         return bytesToLong(bytes, 0, 8, little);
     }
 
     /**
-     * Translates up to the first len bytes of a byte array beyond the given
-     * offset to a long. If there are fewer than 8 bytes to be translated,
-     * the MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first len bytes of a byte array beyond the given offset to a long. If there are fewer than 8
+     * bytes to be translated, the MSBs are all assumed to be zero (regardless of endianness).
      */
-    public static long bytesToLong(final short[] bytes, final int off, int len,
-                                   final boolean little) {
+    public static long bytesToLong(final short[] bytes, final int off, int len, final boolean little) {
         if ((bytes.length - off) < len) {
             len = bytes.length - off;
         }
         long total = 0;
         for (int i = 0, ndx = off; i < len; i++, ndx++) {
-            total |= ((long) bytes[ndx]) << ((little ? i : len - i
-                    - 1) * 8);
+            total |= ((long)bytes[ndx]) << ((little ? i : len - i - 1) * 8);
         }
         return total;
     }
 
     /**
-     * Translates up to the first 8 bytes of a byte array beyond the given
-     * offset to a long. If there are fewer than 8 bytes to be translated,
-     * the MSBs are all assumed to be zero (regardless of endianness).
+     * Translates up to the first 8 bytes of a byte array beyond the given offset to a long. If there are fewer than 8
+     * bytes to be translated, the MSBs are all assumed to be zero (regardless of endianness).
      */
     public static long bytesToLong(final short[] bytes, final int off, final boolean little) {
         return bytesToLong(bytes, off, 8, little);
     }
 
     /**
-     * Translates up to the first 8 bytes of a byte array to a long. If
-     * there are fewer than 8 bytes in the array, the MSBs are all assumed
-     * to be zero (regardless of endianness).
+     * Translates up to the first 8 bytes of a byte array to a long. If there are fewer than 8 bytes in the array, the
+     * MSBs are all assumed to be zero (regardless of endianness).
      */
     public static long bytesToLong(final short[] bytes, final boolean little) {
         return bytesToLong(bytes, 0, 8, little);
@@ -404,19 +361,19 @@ public final class DataTools {
     // -- Byte swapping --
 
     public static short swap(final short x) {
-        return (short) ((x << 8) | ((x >> 8) & 0xFF));
+        return (short)((x << 8) | ((x >> 8) & 0xFF));
     }
 
     public static char swap(final char x) {
-        return (char) ((x << 8) | ((x >> 8) & 0xFF));
+        return (char)((x << 8) | ((x >> 8) & 0xFF));
     }
 
     public static int swap(final int x) {
-        return ((swap((short) x) << 16) | (swap((short) (x >> 16)) & 0xFFFF));
+        return ((swap((short)x) << 16) | (swap((short)(x >> 16)) & 0xFFFF));
     }
 
     public static long swap(final long x) {
-        return (((long) swap((int) x) << 32) | (swap((int) (x >> 32)) & 0xFFFFFFFFL));
+        return (((long)swap((int)x) << 32) | (swap((int)(x >> 32)) & 0xFFFFFFFFL));
     }
 
     // -- Miscellaneous --
@@ -452,18 +409,16 @@ public final class DataTools {
 
         final String sub1 = s1.substring((slash1 == -1) ? 0 : slash1 + 1, n1);
         final String sub2 = s2.substring((slash2 == -1) ? 0 : slash2 + 1, n2);
-        return sub1.equals(sub2) || sub1.startsWith(sub2)
-                || sub2.startsWith(sub1);
+        return sub1.equals(sub2) || sub1.startsWith(sub2) || sub2.startsWith(sub1);
     }
 
     /**
-     * Convert a byte array to the appropriate primitive type array. The
-     * 'bpp' parameter denotes the number of bytes in the returned primitive
-     * type (e.g. if bpp == 2, we should return an array of type short). If
-     * 'fp' is set and bpp == 4 or bpp == 8, then return floats or doubles.
+     * Convert a byte array to the appropriate primitive type array. The 'bpp' parameter denotes the number of bytes in
+     * the returned primitive type (e.g. if bpp == 2, we should return an array of type short). If 'fp' is set and bpp
+     * == 4 or bpp == 8, then return floats or doubles.
      */
-    public static void fillDataArray(final Object alloc, final byte[] b, final int bpp,
-                                     final boolean fp, final boolean little) {
+    public static void fillDataArray(final Object alloc, final byte[] b, final int bpp, final boolean fp,
+                                     final boolean little) {
 
         if (alloc instanceof byte[]) {
             System.arraycopy(b, 0, alloc, 0, b.length);
@@ -472,11 +427,10 @@ public final class DataTools {
 
         if (alloc instanceof int[]) {
             if ((bpp != 4) || fp) {
-                throw new RuntimeException(
-                                           "Incompatible types in makeDataArray");
+                throw new RuntimeException("Incompatible types in makeDataArray");
             }
 
-            final int[] i = (int[]) alloc;
+            final int[] i = (int[])alloc;
             for (int j = 0; j < i.length; j++) {
                 i[j] = bytesToInt(b, j * 4, 4, little);
             }
@@ -486,11 +440,10 @@ public final class DataTools {
 
         if (alloc instanceof long[]) {
             if ((bpp != 8) || fp) {
-                throw new RuntimeException(
-                                           "Incompatible types in makeDataArray");
+                throw new RuntimeException("Incompatible types in makeDataArray");
             }
 
-            final long[] l = (long[]) alloc;
+            final long[] l = (long[])alloc;
             for (int i = 0; i < l.length; i++) {
                 l[i] = bytesToLong(b, i * 8, 8, little);
             }
@@ -499,14 +452,12 @@ public final class DataTools {
 
         if (alloc instanceof double[]) {
             if ((bpp != 8) || !fp) {
-                throw new RuntimeException(
-                                           "Incompatible types in makeDataArray");
+                throw new RuntimeException("Incompatible types in makeDataArray");
             }
 
-            final double[] d = (double[]) alloc;
+            final double[] d = (double[])alloc;
             for (int i = 0; i < d.length; i++) {
-                d[i] = Double.longBitsToDouble(bytesToLong(b,
-                                                           i * 8, 8, little));
+                d[i] = Double.longBitsToDouble(bytesToLong(b, i * 8, 8, little));
             }
 
             return;
@@ -514,14 +465,12 @@ public final class DataTools {
 
         if (alloc instanceof float[]) {
             if ((bpp != 4) || !fp) {
-                throw new RuntimeException(
-                                           "Incompatible types in makeDataArray");
+                throw new RuntimeException("Incompatible types in makeDataArray");
             }
 
-            final float[] f = (float[]) alloc;
+            final float[] f = (float[])alloc;
             for (int i = 0; i < f.length; i++) {
-                f[i] = Float.intBitsToFloat(bytesToInt(b,
-                                                       i * 4, 4, little));
+                f[i] = Float.intBitsToFloat(bytesToInt(b, i * 4, 4, little));
             }
 
             return;
@@ -529,11 +478,10 @@ public final class DataTools {
 
         if (alloc instanceof short[]) {
             if ((bpp != 2) || fp) {
-                throw new RuntimeException(
-                                           "Incompatible types in makeDataArray");
+                throw new RuntimeException("Incompatible types in makeDataArray");
             }
 
-            final short[] s = (short[]) alloc;
+            final short[] s = (short[])alloc;
             for (int i = 0; i < s.length; i++) {
                 s[i] = bytesToShort(b, i * 2, 2, little);
             }
@@ -541,18 +489,15 @@ public final class DataTools {
             return;
         }
 
-        throw new RuntimeException(
-                "No compatible type found in makeDataArray");
+        throw new RuntimeException("No compatible type found in makeDataArray");
     }
 
     /**
-     * Convert a byte array to the appropriate primitive type array. The
-     * 'bpp' parameter denotes the number of bytes in the returned primitive
-     * type (e.g. if bpp == 2, we should return an array of type short). If
-     * 'fp' is set and bpp == 4 or bpp == 8, then return floats or doubles.
+     * Convert a byte array to the appropriate primitive type array. The 'bpp' parameter denotes the number of bytes in
+     * the returned primitive type (e.g. if bpp == 2, we should return an array of type short). If 'fp' is set and bpp
+     * == 4 or bpp == 8, then return floats or doubles.
      */
-    public static Object makeDataArray(final byte[] b, final int bpp, final boolean fp,
-                                       final boolean little) {
+    public static Object makeDataArray(final byte[] b, final int bpp, final boolean fp, final boolean little) {
         if (bpp == 1) {
             return b;
         } else if (bpp == 2) {
@@ -564,8 +509,7 @@ public final class DataTools {
         } else if ((bpp == 4) && fp) {
             final float[] f = new float[b.length / 4];
             for (int i = 0; i < f.length; i++) {
-                f[i] = Float.intBitsToFloat(bytesToInt(b,
-                                                       i * 4, 4, little));
+                f[i] = Float.intBitsToFloat(bytesToInt(b, i * 4, 4, little));
             }
             return f;
         } else if (bpp == 4) {
@@ -577,8 +521,7 @@ public final class DataTools {
         } else if ((bpp == 8) && fp) {
             final double[] d = new double[b.length / 8];
             for (int i = 0; i < d.length; i++) {
-                d[i] = Double.longBitsToDouble(bytesToLong(b,
-                                                           i * 8, 8, little));
+                d[i] = Double.longBitsToDouble(bytesToLong(b, i * 8, 8, little));
             }
             return d;
         } else if (bpp == 8) {
@@ -592,8 +535,7 @@ public final class DataTools {
     }
 
     /**
-     * Normalize the given float array so that the minimum value maps to 0.0
-     * and the maximum value maps to 1.0.
+     * Normalize the given float array so that the minimum value maps to 0.0 and the maximum value maps to 1.0.
      */
     public static float[] normalizeFloats(final float[] data) {
         final float[] rtn = new float[data.length];
@@ -615,17 +557,17 @@ public final class DataTools {
 
         // now normalize; min => 0.0, max => 1.0
 
-                for (int i = 0; i < rtn.length; i++) {
-                    rtn[i] = data[i] / max;
-                    if (rtn[i] < 0f) {
-                        rtn[i] = 0f;
-                    }
-                    if (rtn[i] > 1f) {
-                        rtn[i] = 1f;
-                    }
-                }
+        for (int i = 0; i < rtn.length; i++) {
+            rtn[i] = data[i] / max;
+            if (rtn[i] < 0f) {
+                rtn[i] = 0f;
+            }
+            if (rtn[i] > 1f) {
+                rtn[i] = 1f;
+            }
+        }
 
-                return rtn;
+        return rtn;
     }
 
     // -- Date handling --
@@ -645,8 +587,7 @@ public final class DataTools {
                 break;
         }
 
-        final SimpleDateFormat fmt = new SimpleDateFormat(
-                                                          "yyyy-MM-dd HH:mm:ss.SSS");
+        final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         final StringBuffer sb = new StringBuffer();
 
         final Date d = new Date(ms);

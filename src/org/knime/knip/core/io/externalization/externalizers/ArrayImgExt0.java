@@ -61,7 +61,7 @@ import org.knime.knip.core.io.externalization.Externalizer;
 import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ArrayImgExt0 implements Externalizer<ArrayImg> {
@@ -92,34 +92,31 @@ public class ArrayImgExt0 implements Externalizer<ArrayImg> {
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @throws Exception
      */
     @Override
-    public ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> read(
-                                                                                final BufferedDataInputStream in) throws Exception {
+    public ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> read(final BufferedDataInputStream in)
+            throws Exception {
         final long[] dims = new long[in.readInt()];
         in.read(dims);
 
-        final NativeType<?> type = (NativeType<?>) ExternalizerManager
-                .<Class> read(in).newInstance();
+        final NativeType<?> type = (NativeType<?>)ExternalizerManager.<Class> read(in).newInstance();
 
-        final ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img = new ArrayImgFactory()
-        .create(dims, type);
-        in.readLArray(((ArrayDataAccess<?>) img.update(null))
-                      .getCurrentStorageArray());
+        final ArrayImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>> img =
+                new ArrayImgFactory().create(dims, type);
+        in.readLArray(((ArrayDataAccess<?>)img.update(null)).getCurrentStorageArray());
 
         return img;
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @throws Exception
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final ArrayImg obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final ArrayImg obj) throws Exception {
 
         // write dimensions
         out.writeInt(obj.numDimensions());
@@ -127,10 +124,8 @@ public class ArrayImgExt0 implements Externalizer<ArrayImg> {
             out.writeLong(obj.dimension(i));
         }
 
-        ExternalizerManager.<Class> write(out, obj.firstElement()
-                                          .getClass());
-        out.writeArray(((ArrayDataAccess) obj.update(null))
-                       .getCurrentStorageArray());
+        ExternalizerManager.<Class> write(out, obj.firstElement().getClass());
+        out.writeArray(((ArrayDataAccess)obj.update(null)).getCurrentStorageArray());
 
     }
 }

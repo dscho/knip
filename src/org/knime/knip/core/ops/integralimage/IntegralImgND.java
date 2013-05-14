@@ -64,26 +64,23 @@ import net.imglib2.view.Views;
  */
 
 /**
- * n-dimensional integral image that stores sums using type {@param <T>}. Care
- * must be taken that sums do not overflow the capacity of type {@param <T>}.
- *
- * The integral image will be one pixel larger in each dimension as for easy
- * computation of sums it has to contain "zeros" at the beginning of each
- * dimension. User {@link #bufferFactory()} to create an appropriate image.
- *
- * Sums are done with the precision of {@param <T>} and then set to the integral
- * image type, which may crop the values according to the type's capabilities.
- *
- * @param <R>
- *                The type of the input image.
- * @param <T>
- *                The type of the integral image.
+ * n-dimensional integral image that stores sums using type {@param <T>}. Care must be taken that sums do not overflow
+ * the capacity of type {@param <T>}.
+ * 
+ * The integral image will be one pixel larger in each dimension as for easy computation of sums it has to contain
+ * "zeros" at the beginning of each dimension. User {@link #bufferFactory()} to create an appropriate image.
+ * 
+ * Sums are done with the precision of {@param <T>} and then set to the integral image type, which may crop the values
+ * according to the type's capabilities.
+ * 
+ * @param <R> The type of the input image.
+ * @param <T> The type of the integral image.
  */
-public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & NativeType<T>>
-implements
+public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & NativeType<T>> implements
 UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
     private final ImgFactory<T> m_factory;
+
     private T m_type;
 
     public IntegralImgND(final ImgFactory<T> factory, final T type) {
@@ -102,19 +99,16 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
             @SuppressWarnings("unchecked")
             @Override
-            public RandomAccessibleInterval<T> instantiate(
-                                                           final RandomAccessibleInterval<R> input) {
+            public RandomAccessibleInterval<T> instantiate(final RandomAccessibleInterval<R> input) {
 
-                final R probe = input.randomAccess().get()
-                        .createVariable();
+                final R probe = input.randomAccess().get().createVariable();
                 if (m_type == null) {
-                    if ((probe instanceof LongType)
-                            || (probe instanceof Unsigned12BitType)) {
-                        m_type = (T) new LongType();
+                    if ((probe instanceof LongType) || (probe instanceof Unsigned12BitType)) {
+                        m_type = (T)new LongType();
                     } else if (probe instanceof IntegerType) {
-                        m_type = (T) new IntType();
+                        m_type = (T)new IntType();
                     } else {
-                        m_type = (T) new DoubleType();
+                        m_type = (T)new DoubleType();
                     }
                 }
 
@@ -137,8 +131,7 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
     }
 
     @Override
-    public RandomAccessibleInterval<T> compute(
-                                               final RandomAccessibleInterval<R> input,
+    public RandomAccessibleInterval<T> compute(final RandomAccessibleInterval<R> input,
                                                final RandomAccessibleInterval<T> output) {
 
         // the following methods alter output
@@ -160,22 +153,16 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
             errorSum += inputCursor.next().getRealDouble();
         }
 
-        if ((errorSum > output.randomAccess().get().createVariable()
-                .getMaxValue())
-                || Double.isInfinite(errorSum)) {
-            throw new RuntimeException(
-                                       new IncompatibleTypeException(
-                                                                     output,
-                                                                     "Integral image breaks type boundaries of the output image. (max value of "
-                                                                             + errorSum
-                                                                             + " is too much)"));
+        if ((errorSum > output.randomAccess().get().createVariable().getMaxValue()) || Double.isInfinite(errorSum)) {
+            throw new RuntimeException(new IncompatibleTypeException(output,
+                                                                     "Integral image breaks type boundaries of the output image. (max value of " + errorSum
+                                                                     + " is too much)"));
         }
 
         return output;
     }
 
-    public void process_1D(final RandomAccessibleInterval<R> input,
-                           final RandomAccessibleInterval<T> output) {
+    public void process_1D(final RandomAccessibleInterval<R> input, final RandomAccessibleInterval<T> output) {
         final T tmpVar = output.randomAccess().get().createVariable();
         final T sum = output.randomAccess().get().createVariable();
 
@@ -202,8 +189,7 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
         }
     }
 
-    private void process_nD_initialDimension(
-                                             final RandomAccessibleInterval<R> input,
+    private void process_nD_initialDimension(final RandomAccessibleInterval<R> input,
                                              final RandomAccessibleInterval<T> output) {
 
         final int numDimensions = output.numDimensions();
@@ -222,8 +208,7 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
             fakeSize[d - 1] = output.dimension(d);
         }
 
-        final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
-                                                                                                  fakeSize);
+        final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(fakeSize);
 
         final RandomAccess<R> cursorIn = input.randomAccess();
         final RandomAccess<T> cursorOut = output.randomAccess();
@@ -263,13 +248,11 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
             cursorOut.setPosition(tmpOut);
 
             // integrate over the line
-            integrateLineDim0(cursorIn, cursorOut, sum, tmpVar,
-                              size);
+            integrateLineDim0(cursorIn, cursorOut, sum, tmpVar, size);
         }
     }
 
-    private void process_nD_remainingDimensions(
-                                                final RandomAccessibleInterval<R> input,
+    private void process_nD_remainingDimensions(final RandomAccessibleInterval<R> input,
                                                 final RandomAccessibleInterval<T> output) {
 
         final int numDimensions = output.numDimensions();
@@ -287,17 +270,14 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
             int countDim = 0;
             for (int e = 0; e < numDimensions; ++e) {
                 if (e != d) {
-                    fakeSize[countDim++] = output
-                            .dimension(e);
+                    fakeSize[countDim++] = output.dimension(e);
                 }
             }
 
-            final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(
-                                                                                                      fakeSize);
+            final LocalizingZeroMinIntervalIterator cursorDim = new LocalizingZeroMinIntervalIterator(fakeSize);
 
             final RandomAccess<T> cursor = output.randomAccess();
-            final T sum = output.randomAccess().get()
-                    .createVariable();
+            final T sum = output.randomAccess().get().createVariable();
 
             while (cursorDim.hasNext()) {
                 cursorDim.fwd();
@@ -326,8 +306,7 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
         }
     }
 
-    protected void integrateLineDim0(final RandomAccess<R> cursorIn,
-                                     final RandomAccess<T> cursorOut, final T sum,
+    protected void integrateLineDim0(final RandomAccess<R> cursorIn, final RandomAccess<T> cursorOut, final T sum,
                                      final T tmpVar, final long size) {
         // compute the first pixel
         sum.setReal(cursorIn.get().getRealDouble());
@@ -343,8 +322,7 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
         }
     }
 
-    protected void integrateLine(final int d, final RandomAccess<T> cursor,
-                                 final T sum, final long size) {
+    protected void integrateLine(final int d, final RandomAccess<T> cursor, final T sum, final long size) {
         // init sum on first pixel that is not zero
         sum.set(cursor.get());
 
@@ -358,13 +336,12 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
     // convenience method
     /**
-     *
+     * 
      * @param integralImage
-     * @return a helper object that efficiently computes sums on the
-     *         provided integral image.
+     * @return a helper object that efficiently computes sums on the provided integral image.
      */
-    public final static <T extends RealType<T>> IntegralImgSumAgent<T> getSumAgent(
-                                                                                   final RandomAccessibleInterval<T> integralImage) {
+    public final static <T extends RealType<T>> IntegralImgSumAgent<T>
+    getSumAgent(final RandomAccessibleInterval<T> integralImage) {
         return new IntegralImgSumAgent<T>(integralImage);
     }
 

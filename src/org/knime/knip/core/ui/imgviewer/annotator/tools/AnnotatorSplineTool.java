@@ -6,8 +6,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
 import org.knime.knip.core.ui.imgviewer.overlay.elements.SplineOverlayElement;
 
-public class AnnotatorSplineTool extends
-AnnotationDrawingTool<SplineOverlayElement<String>> {
+public class AnnotatorSplineTool extends AnnotationDrawingTool<SplineOverlayElement<String>> {
 
     public AnnotatorSplineTool() {
         super("Spline", "tool-spline.png");
@@ -34,19 +33,15 @@ AnnotationDrawingTool<SplineOverlayElement<String>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onMousePressedLeft(final ImgViewerMouseEvent e,
-                                   SplineOverlayElement<String> currentOverlayElement,
+    public void onMousePressedLeft(final ImgViewerMouseEvent e, SplineOverlayElement<String> currentOverlayElement,
                                    final PlaneSelectionEvent selection, final Overlay<String> overlay,
                                    final String... labels) {
-        if ((currentOverlayElement == null)
-                || (currentOverlayElement.getStatus() != OverlayElementStatus.DRAWING)) {
-            currentOverlayElement = new SplineOverlayElement<String>(
-                    selection.getPlanePos(e.getPosX(),
-                                          e.getPosY()),
-                                          selection.getDimIndices(), labels);
+        if ((currentOverlayElement == null) || (currentOverlayElement.getStatus() != OverlayElementStatus.DRAWING)) {
+            currentOverlayElement =
+                    new SplineOverlayElement<String>(selection.getPlanePos(e.getPosX(), e.getPosY()),
+                            selection.getDimIndices(), labels);
             overlay.addElement(currentOverlayElement);
-            setCurrentOverlayElement(OverlayElementStatus.DRAWING,
-                                     currentOverlayElement);
+            setCurrentOverlayElement(OverlayElementStatus.DRAWING, currentOverlayElement);
         }
 
         currentOverlayElement.add(e.getPosX(), e.getPosY());

@@ -59,13 +59,13 @@ import net.imglib2.ops.operation.UnaryOperation;
 import org.knime.knip.core.data.LabelGenerator;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
-public class RegularGridSeeds<L extends Comparable<L>> implements
-UnaryOperation<Interval, Labeling<L>> {
+public class RegularGridSeeds<L extends Comparable<L>> implements UnaryOperation<Interval, Labeling<L>> {
 
     private final int m_avgDistance;
+
     private final LabelGenerator<L> m_seedGen;
 
     public RegularGridSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
@@ -81,8 +81,7 @@ UnaryOperation<Interval, Labeling<L>> {
     public Labeling<L> compute(final Interval input, final Labeling<L> output) {
         m_seedGen.reset();
         final RandomAccess<LabelingType<L>> out = output.randomAccess();
-        while (out.getIntPosition(output.numDimensions() - 1) < input
-                .dimension(output.numDimensions() - 1)) {
+        while (out.getIntPosition(output.numDimensions() - 1) < input.dimension(output.numDimensions() - 1)) {
             out.get().setLabel(m_seedGen.nextLabel());
             out.move(m_avgDistance, 0);
 

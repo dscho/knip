@@ -4,10 +4,10 @@ import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.numeric.RealType;
 
-public class RealTypeClipper<T extends RealType<T>> implements
-UnaryOutputOperation<T, T> {
+public class RealTypeClipper<T extends RealType<T>> implements UnaryOutputOperation<T, T> {
 
     private final double max;
+
     private final double min;
 
     public RealTypeClipper(final double min, final double max) {

@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Calculates a specific set of features (double values) for a particular {@link FeatureTarget}. The feature factory
  * itself basically takes care about which features are enabled.
- *
+ * 
  * @author hornm, University of Konstanz
  * @param <T>
  */
@@ -98,7 +98,7 @@ public class FeatureFactory {
 
     /**
      * Creates a new feature factory
-     *
+     * 
      * @param enableAll if all features of the added feature sets have to be enabled
      * @param fsets
      */
@@ -108,7 +108,7 @@ public class FeatureFactory {
 
     /**
      * Creates a new feature factory
-     *
+     * 
      * @param enableAll if all features of the added feature sets have to be enabled
      * @param fsets
      */
@@ -223,7 +223,7 @@ public class FeatureFactory {
 
     /**
      * Updates a feature target.
-     *
+     * 
      * @param target
      * @param obj
      */
@@ -269,7 +269,7 @@ public class FeatureFactory {
     }
 
     /**
-     *
+     * 
      * @param featID
      * @return the feature for the given feature ID, the feature id is assigned according to the order the feature sets
      *         were added
@@ -306,7 +306,7 @@ public class FeatureFactory {
 
     /**
      * The total number of enabled features.
-     *
+     * 
      * @return num enabled features
      */
     public int getNumFeatures() {
@@ -315,8 +315,8 @@ public class FeatureFactory {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return the names of the enabled features.
      */
     public String[] getFeatureNames() {
@@ -369,7 +369,7 @@ public class FeatureFactory {
                 m_method.invoke(m_listener, target);
             } catch (final Exception e) {
                 throw new RuntimeException(
-                        "InvocationTargetException when invoking annotated method from FeatureTarget Update. Data: "
+                                           "InvocationTargetException when invoking annotated method from FeatureTarget Update. Data: "
 
                         + target.toString() + ", subscriber:" + m_listener, e);
             }

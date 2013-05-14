@@ -20,12 +20,11 @@ import org.knime.knip.core.features.seg.ExtractOutlineImg;
 
 /**
  * Input: Outline Image {@link ExtractOutlineImg}
- *
+ * 
  * @author dietzc, schoenenbergerf
- *
+ * 
  */
-public class CalculatePerimeter implements
-UnaryOutputOperation<Img<BitType>, DoubleType> {
+public class CalculatePerimeter implements UnaryOutputOperation<Img<BitType>, DoubleType> {
 
     private final DirectConvolver<BitType, UnsignedShortType, UnsignedShortType> m_convolve;
 
@@ -36,12 +35,11 @@ UnaryOutputOperation<Img<BitType>, DoubleType> {
 
     private static synchronized Img<UnsignedShortType> getKernel() {
         @SuppressWarnings("unchecked")
-        final ArrayImg<UnsignedShortType, ShortArray> img = (ArrayImg<UnsignedShortType, ShortArray>) new ArrayImgFactory<UnsignedShortType>()
-        .create(new long[] { 3, 3 },
-                new UnsignedShortType());
+        final ArrayImg<UnsignedShortType, ShortArray> img =
+        (ArrayImg<UnsignedShortType, ShortArray>)new ArrayImgFactory<UnsignedShortType>().create(new long[]{3,
+                3}, new UnsignedShortType());
 
-        final short[] storage = img.update(null)
-                .getCurrentStorageArray();
+        final short[] storage = img.update(null).getCurrentStorageArray();
 
         storage[0] = 10;
         storage[1] = 2;
@@ -60,20 +58,14 @@ UnaryOutputOperation<Img<BitType>, DoubleType> {
     public DoubleType compute(final Img<BitType> op, final DoubleType r) {
         Img<UnsignedShortType> img = null;
         try {
-            img = (Img<UnsignedShortType>) m_convolve
-                    .compute(Views.extend(
-                                          op,
-                                          new OutOfBoundsMirrorFactory<BitType, Img<BitType>>(
-                                                  Boundary.SINGLE)),
-                                                  getKernel(),
-                                                  op.factory()
-                                                  .imgFactory(new UnsignedShortType())
-                                                  .create(op,
-                                                          new UnsignedShortType()));
+            img =
+                    (Img<UnsignedShortType>)m_convolve
+                    .compute(Views.extend(op, new OutOfBoundsMirrorFactory<BitType, Img<BitType>>(
+                            Boundary.SINGLE)), getKernel(), op.factory().imgFactory(new UnsignedShortType())
+                            .create(op, new UnsignedShortType()));
         } catch (final IncompatibleTypeException e) {
             // If factory not compatible
-            img = new ArrayImgFactory<UnsignedShortType>().create(
-                                                                  op, new UnsignedShortType());
+            img = new ArrayImgFactory<UnsignedShortType>().create(op, new UnsignedShortType());
         }
         final Cursor<UnsignedShortType> c = img.cursor();
 
@@ -106,8 +98,7 @@ UnaryOutputOperation<Img<BitType>, DoubleType> {
 
         }
 
-        r.set(catA + (catB * Math.sqrt(2)) + (catC
-                * ((1d + Math.sqrt(2)) / 2d)));
+        r.set(catA + (catB * Math.sqrt(2)) + (catC * ((1d + Math.sqrt(2)) / 2d)));
 
         return r;
     }

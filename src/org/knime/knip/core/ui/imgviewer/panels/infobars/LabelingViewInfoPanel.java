@@ -10,9 +10,9 @@ import net.imglib2.labeling.LabelingType;
 import net.imglib2.meta.CalibratedSpace;
 
 /**
- *
- *
- *
+ * 
+ * 
+ * 
  * @author dietzc, hornm, schoenenbergerf
  */
 public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPanel<LabelingType<L>> {
@@ -51,7 +51,7 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPane
             buffer.deleteCharAt(buffer.length() - 1);
         }
 
-        StringBuffer valueBuffer = new StringBuffer();
+        final StringBuffer valueBuffer = new StringBuffer();
 
         if ((coords[m_sel.getPlaneDimIndex1()] != -1) && (coords[m_sel.getPlaneDimIndex2()] != -1)) {
             rndAccess.setPosition(coords);

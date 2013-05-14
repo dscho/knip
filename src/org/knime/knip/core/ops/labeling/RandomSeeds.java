@@ -62,17 +62,17 @@ import net.imglib2.view.Views;
 import org.knime.knip.core.data.LabelGenerator;
 
 /**
- *
- *
+ * 
+ * 
  * random seed with a certain average distance
- *
- *
+ * 
+ * 
  * @author hornm, University of Konstanz
  */
-public class RandomSeeds<L extends Comparable<L>> implements
-UnaryOperation<Interval, Labeling<L>> {
+public class RandomSeeds<L extends Comparable<L>> implements UnaryOperation<Interval, Labeling<L>> {
 
     private final int m_avgDistance;
+
     private final LabelGenerator<L> m_seedGen;
 
     public RandomSeeds(final LabelGenerator<L> seedGen, final int avgDistance) {
@@ -88,12 +88,10 @@ UnaryOperation<Interval, Labeling<L>> {
         m_seedGen.reset();
         final Random rand = new Random();
         final long[] currentGridPos = new long[output.numDimensions()];
-        final RandomAccess<LabelingType<L>> out = Views.extendValue(
-                                                                    output, output.firstElement().createVariable())
-                                                                    .randomAccess();
+        final RandomAccess<LabelingType<L>> out =
+                Views.extendValue(output, output.firstElement().createVariable()).randomAccess();
 
-        while (currentGridPos[currentGridPos.length - 1] < input
-                .dimension(currentGridPos.length - 1)) {
+        while (currentGridPos[currentGridPos.length - 1] < input.dimension(currentGridPos.length - 1)) {
 
             /* regular grid */
 
@@ -102,9 +100,7 @@ UnaryOperation<Interval, Labeling<L>> {
             // introduce randomness into the
             // grid position
             for (int i = 0; i < currentGridPos.length; i++) {
-                out.setPosition(currentGridPos[i]
-                        + rand.nextInt(m_avgDistance),
-                        i);
+                out.setPosition(currentGridPos[i] + rand.nextInt(m_avgDistance), i);
 
             }
             out.get().setLabel(m_seedGen.nextLabel());

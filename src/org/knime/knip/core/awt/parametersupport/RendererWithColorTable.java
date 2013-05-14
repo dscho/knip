@@ -7,9 +7,9 @@ import net.imglib2.display.ColorTable;
  * color tables do not interfere a 2nd interface is defined.
  */
 /**
- *
+ * 
  * @author zinsmaie
- *
+ * 
  */
 public interface RendererWithColorTable {
 

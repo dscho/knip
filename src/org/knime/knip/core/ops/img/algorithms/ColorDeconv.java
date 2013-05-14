@@ -8,11 +8,11 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * TODO: Verify the correctness of this implementation!! (e.g. compared to the ImageJ plugin)
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>> implements
-        UnaryOperation<K, K> {
+UnaryOperation<K, K> {
 
     private final int m_dimX;
 
@@ -66,7 +66,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @return
      */
     @Override
@@ -183,7 +183,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
         for (int i = 0; i < stainVectors.length; i++) {
             final double len =
                     Math.sqrt((stainVectors[i][0] * stainVectors[i][0]) + (stainVectors[i][1] * stainVectors[i][1])
-                            + (stainVectors[i][2] * stainVectors[i][2]));
+                              + (stainVectors[i][2] * stainVectors[i][2]));
             stainVectors[i][0] = stainVectors[i][0] / len;
             stainVectors[i][1] = stainVectors[i][1] / len;
             stainVectors[i][2] = stainVectors[i][2] / len;
@@ -264,7 +264,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
     /**
      * die matrix ist links aufgebaut, die entsprechenen indizes im array rechts m11 m12 m13 0 1 2 a b c m21 m22 m23 3 4
      * 5 d e f m31 m32 m33 6 7 8 g h i
-     *
+     * 
      */
     private double[] inverseOf(final double[] m) {
         final double[] res = new double[9];
@@ -273,7 +273,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
         // http://www.mathe-online.at/materialien/klaus.berger/files/Matrizen/determinante.pdf
         double det =
                 ((m[0] * m[4] * m[8]) + (m[1] * m[5] * m[6]) + (m[2] * m[3] * m[7])) - (m[6] * m[4] * m[2])
-                        - (m[7] * m[5] * m[0]) - (m[8] * m[3] * m[1]);
+                - (m[7] * m[5] * m[0]) - (m[8] * m[3] * m[1]);
 
         // berechne inverse einer matrix
         // http://de.wikipedia.org/wiki/Inverse_Matrix
@@ -292,7 +292,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
     }
 
     /**
-     *
+     * 
      * @param a 3x3 matrix
      * @param b 3x3 matrix
      * @return the multiplied matrices

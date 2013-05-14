@@ -75,7 +75,7 @@ import org.knime.knip.core.types.NativeTypes;
 
 /**
  * Naive img externalization.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ImgExt0 implements Externalizer<Img> {
@@ -110,22 +110,18 @@ public class ImgExt0 implements Externalizer<Img> {
     @Override
     public Img read(final BufferedDataInputStream in) throws Exception {
 
-        final Type<?> type = (Type<?>) ExternalizerManager.<Class> read(in)
-                .newInstance();
+        final Type<?> type = (Type<?>)ExternalizerManager.<Class> read(in).newInstance();
 
-        final ImgFactory factory = (ImgFactory) ExternalizerManager
-                .<Class> read(in).newInstance();
+        final ImgFactory factory = (ImgFactory)ExternalizerManager.<Class> read(in).newInstance();
 
         final long[] dims = new long[in.readInt()];
         in.read(dims);
 
         @SuppressWarnings("unchecked")
-        final
-        AbstractImg<Type<?>> res = (AbstractImg<Type<?>>) factory
-        .create(dims, type);
+        final AbstractImg<Type<?>> res = (AbstractImg<Type<?>>)factory.create(dims, type);
 
         final Cursor<? extends Type<?>> cur = res.cursor();
-        final int totalSize = (int) res.size();
+        final int totalSize = (int)res.size();
         final int buffSize = 8192;
 
         final NativeTypes nType = NativeTypes.getPixelType(cur.next());
@@ -134,90 +130,76 @@ public class ImgExt0 implements Externalizer<Img> {
         switch (nType) {
             case BITTYPE:
 
-                final Cursor<BitType> bitTypeCursor = (Cursor<BitType>) cur;
-                final boolean[] booleanBuf = new boolean[Math.min(buffSize,
-                                                                  totalSize)];
+                final Cursor<BitType> bitTypeCursor = (Cursor<BitType>)cur;
+                final boolean[] booleanBuf = new boolean[Math.min(buffSize, totalSize)];
                 int currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(booleanBuf, 0, Math.min(
-                                                    booleanBuf.length, totalSize
-                                                    - currIdx));
+                    in.read(booleanBuf, 0, Math.min(booleanBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        bitTypeCursor.get().set(
-                                                booleanBuf[idx++]);
+                        bitTypeCursor.get().set(booleanBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case BYTETYPE:
-                final Cursor<ByteType> byteTypeCursor = (Cursor<ByteType>) cur;
+                final Cursor<ByteType> byteTypeCursor = (Cursor<ByteType>)cur;
                 byte[] byteBuf = new byte[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(byteBuf, 0, Math.min(byteBuf.length,
-                                                 totalSize - currIdx));
+                    in.read(byteBuf, 0, Math.min(byteBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        byteTypeCursor.get()
-                        .set(byteBuf[idx++]);
+                        byteTypeCursor.get().set(byteBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case DOUBLETYPE:
-                final Cursor<DoubleType> doubleTypeCursor = (Cursor<DoubleType>) cur;
-                final double[] doubleBuf = new double[Math.min(buffSize,
-                                                               totalSize)];
+                final Cursor<DoubleType> doubleTypeCursor = (Cursor<DoubleType>)cur;
+                final double[] doubleBuf = new double[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(doubleBuf, 0, Math.min(
-                                                   doubleBuf.length, totalSize
-                                                   - currIdx));
+                    in.read(doubleBuf, 0, Math.min(doubleBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        doubleTypeCursor.get().set(
-                                                   doubleBuf[idx++]);
+                        doubleTypeCursor.get().set(doubleBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case FLOATTYPE:
 
-                final Cursor<FloatType> floatTypeCursor = (Cursor<FloatType>) cur;
-                final float[] floatBuf = new float[Math.min(buffSize,
-                                                            totalSize)];
+                final Cursor<FloatType> floatTypeCursor = (Cursor<FloatType>)cur;
+                final float[] floatBuf = new float[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(floatBuf, 0, Math.min(floatBuf.length,
-                                                  totalSize - currIdx));
+                    in.read(floatBuf, 0, Math.min(floatBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        floatTypeCursor.get().set(
-                                                  floatBuf[idx++]);
+                        floatTypeCursor.get().set(floatBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case INTTYPE:
-                final Cursor<IntType> intTypeCursor = (Cursor<IntType>) cur;
+                final Cursor<IntType> intTypeCursor = (Cursor<IntType>)cur;
                 int[] intBuf = new int[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(intBuf, 0, Math.min(intBuf.length,
-                                                totalSize - currIdx));
+                    in.read(intBuf, 0, Math.min(intBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
@@ -228,116 +210,102 @@ public class ImgExt0 implements Externalizer<Img> {
                 }
                 break;
             case LONGTYPE:
-                final Cursor<LongType> longTypeCursor = (Cursor<LongType>) cur;
+                final Cursor<LongType> longTypeCursor = (Cursor<LongType>)cur;
                 long[] longBuf = new long[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(longBuf, 0, Math.min(longBuf.length,
-                                                 totalSize - currIdx));
+                    in.read(longBuf, 0, Math.min(longBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        longTypeCursor.get()
-                        .set(longBuf[idx++]);
+                        longTypeCursor.get().set(longBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case SHORTTYPE:
-                final Cursor<ShortType> shortTypeCursor = (Cursor<ShortType>) cur;
-                short[] shortBuf = new short[Math.min(buffSize,
-                                                      totalSize)];
+                final Cursor<ShortType> shortTypeCursor = (Cursor<ShortType>)cur;
+                short[] shortBuf = new short[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(shortBuf, 0, Math.min(shortBuf.length,
-                                                  totalSize - currIdx));
+                    in.read(shortBuf, 0, Math.min(shortBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        shortTypeCursor.get().set(
-                                                  shortBuf[idx++]);
+                        shortTypeCursor.get().set(shortBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case UNSIGNED12BITTYPE:
-                final Cursor<Unsigned12BitType> unsigned12BitTypeCursor = (Cursor<Unsigned12BitType>) cur;
+                final Cursor<Unsigned12BitType> unsigned12BitTypeCursor = (Cursor<Unsigned12BitType>)cur;
                 shortBuf = new short[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(shortBuf, 0, Math.min(shortBuf.length,
-                                                  totalSize - currIdx));
+                    in.read(shortBuf, 0, Math.min(shortBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        unsigned12BitTypeCursor.get().set(
-                                                          shortBuf[idx++]);
+                        unsigned12BitTypeCursor.get().set(shortBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case UNSIGNEDBYTETYPE:
-                final Cursor<UnsignedByteType> unsignedByteTypeCursor = (Cursor<UnsignedByteType>) cur;
+                final Cursor<UnsignedByteType> unsignedByteTypeCursor = (Cursor<UnsignedByteType>)cur;
                 byteBuf = new byte[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(byteBuf, 0, Math.min(byteBuf.length,
-                                                 totalSize - currIdx));
+                    in.read(byteBuf, 0, Math.min(byteBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        unsignedByteTypeCursor.get().set(
-                                                         byteBuf[idx++]);
+                        unsignedByteTypeCursor.get().set(byteBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case UNSIGNEDINTTYPE:
-                final Cursor<UnsignedIntType> unsignedIntTypeCursor = (Cursor<UnsignedIntType>) cur;
+                final Cursor<UnsignedIntType> unsignedIntTypeCursor = (Cursor<UnsignedIntType>)cur;
                 longBuf = new long[Math.min(buffSize, totalSize)];
 
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(longBuf, 0, Math.min(longBuf.length,
-                                                 totalSize - currIdx));
+                    in.read(longBuf, 0, Math.min(longBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        unsignedIntTypeCursor.get().set(
-                                                        longBuf[idx++]);
+                        unsignedIntTypeCursor.get().set(longBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             case UNSIGNEDSHORTTYPE:
-                final Cursor<UnsignedShortType> unsignedShortTypeCursor = (Cursor<UnsignedShortType>) cur;
+                final Cursor<UnsignedShortType> unsignedShortTypeCursor = (Cursor<UnsignedShortType>)cur;
                 intBuf = new int[Math.min(buffSize, totalSize)];
                 currIdx = 0;
                 while (currIdx < totalSize) {
-                    in.read(intBuf, 0, Math.min(intBuf.length,
-                                                totalSize - currIdx));
+                    in.read(intBuf, 0, Math.min(intBuf.length, totalSize - currIdx));
 
                     int idx = 0;
                     while (cur.hasNext() && (idx < buffSize)) {
                         cur.fwd();
-                        unsignedShortTypeCursor.get().set(
-                                                          intBuf[idx++]);
+                        unsignedShortTypeCursor.get().set(intBuf[idx++]);
                     }
                     currIdx += idx;
                 }
                 break;
             default:
-                throw new IllegalArgumentException(
-                                                   "Unsupported Pixeltype.");
+                throw new IllegalArgumentException("Unsupported Pixeltype.");
         }
 
         return res;
@@ -348,13 +316,10 @@ public class ImgExt0 implements Externalizer<Img> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final Img obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final Img obj) throws Exception {
 
-        ExternalizerManager.<Class> write(out, obj.firstElement()
-                                          .getClass());
-        ExternalizerManager
-        .<Class> write(out, obj.factory().getClass());
+        ExternalizerManager.<Class> write(out, obj.firstElement().getClass());
+        ExternalizerManager.<Class> write(out, obj.factory().getClass());
 
         // write dimensions
         out.writeInt(obj.numDimensions());
@@ -369,7 +334,7 @@ public class ImgExt0 implements Externalizer<Img> {
 
         switch (type) {
             case BITTYPE:
-                final Cursor<BitType> bitTypeCursor = (Cursor<BitType>) cur;
+                final Cursor<BitType> bitTypeCursor = (Cursor<BitType>)cur;
 
                 while (bitTypeCursor.hasNext()) {
                     bitTypeCursor.fwd();
@@ -377,7 +342,7 @@ public class ImgExt0 implements Externalizer<Img> {
                 }
                 break;
             case BYTETYPE:
-                final Cursor<ByteType> byteTypeCursor = (Cursor<ByteType>) cur;
+                final Cursor<ByteType> byteTypeCursor = (Cursor<ByteType>)cur;
 
                 while (cur.hasNext()) {
                     cur.fwd();
@@ -385,74 +350,70 @@ public class ImgExt0 implements Externalizer<Img> {
                 }
                 break;
             case DOUBLETYPE:
-                final Cursor<DoubleType> doubleTypeCursor = (Cursor<DoubleType>) cur;
+                final Cursor<DoubleType> doubleTypeCursor = (Cursor<DoubleType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
                     out.writeDouble(doubleTypeCursor.get().get());
                 }
                 break;
             case FLOATTYPE:
-                final Cursor<FloatType> floatTypeCursor = (Cursor<FloatType>) cur;
+                final Cursor<FloatType> floatTypeCursor = (Cursor<FloatType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
                     out.writeFloat(floatTypeCursor.get().get());
                 }
                 break;
             case INTTYPE:
-                final Cursor<IntType> intTypeCursor = (Cursor<IntType>) cur;
+                final Cursor<IntType> intTypeCursor = (Cursor<IntType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
                     out.writeInt(intTypeCursor.get().get());
                 }
                 break;
             case LONGTYPE:
-                final Cursor<LongType> longTypeCursor = (Cursor<LongType>) cur;
+                final Cursor<LongType> longTypeCursor = (Cursor<LongType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
                     out.writeLong(longTypeCursor.get().get());
                 }
                 break;
             case SHORTTYPE:
-                final Cursor<ShortType> shortTypeCursor = (Cursor<ShortType>) cur;
+                final Cursor<ShortType> shortTypeCursor = (Cursor<ShortType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
                     out.writeShort(shortTypeCursor.get().get());
                 }
                 break;
             case UNSIGNED12BITTYPE:
-                final Cursor<Unsigned12BitType> unsigned12BitTypeCursor = (Cursor<Unsigned12BitType>) cur;
+                final Cursor<Unsigned12BitType> unsigned12BitTypeCursor = (Cursor<Unsigned12BitType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
-                    out.writeShort(unsigned12BitTypeCursor.get()
-                                   .get());
+                    out.writeShort(unsigned12BitTypeCursor.get().get());
                 }
                 break;
             case UNSIGNEDBYTETYPE:
-                final Cursor<UnsignedByteType> unsignedByteTypeCursor = (Cursor<UnsignedByteType>) cur;
+                final Cursor<UnsignedByteType> unsignedByteTypeCursor = (Cursor<UnsignedByteType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
-                    out.writeByte(unsignedByteTypeCursor.get()
-                                  .get());
+                    out.writeByte(unsignedByteTypeCursor.get().get());
                 }
                 break;
             case UNSIGNEDINTTYPE:
-                final Cursor<UnsignedIntType> unsignedIntTypeCursor = (Cursor<UnsignedIntType>) cur;
+                final Cursor<UnsignedIntType> unsignedIntTypeCursor = (Cursor<UnsignedIntType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
                     out.writeLong(unsignedIntTypeCursor.get().get());
                 }
                 break;
             case UNSIGNEDSHORTTYPE:
-                final Cursor<UnsignedShortType> unsignedShortTypeCursor = (Cursor<UnsignedShortType>) cur;
+                final Cursor<UnsignedShortType> unsignedShortTypeCursor = (Cursor<UnsignedShortType>)cur;
                 while (cur.hasNext()) {
                     cur.fwd();
-                    out.writeInt(unsignedShortTypeCursor.get()
-                                 .get());
+                    out.writeInt(unsignedShortTypeCursor.get().get());
                 }
                 break;
             default:
-                throw new IllegalArgumentException(
-                                                   "Unsupported Pixeltype.");
+                throw new IllegalArgumentException("Unsupported Pixeltype.");
         }
 
     }

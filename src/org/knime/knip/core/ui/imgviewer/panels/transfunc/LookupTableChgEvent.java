@@ -52,7 +52,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  * @author muethingc
- *
+ * 
  */
 public class LookupTableChgEvent<T, U> implements KNIPEvent {
 

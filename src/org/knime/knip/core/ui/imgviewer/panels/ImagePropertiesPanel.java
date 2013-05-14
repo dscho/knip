@@ -72,11 +72,10 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 
 /**
  * Panel containing image properties.
- *
+ * 
  * @author hornm, University of Konstanz
  */
-public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<T>>
-extends ViewerComponent {
+public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<T>> extends ViewerComponent {
 
     /**
      *
@@ -92,8 +91,7 @@ extends ViewerComponent {
         setPreferredSize(new Dimension(100, getPreferredSize().height));
 
         m_propertiesTable = new JTable();
-        m_propertiesTable.setLayout(new BoxLayout(m_propertiesTable,
-                                                  BoxLayout.X_AXIS));
+        m_propertiesTable.setLayout(new BoxLayout(m_propertiesTable, BoxLayout.X_AXIS));
         add(new JScrollPane(m_propertiesTable));
     }
 
@@ -103,37 +101,25 @@ extends ViewerComponent {
      */
     @EventListener
     public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
-        final String[][] properties = new String[2 + e.getRandomAccessibleInterval()
-                                                 .numDimensions()][2];
+        final String[][] properties = new String[2 + e.getRandomAccessibleInterval().numDimensions()][2];
         properties[0][0] = "Type";
-        properties[0][1] = e.getIterableInterval().firstElement()
-                .createVariable().getClass().getCanonicalName();
+        properties[0][1] = e.getIterableInterval().firstElement().createVariable().getClass().getCanonicalName();
         properties[1][0] = "Image type";
         if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
-            properties[1][1] = ((ImgPlus<T>) e.getRandomAccessibleInterval())
-                    .getImg().getClass().getCanonicalName();
+            properties[1][1] = ((ImgPlus<T>)e.getRandomAccessibleInterval()).getImg().getClass().getCanonicalName();
         } else {
-            properties[1][1] = e.getRandomAccessibleInterval().getClass()
-                    .getCanonicalName();
+            properties[1][1] = e.getRandomAccessibleInterval().getClass().getCanonicalName();
         }
 
         if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
             for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
-                properties[2 + i][0] = "Size "
-                        + ((ImgPlus<T>) e.getRandomAccessibleInterval())
-                        .axis(i)
-                        .getLabel();
-                properties[2 + i][1] = ""
-                        + e.getRandomAccessibleInterval().dimension(i);
+                properties[2 + i][0] = "Size " + ((ImgPlus<T>)e.getRandomAccessibleInterval()).axis(i).getLabel();
+                properties[2 + i][1] = "" + e.getRandomAccessibleInterval().dimension(i);
             }
         } else {
             for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
-                properties[2 + i][0] = "Size "
-                        + e.getCalibratedSpace()
-                        .axis(i)
-                        .getLabel();
-                properties[2 + i][1] = ""
-                        + e.getRandomAccessibleInterval().dimension(i);
+                properties[2 + i][0] = "Size " + e.getCalibratedSpace().axis(i).getLabel();
+                properties[2 + i][1] = "" + e.getRandomAccessibleInterval().dimension(i);
             }
         }
         m_propertiesTable.setModel(new AbstractTableModel() {
@@ -150,8 +136,7 @@ extends ViewerComponent {
             }
 
             @Override
-            public Object getValueAt(final int rowIndex,
-                                     final int columnIndex) {
+            public Object getValueAt(final int rowIndex, final int columnIndex) {
                 return properties[rowIndex][columnIndex];
             }
 
@@ -181,14 +166,12 @@ extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         // Nothing to do here
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException {
         // Nothing to do here
     }
 

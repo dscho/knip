@@ -33,13 +33,12 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 
 /**
- * Creates a awt image from an image, plane selection, normalization parameters,
- * ..., and an overlay. Propagates {@link AWTImageChgEvent}.
- *
+ * Creates a awt image from an image, plane selection, normalization parameters, ..., and an overlay. Propagates
+ * {@link AWTImageChgEvent}.
+ * 
  * @author hornm, University of Konstanz
  */
-public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Comparable<L>>
-extends AWTImageProvider<T> {
+public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Comparable<L>> extends AWTImageProvider<T> {
 
     /**
      *
@@ -65,11 +64,8 @@ extends AWTImageProvider<T> {
     public OverlayBufferedImageProvider() {
         super(0);
         m_renderer = new Real2GreyRenderer<T>();
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>(
-                -1, false);
-        m_config = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice()
-                .getDefaultConfiguration();
+        m_normalizationParameters = new NormalizationParametersChgEvent<T>(-1, false);
+        m_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     @Override
@@ -85,27 +81,21 @@ extends AWTImageProvider<T> {
 
     @Override
     protected Image createImage() {
-        final double[] normParams = m_normalizationParameters
-                .getNormalizationParameters(m_src, m_sel);
+        final double[] normParams = m_normalizationParameters.getNormalizationParameters(m_src, m_sel);
 
         if (m_renderer instanceof RendererWithNormalization) {
-            ((RendererWithNormalization) m_renderer)
-            .setNormalizationParameters(
-                                        normParams[0],
-                                        normParams[1]);
+            ((RendererWithNormalization)m_renderer).setNormalizationParameters(normParams[0], normParams[1]);
         }
 
         if (m_renderer instanceof RendererWithColorTable) {
-            ((RendererWithColorTable) m_renderer)
-            .setColorTables(m_colorTables);
+            ((RendererWithColorTable)m_renderer).setColorTables(m_colorTables);
         }
 
-        final ScreenImage res = ((ImageRenderer<T>) m_renderer).render(m_src,
-                                                                       m_sel.getPlaneDimIndex1(),
-                                                                       m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
+        final ScreenImage res =
+                ((ImageRenderer<T>)m_renderer).render(m_src, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(),
+                                                      m_sel.getPlanePos());
 
-        m_tmpRes = loci.formats.gui.AWTImageTools.makeBuffered(res
-                                                               .image());
+        m_tmpRes = loci.formats.gui.AWTImageTools.makeBuffered(res.image());
 
         return writeOverlay(m_tmpRes);
 
@@ -117,23 +107,18 @@ extends AWTImageProvider<T> {
             return img;
         }
 
-        if ((m_tmpCanvas == null)
-                || (m_tmpCanvas.getWidth() != img.getWidth())
+        if ((m_tmpCanvas == null) || (m_tmpCanvas.getWidth() != img.getWidth())
                 || (m_tmpCanvas.getHeight() != img.getHeight())) {
-            m_tmpCanvas = m_config.createCompatibleImage(
-                                                         (int) m_src.dimension(m_sel
-                                                                               .getPlaneDimIndex1()),
-                                                                               (int) m_src.dimension(m_sel
-                                                                                                     .getPlaneDimIndex2()),
-                                                                                                     Transparency.TRANSLUCENT);
+            m_tmpCanvas =
+                    m_config.createCompatibleImage((int)m_src.dimension(m_sel.getPlaneDimIndex1()),
+                                                   (int)m_src.dimension(m_sel.getPlaneDimIndex2()),
+                                                   Transparency.TRANSLUCENT);
             m_tmpCanvasGraphics = m_tmpCanvas.createGraphics();
         }
 
         m_tmpCanvasGraphics.drawImage(img, 0, 0, null);
 
-        m_overlay.renderBufferedImage(m_tmpCanvasGraphics,
-                                      m_sel.getDimIndices(), m_sel.getPlanePos(),
-                                      m_transparency);
+        m_overlay.renderBufferedImage(m_tmpCanvasGraphics, m_sel.getDimIndices(), m_sel.getPlanePos(), m_transparency);
 
         return m_tmpCanvas;
     }
@@ -141,8 +126,7 @@ extends AWTImageProvider<T> {
     @EventListener
     public void onUpdated(final OverlayChgEvent e) {
         m_overlay = e.getOverlay();
-        m_eventService.publish(new AWTImageChgEvent(
-                                                    writeOverlay(m_tmpRes)));
+        m_eventService.publish(new AWTImageChgEvent(writeOverlay(m_tmpRes)));
     }
 
     @Override
@@ -155,27 +139,21 @@ extends AWTImageProvider<T> {
         m_src = e.getImg();
         m_overlay = e.getOverlay();
 
-        if ((m_sel == null)
-                || (m_sel.numDimensions() != m_src
-                .numDimensions())) {
-            m_sel = new PlaneSelectionEvent(0, 1,
-                                            new long[m_src.numDimensions()]);
+        if ((m_sel == null) || (m_sel.numDimensions() != m_src.numDimensions())) {
+            m_sel = new PlaneSelectionEvent(0, 1, new long[m_src.numDimensions()]);
         }
         for (int d = 0; d < m_sel.numDimensions(); d++) {
             if (m_sel.getPlanePosAt(d) >= m_src.dimension(d)) {
-                m_sel = new PlaneSelectionEvent(0, 1,
-                                                new long[m_src.numDimensions()]);
+                m_sel = new PlaneSelectionEvent(0, 1, new long[m_src.numDimensions()]);
                 break;
             }
         }
 
-        final ImageRenderer<T>[] renderers = RendererFactory
-                .createSuitableRenderer(m_src);
+        final ImageRenderer<T>[] renderers = RendererFactory.createSuitableRenderer(m_src);
         if (m_renderer != null) {
             boolean contained = false;
             for (final ImageRenderer<T> renderer : renderers) {
-                if (m_renderer.toString().equals(
-                                                 renderer.toString())) {
+                if (m_renderer.toString().equals(renderer.toString())) {
                     m_renderer = renderer;
                     contained = true;
                     break;
@@ -193,21 +171,18 @@ extends AWTImageProvider<T> {
     public void onUpdate(final TransparencyPanelValueChgEvent e) {
         if (m_src != null) {
             m_transparency = e.getTransparency();
-            m_eventService.publish(new AWTImageChgEvent(
-                                                        writeOverlay(m_tmpRes)));
+            m_eventService.publish(new AWTImageChgEvent(writeOverlay(m_tmpRes)));
         }
     }
 
     /**
-     * {@link EventListener} for {@link NormalizationParametersChgEvent}
-     * events The {@link NormalizationParametersChgEvent} of the
-     * {@link AWTImageTools} will be updated
-     *
+     * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
+     * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
+     * 
      * @param normalizationParameters
      */
     @EventListener
-    public void onUpdated(
-                          final NormalizationParametersChgEvent<T> normalizationParameters) {
+    public void onUpdated(final NormalizationParametersChgEvent<T> normalizationParameters) {
         if (m_src != null) {
             m_normalizationParameters = normalizationParameters;
             // m_eventService.publish(new AWTImageChgEvent(
@@ -226,8 +201,7 @@ extends AWTImageProvider<T> {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         super.saveComponentConfiguration(out);
         m_overlay.writeExternal(out);
         m_normalizationParameters.writeExternal(out);
@@ -235,8 +209,7 @@ extends AWTImageProvider<T> {
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.loadComponentConfiguration(in);
 
         m_overlay = new Overlay<L>();

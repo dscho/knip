@@ -15,8 +15,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.OverlayElement2D;
  * 
  * @author dietzc, fschoenenberger, hornm,
  */
-public class PointOverlayElement<L extends Comparable<L>> extends
-OverlayElement2D<L> {
+public class PointOverlayElement<L extends Comparable<L>> extends OverlayElement2D<L> {
 
     private static final int DRAWING_RADIUS = 4;
 
@@ -35,8 +34,7 @@ OverlayElement2D<L> {
         super(pos, orientation, labels);
         m_x = x;
         m_y = y;
-        m_roi = new RectangleRegionOfInterest(new double[] { x, y },
-                                              new double[] { 1, 1 });
+        m_roi = new RectangleRegionOfInterest(new double[]{x, y}, new double[]{1, 1});
     }
 
     @Override
@@ -47,16 +45,12 @@ OverlayElement2D<L> {
 
     @Override
     public void renderInterior(final Graphics2D g) {
-        g.fillOval(m_x - DRAWING_RADIUS, m_y
-                   - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
-                   2 * DRAWING_RADIUS);
+        g.fillOval(m_x - DRAWING_RADIUS, m_y - DRAWING_RADIUS, 2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
     }
 
     @Override
     public void renderOutline(final Graphics2D g) {
-        g.drawOval(m_x - DRAWING_RADIUS, m_y
-                   - DRAWING_RADIUS, 2 * DRAWING_RADIUS,
-                   2 * DRAWING_RADIUS);
+        g.drawOval(m_x - DRAWING_RADIUS, m_y - DRAWING_RADIUS, 2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
     }
 
     @Override
@@ -83,14 +77,11 @@ OverlayElement2D<L> {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-    ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
         m_x = in.readInt();
         m_y = in.readInt();
-        m_roi = new RectangleRegionOfInterest(
-                                              new double[] { m_x, m_y },
-                                              new double[] { 1, 1 });
+        m_roi = new RectangleRegionOfInterest(new double[]{m_x, m_y}, new double[]{1, 1});
 
     }
 

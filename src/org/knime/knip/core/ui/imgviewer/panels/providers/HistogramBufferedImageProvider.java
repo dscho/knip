@@ -17,11 +17,10 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramChgEvent;
 
 /**
  * Creates an histogram AWTImage. Publishes a {@link HistogramChgEvent}.
- *
+ * 
  * @author dietzc, hornm, University of Konstanz
  */
-public class HistogramBufferedImageProvider<T extends RealType<T>> extends
-AWTImageProvider<T> {
+public class HistogramBufferedImageProvider<T extends RealType<T>> extends AWTImageProvider<T> {
 
     /**
      *
@@ -38,25 +37,21 @@ AWTImageProvider<T> {
 
     @Override
     protected Image createImage() {
-        final OpsHistogram hist = Operations
-                .compute(new MakeHistogram<T>(),
-                         Views.iterable(SubsetOperations
-                                        .subsetview(m_src,
-                                                    m_sel.getInterval(m_src))));
+        final OpsHistogram hist =
+                Operations.compute(new MakeHistogram<T>(),
+                                   Views.iterable(SubsetOperations.subsetview(m_src, m_sel.getInterval(m_src))));
         m_eventService.publish(new HistogramChgEvent(hist));
         return AWTImageTools.drawHistogram(hist.hist(), m_histHeight);
 
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         super.saveComponentConfiguration(out);
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.loadComponentConfiguration(in);
     }
 

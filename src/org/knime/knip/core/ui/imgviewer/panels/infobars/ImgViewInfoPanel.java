@@ -21,8 +21,7 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
 
     /** Updates cursor probe label. */
     @Override
-    protected String updateMouseLabel(final StringBuffer buffer,
-                                      final Interval interval, final CalibratedSpace axes,
+    protected String updateMouseLabel(final StringBuffer buffer, final Interval interval, final CalibratedSpace axes,
                                       final RandomAccess<T> rndAccess, final long[] coords) {
 
         if (interval == null) {
@@ -37,14 +36,12 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
         for (int i = 0; i < coords.length; i++) {
             buffer.append(" ");
             if (i < interval.numDimensions()) {
-                buffer.append(axes != null ? axes.axis(i)
-                        .getLabel() : i);
+                buffer.append(axes != null ? axes.axis(i).getLabel() : i);
             }
             if (coords[i] == -1) {
                 buffer.append("[ Not set ];");
             } else {
-                buffer.append("[" + (coords[i] + 1) + "/"
-                        + interval.dimension(i) + "];");
+                buffer.append("[" + (coords[i] + 1) + "/" + interval.dimension(i) + "];");
             }
         }
         if (buffer.length() > 0) {
@@ -52,8 +49,7 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
         }
         String val;
 
-        if ((coords[m_sel.getPlaneDimIndex1()] != -1)
-                && (coords[m_sel.getPlaneDimIndex2()] != -1)) {
+        if ((coords[m_sel.getPlaneDimIndex1()] != -1) && (coords[m_sel.getPlaneDimIndex2()] != -1)) {
             rndAccess.setPosition(coords);
             val = rndAccess.get().toString();
         } else {
@@ -68,9 +64,8 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
     }
 
     @Override
-    protected String updateImageLabel(final StringBuffer buffer,
-                                      final Interval interval, final RandomAccess<T> rndAccess,
-                                      final String imgName) {
+    protected String updateImageLabel(final StringBuffer buffer, final Interval interval,
+                                      final RandomAccess<T> rndAccess, final String imgName) {
 
         if (interval == null) {
             return "No image set";
@@ -90,14 +85,12 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         // Nothing to do here
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException {
         // Nothing to do here
     }
 

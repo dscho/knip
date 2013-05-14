@@ -64,17 +64,15 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author Christian Dietz, University of Konstanz
  * @param <T>
  */
-public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet,
-SharesObjects {
+public class TamuraFeatureSet<T extends RealType<T>> implements FeatureSet, SharesObjects {
 
-    public static String[] FEATURES = new String[] { "TamuraGranularity",
-        "TamuraContrast", "TamuraKurtosisOfDirectionality",
-        "TamuraStdDevDirectionality",
-        "TamuraMaxDirectionality", "TamuraSkewness" };
+    public static String[] FEATURES =
+            new String[]{"TamuraGranularity", "TamuraContrast", "TamuraKurtosisOfDirectionality",
+        "TamuraStdDevDirectionality", "TamuraMaxDirectionality", "TamuraSkewness"};
 
     private Tamura<T> m_tamura;
 
@@ -82,8 +80,7 @@ SharesObjects {
 
     private double[] m_hist;
 
-    private final List<String> m_enabledFeatures = new ArrayList<String>(
-            FEATURES.length);
+    private final List<String> m_enabledFeatures = new ArrayList<String>(FEATURES.length);
 
     private ObjectCalcAndCache m_ocac;
 
@@ -98,19 +95,15 @@ SharesObjects {
             m_valid = false;
         } else {
             m_valid = true;
-            m_tamura = new Tamura<T>(
-                    validDims.a,
-                    validDims.b,
-                    m_enabledFeatures
-                    .toArray(new String[m_enabledFeatures
-                                        .size()]));
+            m_tamura =
+                    new Tamura<T>(validDims.a, validDims.b, m_enabledFeatures.toArray(new String[m_enabledFeatures
+                                                                                                 .size()]));
             m_stats = m_ocac.descriptiveStatistics(interval);
             m_hist = m_tamura.updateROI(interval);
         }
     }
 
-    private ValuePair<Integer, Integer> getValidDims(
-                                                     final IterableInterval<T> interval) {
+    private ValuePair<Integer, Integer> getValidDims(final IterableInterval<T> interval) {
 
         int dimX = -1;
         int dimY = -1;
@@ -137,80 +130,79 @@ SharesObjects {
     /**
      * {@inheritDoc}
      */
-     @Override
-     public double value(final int id) {
+    @Override
+    public double value(final int id) {
 
-         if (!m_valid) {
-             return Double.NaN;
-         }
+        if (!m_valid) {
+            return Double.NaN;
+        }
 
-         switch (id) {
-             case 0:
-                 return m_hist[0];
-             case 1:
-                 return m_hist[1];
-             case 2:
-                 return m_stats.getKurtosis();
-             case 3:
-                 return m_stats.getStandardDeviation();
-             case 4:
-                 return m_stats.getMax();
-             case 5:
-                 return m_stats.getSkewness();
-         }
+        switch (id) {
+            case 0:
+                return m_hist[0];
+            case 1:
+                return m_hist[1];
+            case 2:
+                return m_stats.getKurtosis();
+            case 3:
+                return m_stats.getStandardDeviation();
+            case 4:
+                return m_stats.getMax();
+            case 5:
+                return m_stats.getSkewness();
+        }
 
-         throw new IllegalStateException(
-                                         "Feature doesn't exist in Tamura Feature Factory");
-     }
+        throw new IllegalStateException("Feature doesn't exist in Tamura Feature Factory");
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String name(final int id) {
-         return FEATURES[id];
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return FEATURES[id];
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public void enable(final int id) {
-         m_enabledFeatures.add(FEATURES[id]);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        m_enabledFeatures.add(FEATURES[id]);
 
-     }
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public int numFeatures() {
-         return FEATURES.length;
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return FEATURES.length;
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String featureSetId() {
-         return "Tamura Features";
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "Tamura Features";
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public Class<?>[] getSharedObjectClasses() {
-         return new Class[] { ObjectCalcAndCache.class };
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?>[] getSharedObjectClasses() {
+        return new Class[]{ObjectCalcAndCache.class};
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public void setSharedObjectInstances(final Object[] instances) {
-         m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSharedObjectInstances(final Object[] instances) {
+        m_ocac = (ObjectCalcAndCache)instances[0];
 
-     }
+    }
 
 }

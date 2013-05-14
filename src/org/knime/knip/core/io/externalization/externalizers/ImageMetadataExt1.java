@@ -66,8 +66,7 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                             }
                         }
 
-                        obj.setColorTable(new ColorTable8(ct8),
-                                          t);
+                        obj.setColorTable(new ColorTable8(ct8), t);
                         break;
                     case ColorTable16:
                         final short[][] ct16 = new short[componentCount][length];
@@ -78,13 +77,11 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                             }
                         }
 
-                        obj.setColorTable(
-                                          new ColorTable16(ct16),
-                                          t);
+                        obj.setColorTable(new ColorTable16(ct16), t);
                         break;
                     default:
                         throw new IllegalArgumentException(
-                                                           "Fatal error! Unknown ColorTable in ImageMetadataExt1.java! Please contact Administrators!");
+                                "Fatal error! Unknown ColorTable in ImageMetadataExt1.java! Please contact Administrators!");
                 }
 
             }
@@ -94,8 +91,7 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
     }
 
     @Override
-    public void write(final BufferedDataOutputStream out, final ImageMetadata obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final ImageMetadata obj) throws Exception {
 
         // Valid bits
         out.writeInt(obj.getValidBits());
@@ -124,27 +120,17 @@ public class ImageMetadataExt1 implements Externalizer<ImageMetadata> {
                 out.writeInt(table.getComponentCount());
                 out.writeInt(table.getLength());
                 if (table instanceof ColorTable8) {
-                    out.writeInt(ColorTables.ColorTable8
-                                 .ordinal());
-                    for (int c = 0; c < table
-                            .getComponentCount(); c++) {
-                        for (int k = 0; k < table
-                                .getLength(); k++) {
-                            out.writeByte(((ColorTable8) table)
-                                          .getNative(c,
-                                                     k));
+                    out.writeInt(ColorTables.ColorTable8.ordinal());
+                    for (int c = 0; c < table.getComponentCount(); c++) {
+                        for (int k = 0; k < table.getLength(); k++) {
+                            out.writeByte(((ColorTable8)table).getNative(c, k));
                         }
                     }
                 } else if (table instanceof ColorTable16) {
-                    out.writeInt(ColorTables.ColorTable16
-                                 .ordinal());
-                    for (int c = 0; c < table
-                            .getComponentCount(); c++) {
-                        for (int k = 0; k < table
-                                .getLength(); k++) {
-                            out.writeShort(((ColorTable16) table)
-                                           .getNative(c,
-                                                      k));
+                    out.writeInt(ColorTables.ColorTable16.ordinal());
+                    for (int c = 0; c < table.getComponentCount(); c++) {
+                        for (int k = 0; k < table.getLength(); k++) {
+                            out.writeShort(((ColorTable16)table).getNative(c, k));
                         }
                     }
                 }

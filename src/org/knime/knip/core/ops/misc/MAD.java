@@ -17,30 +17,24 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @param <T>
  * @param <V>
  */
-public class MAD<T extends RealType<T>, V extends RealType<V>> implements
-UnaryOperation<IterableInterval<T>, V> {
+public class MAD<T extends RealType<T>, V extends RealType<V>> implements UnaryOperation<IterableInterval<T>, V> {
 
     @Override
     public V compute(final IterableInterval<T> input, V output) {
         // median
-        final double median = new MedianOp<T, DoubleType>().compute(
-                                                                    input.cursor(), new DoubleType())
-                                                                    .getRealDouble();
+        final double median = new MedianOp<T, DoubleType>().compute(input.cursor(), new DoubleType()).getRealDouble();
 
         // abs deviation from median
         final LinkedList<DoubleType> absDeviations = new LinkedList<DoubleType>();
         final Cursor<T> c = input.cursor();
 
         while (c.hasNext()) {
-            final double absDeviation = Math.abs(c.next().getRealDouble()
-                                                 - median);
+            final double absDeviation = Math.abs(c.next().getRealDouble() - median);
             absDeviations.add(new DoubleType(absDeviation));
         }
 
         // median of abs deviations
-        output = new MedianOp<DoubleType, V>().compute(
-                                                       absDeviations.iterator(),
-                                                       output.createVariable());
+        output = new MedianOp<DoubleType, V>().compute(absDeviations.iterator(), output.createVariable());
         return output;
     }
 

@@ -50,7 +50,6 @@
  */
 package org.knime.knip.core.ui.imgviewer.events;
 
-
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.meta.CalibratedSpace;
@@ -62,21 +61,20 @@ import net.imglib2.view.Views;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, dietzc, zinsmaierm University of Konstanz
  */
-public class IntervalWithMetadataChgEvent<T extends Type<T>>
-implements
-KNIPEvent {
+public class IntervalWithMetadataChgEvent<T extends Type<T>> implements KNIPEvent {
 
     private final RandomAccessibleInterval<T> m_interval;
+
     private final Named m_name;
+
     private final CalibratedSpace m_cspace;
+
     private final Sourced m_source;
 
-    public IntervalWithMetadataChgEvent(
-                                        final RandomAccessibleInterval<T> interval,
-                                        final Named name,
+    public IntervalWithMetadataChgEvent(final RandomAccessibleInterval<T> interval, final Named name,
                                         final Sourced source, final CalibratedSpace cspace) {
         m_interval = interval;
         m_name = name;
@@ -129,6 +127,5 @@ KNIPEvent {
     public CalibratedSpace getCalibratedSpace() {
         return m_cspace;
     }
-
 
 }

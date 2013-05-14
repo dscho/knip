@@ -49,10 +49,9 @@ package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import java.util.EventObject;
 
-
 /**
  * @author muethingc
- *
+ * 
  */
 public class TransferFunctionChgEvent extends EventObject {
 
@@ -60,8 +59,7 @@ public class TransferFunctionChgEvent extends EventObject {
 
     private final boolean m_adjusting;
 
-    public TransferFunctionChgEvent(final Object source,
-                                    final TransferFunction function, final boolean adjusting) {
+    public TransferFunctionChgEvent(final Object source, final TransferFunction function, final boolean adjusting) {
         super(source);
 
         m_function = function;

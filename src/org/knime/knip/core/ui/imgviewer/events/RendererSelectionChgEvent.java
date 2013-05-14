@@ -54,7 +54,7 @@ import org.knime.knip.core.awt.ImageRenderer;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class RendererSelectionChgEvent implements KNIPEvent {

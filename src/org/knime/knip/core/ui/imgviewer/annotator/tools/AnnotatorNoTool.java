@@ -17,92 +17,71 @@ public class AnnotatorNoTool extends AnnotatorTool {
     }
 
     @Override
-    public void onMouseDoubleClickLeft(final ImgViewerMouseEvent e,
-                                       final OverlayElement2D currentOverlayElement,
+    public void onMouseDoubleClickLeft(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
                                        final PlaneSelectionEvent selection, final Overlay overlay,
                                        final String... labels) {
     }
 
     @Override
-    public void onMousePressedLeft(final ImgViewerMouseEvent e,
-                                   final OverlayElement2D currentOverlayElement,
-                                   final PlaneSelectionEvent selection, final Overlay overlay,
-                                   final String... labels) {
+    public void onMousePressedLeft(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                   final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseReleasedLeft(final ImgViewerMouseEvent e,
-                                    final OverlayElement2D currentOverlayElement,
-                                    final PlaneSelectionEvent selection, final Overlay overlay,
-                                    final String... labels) {
+    public void onMouseReleasedLeft(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                    final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseDraggedLeft(final ImgViewerMouseEvent e,
-                                   final OverlayElement2D currentOverlayElement,
-                                   final PlaneSelectionEvent selection, final Overlay overlay,
-                                   final String... labels) {
+    public void onMouseDraggedLeft(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                   final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseDoubleClickRight(final ImgViewerMouseEvent e,
-                                        final OverlayElement2D currentOverlayElement,
+    public void onMouseDoubleClickRight(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
                                         final PlaneSelectionEvent selection, final Overlay overlay,
                                         final String... labels) {
     }
 
     @Override
-    public void onMousePressedRight(final ImgViewerMouseEvent e,
-                                    final OverlayElement2D currentOverlayElement,
-                                    final PlaneSelectionEvent selection, final Overlay overlay,
-                                    final String... labels) {
+    public void onMousePressedRight(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                    final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseReleasedRight(final ImgViewerMouseEvent e,
-                                     final OverlayElement2D currentOverlayElement,
-                                     final PlaneSelectionEvent selection, final Overlay overlay,
-                                     final String... labels) {
+    public void
+    onMouseReleasedRight(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                         final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseDraggedRight(final ImgViewerMouseEvent e,
-                                    final OverlayElement2D currentOverlayElement,
-                                    final PlaneSelectionEvent selection, final Overlay overlay,
-                                    final String... labels) {
+    public void onMouseDraggedRight(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                    final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseDoubleClickMid(final ImgViewerMouseEvent e,
-                                      final OverlayElement2D currentOverlayElement,
+    public void onMouseDoubleClickMid(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
                                       final PlaneSelectionEvent selection, final Overlay overlay,
                                       final String... labels) {
     }
 
     @Override
-    public void onMousePressedMid(final ImgViewerMouseEvent e,
-                                  final OverlayElement2D currentOverlayElement,
-                                  final PlaneSelectionEvent selection, final Overlay overlay,
-                                  final String... labels) {
+    public void onMousePressedMid(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                  final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseReleasedMid(final ImgViewerMouseEvent e,
-                                   final OverlayElement2D currentOverlayElement,
-                                   final PlaneSelectionEvent selection, final Overlay overlay,
-                                   final String... labels) {
+    public void onMouseReleasedMid(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                   final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
-    public void onMouseDraggedMid(final ImgViewerMouseEvent e,
-                                  final OverlayElement2D currentOverlayElement,
-                                  final PlaneSelectionEvent selection, final Overlay overlay,
-                                  final String... labels) {
+    public void onMouseDraggedMid(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                  final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override
     public void fireFocusLost(final Overlay overlay) {
     }
-
 
 }

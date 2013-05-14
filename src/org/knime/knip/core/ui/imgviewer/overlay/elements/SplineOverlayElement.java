@@ -10,11 +10,10 @@ import net.imglib2.RealPoint;
 import net.imglib2.roi.PolygonRegionOfInterest;
 
 /**
- *
+ * 
  * @author hornm, dietzc, fschoenenberger
  */
-public class SplineOverlayElement<L extends Comparable<L>> extends
-AbstractPolygonOverlayElement<L> {
+public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolygonOverlayElement<L> {
     private static final int SPLINE_STEPS = 12;
 
     private Polygon m_tmpPoly;
@@ -24,8 +23,7 @@ AbstractPolygonOverlayElement<L> {
         m_tmpPoly = new Polygon();
     }
 
-    public SplineOverlayElement(final long[] planePos, final int[] orientation,
-                                final String... overlayLabels) {
+    public SplineOverlayElement(final long[] planePos, final int[] orientation, final String... overlayLabels) {
         super(planePos, orientation, overlayLabels);
         m_tmpPoly = new Polygon();
     }
@@ -35,7 +33,7 @@ AbstractPolygonOverlayElement<L> {
         if (m_isClosed) {
             return false;
         } else {
-            m_tmpPoly.addPoint((int) x, (int) y);
+            m_tmpPoly.addPoint((int)x, (int)y);
         }
 
         updateSpline();
@@ -54,45 +52,29 @@ AbstractPolygonOverlayElement<L> {
             Cubic[] X;
             Cubic[] Y;
             if (m_isClosed) {
-                X = calcClosedNaturalCubic(
-                                           m_tmpPoly.npoints - 1,
-                                           m_tmpPoly.xpoints);
-                Y = calcClosedNaturalCubic(
-                                           m_tmpPoly.npoints - 1,
-                                           m_tmpPoly.ypoints);
+                X = calcClosedNaturalCubic(m_tmpPoly.npoints - 1, m_tmpPoly.xpoints);
+                Y = calcClosedNaturalCubic(m_tmpPoly.npoints - 1, m_tmpPoly.ypoints);
             } else {
-                X = calcNaturalCubic(m_tmpPoly.npoints - 1,
-                                     m_tmpPoly.xpoints);
-                Y = calcNaturalCubic(m_tmpPoly.npoints - 1,
-                                     m_tmpPoly.ypoints);
+                X = calcNaturalCubic(m_tmpPoly.npoints - 1, m_tmpPoly.xpoints);
+                Y = calcNaturalCubic(m_tmpPoly.npoints - 1, m_tmpPoly.ypoints);
             }
 
             /*
              * very crude technique - just break each segment up
              * into steps lines
              */
-             m_poly = new Polygon();
-             m_poly.addPoint(Math.round(X[0].eval(0)),
-                             Math.round(Y[0].eval(0)));
-             m_roi = new PolygonRegionOfInterest();
-             m_roi.addVertex(0,
-                             new RealPoint((double) Math.round(X[0]
-                                     .eval(0)), Math
-                                     .round(Y[0].eval(0))));
-             int idx = 1;
-             for (int i = 0; i < X.length; i++) {
-                 for (int j = 1; j <= SPLINE_STEPS; j++) {
-                     final float u = j / (float) SPLINE_STEPS;
-                     m_poly.addPoint(Math
-                                     .round(X[i].eval(u)),
-                                     Math.round(Y[i].eval(u)));
-                     m_roi.addVertex(idx++,
-                                     new RealPoint(
-                                                   (double) Math.round(X[i]
-                                                           .eval(u)),
-                                                           Math.round(Y[i].eval(u))));
-                 }
-             }
+            m_poly = new Polygon();
+            m_poly.addPoint(Math.round(X[0].eval(0)), Math.round(Y[0].eval(0)));
+            m_roi = new PolygonRegionOfInterest();
+            m_roi.addVertex(0, new RealPoint((double)Math.round(X[0].eval(0)), Math.round(Y[0].eval(0))));
+            int idx = 1;
+            for (int i = 0; i < X.length; i++) {
+                for (int j = 1; j <= SPLINE_STEPS; j++) {
+                    final float u = j / (float)SPLINE_STEPS;
+                    m_poly.addPoint(Math.round(X[i].eval(u)), Math.round(Y[i].eval(u)));
+                    m_roi.addVertex(idx++, new RealPoint((double)Math.round(X[i].eval(u)), Math.round(Y[i].eval(u))));
+                }
+            }
         } else {
             m_poly = m_tmpPoly;
         }
@@ -127,8 +109,7 @@ AbstractPolygonOverlayElement<L> {
     @Override
     protected void renderPointInterior(final Graphics2D g) {
         for (int i = 0; i < m_tmpPoly.npoints; i++) {
-            g.fillOval(m_tmpPoly.xpoints[i] - DRAWING_RADIUS,
-                       m_tmpPoly.ypoints[i] - DRAWING_RADIUS,
+            g.fillOval(m_tmpPoly.xpoints[i] - DRAWING_RADIUS, m_tmpPoly.ypoints[i] - DRAWING_RADIUS,
                        2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
         }
 
@@ -137,17 +118,15 @@ AbstractPolygonOverlayElement<L> {
     @Override
     protected void renderPointOutline(final Graphics2D g) {
         for (int i = 0; i < m_tmpPoly.npoints; i++) {
-            g.drawOval(m_tmpPoly.xpoints[i] - DRAWING_RADIUS,
-                       m_tmpPoly.ypoints[i] - DRAWING_RADIUS,
+            g.drawOval(m_tmpPoly.xpoints[i] - DRAWING_RADIUS, m_tmpPoly.ypoints[i] - DRAWING_RADIUS,
                        2 * DRAWING_RADIUS, 2 * DRAWING_RADIUS);
         }
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-    ClassNotFoundException {
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
-        m_tmpPoly = (Polygon) in.readObject();
+        m_tmpPoly = (Polygon)in.readObject();
         updateSpline();
     }
 
@@ -164,13 +143,13 @@ AbstractPolygonOverlayElement<L> {
      * ###############################################################
      */
 
-     /*
-      * calculates the natural cubic spline that interpolates y[0], y[1], ...
-      * y[n] The first segment is returned as C[0].a + C[0].b*u + C[0].c*u^2
-      * + C[0].d*u^3 0<=u <1 the other segments are in C[1], C[2], ... C[n-1]
-      *
-      * source: http://www.cse.unsw.edu.au/~lambert/splines/
-      */
+    /*
+     * calculates the natural cubic spline that interpolates y[0], y[1], ...
+     * y[n] The first segment is returned as C[0].a + C[0].b*u + C[0].c*u^2
+     * + C[0].d*u^3 0<=u <1 the other segments are in C[1], C[2], ... C[n-1]
+     *
+     * source: http://www.cse.unsw.edu.au/~lambert/splines/
+     */
 
     private Cubic[] calcNaturalCubic(final int n, final int[] x) {
         final float[] gamma = new float[n + 1];
@@ -196,8 +175,7 @@ AbstractPolygonOverlayElement<L> {
 
         delta[0] = 3 * (x[1] - x[0]) * gamma[0];
         for (i = 1; i < n; i++) {
-            delta[i] = ((3 * (x[i + 1] - x[i - 1])) - delta[i - 1])
-                    * gamma[i];
+            delta[i] = ((3 * (x[i + 1] - x[i - 1])) - delta[i - 1]) * gamma[i];
         }
         delta[n] = ((3 * (x[n] - x[n - 1])) - delta[n - 1]) * gamma[n];
 
@@ -209,9 +187,9 @@ AbstractPolygonOverlayElement<L> {
         /* now compute the coefficients of the cubics */
         final Cubic[] C = new Cubic[n];
         for (i = 0; i < n; i++) {
-            C[i] = new Cubic(x[i], D[i], (3 * (x[i + 1] - x[i])) - (2
-                    * D[i]) - D[i + 1], (2
-                            * (x[i] - x[i + 1])) + D[i] + D[i + 1]);
+            C[i] =
+                    new Cubic(x[i], D[i], (3 * (x[i + 1] - x[i])) - (2 * D[i]) - D[i + 1], (2 * (x[i] - x[i + 1]))
+                              + D[i] + D[i + 1]);
         }
         return C;
     }
@@ -265,20 +243,19 @@ AbstractPolygonOverlayElement<L> {
          * WRONG! in my copy
          * of Spath
          */
-         for (k = n - 2; k >= 0; k--) {
-             D[k] = y[k] - (v[k + 1] * D[k + 1]) - (w[k + 1] * D[n]);
-         }
+        for (k = n - 2; k >= 0; k--) {
+            D[k] = y[k] - (v[k + 1] * D[k + 1]) - (w[k + 1] * D[n]);
+        }
 
-         /* now compute the coefficients of the cubics */
-         final Cubic[] C = new Cubic[n + 1];
-         for (k = 0; k < n; k++) {
-             C[k] = new Cubic(x[k], D[k], (3 * (x[k + 1] - x[k])) - (2
-                     * D[k]) - D[k + 1], (2
-                             * (x[k] - x[k + 1])) + D[k] + D[k + 1]);
-         }
-         C[n] = new Cubic(x[n], D[n], (3 * (x[0] - x[n])) - (2 * D[n])
-                          - D[0], (2 * (x[n] - x[0])) + D[n] + D[0]);
-         return C;
+        /* now compute the coefficients of the cubics */
+        final Cubic[] C = new Cubic[n + 1];
+        for (k = 0; k < n; k++) {
+            C[k] =
+                    new Cubic(x[k], D[k], (3 * (x[k + 1] - x[k])) - (2 * D[k]) - D[k + 1], (2 * (x[k] - x[k + 1]))
+                              + D[k] + D[k + 1]);
+        }
+        C[n] = new Cubic(x[n], D[n], (3 * (x[0] - x[n])) - (2 * D[n]) - D[0], (2 * (x[n] - x[0])) + D[n] + D[0]);
+        return C;
     }
 
     /*
@@ -294,8 +271,7 @@ AbstractPolygonOverlayElement<L> {
 
         float a, b, c, d; /* a + b*u + c*u^2 +d*u^3 */
 
-        public Cubic(final float a, final float b, final float c,
-                     final float d) {
+        public Cubic(final float a, final float b, final float c, final float d) {
             this.a = a;
             this.b = b;
             this.c = c;

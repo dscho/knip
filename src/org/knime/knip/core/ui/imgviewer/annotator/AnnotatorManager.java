@@ -36,12 +36,11 @@ import org.knime.knip.core.ui.imgviewer.panels.HiddenViewerComponent;
 
 /**
  * Manages overlays and overlay elements ...
- *
+ * 
  * @author Christian
- *
+ * 
  */
-public class AnnotatorManager<T extends RealType<T>> extends
-HiddenViewerComponent {
+public class AnnotatorManager<T extends RealType<T>> extends HiddenViewerComponent {
 
     /**
      *
@@ -67,7 +66,7 @@ HiddenViewerComponent {
     public AnnotatorManager() {
         setOverlayMap(new HashMap<String, Overlay<String>>());
         m_removeList = new ArrayList<OverlayElement2D<String>>();
-        m_selectedLabels = new String[] { "Unknown" };
+        m_selectedLabels = new String[]{"Unknown"};
     }
 
     @Override
@@ -88,8 +87,7 @@ HiddenViewerComponent {
     @EventListener
     public void onSetClassLabels(final AnnotatorLabelsSetEvent e) {
         if (m_currentTool != null) {
-            m_currentTool.setLabelsCurrentElements(
-                                                   m_currentOverlay, e.getLabels());
+            m_currentTool.setLabelsCurrentElements(m_currentOverlay, e.getLabels());
         }
     }
 
@@ -132,8 +130,7 @@ HiddenViewerComponent {
     @EventListener
     public void onLabelsDeleted(final AnnotatorLabelsDelEvent e) {
         for (final Overlay<String> overlay : m_overlayMap.values()) {
-            for (final OverlayElement2D<String> element : overlay
-                    .getElements()) {
+            for (final OverlayElement2D<String> element : overlay.getElements()) {
                 for (final String label : e.getLabels()) {
                     element.getLabels().remove(label);
                 }
@@ -157,13 +154,11 @@ HiddenViewerComponent {
     @EventListener
     public void onUpdate(final IntervalWithMetadataChgEvent<T> e) {
 
-        m_currentOverlay = getOverlayMap().get(
-                                               e.getSource().getSource());
+        m_currentOverlay = getOverlayMap().get(e.getSource().getSource());
 
         if (m_currentOverlay == null) {
             m_currentOverlay = new Overlay<String>(e.getRandomAccessibleInterval());
-            getOverlayMap().put(e.getSource().getSource(),
-                                m_currentOverlay);
+            getOverlayMap().put(e.getSource().getSource(), m_currentOverlay);
             m_currentOverlay.setEventService(m_eventService);
         }
 
@@ -171,12 +166,10 @@ HiddenViewerComponent {
         e.getRandomAccessibleInterval().dimensions(dims);
 
         if ((m_sel == null) || !isInsideDims(m_sel.getPlanePos(), dims)) {
-            m_sel = new PlaneSelectionEvent(0, 1, new long[e
-                                                           .getRandomAccessibleInterval().numDimensions()]);
+            m_sel = new PlaneSelectionEvent(0, 1, new long[e.getRandomAccessibleInterval().numDimensions()]);
         }
 
-        m_eventService.publish(new AnnotatorImgAndOverlayChgEvent(e
-                                                                  .getRandomAccessibleInterval(), m_currentOverlay));
+        m_eventService.publish(new AnnotatorImgAndOverlayChgEvent(e.getRandomAccessibleInterval(), m_currentOverlay));
 
         m_eventService.publish(new ImgRedrawEvent());
     }
@@ -203,118 +196,105 @@ HiddenViewerComponent {
     @EventListener
     public void onLabelEdit(final AnnotatorLabelEditEvent e) {
         for (final Overlay<String> overlay : m_overlayMap.values()) {
-            for (final OverlayElement2D<String> element : overlay
-                    .getElements()) {
+            for (final OverlayElement2D<String> element : overlay.getElements()) {
                 if (element.getLabels().remove(e.getOldLabel())) {
-                    element.getLabels()
-                    .add(e.getNewLabel());
+                    element.getLabels().add(e.getNewLabel());
                 }
             }
         }
-        onSelectedLabelsChg(new AnnotatorLabelsSelChgEvent(
-                                                           e.getNewLabel()));
+        onSelectedLabelsChg(new AnnotatorLabelsSelChgEvent(e.getNewLabel()));
 
-        SegmentColorTable.setColor(e.getNewLabel(),
-                                   SegmentColorTable.getColor(e.getOldLabel()));
+        SegmentColorTable.setColor(e.getNewLabel(), SegmentColorTable.getColor(e.getOldLabel()));
     }
 
     /*
      * Handling mouse events
      */
 
-     @EventListener
-     public void onMousePressed(final ImgViewerMousePressedEvent e) {
+    @EventListener
+    public void onMousePressed(final ImgViewerMousePressedEvent e) {
 
         if ((m_currentOverlay != null) && (m_currentTool != null)) {
-            m_currentTool.onMousePressed(e, m_sel,
-                                         m_currentOverlay, m_selectedLabels);
+            m_currentTool.onMousePressed(e, m_sel, m_currentOverlay, m_selectedLabels);
         }
-     }
+    }
 
-     @EventListener
-     public void onMouseDragged(final ImgViewerMouseDraggedEvent e) {
+    @EventListener
+    public void onMouseDragged(final ImgViewerMouseDraggedEvent e) {
 
-         if ((m_currentOverlay != null) && (m_currentTool != null)) {
-             m_currentTool.onMouseDragged(e, m_sel,
-                                          m_currentOverlay, m_selectedLabels);
-         }
-     }
+        if ((m_currentOverlay != null) && (m_currentTool != null)) {
+            m_currentTool.onMouseDragged(e, m_sel, m_currentOverlay, m_selectedLabels);
+        }
+    }
 
-     @EventListener
-     public void onMouseReleased(final ImgViewerMouseReleasedEvent e) {
-         if ((m_currentOverlay != null) && (m_currentTool != null)) {
-             if (e.getClickCount() > 1) {
-                 m_currentTool.onMouseDoubleClick(e, m_sel,
-                                                  m_currentOverlay,
-                                                  m_selectedLabels);
-             } else {
-                 m_currentTool.onMouseReleased(e, m_sel,
-                                               m_currentOverlay,
-                                               m_selectedLabels);
-             }
+    @EventListener
+    public void onMouseReleased(final ImgViewerMouseReleasedEvent e) {
+        if ((m_currentOverlay != null) && (m_currentTool != null)) {
+            if (e.getClickCount() > 1) {
+                m_currentTool.onMouseDoubleClick(e, m_sel, m_currentOverlay, m_selectedLabels);
+            } else {
+                m_currentTool.onMouseReleased(e, m_sel, m_currentOverlay, m_selectedLabels);
+            }
 
-         }
-     }
+        }
+    }
 
-     @Override
-     public void saveComponentConfiguration(final ObjectOutput out)
-             throws IOException {
-         out.writeInt(getOverlayMap().size());
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
+        out.writeInt(getOverlayMap().size());
 
-         for (final Entry<String, Overlay<String>> entry : getOverlayMap()
-                 .entrySet()) {
-             out.writeUTF(entry.getKey());
-             entry.getValue().writeExternal(out);
-         }
-         out.writeInt(m_selectedLabels.length);
+        for (final Entry<String, Overlay<String>> entry : getOverlayMap().entrySet()) {
+            out.writeUTF(entry.getKey());
+            entry.getValue().writeExternal(out);
+        }
+        out.writeInt(m_selectedLabels.length);
 
-         for (final String s : m_selectedLabels) {
-             out.writeUTF(s);
-         }
+        for (final String s : m_selectedLabels) {
+            out.writeUTF(s);
+        }
 
-         // out.writeObject(m_sel);
+        // out.writeObject(m_sel);
 
-     }
+    }
 
-     @Override
-     public void loadComponentConfiguration(final ObjectInput in)
-             throws IOException, ClassNotFoundException {
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
 
-         getOverlayMap().clear();
-         final int num = in.readInt();
-         for (int i = 0; i < num; i++) {
-             final String key = in.readUTF();
-             final Overlay<String> o = new Overlay<String>();
-             o.readExternal(in);
-             o.setEventService(m_eventService);
-             getOverlayMap().put(key, o);
-         }
+        getOverlayMap().clear();
+        final int num = in.readInt();
+        for (int i = 0; i < num; i++) {
+            final String key = in.readUTF();
+            final Overlay<String> o = new Overlay<String>();
+            o.readExternal(in);
+            o.setEventService(m_eventService);
+            getOverlayMap().put(key, o);
+        }
 
-         m_selectedLabels = new String[in.readInt()];
-         for (int i = 0; i < m_selectedLabels.length; i++) {
-             m_selectedLabels[i] = in.readUTF();
-         }
+        m_selectedLabels = new String[in.readInt()];
+        for (int i = 0; i < m_selectedLabels.length; i++) {
+            m_selectedLabels[i] = in.readUTF();
+        }
 
-         // m_sel = (PlaneSelection) in.readObject();
-     }
+        // m_sel = (PlaneSelection) in.readObject();
+    }
 
-     public Map<String, Overlay<String>> getOverlayMap() {
-         return m_overlayMap;
-     }
+    public Map<String, Overlay<String>> getOverlayMap() {
+        return m_overlayMap;
+    }
 
-     public void setOverlayMap(final Map<String, Overlay<String>> m_overlayMap) {
-         this.m_overlayMap = m_overlayMap;
-     }
+    public void setOverlayMap(final Map<String, Overlay<String>> m_overlayMap) {
+        this.m_overlayMap = m_overlayMap;
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public void reset() {
-         m_currentOverlay = null;
-         m_overlayMap = new HashMap<String, Overlay<String>>();
-         m_removeList = new ArrayList<OverlayElement2D<String>>();
-         m_selectedLabels = new String[] { "Unknown" };
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() {
+        m_currentOverlay = null;
+        m_overlayMap = new HashMap<String, Overlay<String>>();
+        m_removeList = new ArrayList<OverlayElement2D<String>>();
+        m_selectedLabels = new String[]{"Unknown"};
+    }
 
 }

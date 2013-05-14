@@ -68,23 +68,24 @@ import javax.swing.event.EventListenerList;
 import org.knime.knip.core.ui.event.EventService;
 
 /**
- * A Panel used to control the Transferfunctions and the actually drawn values
- * of the image to be shown.
- *
+ * A Panel used to control the Transferfunctions and the actually drawn values of the image to be shown.
+ * 
  * @author Clemens M�thing (clemens.muething@uni-konstanz.de)
  */
-public class TransferFunctionControlPanel extends JPanel implements
-TransferFunctionChgListener {
+public class TransferFunctionControlPanel extends JPanel implements TransferFunctionChgListener {
 
     public final class Memento {
 
         private final HistogramPainter.Scale scale;
+
         private TransferFunctionBundle currentBundle;
-        private final Map<TransferFunctionBundle, TransferFunctionColor> map = new HashMap<TransferFunctionBundle, TransferFunctionColor>();
+
+        private final Map<TransferFunctionBundle, TransferFunctionColor> map =
+                new HashMap<TransferFunctionBundle, TransferFunctionColor>();
+
         private final Histogram histogram;
 
-        public Memento(final HistogramPainter.Scale s,
-                       final TransferFunctionBundle cb, final Histogram hist) {
+        public Memento(final HistogramPainter.Scale s, final TransferFunctionBundle cb, final Histogram hist) {
             scale = s;
             currentBundle = cb;
             histogram = hist;
@@ -92,10 +93,15 @@ TransferFunctionChgListener {
     }
 
     public static final String CMD_NORMALIZE = "normalize";
+
     public static final int ID_NORMALIZE = 1;
+
     public static final String CMD_APPLY = "apply";
+
     public static final int ID_APPLY = 2;
+
     public static final String CMD_ONLYONE = "only_one";
+
     public static final int ID_ONLYONE = 3;
 
     /**
@@ -105,8 +111,7 @@ TransferFunctionChgListener {
 
         @Override
         public void actionPerformed(final ActionEvent event) {
-            m_transferPanel.setScale((HistogramPainter.Scale) m_scaleBox
-                                     .getSelectedItem());
+            m_transferPanel.setScale((HistogramPainter.Scale)m_scaleBox.getSelectedItem());
         }
     }
 
@@ -118,8 +123,7 @@ TransferFunctionChgListener {
         @Override
         public void actionPerformed(final ActionEvent event) {
 
-            final TransferFunctionColor color = (TransferFunctionColor) m_focusBox
-                    .getSelectedItem();
+            final TransferFunctionColor color = (TransferFunctionColor)m_focusBox.getSelectedItem();
 
             m_transferPanel.setTransferFocus(color);
             m_memento.map.put(m_memento.currentBundle, color);
@@ -134,8 +138,7 @@ TransferFunctionChgListener {
         @Override
         public void actionPerformed(final ActionEvent event) {
 
-            final TransferFunctionBundle bundle = (TransferFunctionBundle) m_bundleBox
-                    .getSelectedItem();
+            final TransferFunctionBundle bundle = (TransferFunctionBundle)m_bundleBox.getSelectedItem();
             setActiveBundle(bundle);
         }
     }
@@ -147,25 +150,30 @@ TransferFunctionChgListener {
     private final EventListenerList m_listener = new EventListenerList();
 
     private final JComboBox m_bundleBox;
+
     private final JComboBox m_scaleBox;
+
     private final JComboBox m_focusBox;
 
     private final JCheckBox m_boxNormalize;
+
     private final JCheckBox m_boxOnlyOneFunc;
+
     private final JCheckBox m_boxAutoApply;
+
     private final JButton m_buttonApply;
 
     // Save this adapter to unset/set while changing content
     private final ActionListener m_focusAdapter;
+
     private final ActionListener m_bundleAdapter;
 
     private TransferFunction m_lastModified;
 
     /**
      * Sets up a new TransferPanel.
-     *
-     * @param service
-     *                The {@link EventService} to be used
+     * 
+     * @param service The {@link EventService} to be used
      */
     public TransferFunctionControlPanel() {
 
@@ -180,14 +188,12 @@ TransferFunctionChgListener {
         // set up the checkboxes and the button
         m_boxOnlyOneFunc = new JCheckBox("One set of functions");
         m_boxOnlyOneFunc.setToolTipText("Unchecking this option results"
-                + " in a unique set of transfer function for each "
-                + "slice/volume. Usefull for rendering two volumes"
+                + " in a unique set of transfer function for each " + "slice/volume. Usefull for rendering two volumes"
                 + " simulatneously.");
         m_boxOnlyOneFunc.addActionListener(new ActionListener() {
 
             @Override
-            public final void actionPerformed(
-                                              final ActionEvent event) {
+            public final void actionPerformed(final ActionEvent event) {
                 fireActionEvent(ID_ONLYONE, CMD_ONLYONE);
             }
         });
@@ -200,8 +206,7 @@ TransferFunctionChgListener {
         m_boxNormalize.addActionListener(new ActionListener() {
 
             @Override
-            public final void actionPerformed(
-                                              final ActionEvent event) {
+            public final void actionPerformed(final ActionEvent event) {
                 applyNormalize(m_boxNormalize.isSelected());
                 fireActionEvent(ID_NORMALIZE, CMD_NORMALIZE);
             }
@@ -210,8 +215,7 @@ TransferFunctionChgListener {
         m_buttonApply = new JButton("Apply");
         m_buttonApply.addActionListener(new ActionListener() {
             @Override
-            public final void actionPerformed(
-                                              final ActionEvent event) {
+            public final void actionPerformed(final ActionEvent event) {
                 fireActionEvent(ID_APPLY, CMD_APPLY);
             }
         });
@@ -229,80 +233,51 @@ TransferFunctionChgListener {
         // the subgroups to be added to the main groups
         // numbers are colums/rows respectivly
         // use fixed size horizontally
-        final GroupLayout.ParallelGroup box0 = layout.createParallelGroup()
-                .addComponent(m_boxOnlyOneFunc)
-                .addComponent(m_boxAutoApply);
+        final GroupLayout.ParallelGroup box0 =
+                layout.createParallelGroup().addComponent(m_boxOnlyOneFunc).addComponent(m_boxAutoApply);
 
-        final GroupLayout.SequentialGroup boxgroup = layout
-                .createSequentialGroup()
-                .addComponent(m_boxNormalize)
-                .addComponent(glue).addGroup(box0);
+        final GroupLayout.SequentialGroup boxgroup =
+                layout.createSequentialGroup().addComponent(m_boxNormalize).addComponent(glue).addGroup(box0);
 
-        final GroupLayout.ParallelGroup horizontal0 = layout
-                .createParallelGroup()
-                .addComponent(m_transferPanel)
-                .addGroup(boxgroup);
+        final GroupLayout.ParallelGroup horizontal0 =
+                layout.createParallelGroup().addComponent(m_transferPanel).addGroup(boxgroup);
 
-        final GroupLayout.ParallelGroup horizontal1 = layout
-                .createParallelGroup()
-                .addComponent(m_scaleBox, width, width, width)
-                .addComponent(m_bundleBox, width, width, width)
-                .addComponent(m_focusBox, width, width, width)
+        final GroupLayout.ParallelGroup horizontal1 =
+                layout.createParallelGroup().addComponent(m_scaleBox, width, width, width)
+                .addComponent(m_bundleBox, width, width, width).addComponent(m_focusBox, width, width, width)
                 .addComponent(m_buttonApply);
 
         // do not stretch vertically
-        final GroupLayout.SequentialGroup verticalButtons = layout
-                .createSequentialGroup()
-                .addComponent(m_scaleBox,
-                              GroupLayout.PREFERRED_SIZE,
-                              GroupLayout.PREFERRED_SIZE,
+        final GroupLayout.SequentialGroup verticalButtons =
+                layout.createSequentialGroup()
+                .addComponent(m_scaleBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
                               GroupLayout.PREFERRED_SIZE)
-                              .addPreferredGap(
-                                               LayoutStyle.ComponentPlacement.RELATED)
-                                               .addComponent(m_bundleBox,
-                                                             GroupLayout.PREFERRED_SIZE,
-                                                             GroupLayout.PREFERRED_SIZE,
-                                                             GroupLayout.PREFERRED_SIZE)
-                                                             .addPreferredGap(
-                                                                              LayoutStyle.ComponentPlacement.RELATED)
-                                                                              .addComponent(m_focusBox,
-                                                                                            GroupLayout.PREFERRED_SIZE,
-                                                                                            GroupLayout.PREFERRED_SIZE,
-                                                                                            GroupLayout.PREFERRED_SIZE);
+                              .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                              .addComponent(m_bundleBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+                                            GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(m_focusBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+                                                          GroupLayout.PREFERRED_SIZE);
 
-        final GroupLayout.ParallelGroup vertical0 = layout
-                .createParallelGroup()
-                .addComponent(m_transferPanel)
-                .addGroup(verticalButtons);
+        final GroupLayout.ParallelGroup vertical0 =
+                layout.createParallelGroup().addComponent(m_transferPanel).addGroup(verticalButtons);
 
-        final GroupLayout.ParallelGroup vertical1 = layout
-                .createParallelGroup()
-                .addComponent(m_boxNormalize)
-                .addComponent(glue)
+        final GroupLayout.ParallelGroup vertical1 =
+                layout.createParallelGroup().addComponent(m_boxNormalize).addComponent(glue)
                 .addComponent(m_boxOnlyOneFunc);
 
-        final GroupLayout.ParallelGroup vertical2 = layout
-                .createParallelGroup()
-                .addComponent(m_boxAutoApply)
-                .addComponent(m_buttonApply);
+        final GroupLayout.ParallelGroup vertical2 =
+                layout.createParallelGroup().addComponent(m_boxAutoApply).addComponent(m_buttonApply);
 
         // Set up the main sequential layouts
-        final GroupLayout.SequentialGroup horizontal = layout
-                .createSequentialGroup()
-                .addGroup(horizontal0)
-                .addPreferredGap(
-                                 LayoutStyle.ComponentPlacement.UNRELATED)
-                                 .addGroup(horizontal1);
+        final GroupLayout.SequentialGroup horizontal =
+                layout.createSequentialGroup().addGroup(horizontal0)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addGroup(horizontal1);
 
-        final GroupLayout.SequentialGroup vertical = layout
-                .createSequentialGroup()
-                .addGroup(vertical0)
-                .addPreferredGap(
-                                 LayoutStyle.ComponentPlacement.UNRELATED)
-                                 .addGroup(vertical1)
-                                 .addPreferredGap(
-                                                  LayoutStyle.ComponentPlacement.RELATED)
-                                                  .addGroup(vertical2);
+        final GroupLayout.SequentialGroup vertical =
+                layout.createSequentialGroup().addGroup(vertical0)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addGroup(vertical1)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(vertical2);
 
         // add everything to the layout
         layout.setHorizontalGroup(horizontal);
@@ -316,27 +291,24 @@ TransferFunctionChgListener {
         m_bundleBox.addActionListener(m_bundleAdapter);
 
         // create an empty memento
-        m_memento = new Memento(
-                                (HistogramPainter.Scale) m_scaleBox
-                                .getSelectedItem(),
-                                null, null);
+        m_memento = new Memento((HistogramPainter.Scale)m_scaleBox.getSelectedItem(), null, null);
 
         m_transferPanel.addTransferFunctionChgListener(this);
     }
 
     /**
      * Used to determine the longest of the ComboBoxes.
-     *
+     * 
      * @return the largest dimension
      */
     private int getLongestComboBox() {
-        int max = (int) m_scaleBox.getPreferredSize().getWidth();
+        int max = (int)m_scaleBox.getPreferredSize().getWidth();
 
-        if ((int) m_bundleBox.getPreferredSize().getWidth() > max) {
-            max = (int) m_bundleBox.getPreferredSize().getWidth();
+        if ((int)m_bundleBox.getPreferredSize().getWidth() > max) {
+            max = (int)m_bundleBox.getPreferredSize().getWidth();
         }
-        if ((int) m_focusBox.getPreferredSize().getWidth() > max) {
-            max = (int) m_focusBox.getPreferredSize().getWidth();
+        if ((int)m_focusBox.getPreferredSize().getWidth() > max) {
+            max = (int)m_focusBox.getPreferredSize().getWidth();
         }
 
         return max;
@@ -344,7 +316,7 @@ TransferFunctionChgListener {
 
     /**
      * Get the current state of this control.
-     *
+     * 
      * @return the current state
      */
     public final Memento getState() {
@@ -353,10 +325,9 @@ TransferFunctionChgListener {
 
     /**
      * Set the state of the control back.
-     *
-     * @param memento
-     *                the state to set back to
-     *
+     * 
+     * @param memento the state to set back to
+     * 
      * @return the current state
      */
     public final Memento setState(final Memento memento) {
@@ -395,7 +366,7 @@ TransferFunctionChgListener {
 
     /**
      * Convenience function to call getBundle with current mode.
-     *
+     * 
      * @return the bundle of the current mode
      */
     public final TransferFunctionBundle getBundle() {
@@ -403,15 +374,12 @@ TransferFunctionChgListener {
     }
 
     /**
-     * Create a new memento with new histogram data, but keep the state of
-     * the current TransferFunctionBundle.<br>
-     *
-     * To achieve this a deep copy of all currently set bundles is made and
-     * then put into this memento.
-     *
-     * @param hist
-     *                the data for the histogram background
-     *
+     * Create a new memento with new histogram data, but keep the state of the current TransferFunctionBundle.<br>
+     * 
+     * To achieve this a deep copy of all currently set bundles is made and then put into this memento.
+     * 
+     * @param hist the data for the histogram background
+     * 
      * @return the new memento
      */
     public final Memento createMemento(final Histogram hist) {
@@ -419,19 +387,16 @@ TransferFunctionChgListener {
     }
 
     /**
-     * Create a new memento using the passed data for the histogram, and
-     * copying the transfer functions from the passed memento.<br>
-     *
+     * Create a new memento using the passed data for the histogram, and copying the transfer functions from the passed
+     * memento.<br>
+     * 
      * This will perform a deep copy of the functions in the passed memento.
-     *
-     * @param memento
-     *                the memento used for copying the transfer functions
-     * @param hist
-     *                the new data
+     * 
+     * @param memento the memento used for copying the transfer functions
+     * @param hist the new data
      * @return a new memento
      */
-    public final Memento createMemento(final Memento memento,
-                                       final Histogram hist) {
+    public final Memento createMemento(final Memento memento, final Histogram hist) {
 
         final List<TransferFunctionBundle> bundles = new ArrayList<TransferFunctionBundle>();
 
@@ -452,54 +417,37 @@ TransferFunctionChgListener {
 
     /**
      * Create a new memento that can than be used to set the state.<br>
-     *
-     * I.e. if you want to set different data, first create an memento and
-     * then put it in the control.
-     *
-     * @param bundles
-     *                a list of the bundles to display, the first element of
-     *                this list will be active first
-     * @param hist
-     *                the data for the histogram
-     *
+     * 
+     * I.e. if you want to set different data, first create an memento and then put it in the control.
+     * 
+     * @param bundles a list of the bundles to display, the first element of this list will be active first
+     * @param hist the data for the histogram
+     * 
      * @return the new memento
      */
-    public final Memento createMemento(
-                                       final List<TransferFunctionBundle> bundles,
-                                       final Histogram hist) {
+    public final Memento createMemento(final List<TransferFunctionBundle> bundles, final Histogram hist) {
         return createMemento(bundles, hist, bundles.get(0));
     }
 
     /**
      * Create a new memento for that can than be used to set the state.<br>
-     *
-     * I.e. if you want to set different data, first create an memento and
-     * then put it in the control.
-     *
-     * @param bundles
-     *                a list of the bundles to display, the first element of
-     *                this list will be active first
-     * @param hist
-     *                the data for the histogram
-     * @param current
-     *                the bundle from the bundles list that should be active
-     *                when this memento is put to use
-     *
+     * 
+     * I.e. if you want to set different data, first create an memento and then put it in the control.
+     * 
+     * @param bundles a list of the bundles to display, the first element of this list will be active first
+     * @param hist the data for the histogram
+     * @param current the bundle from the bundles list that should be active when this memento is put to use
+     * 
      * @return the new memento
      */
-    public final Memento createMemento(
-                                       final List<TransferFunctionBundle> bundles,
-                                       final Histogram hist, final TransferFunctionBundle current) {
+    public final Memento createMemento(final List<TransferFunctionBundle> bundles, final Histogram hist,
+                                       final TransferFunctionBundle current) {
 
         if (!bundles.contains(current)) {
-            throw new IllegalArgumentException(
-                                               "The current bundle must be part of the bundles list");
+            throw new IllegalArgumentException("The current bundle must be part of the bundles list");
         }
 
-        final Memento memento = new Memento(
-                                            (HistogramPainter.Scale) m_scaleBox
-                                            .getSelectedItem(),
-                                            current, hist);
+        final Memento memento = new Memento((HistogramPainter.Scale)m_scaleBox.getSelectedItem(), current, hist);
 
         // set up the map
         for (final TransferFunctionBundle b : bundles) {
@@ -509,12 +457,10 @@ TransferFunctionChgListener {
         return memento;
     }
 
-
     /**
      * Sets the mode this panel operates in and that of all its children.
-     *
-     * @param bundle
-     *                the new active bundle
+     * 
+     * @param bundle the new active bundle
      */
     private void setActiveBundle(final TransferFunctionBundle bundle) {
 
@@ -524,10 +470,8 @@ TransferFunctionChgListener {
 
         m_transferPanel.setBundle(m_memento.currentBundle);
 
-        final Set<TransferFunctionColor> content = m_memento.currentBundle
-                .getKeys();
-        final TransferFunctionColor focus = m_memento.map
-                .get(m_memento.currentBundle);
+        final Set<TransferFunctionColor> content = m_memento.currentBundle.getKeys();
+        final TransferFunctionColor focus = m_memento.map.get(m_memento.currentBundle);
 
         // change contents or focus box
         // remove the adapter to not set focus to first inserted item
@@ -570,7 +514,7 @@ TransferFunctionChgListener {
 
     /**
      * Check wheter the only one function option is selected.
-     *
+     * 
      * @return true if force checkbox is selected.
      */
     public final boolean isOnlyOneFunc() {
@@ -583,7 +527,7 @@ TransferFunctionChgListener {
 
     /**
      * Check wheter the autoapply option is currently given.
-     *
+     * 
      * @return true if autoapply checkbox is selected.
      */
     public final boolean isAutoApply() {
@@ -591,8 +535,7 @@ TransferFunctionChgListener {
     }
 
     @Override
-    public final void transferFunctionChg(
-                                          final TransferFunctionChgEvent event) {
+    public final void transferFunctionChg(final TransferFunctionChgEvent event) {
         m_lastModified = event.getFunction();
 
         if (m_boxAutoApply.isSelected()) {
@@ -613,8 +556,7 @@ TransferFunctionChgListener {
     }
 
     private void fireActionEvent(final int id, final String command) {
-        for (final ActionListener l : m_listener
-                .getListeners(ActionListener.class)) {
+        for (final ActionListener l : m_listener.getListeners(ActionListener.class)) {
             l.actionPerformed(new ActionEvent(this, id, command));
         }
     }

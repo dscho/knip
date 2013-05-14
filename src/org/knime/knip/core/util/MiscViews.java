@@ -25,21 +25,17 @@ import net.imglib2.view.Views;
 
 public class MiscViews {
 
-    public synchronized static <T extends Type<T>> IterableRandomAccessibleInterval<T> constant(
-                                                                                                final T constant, final Interval interval) {
+    public synchronized static <T extends Type<T>> IterableRandomAccessibleInterval<T>
+    constant(final T constant, final Interval interval) {
 
         final long[] dimensions = new long[interval.numDimensions()];
         interval.dimensions(dimensions);
 
-        return new IterableRandomAccessibleInterval<T>((Views.interval(
-                                                                       new ConstantRandomAccessible<T>(constant,
-                                                                               interval.numDimensions()),
-                                                                               interval))) {
+        return new IterableRandomAccessibleInterval<T>((Views.interval(new ConstantRandomAccessible<T>(constant,
+                interval.numDimensions()), interval))) {
             @Override
             public Cursor<T> cursor() {
-                return new ConstantCursor<T>(constant,
-                        interval.numDimensions(),
-                        dimensions,
+                return new ConstantCursor<T>(constant, interval.numDimensions(), dimensions,
                         Intervals.numElements(interval));
             }
 
@@ -51,21 +47,19 @@ public class MiscViews {
 
     }
 
-    public static <T extends Type<T>> ImgView<T> imgView(
-                                                         final RandomAccessibleInterval<T> randAccessible,
+    public static <T extends Type<T>> ImgView<T> imgView(final RandomAccessibleInterval<T> randAccessible,
                                                          final ImgFactory<T> fac) {
         if (randAccessible instanceof ImgView) {
-            return (ImgView<T>) randAccessible;
+            return (ImgView<T>)randAccessible;
         } else {
             return new ImgView<T>(randAccessible, fac);
         }
     }
 
-    public static <L extends Comparable<L>> LabelingView<L> labelingView(
-                                                                         final RandomAccessibleInterval<LabelingType<L>> randAccessible,
-                                                                         final LabelingFactory<L> fac) {
+    public static <L extends Comparable<L>> LabelingView<L>
+    labelingView(final RandomAccessibleInterval<LabelingType<L>> randAccessible, final LabelingFactory<L> fac) {
         if (randAccessible instanceof LabelingView) {
-            return (LabelingView<L>) randAccessible;
+            return (LabelingView<L>)randAccessible;
         } else {
             return new LabelingView<L>(randAccessible, fac);
         }
@@ -73,25 +67,22 @@ public class MiscViews {
 
     /**
      * {@link RandomAccessibleInterval} with same sice as target is returned
-     *
-     * @param src
-     *                {@link RandomAccessibleInterval} to be adjusted
-     * @param target
-     *                {@link Interval} describing the resulting sizes
+     * 
+     * @param src {@link RandomAccessibleInterval} to be adjusted
+     * @param target {@link Interval} describing the resulting sizes
      * @return Adjusted {@link RandomAccessibleInterval}
      */
-    public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(
-                                                                            RandomAccessibleInterval<T> src,
-                                                                            final CalibratedSpace srcSpace, final Interval target,
+    public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(RandomAccessibleInterval<T> src,
+                                                                            final CalibratedSpace srcSpace,
+                                                                            final Interval target,
                                                                             final CalibratedSpace targetSpace) {
 
         // must hold, if not: most likely an implementation error
-        assert ((srcSpace.numDimensions() == src.numDimensions()) && (target
-                .numDimensions() == targetSpace.numDimensions()));
+        assert ((srcSpace.numDimensions() == src.numDimensions()) && (target.numDimensions() == targetSpace
+                .numDimensions()));
 
         // Check direction of conversion
-        if (Intervals.equals(src, target)
-                && spaceEquals(srcSpace, targetSpace)) {
+        if (Intervals.equals(src, target) && spaceEquals(srcSpace, targetSpace)) {
             return src;
         }
 
@@ -100,13 +91,11 @@ public class MiscViews {
 
         // Init result vars
         RandomAccessibleInterval<T> res = src;
-        final CalibratedSpace resSpace = new CalibratedSpaceImpl(
-                                                                 target.numDimensions());
+        final CalibratedSpace resSpace = new CalibratedSpaceImpl(target.numDimensions());
 
         // 1. Step remove axis from source which can't be found in
         // target
-        final AxisType[] dispensable = getDeltaAxisTypes(targetSpace,
-                                                         srcSpace);
+        final AxisType[] dispensable = getDeltaAxisTypes(targetSpace, srcSpace);
         for (int d = dispensable.length - 1; d >= 0; --d) {
             final int idx = srcSpace.getAxisIndex(dispensable[d]);
             res = Views.hyperSlice(res, idx, 0);
@@ -130,8 +119,7 @@ public class MiscViews {
         i = srcSpace.numDimensions() - dispensable.length;
         for (final AxisType type : missing) {
             final int idx = targetSpace.getAxisIndex(type);
-            res = Views.addDimension(res, target.min(idx),
-                                     target.max(idx));
+            res = Views.addDimension(res, target.min(idx), target.max(idx));
             resSpace.setAxis(type, i++);
         }
 
@@ -144,8 +132,7 @@ public class MiscViews {
             final int srcIdx = resSpace.getAxisIndex(targetSpace.axis(d));
 
             if (srcIdx != d) {
-                resRndAccessible = Views.permute(
-                                                 resRndAccessible, srcIdx, d);
+                resRndAccessible = Views.permute(resRndAccessible, srcIdx, d);
 
                 // also permutate calibrated space
                 final AxisType tmp = resSpace.axis(d);
@@ -159,17 +146,14 @@ public class MiscViews {
 
     /**
      * {@link RandomAccessibleInterval} with same sice as target is returned
-     *
-     * @param src
-     *                {@link RandomAccessibleInterval} to be adjusted
-     * @param target
-     *                {@link Interval} describing the resulting sizes
+     * 
+     * @param src {@link RandomAccessibleInterval} to be adjusted
+     * @param target {@link Interval} describing the resulting sizes
      * @return Adjusted {@link RandomAccessibleInterval}
      */
-    public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(
-                                                                            final RandomAccessibleInterval<T> src, final Interval target) {
-        IntervalView<T> res = Views.interval(Views.extendBorder(src),
-                                             src);
+    public static <T> RandomAccessibleInterval<T> synchronizeDimensionality(final RandomAccessibleInterval<T> src,
+                                                                            final Interval target) {
+        IntervalView<T> res = Views.interval(Views.extendBorder(src), src);
 
         // Check direction of conversion
         if (Intervals.equals(src, target)) {
@@ -178,14 +162,11 @@ public class MiscViews {
 
         // adjust dimensions
         if (res.numDimensions() < target.numDimensions()) {
-            for (int d = res.numDimensions(); d < target
-                    .numDimensions(); d++) {
-                res = Views.addDimension(res, target.min(d),
-                                         target.max(d));
+            for (int d = res.numDimensions(); d < target.numDimensions(); d++) {
+                res = Views.addDimension(res, target.min(d), target.max(d));
             }
         } else {
-            for (int d = res.numDimensions() - 1; d >= target
-                    .numDimensions(); --d) {
+            for (int d = res.numDimensions() - 1; d >= target.numDimensions(); --d) {
                 res = Views.hyperSlice(res, d, 0);
             }
         }
@@ -197,8 +178,7 @@ public class MiscViews {
 
     }
 
-    private static boolean spaceEquals(final CalibratedSpace srcSpace,
-                                       final CalibratedSpace targetSpace) {
+    private static boolean spaceEquals(final CalibratedSpace srcSpace, final CalibratedSpace targetSpace) {
 
         if (srcSpace.numDimensions() != targetSpace.numDimensions()) {
             return false;
@@ -216,8 +196,8 @@ public class MiscViews {
      * Calculate the delta axis which are missing in the smaller space. >
      * From the smallest index of axistype to the biggest
      */
-    private synchronized static AxisType[] getDeltaAxisTypes(
-                                                             final CalibratedSpace sourceSpace, final CalibratedSpace targetSpace) {
+    private synchronized static AxisType[] getDeltaAxisTypes(final CalibratedSpace sourceSpace,
+                                                             final CalibratedSpace targetSpace) {
 
         final List<AxisType> delta = new ArrayList<AxisType>();
         for (int d = 0; d < targetSpace.numDimensions(); d++) {

@@ -51,14 +51,12 @@
 package org.knime.knip.core.io.externalization;
 
 /**
- * Externalizer which serializes/deserializes a specific object given by
- * {@link #getType()}. Usually used together with the
- * {@link ExternalizerManager}. Every object externalized with an externalize of
- * a certain id ({@link #getId()}) should be able to be restored every time with
- * a exteranlizer of the id it was serialized.
- *
+ * Externalizer which serializes/deserializes a specific object given by {@link #getType()}. Usually used together with
+ * the {@link ExternalizerManager}. Every object externalized with an externalize of a certain id ({@link #getId()})
+ * should be able to be restored every time with a exteranlizer of the id it was serialized.
+ * 
  * Note: needs to provide an empty constructor.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public interface Externalizer<T> {
@@ -80,7 +78,7 @@ public interface Externalizer<T> {
 
     /**
      * Restores the object from a stream
-     *
+     * 
      * @param in
      * @return the object
      * @throws Exception
@@ -89,10 +87,9 @@ public interface Externalizer<T> {
 
     /**
      * Writes the object to the stream
-     *
+     * 
      * @param out
-     * @param obj
-     *                object to write
+     * @param obj object to write
      * @throws Exception
      */
     void write(BufferedDataOutputStream out, T obj) throws Exception;

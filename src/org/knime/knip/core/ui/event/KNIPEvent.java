@@ -51,7 +51,7 @@
 package org.knime.knip.core.ui.event;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public interface KNIPEvent {

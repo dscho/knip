@@ -6,8 +6,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
 import org.knime.knip.core.ui.imgviewer.overlay.elements.RectangleOverlayElement;
 
-public class AnnotatorRectangleTool extends
-AnnotationDrawingTool<RectangleOverlayElement<String>> {
+public class AnnotatorRectangleTool extends AnnotationDrawingTool<RectangleOverlayElement<String>> {
 
     private long[] m_startPoint;
 
@@ -30,15 +29,12 @@ AnnotationDrawingTool<RectangleOverlayElement<String>> {
                                    final PlaneSelectionEvent selection, final Overlay<String> overlay,
                                    final String... labels) {
         m_startPoint = getDragPoint();
-        final RectangleOverlayElement<String> element = new RectangleOverlayElement<String>(
-                selection.getPlanePos(e.getPosX(), e.getPosY()),
-                selection.getDimIndices(), labels);
+        final RectangleOverlayElement<String> element =
+                new RectangleOverlayElement<String>(selection.getPlanePos(e.getPosX(), e.getPosY()),
+                        selection.getDimIndices(), labels);
         overlay.addElement(element);
-        element.setRectangle(
-                             m_startPoint[selection.getPlaneDimIndex1()],
-                             m_startPoint[selection.getPlaneDimIndex2()],
-                             m_startPoint[selection.getPlaneDimIndex1()],
-                             m_startPoint[selection.getPlaneDimIndex2()]);
+        element.setRectangle(m_startPoint[selection.getPlaneDimIndex1()], m_startPoint[selection.getPlaneDimIndex2()],
+                             m_startPoint[selection.getPlaneDimIndex1()], m_startPoint[selection.getPlaneDimIndex2()]);
         setCurrentOverlayElement(OverlayElementStatus.DRAWING, element);
         fireStateChanged();
 
@@ -61,12 +57,8 @@ AnnotationDrawingTool<RectangleOverlayElement<String>> {
                                    final String... labels) {
 
         if (currentOverlayElement.getStatus() == OverlayElementStatus.DRAWING) {
-            currentOverlayElement.setRectangle(
-                                               m_startPoint[selection
-                                                            .getPlaneDimIndex1()],
-                                                            m_startPoint[selection
-                                                                         .getPlaneDimIndex2()],
-                                                                         e.getPosX(), e.getPosY());
+            currentOverlayElement.setRectangle(m_startPoint[selection.getPlaneDimIndex1()],
+                                               m_startPoint[selection.getPlaneDimIndex2()], e.getPosX(), e.getPosY());
 
             fireStateChanged();
         }

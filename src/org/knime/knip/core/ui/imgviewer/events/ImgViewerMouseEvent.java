@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf
  */
 public abstract class ImgViewerMouseEvent implements KNIPEvent {

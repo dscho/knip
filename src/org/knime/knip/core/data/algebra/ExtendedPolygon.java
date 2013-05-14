@@ -31,10 +31,10 @@ import org.knime.knip.core.util.PolygonTools;
 
 /**
  * Adds more functionality to the java.awt.Polygon class.
- *
- *
+ * 
+ * 
  * @author hornm
- *
+ * 
  */
 @Deprecated
 public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
@@ -60,7 +60,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Wraps the given polygon.
-     *
+     * 
      * @param poly polygon to wrap
      */
     public ExtendedPolygon(final Polygon poly) {
@@ -68,7 +68,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     }
 
     /**
-     *
+     * 
      * @return the center of the polygons bounding box
      */
     public long[] getBoundingBoxCenter() {
@@ -80,7 +80,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * The center of the polygon. If no center was set, the bounding box center will be returned (not a copy!)
-     *
+     * 
      * @return
      */
 
@@ -94,7 +94,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     /**
      * Sets the new center of the polygon. No checks are made, whether it lies outside of the contour and, furthermore,
      * NO copy is made!
-     *
+     * 
      * @param p
      */
 
@@ -104,7 +104,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Creates the bitmask.
-     *
+     * 
      * @return
      */
     public Img<BitType> createBitmask() {
@@ -130,7 +130,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Return the number of included points in the contour
-     *
+     * 
      * @return number of points
      */
 
@@ -140,7 +140,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Return the point at the specified index.
-     *
+     * 
      * @param index
      * @return
      */
@@ -155,7 +155,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Determines the normal vector of the point at the given index.
-     *
+     * 
      * @param index
      * @return
      */
@@ -177,7 +177,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Calculates the angle of the normal vector of the point at the given index.
-     *
+     * 
      * @param index
      * @return
      */
@@ -192,9 +192,9 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Resamples the polygon with the given maximum number of points.
-     *
+     * 
      * @param maxNumPoints
-     *
+     * 
      * @param numPoints
      * @return the new resampled contour
      */
@@ -290,9 +290,9 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     }
 
     /**
-     *
+     * 
      * An iterator over the points.
-     *
+     * 
      * @return the iterator
      */
 
@@ -327,7 +327,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
 
     /**
      * Shows images for debugging purposes: the lines along the normal vectors at each point of the contour, ...
-     *
+     * 
      * @param srcImg
      */
     public <T extends RealType<T>> void showDebugImage(final Img<T> srcImg) {

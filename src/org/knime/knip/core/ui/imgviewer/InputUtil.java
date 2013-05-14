@@ -52,27 +52,24 @@ import java.awt.event.InputEvent;
 
 /**
  * Collects all input related stuff that differs between platforms.
- *
+ * 
  * @author muethingc
- *
+ * 
  */
 public final class InputUtil {
 
     /**
-     * The default menu shortcut modifierex down mask, i.e., CTRL on
-     * Windows/Linux and CMD ond Mac. Use this to test against conditions on
-     * MouseEvents and not MouseEvent.isCtrlDown, which will not work on
-     * Mac. So for example to test if Ctrl + Button1 is down use<br>
-     *
-     * @{code if ( MouseEvent.getModifiersEx() == (InputUtil.CTRL_DOWN_MASK
-     *        | MouseEvent.BUTTON1_DOWN_MASK); * ... }
+     * The default menu shortcut modifierex down mask, i.e., CTRL on Windows/Linux and CMD ond Mac. Use this to test
+     * against conditions on MouseEvents and not MouseEvent.isCtrlDown, which will not work on Mac. So for example to
+     * test if Ctrl + Button1 is down use<br>
+     * 
+     * @{code if ( MouseEvent.getModifiersEx() == (InputUtil.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK); * ... }
      */
     public static final int CTRL_DOWN_MASK;
 
     static {
         final int ctrl = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        CTRL_DOWN_MASK = ctrl == InputEvent.CTRL_MASK ? InputEvent.CTRL_DOWN_MASK
-                : InputEvent.META_DOWN_MASK;
+        CTRL_DOWN_MASK = ctrl == InputEvent.CTRL_MASK ? InputEvent.CTRL_DOWN_MASK : InputEvent.META_DOWN_MASK;
     }
 
 }

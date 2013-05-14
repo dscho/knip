@@ -27,7 +27,9 @@ public class TransparencyPanel extends ViewerComponent {
     private EventService m_eventService;
 
     private JSlider m_slider;
+
     private JLabel m_sliderValue;
+
     private final boolean m_showLabel;
 
     public TransparencyPanel() {
@@ -49,13 +51,11 @@ public class TransparencyPanel extends ViewerComponent {
         m_sliderValue = new JLabel("128");
         m_slider = new JSlider(SwingConstants.HORIZONTAL, 0, 255, 128);
         m_slider.setPreferredSize(new Dimension(130, 17));
-        m_slider.setMaximumSize(new Dimension(180, m_slider
-                                              .getMaximumSize().height));
+        m_slider.setMaximumSize(new Dimension(180, m_slider.getMaximumSize().height));
         m_slider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(final ChangeEvent e) {
-                m_eventService.publish(new TransparencyPanelValueChgEvent(
-                                                                          m_slider.getValue()));
+                m_eventService.publish(new TransparencyPanelValueChgEvent(m_slider.getValue()));
                 m_eventService.publish(new ImgRedrawEvent());
                 m_sliderValue.setText("" + m_slider.getValue());
             }
@@ -122,28 +122,26 @@ public class TransparencyPanel extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         out.writeInt(m_slider.getValue());
 
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_slider.setValue(in.readInt());
     }
 
     /**
      * {@inheritDoc}
      */
-     @Override
-     public void reset() {
-         // Nothing to do here
-     }
+    @Override
+    public void reset() {
+        // Nothing to do here
+    }
 
-     @Override
-     public void setParent(final Component parent) {
-         // Nothing to do here
-     }
+    @Override
+    public void setParent(final Component parent) {
+        // Nothing to do here
+    }
 }

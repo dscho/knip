@@ -51,7 +51,7 @@ import java.util.EventListener;
 
 /**
  * @author muethingc
- *
+ * 
  */
 public interface TransferFunctionChgListener extends EventListener {
 

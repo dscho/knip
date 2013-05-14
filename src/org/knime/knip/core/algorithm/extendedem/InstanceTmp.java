@@ -2,7 +2,9 @@ package org.knime.knip.core.algorithm.extendedem;
 
 public class InstanceTmp {
     protected InstancesTmp m_Dataset;
+
     protected double[] m_AttValues;
+
     protected double m_Weight;
 
     public InstanceTmp(final double weight, final double[] attValues) {
@@ -79,8 +81,7 @@ public class InstanceTmp {
 
     public double[] toDoubleArray() {
         final double[] newValues = new double[m_AttValues.length];
-        System.arraycopy(m_AttValues, 0, newValues, 0,
-                         m_AttValues.length);
+        System.arraycopy(m_AttValues, 0, newValues, 0, m_AttValues.length);
         return newValues;
     }
 }

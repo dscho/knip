@@ -5,25 +5,27 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.RealType;
 
 /**
- * Helper object for {@link IntegralImgND} that executes efficient region sum
- * queries on the integral image.
- *
+ * Helper object for {@link IntegralImgND} that executes efficient region sum queries on the integral image.
+ * 
  * @author zinsmaie
- *
+ * 
  * @param <T>
  */
 public class IntegralImgSumAgent<T extends RealType<T>> {
 
     private final boolean[][] m_binaryRep;
+
     private final int[] m_signs;
+
     private final RandomAccess<T> m_iiRA;
+
     private final int m_dims;
+
     private final int m_points;
 
     /**
-     * Initializes member variables that are needed for the nd sum
-     * calculation.
-     *
+     * Initializes member variables that are needed for the nd sum calculation.
+     * 
      * @param ii
      */
     public IntegralImgSumAgent(final RandomAccessibleInterval<T> ii) {
@@ -34,7 +36,7 @@ public class IntegralImgSumAgent<T extends RealType<T>> {
         // and the respective signs for the points
 
         m_dims = ii.numDimensions();
-        m_points = (int) Math.pow(2, m_dims);
+        m_points = (int)Math.pow(2, m_dims);
 
         m_binaryRep = new boolean[m_points][m_dims];
         m_signs = new int[m_points];
@@ -49,16 +51,15 @@ public class IntegralImgSumAgent<T extends RealType<T>> {
                 }
             }
 
-            m_signs[i] = (int) Math.pow(-1, m_dims - ones);
+            m_signs[i] = (int)Math.pow(-1, m_dims - ones);
         }
     }
 
     /**
-     * get the sum of the area including leftUpper and rightLower corner.
-     * The positions are defined with respect to the original input image of
-     * the integral image. Therefore you can safely ignore the helper zeros
-     * of the integral image.
-     *
+     * get the sum of the area including leftUpper and rightLower corner. The positions are defined with respect to the
+     * original input image of the integral image. Therefore you can safely ignore the helper zeros of the integral
+     * image.
+     * 
      * @param leftUpper
      * @param rightLower
      * @return

@@ -6,8 +6,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
 import org.knime.knip.core.ui.imgviewer.overlay.elements.PolygonOverlayElement;
 
-public class AnnotatorPolygonTool extends
-AnnotationDrawingTool<PolygonOverlayElement<String>> {
+public class AnnotatorPolygonTool extends AnnotationDrawingTool<PolygonOverlayElement<String>> {
 
     public AnnotatorPolygonTool() {
         super("Polygon", "tool-poly.png");
@@ -33,19 +32,15 @@ AnnotationDrawingTool<PolygonOverlayElement<String>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onMouseReleasedLeft(final ImgViewerMouseEvent e,
-                                    PolygonOverlayElement<String> currentOverlayElement,
+    public void onMouseReleasedLeft(final ImgViewerMouseEvent e, PolygonOverlayElement<String> currentOverlayElement,
                                     final PlaneSelectionEvent selection, final Overlay<String> overlay,
                                     final String... labels) {
-        if ((currentOverlayElement == null)
-                || (currentOverlayElement.getStatus() != OverlayElementStatus.DRAWING)) {
-            currentOverlayElement = new PolygonOverlayElement<String>(
-                    selection.getPlanePos(e.getPosX(),
-                                          e.getPosY()),
-                                          selection.getDimIndices(), labels);
+        if ((currentOverlayElement == null) || (currentOverlayElement.getStatus() != OverlayElementStatus.DRAWING)) {
+            currentOverlayElement =
+                    new PolygonOverlayElement<String>(selection.getPlanePos(e.getPosX(), e.getPosY()),
+                            selection.getDimIndices(), labels);
             overlay.addElement(currentOverlayElement);
-            setCurrentOverlayElement(OverlayElementStatus.DRAWING,
-                                     currentOverlayElement);
+            setCurrentOverlayElement(OverlayElementStatus.DRAWING, currentOverlayElement);
         }
         currentOverlayElement.add(e.getPosX(), e.getPosY());
         fireStateChanged();

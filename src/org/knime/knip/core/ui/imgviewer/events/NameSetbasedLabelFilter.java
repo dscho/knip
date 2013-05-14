@@ -11,7 +11,7 @@ import org.knime.knip.core.data.labeling.LabelFilter;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author dietyc
  */
 public class NameSetbasedLabelFilter<L extends Comparable<L>> implements LabelFilter<L>, KNIPEvent {

@@ -30,8 +30,7 @@ implements UnaryOutputOperation<K, Img<S>> {
 
     private T m_threshold;
 
-    public HoughLine(final S outType, final T threshold, final int numBinsRho,
-                     final int numBinsTheta) {
+    public HoughLine(final S outType, final T threshold, final int numBinsRho, final int numBinsTheta) {
         m_outType = outType;
         m_numBinsRho = numBinsRho;
         m_numBinsTheta = numBinsTheta;
@@ -49,8 +48,7 @@ implements UnaryOutputOperation<K, Img<S>> {
         final Cursor<T> cursor = op.cursor();
         final long[] position = new long[op.numDimensions()];
         final double minTheta = -Math.PI / 2;
-        final double minRho = -Util.computeLength(Util
-                                                  .intervalDimensions(op));
+        final double minRho = -Util.computeLength(Util.intervalDimensions(op));
 
         for (int t = 0; t < m_numBinsTheta; ++t) {
             m_theta[t] = (m_dTheta * t) + minTheta;
@@ -69,12 +67,9 @@ implements UnaryOutputOperation<K, Img<S>> {
 
             for (int t = 0; t < m_numBinsTheta; ++t) {
                 if (cursor.get().compareTo(m_threshold) > 0) {
-                    fRho = (Math.cos(m_theta[t])
-                            * position[0])
-                            + (Math.sin(m_theta[t])
-                                    * position[1]);
+                    fRho = (Math.cos(m_theta[t]) * position[0]) + (Math.sin(m_theta[t]) * position[1]);
 
-                    r = Math.round((float) ((fRho - minRho) / m_dRho));
+                    r = Math.round((float)((fRho - minRho) / m_dRho));
                     voteLoc[0] = r;
                     voteLoc[1] = t;
                     try {
@@ -82,11 +77,11 @@ implements UnaryOutputOperation<K, Img<S>> {
                     } catch (final Exception e) {
                         // System.out.println(fRho);
                         // System.err.println("Tried to place vote at "
-                                              // + r +
-                                              // " "
-                                              // + t + " for theta " +
-                                              // m_theta[t] + ", and rho "
-                                              // + fRho);
+                        // + r +
+                        // " "
+                        // + t + " for theta " +
+                        // m_theta[t] + ", and rho "
+                        // + fRho);
                     }
                 }
             }
@@ -96,8 +91,7 @@ implements UnaryOutputOperation<K, Img<S>> {
     }
 
     private void init(final K op) {
-        m_dRho = (2 * Util.computeLength(Util.intervalDimensions(op)))
-                / (double) m_numBinsRho;
+        m_dRho = (2 * Util.computeLength(Util.intervalDimensions(op))) / (double)m_numBinsRho;
         m_threshold = op.firstElement().createVariable();
         m_dTheta = Math.PI / m_numBinsTheta;
         m_theta = new double[m_numBinsTheta];
@@ -107,12 +101,9 @@ implements UnaryOutputOperation<K, Img<S>> {
 
     /**
      * Place a vote of value 1.
-     *
-     * @param loc
-     *                the integer array indicating the location where the
-     *                vote is to be placed in voteSpace.
-     * @return whether the vote was successful. This here particular method
-     *         should always return true.
+     * 
+     * @param loc the integer array indicating the location where the vote is to be placed in voteSpace.
+     * @return whether the vote was successful. This here particular method should always return true.
      */
     protected void placeVote(final int[] loc, final RandomAccess<S> ra) {
         ra.setPosition(loc);
@@ -121,14 +112,13 @@ implements UnaryOutputOperation<K, Img<S>> {
     }
 
     public double[] getTranslatedPos(final int[] pos) {
-        return new double[] { m_rho[pos[0]], m_theta[pos[1]] };
+        return new double[]{m_rho[pos[0]], m_theta[pos[1]]};
 
     }
 
     @Override
     public UnaryOutputOperation<K, Img<S>> copy() {
-        return new HoughLine<T, S, K>(m_outType.copy(), m_threshold,
-                m_numBinsRho, m_numBinsTheta);
+        return new HoughLine<T, S, K>(m_outType.copy(), m_threshold, m_numBinsRho, m_numBinsTheta);
     }
 
     @Override
@@ -137,11 +127,8 @@ implements UnaryOutputOperation<K, Img<S>> {
 
             @Override
             public Img<S> instantiate(final K a) {
-                return new ArrayImgFactory<S>()
-                        .create(new long[] {
-                                m_numBinsRho,
-                                m_numBinsTheta },
-                                m_outType.createVariable());
+                return new ArrayImgFactory<S>().create(new long[]{m_numBinsRho, m_numBinsTheta},
+                                                       m_outType.createVariable());
             }
         };
     }

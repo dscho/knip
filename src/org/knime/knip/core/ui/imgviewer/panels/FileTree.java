@@ -106,8 +106,7 @@ public class FileTree extends JTree {
     public FileTree() {
         super();
 
-        final DefaultMutableTreeNode top = new DefaultMutableTreeNode(
-                                                                      new FileNode(new File("Computer")));
+        final DefaultMutableTreeNode top = new DefaultMutableTreeNode(new FileNode(new File("Computer")));
 
         final File[] childs = File.listRoots();
 
@@ -128,20 +127,17 @@ public class FileTree extends JTree {
 
         addTreeSelectionListener(new DirSelectionListener());
 
-        getSelectionModel().setSelectionMode(
-                                             TreeSelectionModel.SINGLE_TREE_SELECTION);
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setShowsRootHandles(true);
         setEditable(false);
 
     }
 
     /**
-     * Expands the tree along the given path. If the paths contains not
-     * existing directories, the tree will be expanded until a non existing
-     * directory appears.
+     * Expands the tree along the given path. If the paths contains not existing directories, the tree will be expanded
+     * until a non existing directory appears.
      * 
-     * @param path
-     *                the path as a String
+     * @param path the path as a String
      */
     public void expandPath(final String path) {
         if (path == null) {
@@ -150,8 +146,7 @@ public class FileTree extends JTree {
 
         String s = path;
         DefaultMutableTreeNode node = null;
-        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) getModel()
-                .getRoot();
+        DefaultMutableTreeNode parent = (DefaultMutableTreeNode)getModel().getRoot();
         FileNode fnode;
 
         // operation system dependencies
@@ -169,14 +164,11 @@ public class FileTree extends JTree {
             final int num = parent.getChildCount();
             token = st.nextToken();
             for (i = 0; i < num; i++) {
-                node = (DefaultMutableTreeNode) parent
-                        .getChildAt(i);
+                node = (DefaultMutableTreeNode)parent.getChildAt(i);
                 fnode = getFileNode(node);
                 if (fnode.toString().startsWith(token)) {
-                    if (!fnode.expand(node)
-                            && (node.getChildCount() == 0)) {
-                        parent = (DefaultMutableTreeNode) node
-                                .getParent();
+                    if (!fnode.expand(node) && (node.getChildCount() == 0)) {
+                        parent = (DefaultMutableTreeNode)node.getParent();
                         st = null;
                         break;
                     }
@@ -199,19 +191,16 @@ public class FileTree extends JTree {
     /*
      * Utility function to add a file list as new nodes to a given root node
      */
-    private void addNodes(final DefaultMutableTreeNode root,
-                          final File[] childs) {
+    private void addNodes(final DefaultMutableTreeNode root, final File[] childs) {
 
         DefaultMutableTreeNode node;
         for (int k = 0; k < childs.length; k++) {
 
-            node = new DefaultMutableTreeNode(new FileNode(
-                                                           childs[k]));
+            node = new DefaultMutableTreeNode(new FileNode(childs[k]));
             root.add(node);
             // node.add(new DefaultMutableTreeNode(new
             // Boolean(true)));
-            node.add(new DefaultMutableTreeNode(new String(
-                    "Retrieving data ...")));
+            node.add(new DefaultMutableTreeNode(new String("Retrieving data ...")));
         }
     }
 
@@ -220,7 +209,7 @@ public class FileTree extends JTree {
      * @return tree
      */
     DefaultMutableTreeNode getTreeNode(final TreePath path) {
-        return (DefaultMutableTreeNode) (path.getLastPathComponent());
+        return (DefaultMutableTreeNode)(path.getLastPathComponent());
     }
 
     /**
@@ -235,15 +224,14 @@ public class FileTree extends JTree {
         // if (obj instanceof IconData)
         // obj = ((IconData) obj).getObject();
         if (obj instanceof FileNode) {
-            return (FileNode) obj;
+            return (FileNode)obj;
         }
 
         return null;
     }
 
     /**
-     * Make sure expansion is threaded and updating the tree model only
-     * occurs within the event dispatching thread.
+     * Make sure expansion is threaded and updating the tree model only occurs within the event dispatching thread.
      * 
      */
     class DirExpansionListener implements TreeExpansionListener {
@@ -252,8 +240,7 @@ public class FileTree extends JTree {
          */
         @Override
         public void treeExpanded(final TreeExpansionEvent event) {
-            final DefaultMutableTreeNode node = getTreeNode(event
-                                                            .getPath());
+            final DefaultMutableTreeNode node = getTreeNode(event.getPath());
             final FileNode fnode = getFileNode(node);
 
             final Thread runner = new Thread() {
@@ -432,32 +419,28 @@ class FileNode {
      */
     @Override
     public String toString() {
-        return m_file.getName().length() > 0 ? m_file.getName()
-                : m_file.getPath();
+        return m_file.getName().length() > 0 ? m_file.getName() : m_file.getPath();
     }
 
     /**
-     * Expands a given root node, that is retrieving all files/directories
-     * contained root directory given by the root node. Adding the retrieved
-     * files as new childs to the root node.
+     * Expands a given root node, that is retrieving all files/directories contained root directory given by the root
+     * node. Adding the retrieved files as new childs to the root node.
      * 
-     * @param parent
-     *                the root node
+     * @param parent the root node
      * @return true, if the expansion was successful
      */
     public boolean expand(final DefaultMutableTreeNode parent) {
 
         DefaultMutableTreeNode flag = null;
         try {
-            flag = (DefaultMutableTreeNode) parent.getFirstChild();
+            flag = (DefaultMutableTreeNode)parent.getFirstChild();
         } catch (final NoSuchElementException e) {
             return false;
         }
         // if (flag == null) // No flag
         // return false;
         final Object obj = flag.getUserObject();
-        if (!(obj instanceof String))
-        {
+        if (!(obj instanceof String)) {
             return false; // Already expanded
         }
 
@@ -495,17 +478,15 @@ class FileNode {
         for (int i = 0; i < v.size(); i++) {
             final FileNode nd = v.elementAt(i);
             // IconData idata = new IconData(FileTree.ICON_FOLDER,
-                                             // FileTree.ICON_EXPANDEDFOLDER, nd);
-            final DefaultMutableTreeNode node = new DefaultMutableTreeNode(
-                                                                           nd);
+            // FileTree.ICON_EXPANDEDFOLDER, nd);
+            final DefaultMutableTreeNode node = new DefaultMutableTreeNode(nd);
             parent.add(node);
 
             // if (nd.hasSubDirs())
             // node.add(new DefaultMutableTreeNode(new
             // Boolean(true)));
             if (nd.hasSubDirs()) {
-                node.add(new DefaultMutableTreeNode(new String(
-                                                               "Retrieving data ...")));
+                node.add(new DefaultMutableTreeNode(new String("Retrieving data ...")));
             }
         }
 
@@ -537,16 +518,13 @@ class FileNode {
      * @return result
      */
     public int compareTo(final FileNode toCompare) {
-        return m_file.getName().compareToIgnoreCase(
-                                                    toCompare.m_file.getName());
+        return m_file.getName().compareToIgnoreCase(toCompare.m_file.getName());
     }
 
     /**
-     * Lists all files contained in the directory of represented by this
-     * file node.
+     * Lists all files contained in the directory of represented by this file node.
      * 
-     * @return the file list if this node is a directory, else
-     *         <code>null</code>
+     * @return the file list if this node is a directory, else <code>null</code>
      */
     protected File[] listFiles() {
         if (!m_file.isDirectory()) {
@@ -555,11 +533,8 @@ class FileNode {
         try {
             return m_file.listFiles();
         } catch (final Exception ex) {
-            JOptionPane.showMessageDialog(
-                                          null,
-                                          "Error reading directory "
-                                                  + m_file.getAbsolutePath(),
-                                                  "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error reading directory " + m_file.getAbsolutePath(), "Warning",
+                                          JOptionPane.WARNING_MESSAGE);
             return null;
         }
     }

@@ -9,22 +9,19 @@ import net.imglib2.type.Type;
 
 import org.knime.knip.core.data.img.ImageMetadataImpl;
 
-public class ImgWithMetadataChgEvent<T extends Type<T>> extends
-IntervalWithMetadataChgEvent<T> {
+public class ImgWithMetadataChgEvent<T extends Type<T>> extends IntervalWithMetadataChgEvent<T> {
 
     private final ImageMetadata m_imageMetaData;
 
-    public ImgWithMetadataChgEvent(final RandomAccessibleInterval<T> interval,
-                                   final Named name, final Sourced source, final CalibratedSpace cspace,
-                                   final ImageMetadata imageMetaData) {
+    public ImgWithMetadataChgEvent(final RandomAccessibleInterval<T> interval, final Named name, final Sourced source,
+                                   final CalibratedSpace cspace, final ImageMetadata imageMetaData) {
         super(interval, name, source, cspace);
         m_imageMetaData = imageMetaData;
     }
 
     /**
-     *
-     * @return metadata of the image. This might be an empty instance of
-     *         {@link ImageMetadataImpl}
+     * 
+     * @return metadata of the image. This might be an empty instance of {@link ImageMetadataImpl}
      */
     public ImageMetadata getImgMetaData() {
         return m_imageMetaData;

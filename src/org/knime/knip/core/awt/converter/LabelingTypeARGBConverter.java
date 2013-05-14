@@ -6,8 +6,7 @@ import net.imglib2.converter.Converter;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 
-public class LabelingTypeARGBConverter<L extends Comparable<L>> implements
-Converter<LabelingType<L>, ARGBType> {
+public class LabelingTypeARGBConverter<L extends Comparable<L>> implements Converter<LabelingType<L>, ARGBType> {
 
     private final HashMap<Integer, Integer> colorTable;
 

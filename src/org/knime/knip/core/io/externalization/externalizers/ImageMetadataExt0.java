@@ -82,8 +82,7 @@ public class ImageMetadataExt0 implements Externalizer<ImageMetadata> {
     // Invalid: As ImageMetadataExt1
     @Deprecated
     @Override
-    public void write(final BufferedDataOutputStream out, final ImageMetadata obj)
-            throws Exception {
+    public void write(final BufferedDataOutputStream out, final ImageMetadata obj) throws Exception {
 
         // // Valid bits
         // out.writeInt(obj.getValidBits());

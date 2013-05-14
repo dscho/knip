@@ -14,13 +14,13 @@ import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.view.Views;
 
 /**
- *
+ * 
  * @author dietyc
  */
 //TODO: Use circle instead of rectangle??
 //TODO: Input: RandomAccessibleInterval Output: IterableInterval
 public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleInterval<T>> implements
-        UnaryOperation<I, I> {
+UnaryOperation<I, I> {
 
     private final long[] m_span;
 

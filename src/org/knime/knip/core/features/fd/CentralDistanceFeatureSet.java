@@ -60,13 +60,15 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author dietzc, University of Konstanz
  */
 public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
 
     private final int m_numAngles;
+
     private Signature m_signature;
+
     private ObjectCalcAndCache m_ocac;
 
     /**
@@ -128,7 +130,7 @@ public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
      */
     @Override
     public Class<?>[] getSharedObjectClasses() {
-        return new Class[] { ObjectCalcAndCache.class };
+        return new Class[]{ObjectCalcAndCache.class};
     }
 
     /**
@@ -136,7 +138,7 @@ public class CentralDistanceFeatureSet implements FeatureSet, SharesObjects {
      */
     @Override
     public void setSharedObjectInstances(final Object[] instances) {
-        m_ocac = (ObjectCalcAndCache) instances[0];
+        m_ocac = (ObjectCalcAndCache)instances[0];
 
     }
 

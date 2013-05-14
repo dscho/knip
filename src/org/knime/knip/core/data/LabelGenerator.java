@@ -51,7 +51,7 @@
 package org.knime.knip.core.data;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public interface LabelGenerator<L extends Comparable<L>> {

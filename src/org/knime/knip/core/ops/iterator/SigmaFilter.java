@@ -13,13 +13,17 @@ import net.imglib2.type.numeric.RealType;
  * @param <Integer>
  * @param <TYPE>
  */
-public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE extends Iterator<T>>
-implements BinaryOperation<TYPE, T, V> {
+public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE extends Iterator<T>> implements
+BinaryOperation<TYPE, T, V> {
 
     private final double sigma;
+
     private final double sigmaFactor;
+
     private final double m_sigmaMultiplied;
+
     private final double pixelFraction;
+
     private final boolean outlierDetection;
 
     public SigmaFilter(final double sigma, final double sigmaFactor, final double pixelFraction,
@@ -45,20 +49,19 @@ implements BinaryOperation<TYPE, T, V> {
         while (input.hasNext()) {
             final double pixel = input.next().getRealDouble();
             sumAll += pixel;
-            if (((center - m_sigmaMultiplied) < pixel)
-                    && (pixel < (center + m_sigmaMultiplied))) {
+            if (((center - m_sigmaMultiplied) < pixel) && (pixel < (center + m_sigmaMultiplied))) {
                 sumInRange += pixel;
                 ctrInRange++;
             }
             ctrAll++;
         }
 
-        final int minPixels = (int) Math.floor(ctrAll * pixelFraction);
+        final int minPixels = (int)Math.floor(ctrAll * pixelFraction);
 
         if (ctrInRange >= minPixels) {
             output.setReal(sumInRange / ctrInRange);
         } else {
-            if(outlierDetection) {
+            if (outlierDetection) {
                 output.setReal((sumAll - center) / (ctrAll - 1));
             } else {
                 output.setReal(sumAll / ctrAll);
@@ -210,7 +213,6 @@ implements BinaryOperation<TYPE, T, V> {
 
     @Override
     public BinaryOperation<TYPE, T, V> copy() {
-        return new SigmaFilter<T, V, TYPE>(sigma,
-                sigmaFactor, pixelFraction, outlierDetection);
+        return new SigmaFilter<T, V, TYPE>(sigma, sigmaFactor, pixelFraction, outlierDetection);
     }
 }

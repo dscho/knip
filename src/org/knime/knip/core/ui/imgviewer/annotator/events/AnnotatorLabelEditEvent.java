@@ -53,12 +53,13 @@ package org.knime.knip.core.ui.imgviewer.annotator.events;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class AnnotatorLabelEditEvent implements KNIPEvent {
 
     private final String m_oldLabel;
+
     private final String m_newLabel;
 
     public AnnotatorLabelEditEvent(final String oldLabel, final String newLabel) {

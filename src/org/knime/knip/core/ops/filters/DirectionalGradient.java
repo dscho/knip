@@ -21,10 +21,8 @@ implements UnaryOperation<K, K> {
 
     /**
      * @param direction
-     * @param invert
-     *                inverts the gradient calculation, if false, the
-     *                difference is calculated as left-right, else
-     *                right-left
+     * @param invert inverts the gradient calculation, if false, the difference is calculated as left-right, else
+     *            right-left
      */
     public DirectionalGradient(final GradientDirection direction, final boolean invert) {
         m_invert = invert;
@@ -49,17 +47,14 @@ implements UnaryOperation<K, K> {
     @Override
     public K compute(final K op, final K r) {
         if (op.numDimensions() != 2) {
-            throw new IllegalArgumentException(
-                                               "Operation can only be performed on 2 dimensional images");
+            throw new IllegalArgumentException("Operation can only be performed on 2 dimensional images");
         }
 
         final double max = op.firstElement().getMaxValue();
         final double min = op.firstElement().getMinValue();
 
-        final RandomAccess<T> opLeftRndAccess = Views.extendMirrorDouble(op)
-                .randomAccess();
-        final RandomAccess<T> opRightRndAccess = Views.extendMirrorDouble(op)
-                .randomAccess();
+        final RandomAccess<T> opLeftRndAccess = Views.extendMirrorDouble(op).randomAccess();
+        final RandomAccess<T> opRightRndAccess = Views.extendMirrorDouble(op).randomAccess();
         final RandomAccess<T> resAccess = r.randomAccess();
 
         double diff;
@@ -75,27 +70,15 @@ implements UnaryOperation<K, K> {
             for (int x = 0; x < op.dimension(m_dims[1]); x++) {
 
                 if (m_invert) {
-                    diff = (opRightRndAccess.get()
-                            .getRealDouble()
-                            - opLeftRndAccess
-                            .get()
-                            .getRealDouble())
-                            + min;
+                    diff = (opRightRndAccess.get().getRealDouble() - opLeftRndAccess.get().getRealDouble()) + min;
                 } else {
-                    diff = (opLeftRndAccess.get()
-                            .getRealDouble()
-                            - opRightRndAccess
-                            .get()
-                            .getRealDouble())
-                            + min;
+                    diff = (opLeftRndAccess.get().getRealDouble() - opRightRndAccess.get().getRealDouble()) + min;
                 }
 
                 // sum -= min;
                 // sum += max;
                 // sum /= 2;
-                resAccess.get().setReal(
-                                        Math.max(min, Math.min(max,
-                                                               diff)));
+                resAccess.get().setReal(Math.max(min, Math.min(max, diff)));
 
                 opLeftRndAccess.fwd(m_dims[1]);
                 opRightRndAccess.fwd(m_dims[1]);
@@ -107,7 +90,6 @@ implements UnaryOperation<K, K> {
 
     @Override
     public UnaryOperation<K, K> copy() {
-        return new DirectionalGradient<T, K>(
-                GradientDirection.HORIZONTAL, m_invert);
+        return new DirectionalGradient<T, K>(GradientDirection.HORIZONTAL, m_invert);
     }
 }

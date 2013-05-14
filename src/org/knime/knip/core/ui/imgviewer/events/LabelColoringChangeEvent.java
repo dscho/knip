@@ -7,6 +7,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 public class LabelColoringChangeEvent implements KNIPEvent {
 
     private final Color m_boundingBoxColor;
+
     private final int m_colorMapNr;
 
     public LabelColoringChangeEvent(final Color boundingBoxColor, final int colorMapNr) {

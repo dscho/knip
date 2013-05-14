@@ -62,16 +62,19 @@ import net.imglib2.view.Views;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
-public class ImgAndLabelingChgEvent<T extends Type<T>, L extends Comparable<L>>
-implements KNIPEvent {
+public class ImgAndLabelingChgEvent<T extends Type<T>, L extends Comparable<L>> implements KNIPEvent {
 
     private final Labeling<L> m_labeling;
+
     private final RandomAccessibleInterval<T> m_img;
+
     private final Named m_name;
+
     private final CalibratedSpace m_cspace;
+
     private final Sourced m_source;
 
     /**
@@ -79,9 +82,8 @@ implements KNIPEvent {
      * @param name
      * @param cspace
      */
-    public ImgAndLabelingChgEvent(final RandomAccessibleInterval<T> img,
-                                  final Labeling<L> labeling,
-                                  final Named name, final Sourced source, final CalibratedSpace cspace) {
+    public ImgAndLabelingChgEvent(final RandomAccessibleInterval<T> img, final Labeling<L> labeling, final Named name,
+                                  final Sourced source, final CalibratedSpace cspace) {
         m_img = img;
         m_name = name;
         m_source = source;

@@ -74,14 +74,14 @@ import org.knime.knip.core.features.SharesObjects;
 import org.knime.knip.core.util.ImgUtils;
 
 /**
- *
+ * 
  * @author hornm, dietzc, University of Konstanz
  */
 public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
     /**
-    *
-    */
+     *
+     */
     public final String[] FEATURES;
 
     private double[] m_centroid = null;
@@ -195,8 +195,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
                     if (activeDims == 2) {
                         m_convexityOp
-                                .compute(new ImgView<BitType>(SubsetOperations.subsetview(bitMask, bitMask), null),
-                                         new ImgView<BitType>(SubsetOperations.subsetview(bitMask, bitMask), null));
+                        .compute(new ImgView<BitType>(SubsetOperations.subsetview(bitMask, bitMask), null),
+                                 new ImgView<BitType>(SubsetOperations.subsetview(bitMask, bitMask), null));
                         final Cursor<BitType> convexBitMaskCursor = bitMask.cursor();
 
                         double ctr = 0;
@@ -213,7 +213,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
                         m_solidity = Double.NaN;
 
                         throw new IllegalArgumentException(
-                                "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
+                                                           "Perimeter, Convexity and Circularity and Diameter can only be calculated on two dimensional ROIs containing at least two pixels. Settings them to Double.NaN");
                     }
 
                 }

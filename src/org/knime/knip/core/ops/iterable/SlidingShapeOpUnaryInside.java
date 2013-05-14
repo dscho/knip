@@ -16,18 +16,14 @@ extends SlidingShapeOp<T, V, IN, OUT> {
 
     private UnaryOperation<Iterator<T>, V> op;
 
-    public SlidingShapeOpUnaryInside(final Shape neighborhood,
-                                     final UnaryOperation<Iterator<T>, V> op,
+    public SlidingShapeOpUnaryInside(final Shape neighborhood, final UnaryOperation<Iterator<T>, V> op,
                                      final OutOfBoundsFactory<T, IN> outofbounds) {
         super(neighborhood, outofbounds);
         this.op = op;
     }
 
-
-
     @Override
-    protected OUT compute(final IterableInterval<Neighborhood<T>> neighborhoods,
-                          final IN input, final OUT output) {
+    protected OUT compute(final IterableInterval<Neighborhood<T>> neighborhoods, final IN input, final OUT output) {
         final Cursor<V> outCursor = output.cursor();
         for (final Neighborhood<T> neighborhood : neighborhoods) {
             op.compute(neighborhood.cursor(), outCursor.next());
@@ -42,10 +38,7 @@ extends SlidingShapeOp<T, V, IN, OUT> {
 
     @Override
     public UnaryOperation<IN, OUT> copy() {
-        return new SlidingShapeOpUnaryInside<T, V, IN, OUT>(shape,
-                op != null ? op.copy() : null, outofbounds);
+        return new SlidingShapeOpUnaryInside<T, V, IN, OUT>(shape, op != null ? op.copy() : null, outofbounds);
     }
-
-
 
 }

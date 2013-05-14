@@ -55,19 +55,18 @@ import net.imglib2.type.Type;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
 import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
+
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
-public class AnnotatorImgAndOverlayChgEvent<T extends Type<T>> implements
-KNIPEvent {
+public class AnnotatorImgAndOverlayChgEvent<T extends Type<T>> implements KNIPEvent {
 
     private final RandomAccessibleInterval<T> m_randomAccessibleInterval;
+
     private final Overlay m_overlay;
 
-    public AnnotatorImgAndOverlayChgEvent(
-                                          final RandomAccessibleInterval<T> randInterval,
-                                          final Overlay overlay) {
+    public AnnotatorImgAndOverlayChgEvent(final RandomAccessibleInterval<T> randInterval, final Overlay overlay) {
         m_randomAccessibleInterval = randInterval;
         m_overlay = overlay;
 

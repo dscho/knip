@@ -45,16 +45,14 @@ public class AnnotatorToolbar extends ViewerComponent {
         final ButtonGroup group = new ButtonGroup();
 
         for (final AnnotatorTool<?> tool : tools) {
-            final JToggleButton jtb = new JToggleButton(
-                                                        tool.getName());
+            final JToggleButton jtb = new JToggleButton(tool.getName());
             jtb.setMinimumSize(new Dimension(140, 30));
             jtb.addItemListener(new ItemListener() {
 
                 @Override
                 public void itemStateChanged(final ItemEvent e) {
                     if (e.getStateChange() == ItemEvent.SELECTED) {
-                        m_eventService.publish(new AnnotatorToolChgEvent(
-                                                                         tool));
+                        m_eventService.publish(new AnnotatorToolChgEvent(tool));
                     }
 
                 }
@@ -63,8 +61,7 @@ public class AnnotatorToolbar extends ViewerComponent {
             setButtonIcon(jtb, "icons/" + tool.getIconPath());
             jtb.setActionCommand(tool.toString());
             group.add(jtb);
-            jtb.setMaximumSize(new Dimension(BUTTON_WIDHT,
-                                             BUTTON_HEIGHT));
+            jtb.setMaximumSize(new Dimension(BUTTON_WIDHT, BUTTON_HEIGHT));
             jtb.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(jtb);
         }
@@ -96,12 +93,10 @@ public class AnnotatorToolbar extends ViewerComponent {
         // add( loadButton );
     }
 
-    private final void setButtonIcon(final AbstractButton jb,
-                                     final String path) {
-        final URL icon = getClass().getClassLoader().getResource(
-                                                                 getClass().getPackage().getName()
-                                                                 .replace('.', '/')
-                                                                 + "/" + path);
+    private final void setButtonIcon(final AbstractButton jb, final String path) {
+        final URL icon =
+                getClass().getClassLoader().getResource(getClass().getPackage().getName().replace('.', '/') + "/"
+                        + path);
         jb.setHorizontalAlignment(SwingConstants.LEFT);
         if (icon != null) {
             jb.setIcon(new ImageIcon(icon));
@@ -120,26 +115,19 @@ public class AnnotatorToolbar extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         // Nothing to save here
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException {
         // Nothing to load here
     }
 
     public static ViewerComponent createStandardToolbar() {
-        return new AnnotatorToolbar(new AnnotatorNoTool("pan"),
-                                    new AnnotatorSelectionTool(),
-                                    new AnnotatorPointTool(),
-                                    new AnnotatorRectangleTool(),
-                                    new AnnotatorPolygonTool(),
-                                    new AnnotatorSplineTool(),
-                                    new AnnotatorFreeFormTool(),
-                                    new AnnotatorFreeLineTool());
+        return new AnnotatorToolbar(new AnnotatorNoTool("pan"), new AnnotatorSelectionTool(), new AnnotatorPointTool(),
+                                    new AnnotatorRectangleTool(), new AnnotatorPolygonTool(), new AnnotatorSplineTool(),
+                                    new AnnotatorFreeFormTool(), new AnnotatorFreeLineTool());
     }
 
     @Override

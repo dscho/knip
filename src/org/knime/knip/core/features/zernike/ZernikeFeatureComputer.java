@@ -48,15 +48,13 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * default constructor. initializes the data structures
      * 
-     * @param image
-     *                the image
-     * @param mask
-     *                the mask
+     * @param image the image
+     * @param mask the mask
      */
     public ZernikeFeatureComputer(final IterableInterval<T> interval) {
         m_interval = interval;
-        m_width = (int) interval.dimension(0);
-        m_height = (int) interval.dimension(1);
+        m_width = (int)interval.dimension(0);
+        m_height = (int)interval.dimension(1);
         // if (mask.getWidth() != m_width || mask.getHeight() !=
         // m_height) {
         // throw new IllegalArgumentException(
@@ -98,12 +96,9 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * compute F(m, n, s). see zernike documentation for more.
      * 
-     * @param m
-     *                the "order"
-     * @param n
-     *                the "repetition"
-     * @param s
-     *                the index
+     * @param m the "order"
+     * @param n the "repetition"
+     * @param s the index
      * @return the Coefficient of r^(m-2*s) from R_mn(r)
      */
     public static int computeF(final int m, final int n, final int s) {
@@ -126,10 +121,8 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * create the polynom R_mn. see zernike documentation for more.
      * 
-     * @param m
-     *                the "order"
-     * @param n
-     *                the "repetition"
+     * @param m the "order"
+     * @param n the "repetition"
      * @return the F polynom
      */
     public static Polynom createR(final int m, final int n) {
@@ -146,10 +139,8 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * implements the actual algoritm.
      * 
-     * @param m
-     *                the "order" of the Zernike moment to be computed
-     * @param n
-     *                the "repetition"
+     * @param m the "order" of the Zernike moment to be computed
+     * @param n the "repetition"
      * @return the complex value of the Zernike moment
      */
     public Complex computeZernikeMoment(final int m, final int n) {
@@ -157,9 +148,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
         double imag = 0;
 
         if ((m < 0) || (((m - Math.abs(n)) % 2) != 0) || (Math.abs(n) > m)) {
-            throw new IllegalArgumentException(
-                                               "m and n do not satisfy the"
-                                                       + "Zernike moment properties");
+            throw new IllegalArgumentException("m and n do not satisfy the" + "Zernike moment properties");
         }
 
         final int centerX = m_width / 2;
@@ -183,8 +172,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
             final double ang = n * Math.atan2(y, x);
 
             final double value = polynomOrthogonalRadial.evaluate(r);
-            final double pixel = cur.get().getRealDouble()
-                    / MAX_PIXEL_VALUE;
+            final double pixel = cur.get().getRealDouble() / MAX_PIXEL_VALUE;
 
             real += pixel * value * Math.cos(ang);
             imag -= pixel * value * Math.sin(ang);
@@ -197,27 +185,21 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     }
 
     /**
-     * return the number of zernike moment types that exist and have the
-     * order smaller than or equal to the parameter.
+     * return the number of zernike moment types that exist and have the order smaller than or equal to the parameter.
      * 
-     * @param orderMax
-     *                the maximal order
-     * @return the number of zernike moments which have the order smaller
-     *         than or equal to this one
+     * @param orderMax the maximal order
+     * @return the number of zernike moments which have the order smaller than or equal to this one
      */
     public static int countZernikeMoments(final int orderMax) {
         return ((orderMax + 1) * (orderMax + 2)) / 2;
     }
 
     /**
-     * return the order of the i'th zernike moment from the string of
-     * moments which have the order <= the parameter. indexes start with 0.
+     * return the order of the i'th zernike moment from the string of moments which have the order <= the parameter.
+     * indexes start with 0.
      * 
-     * @param orderMax
-     *                the maximal order
-     * @param index
-     *                the index of the zernike moment in the string of
-     *                moments with order <= orderMax
+     * @param orderMax the maximal order
+     * @param index the index of the zernike moment in the string of moments with order <= orderMax
      * @return the order of the requested zernike moment
      */
     public static int giveZernikeOrder(final int orderMax, final int index) {
@@ -229,22 +211,18 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
             }
         }
         assert "Index for Zernike moment out of range" == "";
-                return -1;
+        return -1;
     }
 
     /**
-     * return the order of the i'th zernike moment from the string of
-     * moments which have the order <= the parameter. indexes start with 0.
+     * return the order of the i'th zernike moment from the string of moments which have the order <= the parameter.
+     * indexes start with 0.
      * 
-     * @param orderMax
-     *                the maximal order
-     * @param index
-     *                the index of the zernike moment in the string of
-     *                moments with order <= orderMax
+     * @param orderMax the maximal order
+     * @param index the index of the zernike moment in the string of moments with order <= orderMax
      * @return the repetition of the requested zernike moment
      */
-    public static int giveZernikeRepetition(final int orderMax,
-                                            final int index) {
+    public static int giveZernikeRepetition(final int orderMax, final int index) {
         // 0, -1, 1, -2, 0, 2, -3, -1, 1, 3, ...
         int sum = 0;
         for (int i = 0; i <= orderMax; ++i) {
@@ -260,17 +238,12 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * given the first few moments of an image, reconstruct it.
      * 
-     * @param width
-     *                the width of the desired image
-     * @param height
-     *                the height of the image
-     * @param features
-     *                the first few zernike features. for any given order
-     *                the features must for all repetitions
+     * @param width the width of the desired image
+     * @param height the height of the image
+     * @param features the first few zernike features. for any given order the features must for all repetitions
      * @return the reconstructed image
      */
-    public static Img<ByteType> reconstructImage(final int width,
-                                                 final int height, final ArrayList<Complex> features) {
+    public static Img<ByteType> reconstructImage(final int width, final int height, final ArrayList<Complex> features) {
         final int centerX = width / 2;
         final int centerY = height / 2;
         final int max = Math.max(centerX, centerY);
@@ -282,8 +255,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
         for (int order = 0; indexFeature < features.size(); ++order) {
             for (int rep = -order; rep <= order; rep += 2) {
                 final Complex moment = features.get(indexFeature);
-                final Polynom polynomOrthogonalRadial = createR(
-                                                                order, rep);
+                final Polynom polynomOrthogonalRadial = createR(order, rep);
 
                 for (int i = 0; i < width; ++i) {
                     for (int j = 0; j < height; ++j) {
@@ -292,22 +264,12 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
                         // compute polar coordinates for
                         // x and y
-                        final double r = Math.sqrt((x * x) + (y
-                                * y))
-                                / radius;
-                        final double ang = rep
-                                * Math.atan2(y,
-                                             x);
-                        final double valueRnm = polynomOrthogonalRadial
-                                .evaluate(r);
+                        final double r = Math.sqrt((x * x) + (y * y)) / radius;
+                        final double ang = rep * Math.atan2(y, x);
+                        final double valueRnm = polynomOrthogonalRadial.evaluate(r);
 
-                        final Complex valueVnm = new Complex(
-                                                             Math.cos(ang)
-                                                             * valueRnm,
-                                                             Math.sin(ang)
-                                                             * valueRnm);
-                        final Complex toAdd = moment
-                                .multiplyTo(valueVnm);
+                        final Complex valueVnm = new Complex(Math.cos(ang) * valueRnm, Math.sin(ang) * valueRnm);
+                        final Complex toAdd = moment.multiplyTo(valueVnm);
 
                         // assert
                         // Math.abs(toAdd.getImaginary())
@@ -329,16 +291,13 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
             }
         }
 
-        final Img<ByteType> res = new ArrayImgFactory<ByteType>().create(
-                                                                         new int[] { width, height }, new ByteType());
+        final Img<ByteType> res = new ArrayImgFactory<ByteType>().create(new int[]{width, height}, new ByteType());
         final Cursor<ByteType> cur = res.localizingCursor();
 
         while (cur.hasNext()) {
             cur.fwd();
             cur.get()
-            .set((byte) (((image[cur
-                                 .getIntPosition(0)][cur
-                                                     .getIntPosition(1)] - imageMin) / (imageMax - imageMin)) * 255));
+            .set((byte)(((image[cur.getIntPosition(0)][cur.getIntPosition(1)] - imageMin) / (imageMax - imageMin)) * 255));
         }
         return res;
     }
@@ -358,8 +317,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
         /**
          * constructor for number with imaginary part = 0.
          * 
-         * @param real
-         *                the real part
+         * @param real the real part
          */
         public Complex(final double real) {
             m_real = real;
@@ -369,10 +327,8 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
         /**
          * constructor.
          * 
-         * @param real
-         *                the real part
-         * @param imaginary
-         *                the imaginary part
+         * @param real the real part
+         * @param imaginary the imaginary part
          */
         public Complex(final double real, final double imaginary) {
             m_real = real;
@@ -397,22 +353,17 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
          * immutably multiply this complex number with the parameter.
          * 
          * @return the result of the multiplication
-         * @param c
-         *                the thing to multiply this by
+         * @param c the thing to multiply this by
          */
         public Complex multiplyTo(final Complex c) {
-            return new Complex((this.m_real * c.m_real)
-                               - (this.m_imaginary * c.m_imaginary),
-                               (this.m_real * c.m_imaginary)
-                               + (this.m_imaginary
-                                       * c.m_real));
+            return new Complex((this.m_real * c.m_real) - (this.m_imaginary * c.m_imaginary),
+                               (this.m_real * c.m_imaginary) + (this.m_imaginary * c.m_real));
         }
 
         /**
          * mutably add the parameter to this.
          * 
-         * @param c
-         *                the thing to add with.
+         * @param c the thing to add with.
          */
         public void add(final Complex c) {
             m_real += c.m_real;
@@ -434,8 +385,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
          * @return the abs value
          */
         public double abs() {
-            return Math.sqrt((m_real * m_real) + (m_imaginary
-                    * m_imaginary));
+            return Math.sqrt((m_real * m_real) + (m_imaginary * m_imaginary));
         }
     }
 

@@ -31,7 +31,7 @@ import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- *
+ * 
  * @author dietyc, zinsmaierm, hornm
  */
 public class LabelOptionPanel extends ViewerComponent {
@@ -109,7 +109,7 @@ public class LabelOptionPanel extends ViewerComponent {
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
                 SegmentColorTable.resetColorMap();
                 m_eventService.publish(new LabelColoringChangeEvent(SegmentColorTable.getBoundingBoxColor(),
-                        SegmentColorTable.getColorMapNr()));
+                                                                    SegmentColorTable.getColorMapNr()));
                 m_eventService.publish(new ImgRedrawEvent());
             }
         });

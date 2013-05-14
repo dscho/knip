@@ -57,7 +57,7 @@ import java.util.Random;
 import org.apache.mahout.math.map.OpenIntIntHashMap;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public final class SegmentColorTable {
@@ -80,8 +80,10 @@ public final class SegmentColorTable {
     /** color that is used for bounding boxes e.g. for label bbs. */
     private static Color m_boundingBoxColor = Color.YELLOW;
 
-    /** counts from 0 on the incarnation nr of the color table (i.e. the color
-     * table is reset and newly build => colorMapNr++)*/
+    /**
+     * counts from 0 on the incarnation nr of the color table (i.e. the color table is reset and newly build =>
+     * colorMapNr++)
+     */
     private static int m_colorMapNr;
 
     // Fast HashMap implementation
@@ -89,7 +91,7 @@ public final class SegmentColorTable {
 
     /**
      * Assigns a color to the given id.
-     *
+     * 
      * @param segmentId
      * @return the color
      */
@@ -113,8 +115,8 @@ public final class SegmentColorTable {
     }
 
     /**
-     * resets the color table such that the label colors can be assigned
-     * again. Increases the ColorMapNr to indicate the change.
+     * resets the color table such that the label colors can be assigned again. Increases the ColorMapNr to indicate the
+     * change.
      */
     public static void resetColorMap() {
         m_colorTable.clear();
@@ -127,8 +129,7 @@ public final class SegmentColorTable {
      * @param segmentId
      * @return the color
      */
-    public static <L extends Comparable<L>> int getColor(final L label,
-                                                         final int transparency) {
+    public static <L extends Comparable<L>> int getColor(final L label, final int transparency) {
 
         final int hashCode = label.hashCode();
         int res = m_colorTable.get(hashCode);
@@ -142,25 +143,23 @@ public final class SegmentColorTable {
 
     /**
      * Assigns a color to the given id.
-     *
+     * 
      * @param segmentId
      * @return the color
      */
-    public static <L extends Comparable<L>> int getColor(final List<L> labels,
-                                                         final int transparency) {
+    public static <L extends Comparable<L>> int getColor(final List<L> labels, final int transparency) {
 
         double totalRes = 0;
         for (int i = 0; i < labels.size(); i++) {
-            totalRes += (double) getColor(labels.get(i))
-                    / (double) labels.size();
+            totalRes += (double)getColor(labels.get(i)) / (double)labels.size();
         }
 
-        return getTransparentRGBA((int) totalRes, transparency);
+        return getTransparentRGBA((int)totalRes, transparency);
     }
 
     /**
      * Assigns a color to the given id.
-     *
+     * 
      * @param segmentId
      * @return the color
      */
@@ -190,8 +189,7 @@ public final class SegmentColorTable {
 
     }
 
-    public static <L extends Comparable<L>> void setColor(final L l, int r,
-                                                          final int g, final int b) {
+    public static <L extends Comparable<L>> void setColor(final L l, int r, final int g, final int b) {
         r = r << 8;
         r |= g;
         r = r << 8;

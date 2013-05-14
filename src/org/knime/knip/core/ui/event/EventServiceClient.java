@@ -52,7 +52,7 @@ package org.knime.knip.core.ui.event;
 
 /**
  * Marks a class which is capable to communicate via a event service.
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  */
 public interface EventServiceClient {

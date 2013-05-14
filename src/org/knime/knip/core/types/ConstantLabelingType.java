@@ -6,8 +6,7 @@ import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.numeric.IntegerType;
 
-public class ConstantLabelingType<T extends Comparable<T>> extends
-LabelingType<T> {
+public class ConstantLabelingType<T extends Comparable<T>> extends LabelingType<T> {
 
     public ConstantLabelingType(final List<T> labeling) {
         super(labeling);
@@ -15,23 +14,17 @@ LabelingType<T> {
 
     /**
      * Constructor for mirroring state with another labeling
-     *
-     * @param type
-     *                Wrapped type
-     * @param mapping
-     *                Mapping from wrapped type to LabelingList
-     * @param generation
-     *                Generation of the type
+     * 
+     * @param type Wrapped type
+     * @param mapping Mapping from wrapped type to LabelingList
+     * @param generation Generation of the type
      */
-    protected ConstantLabelingType(final IntegerType<?> type,
-                                   final LabelingMapping<T> mapping,
-                                   final long[] generation) {
+    protected ConstantLabelingType(final IntegerType<?> type, final LabelingMapping<T> mapping, final long[] generation) {
         super(type, mapping, generation);
     }
 
     // this is the constructor if you want it to read from an array
-    public ConstantLabelingType(final IntegerType<?> type,
-                                final LabelingMapping<T> mapping) {
+    public ConstantLabelingType(final IntegerType<?> type, final LabelingMapping<T> mapping) {
         super(type, mapping);
     }
 
@@ -46,7 +39,7 @@ LabelingType<T> {
 
     /**
      * ConstantLabelingType. Nothing happens here
-     *
+     * 
      * @param labeling
      */
     @Override
@@ -56,7 +49,7 @@ LabelingType<T> {
 
     /**
      * ConstantLabelingType. Nothing happens here
-     *
+     * 
      * @param labeling
      */
     @Override
@@ -66,7 +59,7 @@ LabelingType<T> {
 
     /**
      * ConstantLabelingType. Nothing happens here
-     *
+     * 
      * @param labeling
      */
     @Override

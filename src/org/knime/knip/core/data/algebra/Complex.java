@@ -15,14 +15,12 @@ package org.knime.knip.core.data.algebra;
  * 
  * Data type for complex numbers.
  * 
- * The data type is "immutable" so once you create and initialize a Complex
- * object, you cannot change it. The "final" keyword when declaring re and im
- * enforces this rule, making it a compile-time error to change the .re or .im
- * fields after they've been initialized.
+ * The data type is "immutable" so once you create and initialize a Complex object, you cannot change it. The "final"
+ * keyword when declaring re and im enforces this rule, making it a compile-time error to change the .re or .im fields
+ * after they've been initialized.
  * 
- * % java Complex a = 5.0 + 6.0i b = -3.0 + 4.0i Re(a) = 5.0 Im(a) = 6.0 b + a =
- * 2.0 + 10.0i a - b = 8.0 + 2.0i a * b = -39.0 + 2.0i b * a = -39.0 + 2.0i a /
- * b = 0.36 - 1.52i (a / b) * b = 5.0 + 6.0i conj(a) = 5.0 - 6.0i |a| =
+ * % java Complex a = 5.0 + 6.0i b = -3.0 + 4.0i Re(a) = 5.0 Im(a) = 6.0 b + a = 2.0 + 10.0i a - b = 8.0 + 2.0i a * b =
+ * -39.0 + 2.0i b * a = -39.0 + 2.0i a / b = 0.36 - 1.52i (a / b) * b = 5.0 + 6.0i conj(a) = 5.0 - 6.0i |a| =
  * 7.810249675906654 tan(a) = -6.685231390246571E-6 + 1.0000103108981198i
  * 
  *************************************************************************/
@@ -124,20 +122,17 @@ public class Complex {
     // return a new Complex object whose value is the complex exponential of
     // this
     public Complex exp() {
-        return new Complex(Math.exp(re) * Math.cos(im), Math.exp(re)
-                           * Math.sin(im));
+        return new Complex(Math.exp(re) * Math.cos(im), Math.exp(re) * Math.sin(im));
     }
 
     // return a new Complex object whose value is the complex sine of this
     public Complex sin() {
-        return new Complex(Math.sin(re) * Math.cosh(im), Math.cos(re)
-                           * Math.sinh(im));
+        return new Complex(Math.sin(re) * Math.cosh(im), Math.cos(re) * Math.sinh(im));
     }
 
     // return a new Complex object whose value is the complex cosine of this
     public Complex cos() {
-        return new Complex(Math.cos(re) * Math.cosh(im), -Math.sin(re)
-                           * Math.sinh(im));
+        return new Complex(Math.cos(re) * Math.cosh(im), -Math.sin(re) * Math.sinh(im));
     }
 
     // return a new Complex object whose value is the complex tangent of
@@ -181,8 +176,7 @@ public class Complex {
         return g;
     }
 
-    public static Complex[] makeComplexVector(final double[] real,
-                                              final double[] imag) {
+    public static Complex[] makeComplexVector(final double[] real, final double[] imag) {
         final int M = real.length;
         final Complex[] g = new Complex[M];
         for (int i = 0; i < M; i++) {
@@ -195,8 +189,7 @@ public class Complex {
         return Math.sqrt((re * re) + (im * im));
     }
 
-    public static void printComplexVector(final Complex[] g,
-                                          final String title) {
+    public static void printComplexVector(final Complex[] g, final String title) {
         System.out.println("Printing " + title);
         for (int i = 0; i < g.length; i++) {
             if (g[i] == null) {
@@ -207,13 +200,9 @@ public class Complex {
                 gr = (Math.rint(gr * 1000) / 1000);
                 gi = (Math.rint(gi * 1000) / 1000);
                 if (gi >= 0) {
-                    System.out.println(i + ": " + gr
-                                       + " + " + Math.abs(gi)
-                                       + "i");
+                    System.out.println(i + ": " + gr + " + " + Math.abs(gi) + "i");
                 } else {
-                    System.out.println(i + ": " + gr
-                                       + " - " + Math.abs(gi)
-                                       + "i");
+                    System.out.println(i + ": " + gr + " - " + Math.abs(gi) + "i");
                 }
             }
         }

@@ -62,7 +62,7 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author dietzc, University of Konstanz
  */
 public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
@@ -100,8 +100,7 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
     public void iiUpdated(final IterableInterval<BitType> interval) {
         m_signature = m_ocac.signature(interval, m_numAngles);
         for (int x = 0; x < m_signature.length(); x++) {
-            m_complexSignature[x] = new Complex(
-                                                m_signature.getPosAt(x), 0);
+            m_complexSignature[x] = new Complex(m_signature.getPosAt(x), 0);
         }
 
         m_transformed = InplaceFFT.fft(m_complexSignature);
@@ -114,59 +113,59 @@ public class FDCentralDistanceFeatureSet implements FeatureSet, SharesObjects {
     /**
      * {@inheritDoc}
      */
-     @Override
-     public double value(final int id) {
-         return m_descriptor[id];
-     }
+    @Override
+    public double value(final int id) {
+        return m_descriptor[id];
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String name(final int id) {
-         return "FD:CentralDistance [" + id + "]";
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name(final int id) {
+        return "FD:CentralDistance [" + id + "]";
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public int numFeatures() {
-         return m_numAngles;
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int numFeatures() {
+        return m_numAngles;
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public String featureSetId() {
-         return "FD Central Distance Feature Factory";
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String featureSetId() {
+        return "FD Central Distance Feature Factory";
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public void enable(final int id) {
-         // nothing to do here
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enable(final int id) {
+        // nothing to do here
 
-     }
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public Class<?>[] getSharedObjectClasses() {
-         return new Class[] { ObjectCalcAndCache.class };
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?>[] getSharedObjectClasses() {
+        return new Class[]{ObjectCalcAndCache.class};
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public void setSharedObjectInstances(final Object[] instances) {
-         m_ocac = (ObjectCalcAndCache) instances[0];
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSharedObjectInstances(final Object[] instances) {
+        m_ocac = (ObjectCalcAndCache)instances[0];
 
-     }
+    }
 
 }

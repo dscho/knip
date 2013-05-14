@@ -1,4 +1,3 @@
-
 package org.knime.knip.core.awt;
 
 import net.imglib2.RandomAccessibleInterval;
@@ -13,12 +12,14 @@ import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 import org.knime.knip.core.awt.specializedrendering.FastNormalizingGreyRendering;
 import org.knime.knip.core.awt.specializedrendering.Projector2D;
 
-public class Real2GreyRenderer<R extends RealType<R>> extends
-ProjectingRenderer<R> implements RendererWithNormalization {
+public class Real2GreyRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
+RendererWithNormalization {
 
     // speed up
     double m_normalizationFactor;
+
     double m_min;
+
     // default
     private RealGreyARGBConverter<R> m_converter;
 
@@ -29,13 +30,12 @@ ProjectingRenderer<R> implements RendererWithNormalization {
     }
 
     @Override
-    public ScreenImage render(final RandomAccessibleInterval<R> source, final int dimX,
-                              final int dimY, final long[] planePos) {
+    public ScreenImage render(final RandomAccessibleInterval<R> source, final int dimX, final int dimY,
+                              final long[] planePos) {
 
         // speed up standard cases e.g. array image...
-        final ScreenImage fastResult = FastNormalizingGreyRendering
-                .tryRendering(source, dimX, dimY, planePos,
-                              m_normalizationFactor, m_min);
+        final ScreenImage fastResult =
+                FastNormalizingGreyRendering.tryRendering(source, dimX, dimY, planePos, m_normalizationFactor, m_min);
 
         if (fastResult != null) {
             return fastResult;
@@ -58,11 +58,10 @@ ProjectingRenderer<R> implements RendererWithNormalization {
     }
 
     @Override
-    protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
-                                                            final int dimY, final RandomAccessibleInterval<R> source,
+    protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX, final int dimY,
+                                                            final RandomAccessibleInterval<R> source,
                                                             final ARGBScreenImage target) {
 
-        return new Projector2D<R, ARGBType>(dimX, dimY, source, target,
-                m_converter);
+        return new Projector2D<R, ARGBType>(dimX, dimY, source, target, m_converter);
     }
 }

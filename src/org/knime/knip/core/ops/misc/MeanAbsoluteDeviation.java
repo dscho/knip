@@ -15,14 +15,13 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @param <T>
  * @param <V>
  */
-public class MeanAbsoluteDeviation<T extends RealType<T>, V extends RealType<V>>
-implements UnaryOperation<IterableInterval<T>, V> {
+public class MeanAbsoluteDeviation<T extends RealType<T>, V extends RealType<V>> implements
+UnaryOperation<IterableInterval<T>, V> {
 
     @Override
     public V compute(final IterableInterval<T> input, final V output) {
         // mean
-        final double mean = new Mean<T, DoubleType>().compute(input.cursor(),
-                                                              new DoubleType()).getRealDouble();
+        final double mean = new Mean<T, DoubleType>().compute(input.cursor(), new DoubleType()).getRealDouble();
 
         // abs deviation from mean
         long i = 0;
@@ -30,8 +29,7 @@ implements UnaryOperation<IterableInterval<T>, V> {
         final Cursor<T> c = input.cursor();
 
         while (c.hasNext()) {
-            absDeviationSum += Math.abs(c.next().getRealDouble()
-                                        - mean);
+            absDeviationSum += Math.abs(c.next().getRealDouble() - mean);
             i++;
         }
 

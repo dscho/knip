@@ -10,23 +10,26 @@ import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
-public class Projector2D<A extends Type<A>, B extends Type<B>> extends
-Abstract2DProjector<A, B> {
+public class Projector2D<A extends Type<A>, B extends Type<B>> extends Abstract2DProjector<A, B> {
 
     final Converter<A, B> converter;
+
     final protected IterableInterval<B> target;
+
     final int numDimensions;
+
     private final int dimX;
+
     private final int dimY;
 
     final int X = 0;
+
     final int Y = 1;
+
     private final RandomAccessibleInterval<A> source;
 
-    public Projector2D(final int dimX, final int dimY,
-                       final RandomAccessibleInterval<A> source,
-                       final IterableInterval<B> target,
-                       final Converter<A, B> converter) {
+    public Projector2D(final int dimX, final int dimY, final RandomAccessibleInterval<A> source,
+                       final IterableInterval<B> target, final Converter<A, B> converter) {
         super(source.numDimensions());
         this.dimX = dimX;
         this.dimY = dimY;
@@ -48,8 +51,7 @@ Abstract2DProjector<A, B> {
         max[dimX] = target.max(X);
         max[dimY] = target.max(Y);
         final FinalInterval sourceInterval = new FinalInterval(min, max);
-        final RandomAccessibleInterval<A> subset = SubsetOperations
-                .subsetview(source, sourceInterval);
+        final RandomAccessibleInterval<A> subset = SubsetOperations.subsetview(source, sourceInterval);
 
         final Cursor<B> targetCursor = target.cursor();
         final Cursor<A> sourceCursor = Views.iterable(subset).cursor();
@@ -57,8 +59,7 @@ Abstract2DProjector<A, B> {
         while (targetCursor.hasNext()) {
             targetCursor.fwd();
             sourceCursor.fwd();
-            converter.convert(sourceCursor.get(),
-                              targetCursor.get());
+            converter.convert(sourceCursor.get(), targetCursor.get());
         }
     }
 }

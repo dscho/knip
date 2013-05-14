@@ -94,14 +94,14 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.slf4j.LoggerFactory;
 
 /**
- * A TableCellViewPane providing another view on image objects. It allows to
- * browser through the individual planes/dimensions, enhance contrast, etc.
- *
+ * A TableCellViewPane providing another view on image objects. It allows to browser through the individual
+ * planes/dimensions, enhance contrast, etc.
+ * 
  * @author dietzc, hornm, University of Konstanz
  * @param <T>
  */
-public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
-extends JPanel implements ViewerComponentContainer {
+public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>> extends JPanel implements
+ViewerComponentContainer {
 
     /* def */
     private static final long serialVersionUID = 1L;
@@ -139,28 +139,23 @@ extends JPanel implements ViewerComponentContainer {
         setLayout(new BorderLayout());
 
         m_centerPanels = new JPanel();
-        m_centerPanels.setLayout(new BoxLayout(m_centerPanels,
-                                               BoxLayout.Y_AXIS));
+        m_centerPanels.setLayout(new BoxLayout(m_centerPanels, BoxLayout.Y_AXIS));
         add(m_centerPanels, BorderLayout.CENTER);
 
         m_southPanels = new JPanel();
-        m_southPanels.setLayout(new BoxLayout(m_southPanels,
-                                              BoxLayout.X_AXIS));
+        m_southPanels.setLayout(new BoxLayout(m_southPanels, BoxLayout.X_AXIS));
         add(m_southPanels, BorderLayout.SOUTH);
 
         m_eastPanels = new JPanel();
-        m_eastPanels.setLayout(new BoxLayout(m_eastPanels,
-                                             BoxLayout.Y_AXIS));
+        m_eastPanels.setLayout(new BoxLayout(m_eastPanels, BoxLayout.Y_AXIS));
         add(m_eastPanels, BorderLayout.EAST);
 
         m_westPanels = new JPanel();
-        m_westPanels.setLayout(new BoxLayout(m_westPanels,
-                                             BoxLayout.Y_AXIS));
+        m_westPanels.setLayout(new BoxLayout(m_westPanels, BoxLayout.Y_AXIS));
         add(m_westPanels, BorderLayout.WEST);
 
         m_northPanels = new JPanel();
-        m_northPanels.setLayout(new BoxLayout(m_northPanels,
-                                              BoxLayout.X_AXIS));
+        m_northPanels.setLayout(new BoxLayout(m_northPanels, BoxLayout.X_AXIS));
         add(m_northPanels, BorderLayout.NORTH);
 
     }
@@ -176,18 +171,14 @@ extends JPanel implements ViewerComponentContainer {
 
     /**
      * Adds the {@link ViewerComponent} to the {@link ImgViewer}
-     *
-     * @param panel
-     *                {@link ViewerComponent} to be set
-     *
-     * @param setEventService
-     *                indicates weather the {@link EventService} of the
-     *                {@link ImgViewer} shall be set to the
-     *                {@link ViewerComponent}
-     *
+     * 
+     * @param panel {@link ViewerComponent} to be set
+     * 
+     * @param setEventService indicates weather the {@link EventService} of the {@link ImgViewer} shall be set to the
+     *            {@link ViewerComponent}
+     * 
      */
-    public void addViewerComponent(final ViewerComponent panel,
-                                   final boolean setEventService) {
+    public void addViewerComponent(final ViewerComponent panel, final boolean setEventService) {
 
         if (setEventService) {
             panel.setEventService(m_eventService);
@@ -218,8 +209,7 @@ extends JPanel implements ViewerComponentContainer {
     }
 
     /**
-     * @return the event service used in this particular viewer (e.g. to
-     *         subscribe other listeners)
+     * @return the event service used in this particular viewer (e.g. to subscribe other listeners)
      */
     public EventService getEventService() {
         return m_eventService;
@@ -227,19 +217,14 @@ extends JPanel implements ViewerComponentContainer {
 
     /**
      * Set the current {@link Img} of the viewer
-     *
-     * @param img
-     *                {@link Img} to be set
-     * @param axes
-     *                {@link CalibratedSpace} of the {@link Img}
-     * @param name
-     *                {@link Named} of the {@link Img}
-     * @param imageMetaData
-     *                {@link ImageMetadata} might be null if no metadata
-     *                exists
+     * 
+     * @param img {@link Img} to be set
+     * @param axes {@link CalibratedSpace} of the {@link Img}
+     * @param name {@link Named} of the {@link Img}
+     * @param imageMetaData {@link ImageMetadata} might be null if no metadata exists
      */
-    public void setImg(final I img, final CalibratedSpace axes, final Named name,
-                       final Sourced source, final ImageMetadata imageMetaData) {
+    public void setImg(final I img, final CalibratedSpace axes, final Named name, final Sourced source,
+                       final ImageMetadata imageMetaData) {
 
         // make sure that at least two dimensions exist
         CalibratedSpace axes2d;
@@ -249,44 +234,33 @@ extends JPanel implements ViewerComponentContainer {
             img2d = img;
         } else {
             img2d = Views.addDimension(img, 0, 0);
-            axes2d = new CopyCalibratedSpace<CalibratedSpace>(img2d)
-                    .compute(axes, new CalibratedSpaceImpl(
-                                                           2));
+            axes2d = new CopyCalibratedSpace<CalibratedSpace>(img2d).compute(axes, new CalibratedSpaceImpl(2));
         }
 
         final IterableInterval<T> iterable = Views.iterable(img2d);
 
         if (iterable.firstElement() instanceof DoubleType) {
-            final Convert<DoubleType, FloatType> convertOp = new Convert<DoubleType, FloatType>(
-                    new DoubleType(), new FloatType(),
-                    TypeConversionTypes.DIRECT);
+            final Convert<DoubleType, FloatType> convertOp =
+                    new Convert<DoubleType, FloatType>(new DoubleType(), new FloatType(), TypeConversionTypes.DIRECT);
 
             if (imageMetaData != null) {
                 m_eventService.publish(new ImgWithMetadataChgEvent<FloatType>(
                         new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                (RandomAccessibleInterval<DoubleType>) img2d,
-                                convertOp,
-                                new FloatType()),
-                                name, source, axes2d,
-                                imageMetaData));
+                                (RandomAccessibleInterval<DoubleType>)img2d, convertOp, new FloatType()), name, source,
+                                axes2d, imageMetaData));
             } else {
                 m_eventService.publish(new IntervalWithMetadataChgEvent<FloatType>(
                         new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                (RandomAccessibleInterval<DoubleType>) img2d,
-                                convertOp,
-                                new FloatType()),
-                                name, source, axes2d));
+                                (RandomAccessibleInterval<DoubleType>)img2d, convertOp, new FloatType()), name, source,
+                                axes2d));
             }
             m_eventService.publish(new ImgRedrawEvent());
         } else {
             if (imageMetaData != null) {
-                m_eventService.publish(new ImgWithMetadataChgEvent<T>(
-                        img2d, name, source, axes2d,
-                        imageMetaData));
+                m_eventService.publish(new ImgWithMetadataChgEvent<T>(img2d, name, source, axes2d, imageMetaData));
 
             } else {
-                m_eventService.publish(new IntervalWithMetadataChgEvent<T>(
-                        img2d, name, source, axes2d));
+                m_eventService.publish(new IntervalWithMetadataChgEvent<T>(img2d, name, source, axes2d));
 
             }
             m_eventService.publish(new ImgRedrawEvent());
@@ -295,19 +269,16 @@ extends JPanel implements ViewerComponentContainer {
     }
 
     /**
-     * Save the current settings/state of an ImgViewer to a base64 coded
-     * String
-     *
-     * @return base64 coded String of the current settings/state of the
-     *         viewer
+     * Save the current settings/state of an ImgViewer to a base64 coded String
+     * 
+     * @return base64 coded String of the current settings/state of the viewer
      * @throws IOException
      */
     public String getComponentConfiguration() throws IOException {
         String res = "";
         try {
             final ByteArrayOutputStream totalBytes = new ByteArrayOutputStream();
-            final ObjectOutputStream totalOut = new ObjectOutputStream(
-                                                                       totalBytes);
+            final ObjectOutputStream totalOut = new ObjectOutputStream(totalBytes);
 
             totalOut.writeInt(m_viewerComponents.size());
 
@@ -316,8 +287,7 @@ extends JPanel implements ViewerComponentContainer {
             for (final ViewerComponent c : m_viewerComponents) {
 
                 componentBytes = new ByteArrayOutputStream();
-                componentOutput = new ObjectOutputStream(
-                                                         componentBytes);
+                componentOutput = new ObjectOutputStream(componentBytes);
                 c.saveComponentConfiguration(componentOutput);
                 componentOutput.close();
                 totalOut.writeUTF(c.getClass().getSimpleName());
@@ -328,8 +298,7 @@ extends JPanel implements ViewerComponentContainer {
 
             }
             totalOut.close();
-            res = new String(Base64.encodeBase64(totalBytes
-                                                 .toByteArray()));
+            res = new String(Base64.encodeBase64(totalBytes.toByteArray()));
 
         } catch (final IOException e) {
             e.printStackTrace();
@@ -342,14 +311,12 @@ extends JPanel implements ViewerComponentContainer {
     /**
      * Loading settings of the viewer from a base64Coded String produced by
      * {@link ImgViewer#getComponentConfiguration()}
-     *
-     * @param base64coded
-     *                the base64 representation of the viewer state
+     * 
+     * @param base64coded the base64 representation of the viewer state
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void setComponentConfiguration(final String base64coded)
-            throws IOException, ClassNotFoundException {
+    public void setComponentConfiguration(final String base64coded) throws IOException, ClassNotFoundException {
         final Map<String, ObjectInput> configMap = new HashMap<String, ObjectInput>();
 
         if (base64coded.equals("")) {
@@ -357,10 +324,8 @@ extends JPanel implements ViewerComponentContainer {
         }
 
         try {
-            final byte[] bytes = Base64.decodeBase64(base64coded
-                                                     .getBytes());
-            final ObjectInputStream totalIn = new ObjectInputStream(
-                                                                    new ByteArrayInputStream(bytes));
+            final byte[] bytes = Base64.decodeBase64(base64coded.getBytes());
+            final ObjectInputStream totalIn = new ObjectInputStream(new ByteArrayInputStream(bytes));
 
             final int num = totalIn.readInt();
 
@@ -374,20 +339,17 @@ extends JPanel implements ViewerComponentContainer {
                 for (int b = 0; b < len; b++) {
                     buf[b] = totalIn.readByte();
                 }
-                configMap.put(title, new ObjectInputStream(
-                                                           new ByteArrayInputStream(buf)));
+                configMap.put(title, new ObjectInputStream(new ByteArrayInputStream(buf)));
             }
 
             totalIn.close();
         } catch (final IOException e) {
-            LoggerFactory.getLogger(ImgViewer.class).error("error",
-                                                           e);
+            LoggerFactory.getLogger(ImgViewer.class).error("error", e);
             return;
         }
 
         for (final ViewerComponent c : m_viewerComponents) {
-            final ObjectInput oi = configMap.get(c.getClass()
-                                                 .getSimpleName());
+            final ObjectInput oi = configMap.get(c.getClass().getSimpleName());
             if (oi != null) {
                 c.loadComponentConfiguration(oi);
             }

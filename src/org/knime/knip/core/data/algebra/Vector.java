@@ -14,8 +14,7 @@ import net.imglib2.Localizable;
 import net.imglib2.Point;
 
 /**
- * Class representing a simple point in the image. It mainly serves to
- * facilitate simple operations on the coordinates.
+ * Class representing a simple point in the image. It mainly serves to facilitate simple operations on the coordinates.
  * 
  * @author hornm, schoenen University of Konstanz
  * 
@@ -69,7 +68,7 @@ public class Vector extends Point implements Cloneable {
         for (int i = 0; i < numDimensions(); i++) {
             l += getLongPosition(i) * getLongPosition(i);
         }
-        return (long) Math.sqrt(l);
+        return (long)Math.sqrt(l);
     }
 
     public Vector norm1() {
@@ -90,8 +89,7 @@ public class Vector extends Point implements Cloneable {
     }
 
     /**
-     * Addition. The points must be of same dimensionality, no check is
-     * made.
+     * Addition. The points must be of same dimensionality, no check is made.
      * 
      * @param p
      * @return the resulting point
@@ -99,8 +97,7 @@ public class Vector extends Point implements Cloneable {
     public Vector add(final Vector p) {
         final Vector res = new Vector(numDimensions());
         for (int i = 0; i < numDimensions(); i++) {
-            res.setPosition(getLongPosition(i)
-                            + p.getLongPosition(i), i);
+            res.setPosition(getLongPosition(i) + p.getLongPosition(i), i);
         }
         return res;
     }
@@ -108,8 +105,7 @@ public class Vector extends Point implements Cloneable {
     public Vector subtract(final Vector p) {
         final Vector res = new Vector(numDimensions());
         for (int i = 0; i < numDimensions(); i++) {
-            res.setPosition(getLongPosition(i)
-                            - p.getLongPosition(i), i);
+            res.setPosition(getLongPosition(i) - p.getLongPosition(i), i);
         }
         return res;
     }
@@ -139,42 +135,42 @@ public class Vector extends Point implements Cloneable {
     /**
      * {@inheritDoc}
      */
-     @Override
-     public Vector clone() {
-         return new Vector(this);
-     }
+    @Override
+    public Vector clone() {
+        return new Vector(this);
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public int hashCode() {
-         long l = getLongPosition(0);
-         int hash = (int) (l ^ (l >>> 32));
-         for (int i = 1; i < numDimensions(); i++) {
-             l = getLongPosition(i);
-             hash = (31 * hash) + (int) (l ^ (l >>> 32));
-         }
-         return hash;
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        long l = getLongPosition(0);
+        int hash = (int)(l ^ (l >>> 32));
+        for (int i = 1; i < numDimensions(); i++) {
+            l = getLongPosition(i);
+            hash = (31 * hash) + (int)(l ^ (l >>> 32));
+        }
+        return hash;
+    }
 
-     /**
-      * {@inheritDoc}
-      */
-     @Override
-     public boolean equals(final Object obj) {
-         if (!(obj instanceof Vector)) {
-             return false;
-         }
-         final Vector other = (Vector) obj;
-         if (numDimensions() != other.numDimensions()) {
-             return false;
-         }
-         for (int i = 0; i < numDimensions(); i++) {
-             if (getLongPosition(i) != other.getLongPosition(i)) {
-                 return false;
-             }
-         }
-         return true;
-     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof Vector)) {
+            return false;
+        }
+        final Vector other = (Vector)obj;
+        if (numDimensions() != other.numDimensions()) {
+            return false;
+        }
+        for (int i = 0; i < numDimensions(); i++) {
+            if (getLongPosition(i) != other.getLongPosition(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

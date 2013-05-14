@@ -59,11 +59,10 @@ import net.imglib2.util.ValuePair;
 
 /**
  * This class bundles a group of Transfer functions together.
- *
- * It uses a number of maps to connect info between a String, a Color and a
- * TransferFunction. Internaly it uses a {@link LinkedHashMap}, so it guarantees
- * an ordering of the keys in form of the String.
- *
+ * 
+ * It uses a number of maps to connect info between a String, a Color and a TransferFunction. Internaly it uses a
+ * {@link LinkedHashMap}, so it guarantees an ordering of the keys in form of the String.
+ * 
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  */
 public class TransferFunctionBundle implements Iterable<TransferFunction> {
@@ -84,67 +83,58 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
     }
 
     /**
-     * Returns a new Bundle with four Transferfunction for alpha, red, green
-     * and blue.
-     *
+     * Returns a new Bundle with four Transferfunction for alpha, red, green and blue.
+     * 
      * @return the new bundle
      */
     public static TransferFunctionBundle newRGBABundle() {
-        final TransferFunctionColor[] keys = { TransferFunctionColor.ALPHA,
-                TransferFunctionColor.RED,
-                TransferFunctionColor.GREEN,
-                TransferFunctionColor.BLUE };
+        final TransferFunctionColor[] keys =
+            {TransferFunctionColor.ALPHA, TransferFunctionColor.RED, TransferFunctionColor.GREEN,
+                TransferFunctionColor.BLUE};
 
-        return moveAlpha(setUpBundle(keys, Type.RGBA),
-                         TransferFunctionColor.ALPHA);
+        return moveAlpha(setUpBundle(keys, Type.RGBA), TransferFunctionColor.ALPHA);
     }
 
     /**
-     * Returns a new Bundle with four Transferfunction for red, green and
-     * blue.
-     *
+     * Returns a new Bundle with four Transferfunction for red, green and blue.
+     * 
      * @return the new bundle
      */
     public static TransferFunctionBundle newRGBBundle() {
-        final TransferFunctionColor[] keys = { TransferFunctionColor.RED,
-                TransferFunctionColor.GREEN,
-                TransferFunctionColor.BLUE };
+        final TransferFunctionColor[] keys =
+            {TransferFunctionColor.RED, TransferFunctionColor.GREEN, TransferFunctionColor.BLUE};
         return setUpBundle(keys, Type.RGB);
     }
 
     /**
      * Returns a new Bundle with two Transferfunctions for gray.
-     *
+     * 
      * @return the new bundle
      */
     public static TransferFunctionBundle newGBundle() {
-        final TransferFunctionColor[] keys = { TransferFunctionColor.GREY };
+        final TransferFunctionColor[] keys = {TransferFunctionColor.GREY};
         return setUpBundle(keys, Type.GREY);
     }
 
     /**
      * Returns a new Bundle with two Transferfunctions for alpha and gray.
-     *
+     * 
      * @return the new bundle
      */
     public static TransferFunctionBundle newGABundle() {
-        final TransferFunctionColor[] keys = { TransferFunctionColor.ALPHA,
-                TransferFunctionColor.GREY };
+        final TransferFunctionColor[] keys = {TransferFunctionColor.ALPHA, TransferFunctionColor.GREY};
 
-        return moveAlpha(setUpBundle(keys, Type.GREYA),
-                         TransferFunctionColor.ALPHA);
+        return moveAlpha(setUpBundle(keys, Type.GREYA), TransferFunctionColor.ALPHA);
     }
 
     /**
      * Move the second point of the alpha function.
      */
-    private static TransferFunctionBundle moveAlpha(
-                                                    final TransferFunctionBundle bundle,
+    private static TransferFunctionBundle moveAlpha(final TransferFunctionBundle bundle,
                                                     final TransferFunctionColor color) {
         assert (bundle.get(color).getClass() == PolylineTransferFunction.class);
 
-        final PolylineTransferFunction func = (PolylineTransferFunction) bundle
-                .get(color);
+        final PolylineTransferFunction func = (PolylineTransferFunction)bundle.get(color);
         final List<PolylineTransferFunction.Point> list = func.getPoints();
         func.movePoint(list.get(list.size() - 1), 1.0, 0.2);
 
@@ -153,13 +143,11 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
     /**
      * Use this for static methods to return standard bundles.<br>
-     *
-     * @param colors
-     *                the keys
+     * 
+     * @param colors the keys
      * @return the set up bundle
      */
-    private static TransferFunctionBundle setUpBundle(
-                                                      final TransferFunctionColor[] colors, final Type type) {
+    private static TransferFunctionBundle setUpBundle(final TransferFunctionColor[] colors, final Type type) {
         final TransferFunctionBundle bundle = new TransferFunctionBundle(type);
 
         for (final TransferFunctionColor color : colors) {
@@ -169,8 +157,11 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
         return bundle;
     }
 
-    private final Map<TransferFunctionColor, TransferFunction> m_functions = new LinkedHashMap<TransferFunctionColor, TransferFunction>();
-    private final Map<TransferFunction, TransferFunctionColor> m_names = new HashMap<TransferFunction, TransferFunctionColor>();
+    private final Map<TransferFunctionColor, TransferFunction> m_functions =
+            new LinkedHashMap<TransferFunctionColor, TransferFunction>();
+
+    private final Map<TransferFunction, TransferFunctionColor> m_names =
+            new HashMap<TransferFunction, TransferFunctionColor>();
 
     private final Type m_type;
 
@@ -183,9 +174,8 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
     /**
      * A copy constructor, creating a deep copy.
-     *
-     * @param tfb
-     *                the bundle to copy
+     * 
+     * @param tfb the bundle to copy
      */
     public TransferFunctionBundle(final TransferFunctionBundle tfb) {
 
@@ -203,7 +193,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
     /**
      * Creates a deep copy of this instance.<br>
-     *
+     * 
      * @return a copy of this bundle.
      */
     public TransferFunctionBundle copy() {
@@ -211,14 +201,12 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
     }
 
     /**
-     * Add a bunch of new functions with the given names as keys and
-     * associate them with the given Colors in the order of the Array.
-     *
-     * @param list
-     *                list of the keys and functions to add
+     * Add a bunch of new functions with the given names as keys and associate them with the given Colors in the order
+     * of the Array.
+     * 
+     * @param list list of the keys and functions to add
      */
-    public final void add(
-                          final List<ValuePair<TransferFunction, TransferFunctionColor>> list) {
+    public final void add(final List<ValuePair<TransferFunction, TransferFunctionColor>> list) {
 
         for (final ValuePair<TransferFunction, TransferFunctionColor> p : list) {
             add(p.a, p.b);
@@ -227,58 +215,46 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
     /**
      * Add a function with the given color as key.
-     *
-     * @param func
-     *                the function that should be added
-     * @param color
-     *                the key to register the new function with
+     * 
+     * @param func the function that should be added
+     * @param color the key to register the new function with
      */
-    public final void add(final TransferFunction func,
-                          final TransferFunctionColor color) {
+    public final void add(final TransferFunction func, final TransferFunctionColor color) {
         m_functions.put(color, func);
         m_names.put(func, color);
     }
 
     /**
      * Get the transfer function mapped to this key.
-     *
-     * @param color
-     *                the key
+     * 
+     * @param color the key
      * @return the associated transfer function
      */
-    public final TransferFunction get(final TransferFunctionColor color)
-            throws IllegalArgumentException {
+    public final TransferFunction get(final TransferFunctionColor color) throws IllegalArgumentException {
         final TransferFunction func = m_functions.get(color);
 
         if (func != null) {
             return func;
         } else {
-            throw new IllegalArgumentException(
-                                               "No such function with this name: "
-                                                       + color.toString());
+            throw new IllegalArgumentException("No such function with this name: " + color.toString());
         }
     }
 
     /**
      * Move the function with this keys to the last position in the Map.
-     *
-     * @param color
-     *                the desired key
-     *
-     * @throws IllegalArgumentException
-     *                 if no function is registered under this name
+     * 
+     * @param color the desired key
+     * 
+     * @throws IllegalArgumentException if no function is registered under this name
      */
-    public final void moveToLast(final TransferFunctionColor color)
-            throws IllegalArgumentException {
+    public final void moveToLast(final TransferFunctionColor color) throws IllegalArgumentException {
 
         if (m_functions.containsKey(color)) {
             final TransferFunction temp = m_functions.get(color);
             m_functions.remove(color);
             m_functions.put(color, temp);
         } else {
-            throw new IllegalArgumentException(
-                                               "No such function with this name: "
-                                                       + color.toString());
+            throw new IllegalArgumentException("No such function with this name: " + color.toString());
         }
     }
 
@@ -293,10 +269,9 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
     /**
      * Get the Set of keys used.
-     *
-     * As internally a {@link LinkedHashMap} is used, the order of this set
-     * is guranteed to be always the same.
-     *
+     * 
+     * As internally a {@link LinkedHashMap} is used, the order of this set is guranteed to be always the same.
+     * 
      * @return the set of keys
      */
     public final Set<TransferFunctionColor> getKeys() {
@@ -305,7 +280,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
     /**
      * Get collection of all transfer functions.
-     *
+     * 
      * @return all transfer functions
      */
     public final Collection<TransferFunction> getFunctions() {
@@ -314,30 +289,25 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
 
     /**
      * Get the color that is used as key for a transfer function.
-     *
-     * @param func
-     *                the transfer function
+     * 
+     * @param func the transfer function
      * @return the key that belongs to the function
-     *
-     * @throws IllegalArgumentException
-     *                 if no function is registered under this name
+     * 
+     * @throws IllegalArgumentException if no function is registered under this name
      */
-    public final TransferFunctionColor getColorOfFunction(
-                                                          final TransferFunction func)
-                                                                  throws IllegalArgumentException {
+    public final TransferFunctionColor getColorOfFunction(final TransferFunction func) throws IllegalArgumentException {
 
         final TransferFunctionColor name = m_names.get(func);
         if (name != null) {
             return name;
         } else {
-            throw new IllegalArgumentException(
-                                               "This function is not one of the functions in this bundle");
+            throw new IllegalArgumentException("This function is not one of the functions in this bundle");
         }
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see Iterable#iterator()
      */
     @Override

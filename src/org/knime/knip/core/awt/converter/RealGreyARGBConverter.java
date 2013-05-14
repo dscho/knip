@@ -4,10 +4,10 @@ import net.imglib2.converter.Converter;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
-public class RealGreyARGBConverter<R extends RealType<R>> implements
-Converter<R, ARGBType> {
+public class RealGreyARGBConverter<R extends RealType<R>> implements Converter<R, ARGBType> {
 
     private final double m_localMin;
+
     private final double m_normalizationFactor;
 
     public RealGreyARGBConverter(final double normalizationFactor, final double localMin) {
@@ -22,17 +22,15 @@ Converter<R, ARGBType> {
         double val;
 
         if (m_normalizationFactor == 1) {
-            val = ((input.getRealDouble() - input.getMinValue()) / (input
-                    .getMaxValue() - input.getMinValue()));
+            val = ((input.getRealDouble() - input.getMinValue()) / (input.getMaxValue() - input.getMinValue()));
 
         } else {
-            val = (((input.getRealDouble() - m_localMin)
-                    / (input.getMaxValue() - input
-                            .getMinValue())) * m_normalizationFactor);
+            val =
+                    (((input.getRealDouble() - m_localMin) / (input.getMaxValue() - input.getMinValue())) * m_normalizationFactor);
 
         }
 
-        b = (int) Math.round(val * 255.0);
+        b = (int)Math.round(val * 255.0);
 
         if (b < 0) {
             b = 0;

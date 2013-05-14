@@ -13,7 +13,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.OverlayElement2D;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
 
 /**
- *
+ * 
  * @author dietyc
  * @param <O>
  */
@@ -119,8 +119,8 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
      * @param labels
      */
     public abstract void
-            onMouseDoubleClickMid(ImgViewerMouseEvent e, O currentOverlayElement, PlaneSelectionEvent selection,
-                                  Overlay<String> overlay, String... labels);
+    onMouseDoubleClickMid(ImgViewerMouseEvent e, O currentOverlayElement, PlaneSelectionEvent selection,
+                          Overlay<String> overlay, String... labels);
 
     /**
      * @param e
@@ -288,7 +288,7 @@ public abstract class AnnotatorTool<O extends OverlayElement2D<String>> {
     public final void setButtonIcon(final AbstractButton jb, final String path) {
         final URL icon =
                 getClass().getClassLoader().getResource(getClass().getPackage().getName().replace('.', '/') + "/"
-                                                                + path);
+                        + path);
         jb.setHorizontalAlignment(SwingConstants.LEFT);
         if (icon != null) {
             jb.setIcon(new ImageIcon(icon));

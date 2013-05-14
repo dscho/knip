@@ -58,18 +58,18 @@ import net.imglib2.type.numeric.integer.IntType;
  * Watershed algorithms. The watershed algorithm segments and labels an image using an analogy to a landscape. The image
  * intensities are turned into the z-height of the landscape and the landscape is "filled with water" and the bodies of
  * water label the landscape's pixels. Here is the reference for the original paper:
- *
+ * 
  * Lee Vincent, Pierre Soille, Watersheds in digital spaces: An efficient algorithm based on immersion simulations, IEEE
  * Trans. Pattern Anal. Machine Intell., 13(6) 583-598 (1991)
- *
+ * 
  * Watersheds are often performed on the gradient of an intensity image or one where the edges of the object boundaries
  * have been enhanced. The resulting image has a depressed object interior and a ridge which constrains the watershed
  * boundary.
- *
+ * 
  * @author Lee Kamentsky
  */
 public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<L>> implements
-        OutputAlgorithm<Labeling<L>> {
+OutputAlgorithm<Labeling<L>> {
 
     private static class PixelIntensity<U extends Comparable<U>> implements Comparable<PixelIntensity<U>> {
         protected final long index;
@@ -131,7 +131,7 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
 
     /**
      * Provide the intensity image to be watershedded.
-     *
+     * 
      * @param image the intensity image that defines the watershed landscape. Lower values will be labeled first.
      */
     public void setIntensityImage(final Img<T> image) {
@@ -140,7 +140,7 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
 
     /**
      * Provide the seeds that mark the watersheds.
-     *
+     * 
      * @param seeds a labeling of the space, defining the first pixels in the space to be labeled. The seeded pixels
      *            will be similarly labeled in the output as will be their watershed neighbors.
      */
@@ -150,7 +150,7 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
 
     /**
      * Set the structuring element that defines the connectivity
-     *
+     * 
      * @param structuringElement an array of offsets where each element of the array gives the offset of a connected
      *            pixel from a pixel of interest. You can use AllConnectedComponents.getStructuringElement to get an
      *            8-connected (or N-dimensional equivalent) structuring element (all adjacent pixels + diagonals).
@@ -161,7 +161,7 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
 
     /**
      * Set the output labeling where the results will be stored. The class will provide one if none is supplied.
-     *
+     * 
      * @param outputLabeling
      */
     public void setOutputLabeling(final Labeling<L> outputLabeling) {
@@ -170,7 +170,7 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
 
     /**
      * Set the threshold where the watershed should stop no matter if another water basin was reached.
-     *
+     * 
      * @param threshold the threshold value (i.e. the upper bound), it stop growing if the pixel intensitiy is equal to
      *            the threshold
      */
@@ -182,7 +182,7 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
      * The seeded watershed uses a pre-existing labeling of the space where the labels act as seeds for the output
      * watershed. The analogy would be to use dyed liquids emanating from the seeded pixels, flowing to the local minima
      * and then filling individual watersheds until the liquids meet at the boundaries.
-     *
+     * 
      * This implementation breaks ties by assigning the pixel to the label that occupied an adjacent pixel first.
      */
     @Override

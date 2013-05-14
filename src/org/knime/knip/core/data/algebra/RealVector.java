@@ -14,8 +14,7 @@ import net.imglib2.RealLocalizable;
 import net.imglib2.RealPoint;
 
 /**
- * Class representing a simple point and serves to facilitate simple operations
- * on it.
+ * Class representing a simple point and serves to facilitate simple operations on it.
  * 
  * @author hornm, schoenen University of Konstanz
  */
@@ -39,8 +38,7 @@ public class RealVector extends RealPoint implements Cloneable {
 
     /* --- some operations --- */
     /**
-     * Addition. The points must be of same dimensionality, no check is
-     * made.
+     * Addition. The points must be of same dimensionality, no check is made.
      * 
      * @param p
      * @return
@@ -48,8 +46,7 @@ public class RealVector extends RealPoint implements Cloneable {
     public RealVector add(final RealVector p) {
         final RealVector res = new RealVector(numDimensions());
         for (int i = 0; i < numDimensions(); i++) {
-            res.setPosition(getDoublePosition(i)
-                            + p.getDoublePosition(i), i);
+            res.setPosition(getDoublePosition(i) + p.getDoublePosition(i), i);
         }
         return res;
     }
@@ -57,8 +54,7 @@ public class RealVector extends RealPoint implements Cloneable {
     public RealVector subtract(final RealVector p) {
         final RealVector res = new RealVector(numDimensions());
         for (int i = 0; i < numDimensions(); i++) {
-            res.setPosition(getDoublePosition(i)
-                            - p.getDoublePosition(i), i);
+            res.setPosition(getDoublePosition(i) - p.getDoublePosition(i), i);
         }
         return res;
     }
@@ -127,10 +123,10 @@ public class RealVector extends RealPoint implements Cloneable {
     @Override
     public int hashCode() {
         long l = Double.doubleToLongBits(getDoublePosition(0));
-        int hash = (int) (l ^ (l >>> 32));
+        int hash = (int)(l ^ (l >>> 32));
         for (int i = 1; i < numDimensions(); i++) {
             l = Double.doubleToLongBits(getDoublePosition(i));
-            hash = (31 * hash) + (int) (l ^ (l >>> 32));
+            hash = (31 * hash) + (int)(l ^ (l >>> 32));
         }
         return hash;
     }
@@ -143,7 +139,7 @@ public class RealVector extends RealPoint implements Cloneable {
         if (!(obj instanceof RealVector)) {
             return false;
         }
-        final RealVector other = (RealVector) obj;
+        final RealVector other = (RealVector)obj;
         if (numDimensions() != other.numDimensions()) {
             return false;
         }

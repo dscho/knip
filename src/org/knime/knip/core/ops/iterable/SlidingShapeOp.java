@@ -26,23 +26,17 @@ implements UnaryOperation<IN, OUT> {
     public OUT compute(final IN input, final OUT output) {
 
         // Neighboor update
-        final IntervalView<T> interval = Views.interval(
-                                                        Views.extend(input, outofbounds), input);
+        final IntervalView<T> interval = Views.interval(Views.extend(input, outofbounds), input);
 
-        final IterableInterval<Neighborhood<T>> neighborhoods = shape
-                .neighborhoods(interval);
+        final IterableInterval<Neighborhood<T>> neighborhoods = shape.neighborhoods(interval);
 
         // Create an iterable to check iteration order
-        if (!neighborhoods.iterationOrder().equals(
-                                                   output.iterationOrder())) {
-            throw new IllegalArgumentException(
-                    "Iteration order doesn't fit in SlidingNeighborhoodOp");
+        if (!neighborhoods.iterationOrder().equals(output.iterationOrder())) {
+            throw new IllegalArgumentException("Iteration order doesn't fit in SlidingNeighborhoodOp");
         }
 
         return compute(neighborhoods, input, output);
     }
 
-    protected abstract OUT compute(
-                                   IterableInterval<Neighborhood<T>> neighborhoods,
-                                   IN input, OUT output);
+    protected abstract OUT compute(IterableInterval<Neighborhood<T>> neighborhoods, IN input, OUT output);
 }

@@ -55,16 +55,16 @@ import java.util.Set;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class LabelPanelHiliteSelectionChgEvent implements KNIPEvent {
 
     private final Set<String> m_labels;
+
     private final boolean m_hilite;
 
-    public LabelPanelHiliteSelectionChgEvent(final Set<String> labels,
-                                             final boolean hilite) {
+    public LabelPanelHiliteSelectionChgEvent(final Set<String> labels, final boolean hilite) {
         m_labels = labels;
         m_hilite = hilite;
 

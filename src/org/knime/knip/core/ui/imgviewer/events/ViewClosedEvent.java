@@ -53,7 +53,7 @@ package org.knime.knip.core.ui.imgviewer.events;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ViewClosedEvent implements KNIPEvent {

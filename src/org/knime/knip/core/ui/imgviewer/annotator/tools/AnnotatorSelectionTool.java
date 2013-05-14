@@ -82,7 +82,7 @@ public class AnnotatorSelectionTool extends AnnotatorTool<OverlayElement2D<Strin
                 } else if (currentOverlayElement instanceof AbstractPolygonOverlayElement) {
                     m_selectedIndex =
                             ((AbstractPolygonOverlayElement<String>)currentOverlayElement).getPointIndexByPosition(e
-                                    .getPosX(), e.getPosY(), 3);
+                                                                                                                   .getPosX(), e.getPosY(), 3);
                 }
 
             } else {
@@ -124,8 +124,8 @@ public class AnnotatorSelectionTool extends AnnotatorTool<OverlayElement2D<Strin
                     currentOverlayElement.translate(pos);
                 } else {
                     ((AbstractPolygonOverlayElement<String>)currentOverlayElement)
-                            .translate(m_selectedIndex, pos[selection.getPlaneDimIndex1()],
-                                       pos[selection.getPlaneDimIndex2()]);
+                    .translate(m_selectedIndex, pos[selection.getPlaneDimIndex1()],
+                               pos[selection.getPlaneDimIndex2()]);
                 }
             }
             fireStateChanged();

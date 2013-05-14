@@ -55,7 +55,7 @@ import java.awt.Image;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class AWTImageChgEvent implements KNIPEvent {
@@ -73,7 +73,6 @@ public class AWTImageChgEvent implements KNIPEvent {
     public Image getImage() {
         return m_image;
     }
-
 
     @Override
     public ExecutionPriority getExecutionOrder() {

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author zinsmaierm
  */
 public class CalibrationUpdateEvent implements KNIPEvent {

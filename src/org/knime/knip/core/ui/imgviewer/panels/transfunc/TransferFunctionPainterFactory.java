@@ -49,27 +49,21 @@ package org.knime.knip.core.ui.imgviewer.panels.transfunc;
 
 import java.awt.Color;
 
-
 /**
  * @author muethingc
- *
+ * 
  */
 public class TransferFunctionPainterFactory {
 
     private TransferFunctionPainterFactory() {
     };
 
-    public static final TransferFunctionPainter create(
-                                                       final TransferFunction function, final Color color) {
+    public static final TransferFunctionPainter create(final TransferFunction function, final Color color) {
         if (function instanceof PolylineTransferFunction) {
 
-            return new PolylineTransferFunctionPainter(
-                                                       (PolylineTransferFunction) function,
-                                                       color);
+            return new PolylineTransferFunctionPainter((PolylineTransferFunction)function, color);
         }
 
-        throw new IllegalArgumentException(
-                                           "not yet implemented for type "
-                                                   + function.getClass());
+        throw new IllegalArgumentException("not yet implemented for type " + function.getClass());
     }
 }

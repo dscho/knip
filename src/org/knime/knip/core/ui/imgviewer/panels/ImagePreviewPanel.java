@@ -77,7 +77,7 @@ import loci.formats.gui.BufferedImageReader;
 
 /**
  * A JPanel to provide a preview of the image itself or the meta data.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ImagePreviewPanel extends JPanel implements Runnable {
@@ -96,13 +96,13 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
     private String[][] m_metadata;
 
     private JTable m_metadataTable;
+
     private final JPanel image = new JPanel();
+
     private final JPanel table = new JPanel();
 
-    private static final String[] CORE_METADATA = new String[] { "SizeX",
-        "SizeY", "SizeZ", "SizeT", "SizeC", "IsRGB",
-        "PixelType", "LittleEndian", "DimensionsOrder",
-    "IsInterleaved" };
+    private static final String[] CORE_METADATA = new String[]{"SizeX", "SizeY", "SizeZ", "SizeT", "SizeC", "IsRGB",
+        "PixelType", "LittleEndian", "DimensionsOrder", "IsInterleaved"};
 
     /**
      *
@@ -120,7 +120,7 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
         m_iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         image.add("Image", m_iconLabel);
-        m_metadata = new String[][] { { "", "" } };
+        m_metadata = new String[][]{{"", ""}};
         m_metadataTable = new JTable(new AbstractTableModel() {
             /**
              *
@@ -135,13 +135,11 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
             @Override
             public int getRowCount() {
 
-                return m_metadata != null ? m_metadata.length
-                        : 0;
+                return m_metadata != null ? m_metadata.length : 0;
             }
 
             @Override
-            public Object getValueAt(final int rowIndex,
-                                     final int columnIndex) {
+            public Object getValueAt(final int rowIndex, final int columnIndex) {
                 return m_metadata[rowIndex][columnIndex];
             }
 
@@ -165,9 +163,8 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
     }
 
     /**
-     * Sets the preview to the specified file. This methods opens the file
-     * and updates the preview panel.
-     *
+     * Sets the preview to the specified file. This methods opens the file and updates the preview panel.
+     * 
      * @param filename
      */
     public void setImage(final String filename) {
@@ -196,21 +193,15 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
                 final int x = m_reader.getSizeX();
                 final int y = m_reader.getSizeY();
                 // Calculate the Size of the Preview
-                final int scx = (int) (x * (290.0 / new Double(x)));
-                final int scy = (int) (y * (240 / new Double(y)));
+                final int scx = (int)(x * (290.0 / new Double(x)));
+                final int scy = (int)(y * (240 / new Double(y)));
                 // Workaround for bigger ImageIcon
-                ico.setImage(m_reader
-                             .openThumbImage(0)
-                             .getScaledInstance(
-                                                scx, scy,
-                                                Image.SCALE_DEFAULT));
+                ico.setImage(m_reader.openThumbImage(0).getScaledInstance(scx, scy, Image.SCALE_DEFAULT));
 
                 m_iconLabel.setIcon(ico);
-                m_metadata = new String[][] { { "", "" } };
-                final Hashtable<String, Object> gm = m_reader
-                        .getGlobalMetadata();
-                m_metadata = new String[CORE_METADATA.length
-                                        + gm.size()][2];
+                m_metadata = new String[][]{{"", ""}};
+                final Hashtable<String, Object> gm = m_reader.getGlobalMetadata();
+                m_metadata = new String[CORE_METADATA.length + gm.size()][2];
                 for (int i = 0; i < CORE_METADATA.length; i++) {
                     m_metadata[i][0] = CORE_METADATA[i];
                 }
@@ -219,40 +210,31 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
                 m_metadata[1][1] = "" + y;
                 m_metadata[2][1] = "" + m_reader.getSizeZ();
                 m_metadata[3][1] = "" + m_reader.getSizeT();
-                m_metadata[4][1] = ""
-                        + m_reader.getEffectiveSizeC();
+                m_metadata[4][1] = "" + m_reader.getEffectiveSizeC();
                 m_metadata[5][1] = "" + m_reader.isRGB();
                 m_metadata[6][1] = "" + m_reader.getPixelType();
-                m_metadata[7][1] = ""
-                        + m_reader.isLittleEndian();
-                m_metadata[8][1] = ""
-                        + m_reader.getDimensionOrder();
-                m_metadata[9][1] = ""
-                        + m_reader.isInterleaved();
+                m_metadata[7][1] = "" + m_reader.isLittleEndian();
+                m_metadata[8][1] = "" + m_reader.getDimensionOrder();
+                m_metadata[9][1] = "" + m_reader.isInterleaved();
 
                 final Set<String> keys = gm.keySet();
                 int i = 0;
                 for (final Object o : keys) {
-                    m_metadata[(CORE_METADATA.length + (i++))
-                               - 1][0] = o.toString();
+                    m_metadata[(CORE_METADATA.length + (i++)) - 1][0] = o.toString();
                 }
                 final Collection<Object> values = gm.values();
                 i = 0;
                 for (final Object o : values) {
-                    m_metadata[(CORE_METADATA.length + (i++))
-                               - 1][1] = o.toString();
+                    m_metadata[(CORE_METADATA.length + (i++)) - 1][1] = o.toString();
                 }
 
-                m_metadataTable.tableChanged(new TableModelEvent(
-                                                                 m_metadataTable.getModel()));
+                m_metadataTable.tableChanged(new TableModelEvent(m_metadataTable.getModel()));
 
             } catch (final FormatException e) {
-                m_iconLabel.setIcon(new ImageIcon(
-                                                  makeImage("unsupported format")));
+                m_iconLabel.setIcon(new ImageIcon(makeImage("unsupported format")));
 
             } catch (final IOException e) {
-                m_iconLabel.setIcon(new ImageIcon(
-                                                  makeImage("failed")));
+                m_iconLabel.setIcon(new ImageIcon(makeImage("failed")));
                 m_metadata = null;
             }
 
@@ -263,9 +245,8 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
     }
 
     /**
-     * Creates a blank image with the given message painted on top (e.g., a
-     * loading or error message), matching the size of the active reader's
-     * thumbnails.
+     * Creates a blank image with the given message painted on top (e.g., a loading or error message), matching the size
+     * of the active reader's thumbnails.
      */
     private BufferedImage makeImage(final String message) {
         int w = getSize().width, h = getSize().height;
@@ -275,14 +256,10 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
         if (h < 32) {
             h = 32;
         }
-        final BufferedImage image = new BufferedImage(w, h,
-                                                      BufferedImage.TYPE_INT_RGB);
+        final BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         final Graphics2D g = image.createGraphics();
-        final Rectangle2D.Float r = (Rectangle2D.Float) g.getFont()
-                .getStringBounds(message,
-                                 g.getFontRenderContext());
-        g.drawString(message, (w - r.width) / 2, ((h - r.height) / 2)
-                     + r.height);
+        final Rectangle2D.Float r = (Rectangle2D.Float)g.getFont().getStringBounds(message, g.getFontRenderContext());
+        g.drawString(message, (w - r.width) / 2, ((h - r.height) / 2) + r.height);
         g.dispose();
         return image;
     }

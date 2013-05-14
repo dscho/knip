@@ -20,7 +20,7 @@ import org.knime.knip.core.awt.specializedrendering.Projector2D;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 public class RandomColorLabelingRenderer<L extends Comparable<L>> extends ProjectingRenderer<LabelingType<L>> implements
-        RendererWithLabels<L>, RendererWithHilite {
+RendererWithLabels<L>, RendererWithHilite {
 
     private static int WHITE_RGB = Color.WHITE.getRGB();
 
@@ -79,8 +79,8 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends Projec
 
     @Override
     protected Abstract2DProjector<LabelingType<L>, ARGBType>
-            getProjector(final int dimX, final int dimY, final RandomAccessibleInterval<LabelingType<L>> source,
-                         final ARGBScreenImage target) {
+    getProjector(final int dimX, final int dimY, final RandomAccessibleInterval<LabelingType<L>> source,
+                 final ARGBScreenImage target) {
 
         if (m_rebuildRequired) {
             m_rebuildRequired = false;

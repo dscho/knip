@@ -59,9 +59,8 @@ import org.knime.knip.core.ui.imgviewer.panels.PlaneSelectionPanel;
 import org.knime.knip.core.ui.imgviewer.panels.RendererSelectionPanel;
 
 /**
- * Enumeration of "primitive" manipulators the can be created with out further
- * knowledge.
- *
+ * Enumeration of "primitive" manipulators the can be created with out further knowledge.
+ * 
  * @author dietzc, hornm, schoenenbergerf
  */
 public enum ViewerComponents {
@@ -135,6 +134,6 @@ public enum ViewerComponents {
      * @param <I>
      * @return
      */
-     public abstract ViewerComponent createInstance();
+    public abstract ViewerComponent createInstance();
 
 }

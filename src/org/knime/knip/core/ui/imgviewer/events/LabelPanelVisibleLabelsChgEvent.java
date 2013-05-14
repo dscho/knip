@@ -56,16 +56,16 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class LabelPanelVisibleLabelsChgEvent implements KNIPEvent {
 
     private final Set<String> m_labels;
+
     private final Operator m_operator;
 
-    public LabelPanelVisibleLabelsChgEvent(final Set<String> labels,
-                                           final Operator operator) {
+    public LabelPanelVisibleLabelsChgEvent(final Set<String> labels, final Operator operator) {
         m_labels = labels;
         m_operator = operator;
 

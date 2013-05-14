@@ -14,13 +14,15 @@ import net.imglib2.ops.util.metadata.SourcedImpl;
 
 /**
  * Implementation of GeneralMetadata
- *
+ * 
  * @author dietzc
  */
 public class GeneralMetadataImpl implements GeneralMetadata {
 
     private final CalibratedSpace m_cs;
+
     private final Named m_named;
+
     private final Sourced m_sourced;
 
     public GeneralMetadataImpl(final int numDimensions) {
@@ -29,8 +31,7 @@ public class GeneralMetadataImpl implements GeneralMetadata {
         this.m_sourced = new SourcedImpl();
     }
 
-    public GeneralMetadataImpl(final CalibratedSpace cs, final Named named,
-                               final Sourced sourced) {
+    public GeneralMetadataImpl(final CalibratedSpace cs, final Named named, final Sourced sourced) {
         this(cs.numDimensions());
 
         new CopyNamed<Named>().compute(named, m_named);
@@ -42,8 +43,7 @@ public class GeneralMetadataImpl implements GeneralMetadata {
         this(cs, metadata, metadata);
     }
 
-    public GeneralMetadataImpl(final CalibratedSpace space,
-                               final GeneralMetadata metadata) {
+    public GeneralMetadataImpl(final CalibratedSpace space, final GeneralMetadata metadata) {
         this(space, metadata, metadata);
     }
 

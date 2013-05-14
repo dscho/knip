@@ -56,8 +56,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Helpers to sort arrays or lists. The sorting result leaves the lists
- * unchanged and just gives the permutation of the element positions.
+ * Helpers to sort arrays or lists. The sorting result leaves the lists unchanged and just gives the permutation of the
+ * element positions.
  * 
  * @author hornm, University of Konstanz
  */
@@ -68,8 +68,7 @@ public class PermutationSort {
     }
 
     /**
-     * Sorts an arbitrary array by given the permutation of the array
-     * elements.
+     * Sorts an arbitrary array by given the permutation of the array elements.
      * 
      * @return the permutation of the positions
      */
@@ -93,13 +92,11 @@ public class PermutationSort {
     }
 
     /**
-     * Sorts an arbitrary list by given the permutation of the list
-     * elements.
+     * Sorts an arbitrary list by given the permutation of the list elements.
      * 
      * @return the permutation of the positions
      */
-    public static <T> int[] sort(final List<T> l,
-                                 final Comparator<? super T> c) {
+    public static <T> int[] sort(final List<T> l, final Comparator<? super T> c) {
 
         final Integer[] perm = new Integer[l.size()];
         for (int i = 0; i < perm.length; i++) {
@@ -134,8 +131,7 @@ public class PermutationSort {
         return res;
     }
 
-    public static void sortPermInPlace(final double[] a,
-                                       final Integer[] permutation) {
+    public static void sortPermInPlace(final double[] a, final Integer[] permutation) {
         for (int i = 0; i < permutation.length; i++) {
             permutation[i] = i;
         }
@@ -161,8 +157,7 @@ public class PermutationSort {
         Arrays.sort(perm, new Comparator<Integer>() {
             @Override
             public int compare(final Integer o1, final Integer o2) {
-                return Double.compare(a[from + o1],
-                                      a[from + o2]);
+                return Double.compare(a[from + o1], a[from + o2]);
             }
         });
         final int[] res = new int[perm.length];
@@ -173,8 +168,7 @@ public class PermutationSort {
     }
 
     /**
-     * Sorts <code>perm</code> according to the given double array. without
-     * touching 'a'.
+     * Sorts <code>perm</code> according to the given double array. without touching 'a'.
      * 
      * @return the permutation of the positions
      */

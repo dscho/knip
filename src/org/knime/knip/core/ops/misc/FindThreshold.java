@@ -58,7 +58,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 import org.knime.knip.core.algorithm.types.ThresholdingType;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  */
 public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsHistogram, DoubleType> {
@@ -399,22 +399,22 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         int ih;
         int numPixels;
         int sumBack; /*
-                     * sum of the background pixels at a given
-                     * threshold
-                     */
+         * sum of the background pixels at a given
+         * threshold
+         */
         int sumObj; /* sum of the object pixels at a given threshold */
         int numBack; /* number of background pixels at a given threshold */
         int numObj; /* number of object pixels at a given threshold */
         double oldThresh;
         double newThresh;
         double meanBack; /*
-                         * mean of the background pixels at a given
-                         * threshold
-                         */
+         * mean of the background pixels at a given
+         * threshold
+         */
         double meanObj; /*
-                        * mean of the object pixels at a given
-                        * threshold
-                        */
+         * mean of the object pixels at a given
+         * threshold
+         */
         double mean; /* mean gray-level in the image */
         double tolerance; /* threshold tolerance */
         double temp;
@@ -502,21 +502,21 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         double totEnt; /* total entropy */
         double maxEnt; /* max entropy */
         double entBack; /*
-                        * entropy of the background pixels at a given
-                        * threshold
-                        */
+         * entropy of the background pixels at a given
+         * threshold
+         */
         double entObj; /*
-                       * entropy of the object pixels at a given
-                       * threshold
-                       */
+         * entropy of the object pixels at a given
+         * threshold
+         */
         final double[] norm_histo = new double[m_maxValue + 1]; /*
-                                                                * normalized
-                                                                * histogram
-                                                                */
+         * normalized
+         * histogram
+         */
         final double[] P1 = new double[m_maxValue + 1]; /*
-                                                        * cumulative normalized
-                                                        * histogram
-                                                        */
+         * cumulative normalized
+         * histogram
+         */
         final double[] P2 = new double[m_maxValue + 1];
 
         int total = 0;
@@ -637,7 +637,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
             sigma2 = (C(data, threshold) / A(data, threshold)) - (mu * mu);
             tau2 =
                     ((C(data, m_maxValue) - C(data, threshold)) / (A(data, m_maxValue) - A(data, threshold)))
-                            - (nu * nu);
+                    - (nu * nu);
 
             // The terms of the quadratic equation to be solved.
             w0 = (1.0 / sigma2) - (1.0 / tau2);
@@ -800,9 +800,9 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         z0 = 0.5 * (-c1 - Math.sqrt((c1 * c1) - (4.0 * c0)));
         z1 = 0.5 * (-c1 + Math.sqrt((c1 * c1) - (4.0 * c0)));
         p0 = (z1 - m1) / (z1 - z0); /*
-                                    * Fraction of the object pixels in
-                                    * the target binary image
-                                    */
+         * Fraction of the object pixels in
+         * the target binary image
+         */
 
         // The threshold is the gray-level closest
         // to the p0-tile of the normalized histogram
@@ -961,22 +961,22 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         double totEnt; /* total entropy */
         double maxEnt; /* max entropy */
         double entBack; /*
-                        * entropy of the background pixels at a given
-                        * threshold
-                        */
+         * entropy of the background pixels at a given
+         * threshold
+         */
         double entObj; /*
-                       * entropy of the object pixels at a given
-                       * threshold
-                       */
+         * entropy of the object pixels at a given
+         * threshold
+         */
         double omega;
         final double[] normHisto = new double[m_maxValue + 1]; /*
-                                                               * normalized
-                                                               * histogram
-                                                               */
+         * normalized
+         * histogram
+         */
         final double[] P1 = new double[m_maxValue + 1]; /*
-                                                        * cumulative normalized
-                                                        * histogram
-                                                        */
+         * cumulative normalized
+         * histogram
+         */
         final double[] P2 = new double[m_maxValue + 1];
 
         int total = 0;
@@ -1180,21 +1180,21 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         double tot_ent; /* total entropy */
         double min_ent; /* max entropy */
         double ent_back; /*
-                         * entropy of the background pixels at a given
-                         * threshold
-                         */
+         * entropy of the background pixels at a given
+         * threshold
+         */
         double ent_obj; /*
-                        * entropy of the object pixels at a given
-                        * threshold
-                        */
+         * entropy of the object pixels at a given
+         * threshold
+         */
         final double[] norm_histo = new double[m_maxValue + 1]; /*
-                                                                * normalized
-                                                                * histogram
-                                                                */
+         * normalized
+         * histogram
+         */
         final double[] P1 = new double[m_maxValue + 1]; /*
-                                                        * cumulative normalized
-                                                        * histogram
-                                                        */
+         * cumulative normalized
+         * histogram
+         */
         final double[] P2 = new double[m_maxValue + 1];
 
         int total = 0;
@@ -1403,13 +1403,13 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         double crit;
         double maxCrit;
         final double[] normHisto = new double[m_maxValue + 1]; /*
-                                                               * normalized
-                                                               * histogram
-                                                               */
+         * normalized
+         * histogram
+         */
         final double[] p1 = new double[m_maxValue + 1]; /*
-                                                        * cumulative normalized
-                                                        * histogram
-                                                        */
+         * cumulative normalized
+         * histogram
+         */
         final double[] p1Sq = new double[m_maxValue + 1];
         final double[] p2Sq = new double[m_maxValue + 1];
 
@@ -1443,7 +1443,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         for (it = 0; it < (m_maxValue + 1); it++) {
             crit =
                     (-1.0 * ((p1Sq[it] * p2Sq[it]) > 0.0 ? Math.log(p1Sq[it] * p2Sq[it]) : 0.0))
-                            + (2 * ((p1[it] * (1.0 - p1[it])) > 0.0 ? Math.log(p1[it] * (1.0 - p1[it])) : 0.0));
+                    + (2 * ((p1[it] * (1.0 - p1[it])) > 0.0 ? Math.log(p1[it] * (1.0 - p1[it])) : 0.0));
             if (crit > maxCrit) {
                 maxCrit = crit;
                 threshold = it;

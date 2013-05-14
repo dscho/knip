@@ -58,10 +58,9 @@ import org.knime.knip.core.features.FeatureTargetListener;
 import org.knime.knip.core.features.zernike.ZernikeFeatureComputer;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
- * @param <T>
- *                image type
+ * @param <T> image type
  */
 public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
 
@@ -82,28 +81,21 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
         super();
         m_order = order;
         m_calcMagnitude = calcMagnitude;
-        int countFeatures = ZernikeFeatureComputer
-                .countZernikeMoments(order);
+        int countFeatures = ZernikeFeatureComputer.countZernikeMoments(order);
         if (!calcMagnitude) {
             countFeatures *= 2;
         }
         m_names = new String[countFeatures];
         for (int j = 0; j < countFeatures; ++j) {
-            final int newOrder = ZernikeFeatureComputer.giveZernikeOrder(
-                                                                         order, j);
-            final int rep = ZernikeFeatureComputer.giveZernikeRepetition(
-                                                                         order, j);
+            final int newOrder = ZernikeFeatureComputer.giveZernikeOrder(order, j);
+            final int rep = ZernikeFeatureComputer.giveZernikeRepetition(order, j);
 
             if (!calcMagnitude) {
-                m_names[j] = "ZernikeReal[order=" + newOrder
-                        + ";rep=" + rep + "]";
+                m_names[j] = "ZernikeReal[order=" + newOrder + ";rep=" + rep + "]";
                 j++;
-                m_names[j++] = "ZernikeComplex[order="
-                        + newOrder + ";rep=" + rep
-                        + "]";
+                m_names[j++] = "ZernikeComplex[order=" + newOrder + ";rep=" + rep + "]";
             } else {
-                m_names[j] = "ZernikeMagn[order=" + newOrder
-                        + ";rep=" + rep + "]";
+                m_names[j] = "ZernikeMagn[order=" + newOrder + ";rep=" + rep + "]";
             }
         }
 
@@ -124,9 +116,7 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
         if (m_calcMagnitude) {
             // gives the magnitued of the result
             final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id);
-            return Math.sqrt((res.getImaginary()
-                    * res.getImaginary()) + (res.getReal()
-                            * res.getReal()));
+            return Math.sqrt((res.getImaginary() * res.getImaginary()) + (res.getReal() * res.getReal()));
         } else {
             // TODO: cache the complex result!!
             final ZernikeFeatureComputer.Complex res = getComplexFeatureValue(id / 2);
@@ -145,16 +135,9 @@ public class ZernikeFeatureSet<T extends RealType<T>> implements FeatureSet {
         if (m_comp == null) {
             m_comp = new ZernikeFeatureComputer<T>(m_interval);
         }
-        final ZernikeFeatureComputer.Complex result = m_comp
-                .computeZernikeMoment(
-                                      ZernikeFeatureComputer
-                                      .giveZernikeOrder(
-                                                        m_order,
-                                                        id),
-                                                        ZernikeFeatureComputer
-                                                        .giveZernikeRepetition(
-                                                                               m_order,
-                                                                               id));
+        final ZernikeFeatureComputer.Complex result =
+                m_comp.computeZernikeMoment(ZernikeFeatureComputer.giveZernikeOrder(m_order, id),
+                                            ZernikeFeatureComputer.giveZernikeRepetition(m_order, id));
         return result;
     }
 

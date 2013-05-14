@@ -60,9 +60,9 @@ import org.knime.knip.core.util.MiscViews;
 
 /**
  * Panel to generate a Rulebased LabelFilter.
- *
+ * 
  * Publishes {@link RulebasedLabelFilter}
- *
+ * 
  * @author hornm, dietzc, schoenenbergerf, ortweinm University of Konstanz
  */
 public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
@@ -144,23 +144,13 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(
-                                                          final JList list, final Object value,
-                                                          final int index,
-                                                          final boolean isSelected,
-                                                          final boolean cellHasFocus) {
-                final Component c = super
-                        .getListCellRendererComponent(
-                                                      list, value,
-                                                      index,
-                                                      isSelected,
-                                                      cellHasFocus);
+            public Component getListCellRendererComponent(final JList list, final Object value, final int index,
+                                                          final boolean isSelected, final boolean cellHasFocus) {
+                final Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
                 c.setForeground(Color.BLACK);
 
-                if ((m_hilitedLabels != null)
-                        && m_hilitedLabels.contains(value
-                                                    .toString())) {
+                if ((m_hilitedLabels != null) && m_hilitedLabels.contains(value.toString())) {
 
                     if (isSelected) {
                         c.setBackground(SegmentColorTable.HILITED_SELECTED);
@@ -183,12 +173,10 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
         // m_scrollPane.setSize(new Dimension(150, 1);
 
         final JPanel confirmationPanel = new JPanel();
-        confirmationPanel.setLayout(new BoxLayout(confirmationPanel,
-                                                  BoxLayout.X_AXIS));
+        confirmationPanel.setLayout(new BoxLayout(confirmationPanel, BoxLayout.X_AXIS));
 
         m_textFieldsPanel = new JPanel();
-        m_textFieldsPanel.setLayout(new BoxLayout(m_textFieldsPanel,
-                                                  BoxLayout.Y_AXIS));
+        m_textFieldsPanel.setLayout(new BoxLayout(m_textFieldsPanel, BoxLayout.Y_AXIS));
 
         final JButton filterButton = new JButton("Filter");
         filterButton.addActionListener(new ActionListener() {
@@ -209,8 +197,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             }
         });
 
-        m_operatorBox = new JComboBox(
-                                      RulebasedLabelFilter.Operator.values());
+        m_operatorBox = new JComboBox(RulebasedLabelFilter.Operator.values());
         m_operatorBox.setSize(new Dimension(40, 22));
         m_operatorBox.setMaximumSize(new Dimension(40, 22));
 
@@ -227,10 +214,8 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
     protected void addTextField(final String initValue) {
         final JPanel oneFieldRow = new JPanel();
-        oneFieldRow.add(new JLabel("Rule " + (m_textFields.size() + 1)
-                                   + ":"));
-        oneFieldRow.setLayout(new BoxLayout(oneFieldRow,
-                                            BoxLayout.X_AXIS));
+        oneFieldRow.add(new JLabel("Rule " + (m_textFields.size() + 1) + ":"));
+        oneFieldRow.setLayout(new BoxLayout(oneFieldRow, BoxLayout.X_AXIS));
 
         final JTextField newField = new JTextField(initValue);
         newField.setPreferredSize(new Dimension(70, 20));
@@ -243,16 +228,14 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             @Override
             public void actionPerformed(final ActionEvent e) {
 
-                for (final Component p : removeButton.getParent()
-                        .getComponents()) {
+                for (final Component p : removeButton.getParent().getComponents()) {
 
                     if (p instanceof JTextField) {
                         m_textFields.remove(p);
                     }
 
                 }
-                m_textFieldsPanel.remove(removeButton
-                                         .getParent());
+                m_textFieldsPanel.remove(removeButton.getParent());
                 updateUI();
                 doFilter();
 
@@ -277,11 +260,9 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
         } else if (m_showHilitedOnly) {
             // only hilited
             final HashSet<String> filterSet = new HashSet<String>();
-            if ((m_hilitedLabels != null)
-                    && (m_hilitedLabels.size() > 0)) {
+            if ((m_hilitedLabels != null) && (m_hilitedLabels.size() > 0)) {
                 for (final L o : m_labeling.getLabels()) {
-                    if (!m_hilitedLabels.contains(o
-                                                  .toString())) {
+                    if (!m_hilitedLabels.contains(o.toString())) {
                         filterSet.add(o.toString());
                     }
                 }
@@ -293,10 +274,8 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             m_hiliteFilter.setFilterSet(filterSet);
         } else {
             // only unhilited
-            if ((m_hilitedLabels != null)
-                    && (m_hilitedLabels.size() > 0)) {
-                m_hiliteFilter.setFilterSet((HashSet<String>) m_hilitedLabels
-                                            .clone());
+            if ((m_hilitedLabels != null) && (m_hilitedLabels.size() > 0)) {
+                m_hiliteFilter.setFilterSet((HashSet<String>)m_hilitedLabels.clone());
             } else {
                 m_hiliteFilter.clear();
             }
@@ -308,23 +287,16 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             final Set<String> allLabels = new HashSet<String>();
             m_ruleFilter.clear();
             for (int i = 0; i < m_textFields.size(); i++) {
-                m_ruleFilter.addRules(RulebasedLabelFilter
-                                      .formatRegExp(m_textFields.get(
-                                                                     i).getText()));
+                m_ruleFilter.addRules(RulebasedLabelFilter.formatRegExp(m_textFields.get(i).getText()));
             }
             m_activeLabels.clear();
 
             // filter with hilites
-            Collection<L> filtered = m_ruleFilter
-                    .filterLabeling(m_labeling
-                                    .firstElement()
-                                    .getMapping()
-                                    .getLabels());
+            Collection<L> filtered = m_ruleFilter.filterLabeling(m_labeling.firstElement().getMapping().getLabels());
 
             // filter with rules
             if (m_showHilitedOnly || m_showUnhilitedOnly) {
-                filtered = m_hiliteFilter
-                        .filterLabeling(filtered);
+                filtered = m_hiliteFilter.filterLabeling(filtered);
             }
 
             m_activeLabels.addAll(filtered);
@@ -334,15 +306,10 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             }
 
             // As this is faster than checking all labels
-            if ((m_ruleFilter.getRules().size() == 0)
-                    && !m_showHilitedOnly
-                    && !m_showUnhilitedOnly) {
-                m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(
-                                                                           null, null));
+            if ((m_ruleFilter.getRules().size() == 0) && !m_showHilitedOnly && !m_showUnhilitedOnly) {
+                m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(null, null));
             } else {
-                m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(
-                                                                           allLabels,
-                                                                           (Operator) (m_operatorBox)
+                m_eventService.publish(new LabelPanelVisibleLabelsChgEvent(allLabels, (Operator)(m_operatorBox)
                                                                            .getSelectedItem()));
             }
 
@@ -352,9 +319,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
         }
 
         catch (final NullPointerException e) {
-            JOptionPane.showMessageDialog(null,
-                                          "No image selected", "Error",
-                                          JOptionPane.ERROR_MESSAGE, null);
+            JOptionPane.showMessageDialog(null, "No image selected", "Error", JOptionPane.ERROR_MESSAGE, null);
             return;
         }
 
@@ -365,14 +330,11 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
      * @param name
      */
     @EventListener
-    public void onLabelingUpdated(
-                                  final IntervalWithMetadataChgEvent<LabelingType<L>> e) {
-        m_labeling = MiscViews.labelingView(
-                                            e.getRandomAccessibleInterval(), null);
+    public void onLabelingUpdated(final IntervalWithMetadataChgEvent<LabelingType<L>> e) {
+        m_labeling = MiscViews.labelingView(e.getRandomAccessibleInterval(), null);
 
         m_activeLabels.clear();
-        for (final L label : m_labeling.firstElement().getMapping()
-                .getLabels()) {
+        for (final L label : m_labeling.firstElement().getMapping().getLabels()) {
             if (m_ruleFilter.isValid(label)) {
                 m_activeLabels.add(label);
             }
@@ -415,14 +377,12 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         m_ruleFilter.writeExternal(out);
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
 
         m_textFields.clear();
         m_textFieldsPanel.removeAll();
@@ -477,14 +437,11 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             @SuppressWarnings("unchecked")
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final long[] min = new long[m_labeling
-                                            .numDimensions()];
+                final long[] min = new long[m_labeling.numDimensions()];
 
-                m_labeling.getRasterStart((L) m_jLabelList
-                                          .getSelectedValue(), min);
+                m_labeling.getRasterStart((L)m_jLabelList.getSelectedValue(), min);
 
-                m_eventService.publish(new ForcePlanePosEvent(
-                                                              min));
+                m_eventService.publish(new ForcePlanePosEvent(min));
                 m_eventService.publish(new ImgRedrawEvent());
             }
         });
@@ -495,8 +452,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 final StringBuffer buf = new StringBuffer();
-                for (final Object o : m_jLabelList
-                        .getSelectedValues()) {
+                for (final Object o : m_jLabelList.getSelectedValues()) {
                     buf.append(o.toString() + "|");
                 }
 
@@ -505,8 +461,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                     m_textFieldsPanel.removeAll();
                     m_textFields.clear();
 
-                    addTextField(buf.substring(0,
-                                               buf.length() - 1));
+                    addTextField(buf.substring(0, buf.length() - 1));
                     doFilter();
                 }
             }
@@ -531,26 +486,19 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
 
         if (enableHilite) {
             m_unhiliteSelected = new JMenuItem("Unhilite Selected");
-            m_unhiliteSelected
-            .addActionListener(new ActionListener() {
+            m_unhiliteSelected.addActionListener(new ActionListener() {
 
                 @Override
-                public void actionPerformed(
-                                            final ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     final Set<String> selection = new HashSet<String>();
-                    for (final Object o : m_jLabelList
-                            .getSelectedValues()) {
+                    for (final Object o : m_jLabelList.getSelectedValues()) {
                         selection.add(o.toString());
-                        m_hilitedLabels.remove(o
-                                               .toString());
+                        m_hilitedLabels.remove(o.toString());
                     }
 
-                    m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
-                                                                                 selection,
-                                                                                 false));
+                    m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(selection, false));
 
-                    if (m_showHilitedOnly
-                            || m_showUnhilitedOnly) {
+                    if (m_showHilitedOnly || m_showUnhilitedOnly) {
                         // do filter
                         // triggeres
                         // redraw
@@ -568,18 +516,14 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 @Override
                 public void actionPerformed(final ActionEvent e) {
                     final Set<String> selection = new HashSet<String>();
-                    for (final Object o : m_jLabelList
-                            .getSelectedValues()) {
+                    for (final Object o : m_jLabelList.getSelectedValues()) {
                         selection.add(o.toString());
-                        m_hilitedLabels.add(o
-                                            .toString());
+                        m_hilitedLabels.add(o.toString());
                     }
 
-                    m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
-                                                                                 selection, true));
+                    m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(selection, true));
 
-                    if (m_showHilitedOnly
-                            || m_showUnhilitedOnly) {
+                    if (m_showHilitedOnly || m_showUnhilitedOnly) {
                         // do filter triggeres redraw
                         updateHiliteFilter();
                         doFilter();
@@ -589,8 +533,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 }
             });
 
-            final JRadioButtonMenuItem hiliteOnly = new JRadioButtonMenuItem(
-                    "Show HiLited Only");
+            final JRadioButtonMenuItem hiliteOnly = new JRadioButtonMenuItem("Show HiLited Only");
             hiliteOnly.addActionListener(new ActionListener() {
 
                 @Override
@@ -603,8 +546,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 }
             });
 
-            final JRadioButtonMenuItem unhiliteOnly = new JRadioButtonMenuItem(
-                                                                               "Show UnHiLited Only");
+            final JRadioButtonMenuItem unhiliteOnly = new JRadioButtonMenuItem("Show UnHiLited Only");
             unhiliteOnly.addActionListener(new ActionListener() {
 
                 @Override
@@ -616,8 +558,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 }
             });
 
-            final JRadioButtonMenuItem showAll = new JRadioButtonMenuItem(
-                                                                          "Show All");
+            final JRadioButtonMenuItem showAll = new JRadioButtonMenuItem("Show All");
             showAll.addActionListener(new ActionListener() {
 
                 @Override
@@ -640,8 +581,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 // clears all hilites
                 @Override
                 public void actionPerformed(final ActionEvent e) {
-                    m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(
-                                                                                 m_hilitedLabels, false));
+                    m_eventService.publish(new LabelPanelHiliteSelectionChgEvent(m_hilitedLabels, false));
                     m_hilitedLabels.clear();
 
                     if (m_hiliteFilter.sizeOfFilterSet() > 0) {
@@ -654,8 +594,7 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 }
             });
 
-            final JCheckBoxMenuItem hiliteMode = new JCheckBoxMenuItem(
-                    "HiLite mode On");
+            final JCheckBoxMenuItem hiliteMode = new JCheckBoxMenuItem("HiLite mode On");
             if (m_hMode) {
                 hiliteMode.setSelected(true);
             }
@@ -665,13 +604,10 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 @Override
                 public void stateChanged(final ChangeEvent e) {
                     final boolean old = m_hMode;
-                    m_hMode = ((JCheckBoxMenuItem) e
-                            .getSource())
-                            .isSelected();
+                    m_hMode = ((JCheckBoxMenuItem)e.getSource()).isSelected();
 
                     if (old != m_hMode) {
-                        m_eventService.publish(new LabelPanelIsHiliteModeEvent(
-                                                                               m_hMode));
+                        m_eventService.publish(new LabelPanelIsHiliteModeEvent(m_hMode));
                         m_eventService.publish(new ImgRedrawEvent());
                     }
                 }

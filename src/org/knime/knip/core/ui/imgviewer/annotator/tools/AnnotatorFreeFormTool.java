@@ -6,8 +6,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
 import org.knime.knip.core.ui.imgviewer.overlay.elements.FreeFormOverlayElement;
 
-public class AnnotatorFreeFormTool extends
-AnnotationDrawingTool<FreeFormOverlayElement<String>> {
+public class AnnotatorFreeFormTool extends AnnotationDrawingTool<FreeFormOverlayElement<String>> {
 
     public AnnotatorFreeFormTool() {
         super("Free Form", "tool-freeform.png");
@@ -29,15 +28,14 @@ AnnotationDrawingTool<FreeFormOverlayElement<String>> {
                                    final PlaneSelectionEvent selection, final Overlay<String> overlay,
                                    final String... labels) {
 
-        final FreeFormOverlayElement<String> element = new FreeFormOverlayElement<String>(
-                selection.getPlanePos(e.getPosX(), e.getPosY()),
-                selection.getDimIndices(), true, labels);
+        final FreeFormOverlayElement<String> element =
+                new FreeFormOverlayElement<String>(selection.getPlanePos(e.getPosX(), e.getPosY()),
+                        selection.getDimIndices(), true, labels);
 
         overlay.addElement(element);
         element.add(e.getPosX(), e.getPosY());
 
-        if (setCurrentOverlayElement(OverlayElementStatus.DRAWING,
-                                     element)) {
+        if (setCurrentOverlayElement(OverlayElementStatus.DRAWING, element)) {
             fireStateChanged();
         }
     }

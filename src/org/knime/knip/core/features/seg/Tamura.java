@@ -37,7 +37,7 @@ import net.imglib2.type.numeric.RealType;
  * <li>Christian Dietz, University of Konstanz -> Integrated to KNIME / ImgLib</li>
  * </ul>
  * Date: 28.05.2008 Time: 11:52:03
- *
+ * 
  * @author Mathias Lux, mathias@juggle.at
  * @param <T>
  */
@@ -90,7 +90,7 @@ public class Tamura<T extends RealType<T>> {
 
     /**
      * 1. For every point(x, y) calculate the average over neighborhoods.
-     *
+     * 
      * @param x
      * @param y
      * @return
@@ -127,7 +127,7 @@ public class Tamura<T extends RealType<T>> {
     /**
      * 2. For every point (x, y) calculate differences between the not overlapping neighborhoods on opposite sides of
      * the point in horizontal direction.
-     *
+     * 
      * @param x
      * @param y
      * @return
@@ -136,14 +136,14 @@ public class Tamura<T extends RealType<T>> {
         double result = 0;
         result =
                 Math.abs(this.averageOverNeighborhoods(x + (int)Math.pow(2, k - 1), y, k)
-                        - this.averageOverNeighborhoods(x - (int)Math.pow(2, k - 1), y, k));
+                         - this.averageOverNeighborhoods(x - (int)Math.pow(2, k - 1), y, k));
         return result;
     }
 
     /**
      * 2. For every point (x, y) calculate differences between the not overlapping neighborhoods on opposite sides of
      * the point in vertical direction.
-     *
+     * 
      * @param x
      * @param y
      * @return
@@ -152,13 +152,13 @@ public class Tamura<T extends RealType<T>> {
         double result = 0;
         result =
                 Math.abs(this.averageOverNeighborhoods(x, y + (int)Math.pow(2, k - 1), k)
-                        - this.averageOverNeighborhoods(x, y - (int)Math.pow(2, k - 1), k));
+                         - this.averageOverNeighborhoods(x, y - (int)Math.pow(2, k - 1), k));
         return result;
     }
 
     /**
      * 3. At each point (x, y) select the size leading to the highest difference value.
-     *
+     * 
      * @param x
      * @param y
      * @return
@@ -181,7 +181,7 @@ public class Tamura<T extends RealType<T>> {
 
     /**
      * Picture Quality.
-     *
+     * 
      * @return
      */
     private final double contrast() {

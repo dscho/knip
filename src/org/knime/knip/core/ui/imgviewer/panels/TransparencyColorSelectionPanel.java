@@ -13,14 +13,14 @@ import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 
 /**
  * composite of a {@link TransparencyPanel} and a {@link LabelOptionPanel}.
- *
+ * 
  * @author zinsmaie
- *
+ * 
  */
 public class TransparencyColorSelectionPanel extends ViewerComponent {
 
-
     private final TransparencyPanel m_transparencyPanel;
+
     private final LabelOptionPanel m_colorSelectionPanel;
 
     public TransparencyColorSelectionPanel() {
@@ -71,15 +71,13 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         m_transparencyPanel.saveComponentConfiguration(out);
         m_colorSelectionPanel.saveComponentConfiguration(out);
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_transparencyPanel.loadComponentConfiguration(in);
         m_colorSelectionPanel.loadComponentConfiguration(in);
     }

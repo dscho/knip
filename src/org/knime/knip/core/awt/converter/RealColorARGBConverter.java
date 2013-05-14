@@ -5,15 +5,13 @@ import net.imglib2.display.projectors.ProjectedDimSampler;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
-
-public class RealColorARGBConverter<R extends RealType<R>> implements
-Converter<ProjectedDimSampler<R>, ARGBType> {
+public class RealColorARGBConverter<R extends RealType<R>> implements Converter<ProjectedDimSampler<R>, ARGBType> {
 
     private final double m_localMin;
+
     private final double m_normalizationFactor;
 
-    public RealColorARGBConverter(final double normalizationFactor,
-                                  final double localMin) {
+    public RealColorARGBConverter(final double normalizationFactor, final double localMin) {
 
         m_localMin = localMin;
         m_normalizationFactor = normalizationFactor;
@@ -21,8 +19,7 @@ Converter<ProjectedDimSampler<R>, ARGBType> {
     }
 
     @Override
-    public void convert(final ProjectedDimSampler<R> input,
-                        final ARGBType output) {
+    public void convert(final ProjectedDimSampler<R> input, final ARGBType output) {
 
         int i = 0;
         final int[] rgb = new int[3];
@@ -33,9 +30,7 @@ Converter<ProjectedDimSampler<R>, ARGBType> {
             double value = ((val - m_localMin) * m_normalizationFactor);
 
             // normalize to be between 0 and 1
-            value = value
-            / (input.get().getMaxValue() - input
-                    .get().getMinValue());
+            value = value / (input.get().getMaxValue() - input.get().getMinValue());
 
             if (value < 0) {
                 value = 0;
@@ -43,7 +38,7 @@ Converter<ProjectedDimSampler<R>, ARGBType> {
                 value = 1;
             }
 
-            rgb[i] = (int) Math.round(value * 255);
+            rgb[i] = (int)Math.round(value * 255);
             i++;
             input.fwd();
         }

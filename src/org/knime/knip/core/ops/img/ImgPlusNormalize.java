@@ -58,15 +58,13 @@ import net.imglib2.util.ValuePair;
 
 import org.knime.knip.core.util.ImgPlusFactory;
 
-public class ImgPlusNormalize<T extends RealType<T>> implements
-UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> {
+public class ImgPlusNormalize<T extends RealType<T>> implements UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> {
 
     private final ImgNormalize<T> m_op;
+
     private final T m_val;
 
-    public ImgPlusNormalize(final double saturation, final T val,
-                            final ValuePair<T, T> minmax,
-                            final boolean isTarget) {
+    public ImgPlusNormalize(final double saturation, final T val, final ValuePair<T, T> minmax, final boolean isTarget) {
         m_val = val;
         m_op = new ImgNormalize<T>(saturation, val, minmax, isTarget);
     }
@@ -89,7 +87,6 @@ UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> {
 
     @Override
     public UnaryOutputOperation<ImgPlus<T>, ImgPlus<T>> copy() {
-        return new ImgPlusNormalize<T>((ImgNormalize<T>) m_op.copy(),
-                m_val.createVariable());
+        return new ImgPlusNormalize<T>((ImgNormalize<T>)m_op.copy(), m_val.createVariable());
     }
 }

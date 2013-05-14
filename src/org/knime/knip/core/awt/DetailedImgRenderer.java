@@ -66,12 +66,11 @@ import net.imglib2.type.Type;
 import org.knime.knip.core.data.img.GeneralMetadataImpl;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schonenbergerf University of Konstanz
  * @param <T>
  */
-public class DetailedImgRenderer<T extends Type<T>> implements
-ImageRenderer<T> {
+public class DetailedImgRenderer<T extends Type<T>> implements ImageRenderer<T> {
 
     /* for source images below that size, no details will be shown */
     private static final Dimension MIN_SIZE = new Dimension(150, 150);
@@ -111,8 +110,8 @@ ImageRenderer<T> {
     }
 
     @Override
-    public ScreenImage render(final RandomAccessibleInterval<T> source, final int dimX,
-                              final int dimY, final long[] planePos) {
+    public ScreenImage render(final RandomAccessibleInterval<T> source, final int dimX, final int dimY,
+                              final long[] planePos) {
 
         final long[] orgDims = new long[planePos.length];
         source.dimensions(orgDims);
@@ -122,19 +121,15 @@ ImageRenderer<T> {
 
         for (int i = 0; i < planePos.length; i++) {
             if (m_axes != null) {
-                sb.append("Size " + m_axes.axis(i).getLabel()
-                          + "=" + orgDims[i] + "\n");
+                sb.append("Size " + m_axes.axis(i).getLabel() + "=" + orgDims[i] + "\n");
             } else {
                 sb.append("Size " + i + "=" + orgDims[i] + "\n");
             }
         }
 
-        sb.append("Pixel Type="
-                + source.randomAccess().get().getClass()
-                .getSimpleName() + "\n");
+        sb.append("Pixel Type=" + source.randomAccess().get().getClass().getSimpleName() + "\n");
 
-        sb.append("Image Type=" + source.getClass().getSimpleName()
-                  + "\n");
+        sb.append("Image Type=" + source.getClass().getSimpleName() + "\n");
 
         if (m_imgName != null) {
             sb.append("Image Name=" + m_imgName.getName() + "\n");
@@ -148,31 +143,26 @@ ImageRenderer<T> {
         final String[] tmp = sb.toString().split("\n");
 
         // render image and created information string
-        final ScreenImage res = m_projectingRenderer.render(source, dimX,
-                                                            dimY, planePos);
+        final ScreenImage res = m_projectingRenderer.render(source, dimX, dimY, planePos);
 
-        final int width = (int) (orgDims[dimX] * ((double) m_height / orgDims[dimY]));
+        final int width = (int)(orgDims[dimX] * ((double)m_height / orgDims[dimY]));
 
         if ((width < MIN_SIZE.width) || (m_height < MIN_SIZE.height)) {
             // scale render without text
-            final ScreenImage scaledRes = new ARGBScreenImage(width,
-                                                              m_height);
+            final ScreenImage scaledRes = new ARGBScreenImage(width, m_height);
             final Graphics g = scaledRes.image().getGraphics();
             g.drawImage(res.image(), 0, 0, width, m_height, null);
 
             return scaledRes;
         } else {
             // scale render with text
-            final ScreenImage composedRes = new ARGBScreenImage(width,
-                                                                m_height);
+            final ScreenImage composedRes = new ARGBScreenImage(width, m_height);
             final Graphics g = composedRes.image().getGraphics();
             g.drawImage(res.image(), 0, 0, width, m_height, null);
             g.setXORMode(Color.black);
 
             for (int i = 0; i < tmp.length; i++) {
-                g.drawString(tmp[i], posX, composedRes.image()
-                             .getHeight(null)
-                             - ((tmp.length - i) * lineHeight));
+                g.drawString(tmp[i], posX, composedRes.image().getHeight(null) - ((tmp.length - i) * lineHeight));
             }
             return composedRes;
         }

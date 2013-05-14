@@ -34,12 +34,12 @@ import org.knime.knip.core.ui.imgviewer.events.TransparencyPanelValueChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- *
- *
+ * 
+ * 
  * @author dietzc, hornm, schoenenbergerf, zinsmaierm University of Konstanz
  */
 public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L extends Comparable<L>> extends
-        LabelingBufferedImageProvider<L> {
+LabelingBufferedImageProvider<L> {
 
     /**
      *
@@ -231,7 +231,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
     /**
      * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
      * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
-     *
+     * 
      * @param normalizationParameters
      */
     @EventListener

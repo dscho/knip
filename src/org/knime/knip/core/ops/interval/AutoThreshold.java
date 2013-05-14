@@ -26,13 +26,10 @@ implements UnaryOperation<I, K> {
     @Override
     public K compute(final I op, final K r) {
 
-        final OpsHistogram hist = Operations.compute(new MakeHistogram<T>(),
-                                                     op);
+        final OpsHistogram hist = Operations.compute(new MakeHistogram<T>(), op);
         final T thresh = op.firstElement().createVariable();
-        thresh.setReal(new FindThreshold<T>(m_thresholdType).compute(
-                                                                     hist, new DoubleType()).getRealDouble());
-        new UnaryRelationAssigment<T>(new RealGreaterThanConstant<T>(
-                thresh)).compute(op, r);
+        thresh.setReal(new FindThreshold<T>(m_thresholdType).compute(hist, new DoubleType()).getRealDouble());
+        new UnaryRelationAssigment<T>(new RealGreaterThanConstant<T>(thresh)).compute(op, r);
         return r;
     }
 

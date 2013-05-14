@@ -10,10 +10,11 @@ import net.imglib2.type.numeric.RealType;
 import org.knime.knip.core.awt.converter.RealColorARGBConverter;
 import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 
-public class Real2ColorRenderer<R extends RealType<R>> extends
-ProjectingRenderer<R> implements RendererWithNormalization {
+public class Real2ColorRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
+RendererWithNormalization {
 
     private RealColorARGBConverter<R> m_converter;
+
     private final int m_projectedDimension;
 
     public Real2ColorRenderer(final int projectedDimension) {
@@ -23,8 +24,7 @@ ProjectingRenderer<R> implements RendererWithNormalization {
 
     @Override
     public String toString() {
-        return "RGB Image Renderer (RGB-Dim:" + m_projectedDimension
-                + ")";
+        return "RGB Image Renderer (RGB-Dim:" + m_projectedDimension + ")";
     }
 
     @Override
@@ -33,12 +33,11 @@ ProjectingRenderer<R> implements RendererWithNormalization {
     }
 
     @Override
-    protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
-                                                            final int dimY, final RandomAccessibleInterval<R> source,
+    protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX, final int dimY,
+                                                            final RandomAccessibleInterval<R> source,
                                                             final ARGBScreenImage target) {
 
-        return new DimProjector2D<R, ARGBType>(dimX, dimY, source,
-                target, m_converter, m_projectedDimension);
+        return new DimProjector2D<R, ARGBType>(dimX, dimY, source, target, m_converter, m_projectedDimension);
     }
 
 }

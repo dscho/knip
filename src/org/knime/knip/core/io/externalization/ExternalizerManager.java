@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Manages a set of externalizers, e.g. registered via the according extension point.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public final class ExternalizerManager {
@@ -154,9 +154,9 @@ public final class ExternalizerManager {
     /**
      * Recursively retrieves the right {@link Externalizer} for the given object, beginning with the class itself. If
      * for a class no externalizer is registered, the super-classes will be checked iteratively.
-     *
-     *
-     *
+     * 
+     * 
+     * 
      * @param <T>
      * @param out
      * @param type
@@ -175,7 +175,7 @@ public final class ExternalizerManager {
     /**
      * Writes the given object to the output stream using the most specific externalizer from the registered
      * externalizers.
-     *
+     * 
      * @param <T>
      * @param out
      * @param obj
@@ -187,7 +187,7 @@ public final class ExternalizerManager {
 
     /**
      * Writes the object to the output stream assuming the given class.
-     *
+     * 
      * @param <T>
      * @param out
      * @param obj
@@ -208,7 +208,7 @@ public final class ExternalizerManager {
 
     /**
      * Writes the object to the output stream using the given externalizer.
-     *
+     * 
      * @param <T>
      * @param out
      * @param obj
@@ -216,7 +216,7 @@ public final class ExternalizerManager {
      * @throws Exception
      */
     public static synchronized <T> void
-            write(final BufferedDataOutputStream out, final T obj, final Externalizer<T> ext) throws Exception {
+    write(final BufferedDataOutputStream out, final T obj, final Externalizer<T> ext) throws Exception {
         writeString(out, ext.getId());
         ext.write(out, obj);
     }
@@ -224,7 +224,7 @@ public final class ExternalizerManager {
     /**
      * Registers a new externalizer at the manager. Already existing externalizers for a certain type or id will not be
      * replaced if they priority is higher.
-     *
+     * 
      * @param <T>
      * @param ext the externalizer - must not be a inner class of another class
      */

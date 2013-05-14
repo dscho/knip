@@ -11,8 +11,7 @@ import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.ops.operation.UnaryOperation;
 
-public class MakeStringLabeling<L extends Comparable<L>> implements
-UnaryOperation<Labeling<L>, Labeling<String>> {
+public class MakeStringLabeling<L extends Comparable<L>> implements UnaryOperation<Labeling<L>, Labeling<String>> {
 
     @Override
     public Labeling<String> compute(final Labeling<L> op, final Labeling<String> res) {
@@ -32,8 +31,7 @@ UnaryOperation<Labeling<L>, Labeling<String>> {
             //
         }
 
-        final LabelingMapping<String> resMapping = res.firstElement()
-                .getMapping();
+        final LabelingMapping<String> resMapping = res.firstElement().getMapping();
         final Map<List<L>, List<String>> map = new HashMap<List<L>, List<String>>();
         for (int i = 0; i < size; i++) {
             final List<L> from = srcMapping.listAtIndex(i);
@@ -51,8 +49,7 @@ UnaryOperation<Labeling<L>, Labeling<String>> {
         while (inCursor.hasNext()) {
             inCursor.fwd();
             resCursor.fwd();
-            resCursor.get().setLabeling(
-                                        map.get(inCursor.get().getLabeling()));
+            resCursor.get().setLabeling(map.get(inCursor.get().getLabeling()));
         }
 
         return res;

@@ -8,11 +8,10 @@ public enum NeighborhoodType {
     RECTANGULAR, SPHERICAL;
 
     /**
-     * This is a not so beautiful way to initialize neighborhoods: actually
-     * here it's not possible to set different spans in different dimensions
+     * This is a not so beautiful way to initialize neighborhoods: actually here it's not possible to set different
+     * spans in different dimensions
      */
-    public static Shape getNeighborhood(final NeighborhoodType type,
-                                        final int radius) {
+    public static Shape getNeighborhood(final NeighborhoodType type, final int radius) {
 
         switch (type) {
             case RECTANGULAR:
@@ -20,8 +19,7 @@ public enum NeighborhoodType {
             case SPHERICAL:
                 return new HyperSphereShape(radius);
             default:
-                throw new IllegalArgumentException(
-                                                   "Neighborhood type can't be found");
+                throw new IllegalArgumentException("Neighborhood type can't be found");
         }
 
     }

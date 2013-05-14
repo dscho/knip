@@ -53,17 +53,16 @@ package org.knime.knip.core.util;
 import java.util.Arrays;
 
 /**
- *
+ * 
  * @author Lee Kamentsky
  * @author hornm, University of Konstanz
  */
 public class NeighborhoodUtils {
 
     /**
-     * Return an array of offsets to the 8-connected (or N-d equivalent)
-     * structuring element for the dimension space. The structuring element
-     * is the list of offsets from the center to the pixels to be examined.
-     *
+     * Return an array of offsets to the 8-connected (or N-d equivalent) structuring element for the dimension space.
+     * The structuring element is the list of offsets from the center to the pixels to be examined.
+     * 
      * @param dimensions
      * @return the structuring element.
      */
@@ -98,10 +97,9 @@ public class NeighborhoodUtils {
     }
 
     /**
-     * Return an array of offsets to the -connected (or N-d equivalent)
-     * structuring element for the dimension space. The structuring element
-     * is the list of offsets from the center to the pixels to be examined.
-     *
+     * Return an array of offsets to the -connected (or N-d equivalent) structuring element for the dimension space. The
+     * structuring element is the list of offsets from the center to the pixels to be examined.
+     * 
      * @param dimensions
      * @return the structuring element.
      */
@@ -120,11 +118,10 @@ public class NeighborhoodUtils {
     }
 
     /**
-     * Rework the structuring element into a series of consecutive offsets
-     * so we can use Positionable.move to scan the image array.
+     * Rework the structuring element into a series of consecutive offsets so we can use Positionable.move to scan the
+     * image array.
      */
-    public static long[][] reworkStructuringElement(
-                                                    final long[][] structuringElement) {
+    public static long[][] reworkStructuringElement(final long[][] structuringElement) {
 
         final int numDimensions = structuringElement[0].length;
         final long[][] strelMoves = new long[structuringElement.length][];
@@ -132,11 +129,9 @@ public class NeighborhoodUtils {
         for (int i = 0; i < structuringElement.length; i++) {
             strelMoves[i] = new long[numDimensions];
             for (int j = 0; j < numDimensions; j++) {
-                strelMoves[i][j] = structuringElement[i][j]
-                        - currentOffset[j];
+                strelMoves[i][j] = structuringElement[i][j] - currentOffset[j];
                 if (i > 0) {
-                    currentOffset[j] += structuringElement[i][j]
-                            - structuringElement[i - 1][j];
+                    currentOffset[j] += structuringElement[i][j] - structuringElement[i - 1][j];
                 } else {
                     currentOffset[j] += structuringElement[i][j];
                 }

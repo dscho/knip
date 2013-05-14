@@ -12,7 +12,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  * @author dietzc, hornm, schoenenbergerf (University of Konstanz)
- *
+ * 
  */
 public class PlaneSelectionEvent implements Externalizable, KNIPEvent {
 

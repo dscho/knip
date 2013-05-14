@@ -55,7 +55,7 @@ import java.awt.Rectangle;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ImgViewerRectChgEvent implements KNIPEvent {

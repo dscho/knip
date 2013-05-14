@@ -62,15 +62,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * 
  * Manager to queue arbitrary objects to be propagated to the listeners.
- *
+ * 
  * @author dietzc, hornm, University of Konstanz
  */
 public class EventService {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(EventService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventService.class);
 
     private final Map<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>> m_typeToSubscriber;
 
@@ -80,16 +79,14 @@ public class EventService {
 
     public EventService() {
         final Comparator<KNIPEvent> comparator = new KNIPEventComparator();
-        m_eventQueue = new PriorityBlockingQueue<KNIPEvent>(20,
-                comparator);
+        m_eventQueue = new PriorityBlockingQueue<KNIPEvent>(20, comparator);
         m_typeToSubscriber = new HashMap<Class<? extends KNIPEvent>, List<ProxyEventSubscriber<?>>>();
     }
 
     /**
-     * Subscribes all of the given object's @{@link EventListener} annotated
-     * methods. This allows a single class to subscribe to multiple types of
-     * events by implementing multiple event handling methods and annotating
-     * each one with @{@link EventListener}.
+     * Subscribes all of the given object's @{@link EventListener} annotated methods. This allows a single class to
+     * subscribe to multiple types of events by implementing multiple event handling methods and annotating each one
+     * with @{@link EventListener}.
      */
 
     public void subscribe(final Object obj) {
@@ -137,10 +134,8 @@ public class EventService {
             return;
         }
         for (final Method m : type.getDeclaredMethods()) {
-            final EventListener ann = m
-                    .getAnnotation(EventListener.class);
-            if (ann == null)
-            {
+            final EventListener ann = m.getAnnotation(EventListener.class);
+            if (ann == null) {
                 continue; // not an event handler method
             }
 
@@ -158,24 +153,20 @@ public class EventService {
     /* Gets the event class parameter of the given method. */
     private Class<? extends KNIPEvent> getEventClass(final Method m) {
         final Class<?>[] c = m.getParameterTypes();
-        if ((c == null) || (c.length != 1))
-        {
+        if ((c == null) || (c.length != 1)) {
             return null; // wrong number of args
         }
-        if (!KNIPEvent.class.isAssignableFrom(c[0]))
-        {
+        if (!KNIPEvent.class.isAssignableFrom(c[0])) {
             return null; // wrong class
         }
 
         @SuppressWarnings("unchecked")
-        final Class<? extends KNIPEvent> eventClass = (Class<? extends KNIPEvent>) c[0];
+        final Class<? extends KNIPEvent> eventClass = (Class<? extends KNIPEvent>)c[0];
         return eventClass;
     }
 
-    private <E extends KNIPEvent> void subscribe(final Class<E> c,
-                                                 final Object o, final Method m) {
-        final ProxyEventSubscriber<E> subscriber = new ProxyEventSubscriber<E>(
-                o, m);
+    private <E extends KNIPEvent> void subscribe(final Class<E> c, final Object o, final Method m) {
+        final ProxyEventSubscriber<E> subscriber = new ProxyEventSubscriber<E>(o, m);
         // Mapping Listeners to Topics
         List<ProxyEventSubscriber<?>> ref = m_typeToSubscriber.get(c);
 
@@ -195,18 +186,15 @@ public class EventService {
             Class<?> clazz = event.getClass();
 
             while (KNIPEvent.class.isAssignableFrom(clazz)) {
-                final List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber
-                        .get(clazz);
+                final List<ProxyEventSubscriber<?>> suscribers = m_typeToSubscriber.get(clazz);
 
                 if (suscribers != null) {
                     for (final ProxyEventSubscriber l : suscribers) {
                         l.onEvent(event);
                     }
-                    LOGGER.debug("Event " + event
-                                 + " processed");
+                    LOGGER.debug("Event " + event + " processed");
                 } else {
-                    LOGGER.debug("Nobody is listening to: "
-                            + event);
+                    LOGGER.debug("Nobody is listening to: " + event);
                 }
                 clazz = clazz.getSuperclass();
             }
@@ -233,10 +221,7 @@ public class EventService {
             } catch (final Exception e) {
                 throw new RuntimeException(
                                            "InvocationTargetException when invoking annotated method from EventService publication. Eata: "
-                                                   + event
-                                                   + ", subscriber:"
-                                                   + m_subscriber,
-                                                   e);
+                                                   + event + ", subscriber:" + m_subscriber, e);
             }
         }
     }
@@ -244,11 +229,9 @@ public class EventService {
     private class KNIPEventComparator implements Comparator<KNIPEvent> {
         @Override
         public int compare(final KNIPEvent a, final KNIPEvent b) {
-            if (a.getExecutionOrder().ordinal() == b
-                    .getExecutionOrder().ordinal()) {
+            if (a.getExecutionOrder().ordinal() == b.getExecutionOrder().ordinal()) {
                 return 0;
-            } else if (a.getExecutionOrder().ordinal() < b
-                    .getExecutionOrder().ordinal()) {
+            } else if (a.getExecutionOrder().ordinal() < b.getExecutionOrder().ordinal()) {
                 return -1;
             }
             return 1;

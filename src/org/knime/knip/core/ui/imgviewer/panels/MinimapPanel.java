@@ -36,12 +36,10 @@ import org.knime.knip.core.ui.imgviewer.events.MinimapOffsetChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 
 /**
- * A panel showing the minimap of a buffered image and enables the user to zoom
- * and change the focus.
- *
- * Publishes {@link MinimapOffsetChgEvent} and {@link MinimapZoomfactorChgEvent}
- * .
- *
+ * A panel showing the minimap of a buffered image and enables the user to zoom and change the focus.
+ * 
+ * Publishes {@link MinimapOffsetChgEvent} and {@link MinimapZoomfactorChgEvent} .
+ * 
  * @author dietzc, hornm, schoenenbergerf
  */
 public class MinimapPanel extends ViewerComponent {
@@ -51,16 +49,15 @@ public class MinimapPanel extends ViewerComponent {
      */
     private static final long serialVersionUID = 1L;
 
-    private static final Color BOUNDING_BOX_COLOR = new Color(0, 127, 255,
-                                                              60);
+    private static final Color BOUNDING_BOX_COLOR = new Color(0, 127, 255, 60);
 
-    private static final Color BOUNDING_BOX_BORDER_COLOR = new Color(0,
-                                                                     127, 255, 255);
+    private static final Color BOUNDING_BOX_BORDER_COLOR = new Color(0, 127, 255, 255);
 
     public static final int ZOOM_MIN = 10;
+
     public static final int ZOOM_MAX = 1000;
-    private static final Integer[] ZOOM_LEVELS = new Integer[] { 25, 50,
-        75, 100, 200, 400, 800 };
+
+    private static final Integer[] ZOOM_LEVELS = new Integer[]{25, 50, 75, 100, 200, 400, 800};
 
     private final JSlider m_zoomSlider;
 
@@ -100,8 +97,7 @@ public class MinimapPanel extends ViewerComponent {
                     @Override
                     public void run() {
                         if (m_img != null) {
-                            onBufferedImageUpdated(new AWTImageChgEvent(
-                                                                        m_img));
+                            onBufferedImageUpdated(new AWTImageChgEvent(m_img));
                         }
 
                     }
@@ -114,43 +110,19 @@ public class MinimapPanel extends ViewerComponent {
             public void paint(final Graphics g) {
                 super.paint(g);
                 if (m_img != null) {
-                    final int w = (int) (m_img.getWidth() * m_scaleFactor);
-                    final int h = (int) (m_img.getHeight() * m_scaleFactor);
+                    final int w = (int)(m_img.getWidth() * m_scaleFactor);
+                    final int h = (int)(m_img.getHeight() * m_scaleFactor);
                     g.drawImage(m_img, 0, 0, w, h, null);
                     g.setColor(BOUNDING_BOX_COLOR);
-                    g.fillRect((int) Math
-                               .min(Math.max((m_offset[0]
-                                       * m_scaleFactor)
-                                       + m_visibleRect.x,
-                                       0),
-                                       w
-                                       - m_visibleRect.width),
-                                       (int) Math.min(Math
-                                                      .max((m_offset[1]
-                                                              * m_scaleFactor)
-                                                              + m_visibleRect.y,
-                                                              0),
-                                                              h
-                                                              - m_visibleRect.height),
-                                                              (m_visibleRect.width),
-                                                              (m_visibleRect.height));
+                    g.fillRect((int)Math.min(Math.max((m_offset[0] * m_scaleFactor) + m_visibleRect.x, 0), w
+                                             - m_visibleRect.width),
+                                             (int)Math.min(Math.max((m_offset[1] * m_scaleFactor) + m_visibleRect.y, 0), h
+                                                           - m_visibleRect.height), (m_visibleRect.width), (m_visibleRect.height));
                     g.setColor(BOUNDING_BOX_BORDER_COLOR);
-                    g.drawRect((int) Math
-                               .min(Math.max((m_offset[0]
-                                       * m_scaleFactor)
-                                       + m_visibleRect.x,
-                                       0),
-                                       w
-                                       - m_visibleRect.width),
-                                       (int) Math.min(Math
-                                                      .max((m_offset[1]
-                                                              * m_scaleFactor)
-                                                              + m_visibleRect.y,
-                                                              0),
-                                                              h
-                                                              - m_visibleRect.height),
-                                                              (m_visibleRect.width),
-                                                              (m_visibleRect.height));
+                    g.drawRect((int)Math.min(Math.max((m_offset[0] * m_scaleFactor) + m_visibleRect.x, 0), w
+                                             - m_visibleRect.width),
+                                             (int)Math.min(Math.max((m_offset[1] * m_scaleFactor) + m_visibleRect.y, 0), h
+                                                           - m_visibleRect.height), (m_visibleRect.width), (m_visibleRect.height));
                 }
 
             }
@@ -170,11 +142,8 @@ public class MinimapPanel extends ViewerComponent {
                         direction = 1;
                     }
 
-                    final int change = (int) Math.sqrt(m_zoomSlider
-                                                       .getValue())
-                                                       * direction;
-                    int newValue = m_zoomSlider.getValue()
-                            + change;
+                    final int change = (int)Math.sqrt(m_zoomSlider.getValue()) * direction;
+                    int newValue = m_zoomSlider.getValue() + change;
 
                     if (newValue < ZOOM_MIN) {
                         newValue = ZOOM_MIN;
@@ -182,8 +151,7 @@ public class MinimapPanel extends ViewerComponent {
                         newValue = ZOOM_MAX;
                     }
 
-                    m_eventService.publish(new ViewZoomfactorChgEvent(
-                                                                      newValue / 100d));
+                    m_eventService.publish(new ViewZoomfactorChgEvent(newValue / 100d));
 
                 }
             }
@@ -193,16 +161,13 @@ public class MinimapPanel extends ViewerComponent {
             @Override
             public void mousePressed(final MouseEvent e) {
 
-                m_offset[0] = ((int) ((e.getX() - (m_visibleRect.width / 2)) / m_scaleFactor));
-                m_offset[1] = ((int) ((e.getY() - (m_visibleRect.height / 2)) / m_scaleFactor));
+                m_offset[0] = ((int)((e.getX() - (m_visibleRect.width / 2)) / m_scaleFactor));
+                m_offset[1] = ((int)((e.getY() - (m_visibleRect.height / 2)) / m_scaleFactor));
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        m_scaleFactor = m_canvas
-                                .getWidth()
-                                / (float) m_img.getWidth();
-                        final float t = m_canvas.getHeight()
-                                / (float) m_img.getHeight();
+                        m_scaleFactor = m_canvas.getWidth() / (float)m_img.getWidth();
+                        final float t = m_canvas.getHeight() / (float)m_img.getHeight();
                         if (t < m_scaleFactor) {
                             m_scaleFactor = t;
                         }
@@ -210,8 +175,7 @@ public class MinimapPanel extends ViewerComponent {
                         repaint();
                     }
                 });
-                m_eventService.publish(new MinimapOffsetChgEvent(
-                                                                 m_offset));
+                m_eventService.publish(new MinimapOffsetChgEvent(m_offset));
             }
         });
         m_canvas.addMouseMotionListener(new MouseMotionAdapter() {
@@ -219,17 +183,14 @@ public class MinimapPanel extends ViewerComponent {
             @Override
             public void mouseDragged(final MouseEvent e) {
 
-                m_offset[0] = ((int) ((e.getX() - (m_visibleRect.width / 2)) / m_scaleFactor));
-                m_offset[1] = ((int) ((e.getY() - (m_visibleRect.height / 2)) / m_scaleFactor));
+                m_offset[0] = ((int)((e.getX() - (m_visibleRect.width / 2)) / m_scaleFactor));
+                m_offset[1] = ((int)((e.getY() - (m_visibleRect.height / 2)) / m_scaleFactor));
 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        m_scaleFactor = m_canvas
-                                .getWidth()
-                                / (float) m_img.getWidth();
-                        final float t = m_canvas.getHeight()
-                                / (float) m_img.getHeight();
+                        m_scaleFactor = m_canvas.getWidth() / (float)m_img.getWidth();
+                        final float t = m_canvas.getHeight() / (float)m_img.getHeight();
                         if (t < m_scaleFactor) {
                             m_scaleFactor = t;
                         }
@@ -237,8 +198,7 @@ public class MinimapPanel extends ViewerComponent {
                         repaint();
                     }
                 });
-                m_eventService.publish(new MinimapOffsetChgEvent(
-                                                                 m_offset));
+                m_eventService.publish(new MinimapOffsetChgEvent(m_offset));
             }
         });
         add(m_canvas, BorderLayout.CENTER);
@@ -254,15 +214,13 @@ public class MinimapPanel extends ViewerComponent {
                     return;
                 }
 
-                m_eventService.publish(new ViewZoomfactorChgEvent(
-                                                                  m_zoomSlider.getValue() / 100d));
+                m_eventService.publish(new ViewZoomfactorChgEvent(m_zoomSlider.getValue() / 100d));
             }
         });
         jp.add(m_zoomSlider, BorderLayout.CENTER);
 
         m_zoomComboBox = new JComboBox(ZOOM_LEVELS);
-        m_zoomComboBox.setPreferredSize(new Dimension(55,
-                                                      m_zoomComboBox.getPreferredSize().height));
+        m_zoomComboBox.setPreferredSize(new Dimension(55, m_zoomComboBox.getPreferredSize().height));
         m_zoomComboBox.setEditable(true);
 
         jp.add(m_zoomComboBox, BorderLayout.EAST);
@@ -275,10 +233,8 @@ public class MinimapPanel extends ViewerComponent {
                     return;
                 }
 
-                m_eventService.publish(new ViewZoomfactorChgEvent(
-                                                                  ((Integer) m_zoomComboBox
-                                                                          .getSelectedItem())
-                                                                          .doubleValue() / 100));
+                m_eventService.publish(new ViewZoomfactorChgEvent(((Integer)m_zoomComboBox.getSelectedItem())
+                                                                  .doubleValue() / 100));
             }
         });
     }
@@ -290,8 +246,7 @@ public class MinimapPanel extends ViewerComponent {
         }
 
         m_isZoomAdjusting = true;
-        final Integer newValue = Integer.valueOf((int) (zoomEvent
-                .getZoomFactor() * 100.0));
+        final Integer newValue = Integer.valueOf((int)(zoomEvent.getZoomFactor() * 100.0));
         m_zoomComboBox.setSelectedItem(newValue);
         m_zoomSlider.setValue(newValue);
         m_isZoomAdjusting = false;
@@ -300,19 +255,16 @@ public class MinimapPanel extends ViewerComponent {
 
     @EventListener
     public void onBufferedImageUpdated(final AWTImageChgEvent e) {
-        m_img = (BufferedImage) e.getImage();
+        m_img = (BufferedImage)e.getImage();
 
-        m_scaleFactor = m_canvas.getWidth() / (float) m_img.getWidth();
-        final float t = m_canvas.getHeight() / (float) m_img.getHeight();
+        m_scaleFactor = m_canvas.getWidth() / (float)m_img.getWidth();
+        final float t = m_canvas.getHeight() / (float)m_img.getHeight();
         if (t < m_scaleFactor) {
             m_scaleFactor = t;
         }
 
-        m_visibleRect.setBounds(
-                                0,
-                                0,
-                                (int) (m_imgCanvasRectangle.width * m_scaleFactor),
-                                (int) (m_imgCanvasRectangle.height * m_scaleFactor));
+        m_visibleRect.setBounds(0, 0, (int)(m_imgCanvasRectangle.width * m_scaleFactor),
+                                (int)(m_imgCanvasRectangle.height * m_scaleFactor));
 
         repaint();
     }
@@ -322,9 +274,8 @@ public class MinimapPanel extends ViewerComponent {
         m_offset[0] = e.getRectangle().x;
         m_offset[1] = e.getRectangle().y;
 
-        m_visibleRect.setBounds(0, 0,
-                                (int) (e.getRectangle().width * m_scaleFactor),
-                                (int) (e.getRectangle().height * m_scaleFactor));
+        m_visibleRect.setBounds(0, 0, (int)(e.getRectangle().width * m_scaleFactor),
+                                (int)(e.getRectangle().height * m_scaleFactor));
 
         // store this temporary to allow a correct redraw on initial
         // component resize
@@ -348,14 +299,12 @@ public class MinimapPanel extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         out.writeInt(m_zoomSlider.getValue());
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_zoomSlider.setValue(in.readInt());
     }
 

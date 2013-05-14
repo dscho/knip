@@ -15,31 +15,28 @@ public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T> & NativeTyp
 implements UnaryOperation<I, I> {
 
     private final double m_deltat;
+
     // Iterations
     private final int m_n;
+
     // used Difussion Function
     private final DiffusionFunction m_fun;
+
     // number of threads
     private final int threads;
 
     /**
-     *
-     * Constructs a wrapping operation to execute the (elsewhere
-     * implemented) Perona & Malik Anisotropic Diffusion scheme. See
-     * {@link PeronaMalikAnisotropicDiffusion}.
-     *
-     * @param deltat
-     *                the integration constant for the numerical integration
-     *                scheme. Typically less that 1.
-     * @param n
-     *                the number of Iterations
-     * @param fun
-     *                the diffusion function to be used
-     * @param threads
-     *                The number of the threads to be used. Usually 1.
+     * 
+     * Constructs a wrapping operation to execute the (elsewhere implemented) Perona & Malik Anisotropic Diffusion
+     * scheme. See {@link PeronaMalikAnisotropicDiffusion}.
+     * 
+     * @param deltat the integration constant for the numerical integration scheme. Typically less that 1.
+     * @param n the number of Iterations
+     * @param fun the diffusion function to be used
+     * @param threads The number of the threads to be used. Usually 1.
      */
-    public PeronaMalikAnisotropicDiffusionOp(final double deltat, final int n,
-                                             final DiffusionFunction fun, final int threads) {
+    public PeronaMalikAnisotropicDiffusionOp(final double deltat, final int n, final DiffusionFunction fun,
+                                             final int threads) {
         this.m_deltat = deltat;
         this.m_n = n;
         this.m_fun = fun;
@@ -52,15 +49,13 @@ implements UnaryOperation<I, I> {
         // this is ugly and a hack but needed as the implementation of
         // this
         // algorithms doesn't accept the input img
-        final ImgView<T> out = new ImgView<T>(output,
-                new ArrayImgFactory<T>());
+        final ImgView<T> out = new ImgView<T>(output, new ArrayImgFactory<T>());
 
-        new IterableIntervalCopy<T>().compute(Views.iterable(input),
-                                              out);
+        new IterableIntervalCopy<T>().compute(Views.iterable(input), out);
 
         // build a new diffusion scheme
-        final PeronaMalikAnisotropicDiffusion<T> diff = new PeronaMalikAnisotropicDiffusion<T>(
-                out, this.m_deltat, this.m_fun);
+        final PeronaMalikAnisotropicDiffusion<T> diff =
+                new PeronaMalikAnisotropicDiffusion<T>(out, this.m_deltat, this.m_fun);
 
         // set threads //TODO: noch ne "auto"-funktion einbauen, das das
         // autmatisch passiert? bis der fehler gefunden ist...
@@ -77,9 +72,7 @@ implements UnaryOperation<I, I> {
 
     @Override
     public UnaryOperation<I, I> copy() {
-        return new PeronaMalikAnisotropicDiffusionOp<T, I>(
-                this.m_deltat, this.m_n, this.m_fun,
-                this.threads);
+        return new PeronaMalikAnisotropicDiffusionOp<T, I>(this.m_deltat, this.m_n, this.m_fun, this.threads);
     }
 
 }

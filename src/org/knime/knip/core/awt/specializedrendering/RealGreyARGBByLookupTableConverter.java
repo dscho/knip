@@ -8,37 +8,30 @@ import org.knime.knip.core.awt.lookup.LookupTable;
 
 /**
  * Converts RealType values to ARGB using a Lookuptable.<br>
- *
+ * 
  * @author muethingc
  */
-public class RealGreyARGBByLookupTableConverter<T extends RealType<T>>
-implements Converter<T, ARGBType> {
+public class RealGreyARGBByLookupTableConverter<T extends RealType<T>> implements Converter<T, ARGBType> {
 
     private LookupTable<T, ARGBType> m_table = null;
 
     /**
      * Create a new instance.<br>
-     *
-     * @param table
-     *                the lookup table
-     *
-     * @throws NullPointerException
-     *                 if table == null
+     * 
+     * @param table the lookup table
+     * 
+     * @throws NullPointerException if table == null
      */
-    public RealGreyARGBByLookupTableConverter(
-                                              final LookupTable<T, ARGBType> table) {
+    public RealGreyARGBByLookupTableConverter(final LookupTable<T, ARGBType> table) {
         setLookupTable(table);
     }
 
     /**
-     * Set a new LookupTable which will be used from the next call to
-     * lookup.
-     *
-     * @param table
-     *                the new lookup table
-     *
-     * @throws NullPointerException
-     *                 if table == null
+     * Set a new LookupTable which will be used from the next call to lookup.
+     * 
+     * @param table the new lookup table
+     * 
+     * @throws NullPointerException if table == null
      */
     public void setLookupTable(final LookupTable<T, ARGBType> table) {
         if (table == null) {

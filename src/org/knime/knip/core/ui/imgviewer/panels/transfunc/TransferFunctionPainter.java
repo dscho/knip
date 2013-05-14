@@ -55,38 +55,36 @@ import java.awt.event.MouseMotionListener;
 
 /**
  * Each implementation is able to draw a specific kind of TransferFunction.<br>
- *
+ * 
  * @author muethingc
  * 
  */
-public interface TransferFunctionPainter extends MouseListener,
-MouseMotionListener {
-
+public interface TransferFunctionPainter extends MouseListener, MouseMotionListener {
 
     /**
      * Paint the Function.<br>
-     *
+     * 
      * @param g2 graphics2d used for painting
      */
     public void paint(final Graphics2D g2);
 
     /**
      * Paint the function using backbuffer selection.<br>
-     *
-     * After the call to this method the caller will then call {@link checkForHilite(Color)} later and thus
-     * make each instance check if the painted transfer function has been selected.
-     *
+     * 
+     * After the call to this method the caller will then call {@link checkForHilite(Color)} later and thus make each
+     * instance check if the painted transfer function has been selected.
+     * 
      * @param g2 graphics2d used for painting
      */
     public void paintForSelection(final Graphics2D g2);
 
     /**
      * Called each time it is necessary to check if a transfer function has been selected.<br>
-     *
-     * The passed color will have been retrieved from the area painted to in {@link paintForSelection(Graphics2D)}
-     * and thus the implementing class should be able to conclude if it or some part of it has
-     * currently the cursor above it.
-     *
+     * 
+     * The passed color will have been retrieved from the area painted to in {@link paintForSelection(Graphics2D)} and
+     * thus the implementing class should be able to conclude if it or some part of it has currently the cursor above
+     * it.
+     * 
      * @param color the color to check for
      * 
      * @return true if the cursor is currently above the function or a part of it, false otherwise
@@ -94,32 +92,31 @@ MouseMotionListener {
     public boolean checkForHilite(final Color color);
 
     /**
-     * Called to singal the implementing class that something has changed and no more info about the current hiliting is available.<br>
+     * Called to singal the implementing class that something has changed and no more info about the current hiliting is
+     * available.<br>
      */
     public void clearHilite();
 
     /**
-     * Called if {@link checkForHilite(Color)} has returned true and should return a cursor that fits the current
-     * user interaction of the painted transfer function.<br>
-     *
+     * Called if {@link checkForHilite(Color)} has returned true and should return a cursor that fits the current user
+     * interaction of the painted transfer function.<br>
+     * 
      * @return a fitting cursor
      */
     public Cursor getCursor();
 
     /**
      * Add a TransferFunctionChgListener.<br>
-     *
+     * 
      * @param l the listener to add
      */
-    public void addTransferFunctionChgListener(
-                                               final TransferFunctionChgListener l);
+    public void addTransferFunctionChgListener(final TransferFunctionChgListener l);
 
     /**
      * Remove a TransferFunctionChgListener.<br>
-     *
+     * 
      * @param l the listener to remove
      */
-    public void removeTransferFunctionChgListener(
-                                                  final TransferFunctionChgListener l);
+    public void removeTransferFunctionChgListener(final TransferFunctionChgListener l);
 
 }

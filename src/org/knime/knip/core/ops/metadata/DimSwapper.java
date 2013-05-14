@@ -8,7 +8,7 @@ import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.Type;
 
 /**
- *
+ * 
  * @author dietzc, horn, zinsmaierm
  * @param <T>
  */
@@ -26,7 +26,7 @@ public class DimSwapper<T extends Type<T>> implements UnaryOutputOperation<Img<T
      * mapping[1] = 2; // Y &lt;- C, C becomes Y
      * mapping[2] = 0; // C &lt;- X, X becomes C
      * </pre>
-     *
+     * 
      * @param backMapping
      */
     public DimSwapper(final int[] backMapping) {
@@ -36,7 +36,7 @@ public class DimSwapper<T extends Type<T>> implements UnaryOutputOperation<Img<T
     }
 
     /**
-     *
+     * 
      * @param backMapping
      * @param srcOffset Offset in source coordinates.
      * @param srcSize Size in source coordinates.
