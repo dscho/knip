@@ -448,6 +448,14 @@ public class Signature {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(m_sign);
+    }
+
+    /**
      * Transforms the signature to the corresponding {@link Polygon} in the Cartesian space.
      *
      * @return the new contour
