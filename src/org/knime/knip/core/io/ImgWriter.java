@@ -119,17 +119,14 @@ public class ImgWriter {
 
         if (m_mapWriters == null) {
             loci.formats.ImageWriter writer;
-            final ClassList<IFormatWriter> defaultClasses = ImageWriter
-                    .getDefaultWriterClasses();
+            final ClassList<IFormatWriter> defaultClasses = ImageWriter.getDefaultWriterClasses();
             writer = new loci.formats.ImageWriter(defaultClasses);
             final IFormatWriter[] writers = writer.getWriters();
             WRITERS = new String[writers.length];
             m_mapWriters = new HashMap<String, IFormatWriter>();
             for (int i = 0; i < writers.length; i++) {
 
-                WRITERS[i] = writers[i].getFormat() + " ("
-                        + writers[i].getSuffixes()[0]
-                                + ")";
+                WRITERS[i] = writers[i].getFormat() + " (" + writers[i].getSuffixes()[0] + ")";
                 // String[] suffixes = writers[i].getSuffixes();
                 // for (int j = 0; j < suffixes.length - 1; j++)
                 // {
@@ -145,13 +142,10 @@ public class ImgWriter {
     }
 
     /**
-     * Returns the list of the possible compression types of the specific
-     * writer.
+     * Returns the list of the possible compression types of the specific writer.
      *
-     * @param writer
-     *                the name of the writer
-     * @return the list of possible compressions, <code>null</code> if there
-     *         are no compression types
+     * @param writer the name of the writer
+     * @return the list of possible compressions, <code>null</code> if there are no compression types
      */
 
     public String[] getCompressionTypes(final String writer) {
@@ -172,11 +166,9 @@ public class ImgWriter {
     }
 
     /**
-     * Gets one suffix normally used to identify the format associated with
-     * the specific writer.
+     * Gets one suffix normally used to identify the format associated with the specific writer.
      *
-     * @param writer
-     *                the writer
+     * @param writer the writer
      * @return the suffix, e.g. '.tif'
      */
     public String getSuffix(final String writer) {
@@ -189,85 +181,57 @@ public class ImgWriter {
     }
 
     /**
-     * Writes the image plane stack to the given file. The resulting image
-     * format is determined by the given writer.
+     * Writes the image plane stack to the given file. The resulting image format is determined by the given writer.
      *
-     * @param img
-     *                the image to be written
-     * @param <T>
-     *                the image type
+     * @param img the image to be written
+     * @param <T> the image type
      *
-     * @param outfile
-     *                the absolute path of the file to write in
-     * @param writer
-     *                the writer
-     * @param compressionType
-     *                the compression type, if available, can be
-     *                <code>null</code>.
-     * @param dimMapping
-     *                mapping of the image dimensions (without X and Y) to
-     *                the dimension order ZCT (array must be of length 3),
-     *                If <code>null</code> Z=dim2, C=dim3, T=dim4. If a
-     *                mapping is -1 , that particular dimensions is assumed
-     *                to be not existent.
+     * @param outfile the absolute path of the file to write in
+     * @param writer the writer
+     * @param compressionType the compression type, if available, can be <code>null</code>.
+     * @param dimMapping mapping of the image dimensions (without X and Y) to the dimension order ZCT (array must be of
+     *            length 3), If <code>null</code> Z=dim2, C=dim3, T=dim4. If a mapping is -1 , that particular
+     *            dimensions is assumed to be not existent.
      * @throws IOException
      * @throws FormatException
      * @throws MissingLibraryException
      * @throws ServiceException
      * @throws DependencyException
      */
-    public <T extends RealType<T>> void writeImage(final Img<T> img,
-                                                   final String outfile, final String writer,
+    public <T extends RealType<T>> void writeImage(final Img<T> img, final String outfile, final String writer,
                                                    final String compressionType, final int[] dimMapping)
-                                                           throws FormatException, IOException,
-                                                           MissingLibraryException, ServiceException,
-                                                           DependencyException {
+            throws FormatException, IOException, MissingLibraryException, ServiceException, DependencyException {
         retrieveSupportedWriters();
-        writeImage(img, outfile, m_mapWriters.get(writer),
-                   compressionType, dimMapping);
+        writeImage(img, outfile, m_mapWriters.get(writer), compressionType, dimMapping);
 
     }
 
     /**
-     * Writes the image plane stack to the given file. The resulting image
-     * format is determined by the given writer.
+     * Writes the image plane stack to the given file. The resulting image format is determined by the given writer.
      *
-     * @param img
-     *                the image to be written
-     * @param <T>
-     *                the image type
+     * @param img the image to be written
+     * @param <T> the image type
      *
-     * @param outfile
-     *                the absolute path of the file to write in
-     * @param writer
-     *                the writer
-     * @param compressionType
-     *                the compression type, if available, can be
-     *                <code>null</code>.
-     * @param dimMapping
-     *                mapping of the image dimensions (without X and Y) to
-     *                the dimension order ZCT (array must be of length 3),
-     *                If <code>null</code> Z=dim2, C=dim3, T=dim4. If a
-     *                mapping is -1 , that particular dimensions is assumed
-     *                to be not existent.
+     * @param outfile the absolute path of the file to write in
+     * @param writer the writer
+     * @param compressionType the compression type, if available, can be <code>null</code>.
+     * @param dimMapping mapping of the image dimensions (without X and Y) to the dimension order ZCT (array must be of
+     *            length 3), If <code>null</code> Z=dim2, C=dim3, T=dim4. If a mapping is -1 , that particular
+     *            dimensions is assumed to be not existent.
      * @throws IOException
      * @throws FormatException
      * @throws MissingLibraryException
      * @throws ServiceException
      * @throws DependencyException
      */
-    public <T extends RealType<T>> void writeImage(final Img<T> img,
-                                                   final String outfile, final IFormatWriter writer,
+    public <T extends RealType<T>> void writeImage(final Img<T> img, final String outfile, final IFormatWriter writer,
                                                    final String compressionType, final int[] dimMapping)
-                                                           throws FormatException, IOException,
-                                                           MissingLibraryException, ServiceException,
-                                                           DependencyException {
+            throws FormatException, IOException, MissingLibraryException, ServiceException, DependencyException {
 
         // create metadata object with minimum required metadata
         // fields
         final ServiceFactory factory = new ServiceFactory();
-        final OMEXMLService service = factory
-                .getInstance(OMEXMLService.class);
+        final OMEXMLService service = factory.getInstance(OMEXMLService.class);
         final IMetadata store = service.createOMEXMLMetadata();
 
         // retrieve the pixeltype
@@ -302,237 +266,190 @@ public class ImgWriter {
             ptype = PixelType.DOUBLE;
             ftptype = FormatTools.DOUBLE;
         } else {
-            throw new FormatException("The given image format ("
-                    + val.getClass().toString()
-                    + ") can't be writen!");
+            throw new FormatException("The given image format (" + val.getClass().toString() + ") can't be writen!");
         }
 
         if (store == null) {
-            throw new MissingLibraryException(
-                                              "OME-XML Java library not found.");
+            throw new MissingLibraryException("OME-XML Java library not found.");
         }
 
         int[] map;
         if ((dimMapping == null) || (dimMapping.length != 3)) {
-            map = new int[] { 2, 3, 4 };
+            map = new int[]{2, 3, 4};
         } else {
             map = dimMapping.clone();
         }
 
         final int numDim = img.numDimensions();
-        final int sizeX = (int) img.dimension(0);
-        final int sizeY = (int) img.dimension(1);
-        final int sizeZ = ((img.numDimensions() > map[0]) && (map[0] != -1)) ? (int) img
-                .dimension(2 + map[0]) : 1;
-                int sizeC = (img.numDimensions() > map[1]) && (map[1] != -1) ? (int) img
-                        .dimension(2 + map[1]) : 1;
-                        if (sizeC > 3) {
-                            LOGGER.warn("Image has more than 3 channels. These channels will be ignored.");
-                            sizeC = 3;
+        final int sizeX = (int)img.dimension(0);
+        final int sizeY = (int)img.dimension(1);
+        final int sizeZ = ((img.numDimensions() > map[0]) && (map[0] != -1)) ? (int)img.dimension(2 + map[0]) : 1;
+        int sizeC = (img.numDimensions() > map[1]) && (map[1] != -1) ? (int)img.dimension(2 + map[1]) : 1;
+        if (sizeC > 3) {
+            LOGGER.warn("Image has more than 3 channels. These channels will be ignored.");
+            sizeC = 3;
+        }
+        final int sizeT = (img.numDimensions() > map[2]) && (map[2] != -1) ? (int)img.dimension(2 + map[2]) : 1;
+
+        MetadataTools.populateMetadata(store, 0, outfile, false, "XYZCT", FormatTools.getPixelTypeString(ftptype),
+                                       sizeX, sizeY, sizeZ, sizeC, sizeT, sizeC);
+
+        if (img.numDimensions() > 5) {
+            LOGGER.warn("Image has more than five dimension. These dimensions will be ignored.");
+        }
+        if ((sizeC > 1) && !((val instanceof ByteType) || (val instanceof UnsignedByteType))) {
+            throw new FormatException("RGB images must be of type byte!");
+        }
+
+        // write image plane to disk
+
+        writer.setMetadataRetrieve(store);
+        writer.setFramesPerSecond(m_fps);
+        writer.setId(outfile);
+
+        if ((compressionType != null) && (writer.getCompressionTypes() != null)) {
+            writer.setCompression(compressionType);
+        }
+
+        if (!writer.isSupportedType(ftptype)) {
+            final int[] supportedPTypes = writer.getPixelTypes();
+            StringBuffer types = new StringBuffer();
+            for (int i = 0; i < supportedPTypes.length; i++) {
+                types.append(FormatTools.getPixelTypeString(supportedPTypes[i]) + " ");
+            }
+
+            throw new FormatException(ptype.toString() + " not supported by the selected image format. Supported are "
+                    + types.toString() + ".");
+        }
+
+        // convert and save slices
+        final boolean doStack = writer.canDoStacks();
+
+        if (!doStack && ((sizeT > 1) || (sizeZ > 1))) {
+            throw new FormatException("Seleted format doesn't support image stacks.");
+        }
+
+        writer.setInterleaved(false);
+
+        final boolean littleEndian = !writer.getMetadataRetrieve().getPixelsBinDataBigEndian(0, 0).booleanValue();
+
+        final IntervalIterator fakeCursor = new IntervalIterator(new int[]{sizeZ, sizeT});
+
+        OrthoSliceCursor<T> c;
+
+        final byte[][] planes = new byte[sizeC][];
+        long[] pos;
+        final int numSteps = sizeT * sizeZ;
+        while (fakeCursor.hasNext()) {
+            fakeCursor.fwd();
+
+            // iterate through the channels
+            for (int i = 0; i < sizeC; i++) {
+
+                final long[] zctPos = new long[]{fakeCursor.getLongPosition(0), i, fakeCursor.getLongPosition(1)};
+
+                // map xyzct pos to img dimensions
+                switch (numDim) {
+                    case 2:
+                        pos = new long[]{0, 0};
+                        break;
+                    case 3:
+                        pos = new long[3];
+                        for (int j = 0; j < map.length; j++) {
+                            if ((map[j] != -1) && (map[j] < 3)) {
+                                pos[2 + map[j]] = zctPos[j];
+                                break;
+                            }
                         }
-                        final int sizeT = (img.numDimensions() > map[2]) && (map[2] != -1) ? (int) img
-                                .dimension(2 + map[2]) : 1;
-
-                                MetadataTools.populateMetadata(store, 0, outfile, false,
-                                                               "XYZCT",
-                                                               FormatTools.getPixelTypeString(ftptype), sizeX,
-                                                               sizeY, sizeZ, sizeC, sizeT, sizeC);
-
-                                if (img.numDimensions() > 5) {
-                                    LOGGER.warn("Image has more than five dimension. These dimensions will be ignored.");
+                        break;
+                    case 4:
+                        pos = new long[4];
+                        pos[2] = -1;
+                        for (int j = 0; j < map.length; j++) {
+                            if ((map[j] != -1) && (map[j] < 4)) {
+                                if (pos[2] == -1) {
+                                    pos[2 + map[j]] = zctPos[j];
+                                } else {
+                                    pos[2 + map[j]] = zctPos[j];
+                                    break;
                                 }
-                                if ((sizeC > 1)
-                                        && !((val instanceof ByteType) || (val instanceof UnsignedByteType))) {
-                                    throw new FormatException(
-                                            "RGB images must be of type byte!");
-                                }
+                            }
+                        }
+                        break;
+                    // five or more dimensions
+                    default:
+                        pos = new long[numDim];
+                        for (int j = 0; j < map.length; j++) {
+                            if (map[j] != -1) {
+                                pos[2 + map[j]] = zctPos[j];
+                            }
+                        }
+                        break;
 
-                                // write image plane to disk
+                }
 
-                                writer.setMetadataRetrieve(store);
-                                writer.setFramesPerSecond(m_fps);
-                                writer.setId(outfile);
+                c = new OrthoSliceCursor<T>(img, 0, 1, pos);
 
-                                if ((compressionType != null)
-                                        && (writer.getCompressionTypes() != null)) {
-                                    writer.setCompression(compressionType);
-                                }
+                if (val instanceof ByteType) {
+                    planes[i] = new byte[(int)(img.dimension(0) * img.dimension(1))];
+                    while (c.hasNext()) {
+                        c.fwd();
+                        planes[i][c.getIntPosition(0) + ((int)img.dimension(0) * c.getIntPosition(1))] =
+                                ((ByteType)c.get()).get();
+                    }
+                    planes[i] = DataTools.makeSigned(planes[i]);
 
-                                if (!writer.isSupportedType(ftptype)) {
-                                    final int[] supportedPTypes = writer.getPixelTypes();
-                                    String types = "";
-                                    for (int i = 0; i < supportedPTypes.length; i++) {
-                                        types += FormatTools
-                                                .getPixelTypeString(supportedPTypes[i])
-                                                + " ";
-                                    }
+                } else if (val instanceof UnsignedByteType) {
+                    planes[i] = new byte[(int)(img.dimension(0) * img.dimension(1))];
+                    while (c.hasNext()) {
+                        c.fwd();
+                        planes[i][c.getIntPosition(0) + ((int)img.dimension(0) * c.getIntPosition(1))] =
+                                (byte)(((UnsignedByteType)c.get()).get() - 128);
+                    }
+                    planes[i] = DataTools.makeSigned(planes[i]);
+                } else if (val instanceof ShortType) {
+                    final short[] tmp = new short[(int)(img.dimension(0) * img.dimension(1))];
+                    while (c.hasNext()) {
+                        c.fwd();
+                        tmp[c.getIntPosition(0) + ((int)img.dimension(0) * c.getIntPosition(1))] =
+                                ((ShortType)c.get()).get();
+                    }
+                    planes[i] = DataTools.shortsToBytes(tmp, littleEndian);
 
-                                    throw new FormatException(
-                                                              ptype.toString()
-                                                              + " not supported by the selected image format. Supported are "
-                                                              + types + ".");
-                                }
+                } else if (val instanceof FloatType) {
+                    final float[] tmp = new float[(int)(img.dimension(0) * img.dimension(1))];
+                    while (c.hasNext()) {
+                        c.fwd();
+                        tmp[c.getIntPosition(0) + ((int)img.dimension(0) * c.getIntPosition(1))] =
+                                ((FloatType)c.get()).get();
+                    }
+                    planes[i] = DataTools.floatsToBytes(tmp, littleEndian);
 
-                                // convert and save slices
-                                final boolean doStack = writer.canDoStacks();
+                } else {
+                    throw new FormatException("Pixel type not supported by this format.");
+                }
 
-                                if (!doStack && ((sizeT > 1) || (sizeZ > 1))) {
-                                    throw new FormatException(
-                                            "Seleted format doesn't support image stacks.");
-                                }
+            }
+            final int index =
+                    FormatTools.getIndex(DimensionOrder.XYZCT.toString(), sizeZ, 1, sizeT, numSteps,
+                                         fakeCursor.getIntPosition(0), 0, fakeCursor.getIntPosition(1));
 
-                                writer.setInterleaved(false);
+            // merge channel planes
+            if ((sizeC > 1) && ((val instanceof ByteType) || (val instanceof UnsignedByteType))) {
+                final byte[] rgb = new byte[planes[0].length * sizeC];
 
-                                final boolean littleEndian = !writer.getMetadataRetrieve()
-                                        .getPixelsBinDataBigEndian(0, 0).booleanValue();
+                for (int j = 0; j < sizeC; j++) {
+                    System.arraycopy(planes[j], 0, rgb, planes[j].length * j, planes[j].length);
+                }
+                writer.saveBytes(index, rgb);
 
-                                final IntervalIterator fakeCursor = new IntervalIterator(new int[] {
-                                        sizeZ, sizeT });
+            } else {
+                writer.saveBytes(index, planes[0]);
+            }
 
-                                OrthoSliceCursor<T> c;
+        }
 
-                                final byte[][] planes = new byte[sizeC][];
-                                long[] pos;
-                                final int numSteps = sizeT * sizeZ;
-                                while (fakeCursor.hasNext()) {
-                                    fakeCursor.fwd();
-
-                                    // iterate through the channels
-                                    for (int i = 0; i < sizeC; i++) {
-
-                                        final long[] zctPos = new long[] {
-                                                fakeCursor.getLongPosition(0),
-                                                i,
-                                                fakeCursor.getLongPosition(1) };
-
-                                        // map xyzct pos to img dimensions
-                                        switch (numDim) {
-                                            case 2:
-                                                pos = new long[] { 0, 0 };
-                                                break;
-                                            case 3:
-                                                pos = new long[3];
-                                                for (int j = 0; j < map.length; j++) {
-                                                    if ((map[j] != -1) && (map[j] < 3)) {
-                                                        pos[2 + map[j]] = zctPos[j];
-                                                        break;
-                                                    }
-                                                }
-                                                break;
-                                            case 4:
-                                                pos = new long[4];
-                                                pos[2] = -1;
-                                                for (int j = 0; j < map.length; j++) {
-                                                    if ((map[j] != -1) && (map[j] < 4)) {
-                                                        if (pos[2] == -1) {
-                                                            pos[2 + map[j]] = zctPos[j];
-                                                        } else {
-                                                            pos[2 + map[j]] = zctPos[j];
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                break;
-                                                // five or more dimensions
-                                            default:
-                                                pos = new long[numDim];
-                                                for (int j = 0; j < map.length; j++) {
-                                                    if (map[j] != -1) {
-                                                        pos[2 + map[j]] = zctPos[j];
-                                                    }
-                                                }
-                                                break;
-
-                                        }
-
-                                        c = new OrthoSliceCursor<T>(img, 0, 1, pos);
-
-                                        if (val instanceof ByteType) {
-                                            planes[i] = new byte[(int) (img
-                                                    .dimension(0) * img
-                                                    .dimension(1))];
-                                            while (c.hasNext()) {
-                                                c.fwd();
-                                                planes[i][c.getIntPosition(0)
-                                                          + ((int) img.dimension(0)
-                                                                  * c.getIntPosition(1))] = ((ByteType) c
-                                                                          .get()).get();
-                                            }
-                                            planes[i] = DataTools
-                                                    .makeSigned(planes[i]);
-
-                                        } else if (val instanceof UnsignedByteType) {
-                                            planes[i] = new byte[(int) (img
-                                                    .dimension(0) * img
-                                                    .dimension(1))];
-                                            while (c.hasNext()) {
-                                                c.fwd();
-                                                planes[i][c.getIntPosition(0)
-                                                          + ((int) img.dimension(0)
-                                                                  * c.getIntPosition(1))] = (byte) (((UnsignedByteType) c
-                                                                          .get()).get() - 128);
-                                            }
-                                            planes[i] = DataTools
-                                                    .makeSigned(planes[i]);
-                                        } else if (val instanceof ShortType) {
-                                            final short[] tmp = new short[(int) (img
-                                                    .dimension(0) * img
-                                                    .dimension(1))];
-                                            while (c.hasNext()) {
-                                                c.fwd();
-                                                tmp[c.getIntPosition(0)
-                                                    + ((int) img.dimension(0)
-                                                            * c.getIntPosition(1))] = ((ShortType) c
-                                                                    .get()).get();
-                                            }
-                                            planes[i] = DataTools.shortsToBytes(
-                                                                                tmp, littleEndian);
-
-                                        } else if (val instanceof FloatType) {
-                                            final float[] tmp = new float[(int) (img
-                                                    .dimension(0) * img
-                                                    .dimension(1))];
-                                            while (c.hasNext()) {
-                                                c.fwd();
-                                                tmp[c.getIntPosition(0)
-                                                    + ((int) img.dimension(0)
-                                                            * c.getIntPosition(1))] = ((FloatType) c
-                                                                    .get()).get();
-                                            }
-                                            planes[i] = DataTools.floatsToBytes(
-                                                                                tmp, littleEndian);
-
-                                        } else {
-                                            throw new FormatException(
-                                                    "Pixel type not supported by this format.");
-                                        }
-
-                                    }
-                                    final int index = FormatTools.getIndex(
-                                                                           DimensionOrder.XYZCT.toString(), sizeZ,
-                                                                           1, sizeT, numSteps,
-                                                                           fakeCursor.getIntPosition(0), 0,
-                                                                           fakeCursor.getIntPosition(1));
-
-                                    // merge channel planes
-                                    if ((sizeC > 1)
-                                            && ((val instanceof ByteType) || (val instanceof UnsignedByteType))) {
-                                        final byte[] rgb = new byte[planes[0].length * sizeC];
-
-                                        for (int j = 0; j < sizeC; j++) {
-                                            System.arraycopy(planes[j], 0, rgb,
-                                                             planes[j].length * j,
-                                                             planes[j].length);
-                                        }
-                                        writer.saveBytes(index, rgb);
-
-                                    } else {
-                                        writer.saveBytes(index, planes[0]);
-                                    }
-
-                                }
-
-                                writer.close();
+        writer.close();
 
     }
 

@@ -1,18 +1,18 @@
 /* -------------------------------------------------------------------
  * This source code, its documentation and all appendant files
  * are protected by copyright law. All rights reserved.
- * 
+ *
  * Copyright, 2003 - 2010
  * Universitaet Konstanz, Germany.
  * Lehrstuhl fuer Angewandte Informatik
  * Prof. Dr. Michael R. Berthold
- * 
+ *
  * You may not modify, publish, transmit, transfer or sell, reproduce,
  * create derivative works from, distribute, perform, display, or in
  * any way exploit any of the content, in whole or in part, except as
  * otherwise expressly permitted in writing by the copyright owner.
  * -------------------------------------------------------------------
- * 
+ *
  * History
  *   Feb 8, 2006 (Stefan): created
  */
@@ -30,9 +30,8 @@ public class Polynom {
 
     /**
      * default constructor.
-     * 
-     * @param degree
-     *                the degree of the polynom
+     *
+     * @param degree the degree of the polynom
      */
     public Polynom(final int degree) {
         m_degree = degree;
@@ -44,11 +43,9 @@ public class Polynom {
 
     /**
      * set the coefficient at a position.
-     * 
-     * @param pos
-     *                the position (the power of the monom)
-     * @param coef
-     *                the coefficient
+     *
+     * @param pos the position (the power of the monom)
+     * @param coef the coefficient
      */
     public void setCoefficient(final int pos, final int coef) {
         m_coefficients[pos] = coef;
@@ -56,9 +53,8 @@ public class Polynom {
 
     /**
      * return the coefficient at a given position.
-     * 
-     * @param pos
-     *                the position
+     *
+     * @param pos the position
      * @return the coefficient
      */
     public int getCoefficient(final int pos) {
@@ -67,9 +63,8 @@ public class Polynom {
 
     /**
      * return the value of the polynom in a given point.
-     * 
-     * @param x
-     *                the point
+     *
+     * @param x the point
      * @return the value of the polynom
      */
     public double evaluate(final double x) {
@@ -83,19 +78,18 @@ public class Polynom {
     }
 
     /**
-     * provide a String representation of this polynom. mostly for debugging
-     * purposes and for the JUnit test case
-     * 
+     * provide a String representation of this polynom. mostly for debugging purposes and for the JUnit test case
+     *
      * @return the String representation
      */
     @Override
     public String toString() {
-        String result = "";
+        StringBuffer result = new StringBuffer();
         for (int i = 0; i <= m_degree; ++i) {
             if (m_coefficients[i] != 0) {
-                result += m_coefficients[i] + "X^" + i + "  ";
+                result.append(m_coefficients[i] + "X^" + i + "  ");
             }
         }
-        return result;
+        return result.toString();
     }
 }
