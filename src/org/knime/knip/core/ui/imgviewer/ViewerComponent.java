@@ -20,6 +20,8 @@ import org.knime.knip.core.ui.event.EventServiceClient;
  */
 public abstract class ViewerComponent extends JPanel implements EventServiceClient {
 
+    private static final long serialVersionUID = 1L;
+
     protected enum Position {
         CENTER, NORTH, SOUTH, WEST, EAST, HIDDEN;
 
