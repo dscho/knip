@@ -233,11 +233,11 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
          */
         @Override
         public boolean equals(final Object obj) {
-            if (obj == null) {
+            if (obj instanceof Point) {
+                return ((Point)obj).getX() == m_x;
+            } else {
                 return false;
             }
-
-            return ((Point)obj).getX() == m_x;
         }
 
         /**
