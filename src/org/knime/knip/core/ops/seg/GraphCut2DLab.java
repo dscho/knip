@@ -76,11 +76,11 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 
 /**
  * GraphCut where the averge value for the sink and source are retrieved from a labeling.
- * 
+ *
  * @author dietzc, University of Konstanz
  */
 public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>> implements
-BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
+        BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
 
     private Set<long[]> m_sources;
 
@@ -135,7 +135,7 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return
      */
     @Override
@@ -164,8 +164,8 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
 
             final Cursor<T> roiCursor =
                     labeling.getIterableRegionOfInterest(label)
-                    .getIterableIntervalOverROI(new ConstantRandomAccessible<T>(src.firstElement(), labeling
-                            .numDimensions())).localizingCursor();
+                            .getIterableIntervalOverROI(new ConstantRandomAccessible<T>(src.firstElement(), labeling
+                                                                .numDimensions())).localizingCursor();
 
             final RandomAccess<T> srcRA = src.randomAccess();
 
@@ -216,7 +216,7 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
 
     /**
      * calculates the GraphCut on the Image Img
-     * 
+     *
      * @param img The Image
      * @return the processed Image with black and white values for sink and Source
      */
@@ -308,15 +308,6 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
                 // if we are not at the lower dimension bounds
                 if ((srcRandomAcess.getIntPosition(d) - 1) >= 0) {
 
-                    /*
-                     * weight according to p.109 lower right
-                     * in the paper (ad-hoc) function
-                     */
-
-                    // // get the intensity from this pixel
-                    // final float intensity1 =
-                    // value.getRealFloat();
-
                     // get the intensity from the neighbor
                     // pixel
                     srcRandomAcess.bck(d);
@@ -326,11 +317,6 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
                     getValues(neighborValues, srcRandomAcess);
 
                     srcRandomAcess.fwd(d);
-
-                    // float weight = -((intensity1 -
-                    // intensity2)
-                    // * (intensity1 - intensity2) / (2 *
-                    // stdDev * stdDev));
                     float weight = 0;
 
                     for (int i = 0; i < nodeValues.length; i++) {
@@ -415,7 +401,7 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
             resCursor.fwd();
             resCursor.localize(resPos);
             resCursor.get().set(graphCut.getTerminal(listPosition(resPos, dims))
-                                .equals(org.knime.knip.core.algorithm.GraphCutAlgorithm.Terminal.BACKGROUND));
+                                        .equals(org.knime.knip.core.algorithm.GraphCutAlgorithm.Terminal.BACKGROUND));
 
         }
 
@@ -423,20 +409,13 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
 
     /**
      * Gives the position of the node in the list from the pixel position in the image.
-     * 
+     *
      * @param imagePosition Coordinates of the pixel in x,y,z,... direction
      * @param dimensions overall image dimensions (width, height, depth,...)
      * @return the position of the node in the list
      */
     private int listPosition(final long[] imagePosition, final long[] dimensions) {
         return (int)IntervalIndexer.positionToIndex(imagePosition, dimensions);
-        // int pos = 0;
-        // int fac = 1;
-        // for (int d = 0; d < dimensions.length; d++) {
-        // pos += fac * imagePosition[d];
-        // fac *= dimensions[d];
-        // }
-        // return pos;
     }
 
     private void getValues(final double[] res, final RandomAccess<T> ra) {
@@ -489,8 +468,8 @@ BinaryOutputOperation<Img<T>, Labeling<L>, Img<BitType>> {
             if ((src.dimension(m_dimX) != labeling.dimension(m_dimX))
                     || (src.dimension(m_dimY) != labeling.dimension(m_dimY))) {
                 throw new IllegalArgumentException(
-                                                   "Image labeling must have the same dimensions size in the dimensions " + m_dimX + " and "
-                                                           + m_dimY + ".");
+                        "Image labeling must have the same dimensions size in the dimensions " + m_dimX + " and "
+                                + m_dimY + ".");
             }
 
             return new long[]{src.dimension(m_dimX), src.dimension(m_dimY)};

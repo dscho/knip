@@ -89,9 +89,9 @@ import net.imglib2.view.Views;
 import org.knime.knip.core.util.MiscViews;
 
 /**
- * 
+ *
  * Methods to convert data (e.g. an imglib image or a histogram) to a java.awt.BufferedImage
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public final class AWTImageTools {
@@ -102,8 +102,8 @@ public final class AWTImageTools {
 
     /** Creates an image with the given DataBuffer. */
     public static BufferedImage
-    constructImage(final int c, final int type, final int w, final int h, final boolean interleaved,
-                   final boolean banded, final DataBuffer buffer) {
+            constructImage(final int c, final int type, final int w, final int h, final boolean interleaved,
+                           final boolean banded, final DataBuffer buffer) {
         if (c > 4) {
             throw new IllegalArgumentException("Cannot construct image with " + c + " channels");
         }
@@ -149,16 +149,6 @@ public final class AWTImageTools {
             final GraphicsConfiguration config = device.getDefaultConfiguration();
             b = config.createCompatibleImage(w, h);
             b.setData(raster);
-            // if (c == 3) {
-            // b = new BufferedImage(w, h,
-            // BufferedImage.TYPE_INT_RGB);
-            // } else if (c == 4) {
-            // b = new BufferedImage(w, h,
-            // BufferedImage.TYPE_INT_ARGB);
-            // }
-            //
-            // if (b != null)
-            // b.setData(raster);
         }
 
         return b;
@@ -166,7 +156,7 @@ public final class AWTImageTools {
 
     /**
      * Draws the histogram of the {@link ImagePlane} onto a {@link BufferedImage}.
-     * 
+     *
      * @param ip
      * @param width the width of the image containing the histogram
      * @param height the height of the image containing the histogram
@@ -183,7 +173,7 @@ public final class AWTImageTools {
 
     /**
      * Draws the histogram of the {@link ImagePlane} onto a {@link BufferedImage}.
-     * 
+     *
      * @param ip
      * @param width the width of the image containing the histogram
      * @param height the height of the image containing the histogram
@@ -191,7 +181,6 @@ public final class AWTImageTools {
      */
     public static BufferedImage drawHistogram(final int[] hist, final int width, final int height, final int max,
                                               final boolean log) {
-        // int width = hist.length;
         final int margin = 20;
 
         final BufferedImage histImg = new BufferedImage(width, height + margin, BufferedImage.TYPE_BYTE_GRAY);
@@ -203,9 +192,6 @@ public final class AWTImageTools {
         final double heightScale = (double)height / max;
         final double heightScaleLog = height / Math.log(max);
         for (int i = 0; i < hist.length; i++) {
-            // g.drawLine(i, (int) Math.round(height - (hist[i] *
-            // heightScale)),
-            // i, height);
 
             if (log) {
                 g.setColor(Color.GRAY);
@@ -252,7 +238,7 @@ public final class AWTImageTools {
 
     /**
      * Adds a subtitle to the given image.
-     * 
+     *
      * @param source
      * @param txt
      * @return
@@ -272,7 +258,7 @@ public final class AWTImageTools {
 
     /**
      * Shows the first image plane in the dimension 0,1 in a JFrame.
-     * 
+     *
      * @param ip the image plane
      * @param title a title for the frame
      */
@@ -282,7 +268,7 @@ public final class AWTImageTools {
 
     /**
      * Shows first image plane in the dimension 0,1, scaled with the specified factor in a JFrame.
-     * 
+     *
      * @param ip the image plane
      * @param factor the scaling factor
      */
@@ -292,7 +278,7 @@ public final class AWTImageTools {
 
     /**
      * Shows the selected ImagePlane in a JFrame.
-     * 
+     *
      * @param img the image plane
      * @param factor the scaling factor
      */
@@ -325,7 +311,7 @@ public final class AWTImageTools {
 
     /**
      * Shows an AWT-image in a JFrame.
-     * 
+     *
      * @param img the image to show.
      */
 
@@ -392,10 +378,10 @@ public final class AWTImageTools {
 
         return loci.formats.gui.AWTImageTools
                 .makeBuffered(renderer
-                              .render(Views.interval(RealViews.constantAffine(Views.interpolate(Views.extend(img,
-                                                                                                             new OutOfBoundsBorderFactory<T, RandomAccessibleInterval<T>>()),
-                                                                                                             new NearestNeighborInterpolatorFactory<T>()),
-                                                                                                             transform), interval), 0, 1, startPos).image());
+                        .render(Views.interval(RealViews.constantAffine(Views.interpolate(Views.extend(img,
+                                                                                                       new OutOfBoundsBorderFactory<T, RandomAccessibleInterval<T>>()),
+                                                                                          new NearestNeighborInterpolatorFactory<T>()),
+                                                                        transform), interval), 0, 1, startPos).image());
 
     }
 

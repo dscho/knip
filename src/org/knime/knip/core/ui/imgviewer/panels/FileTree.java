@@ -71,7 +71,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 /**
  * JTree-Component which represents the file system as a tree.
- * 
+ *
  * @author hornm, University of Konstanz
  */
 @SuppressWarnings("serial")
@@ -79,7 +79,7 @@ public class FileTree extends JTree {
 
     /**
      * for testing purposes
-     * 
+     *
      * @param args
      */
     public static void main(final String[] args) {
@@ -101,7 +101,7 @@ public class FileTree extends JTree {
 
     /**
      * Creates a new file tree.
-     * 
+     *
      */
     public FileTree() {
         super();
@@ -136,7 +136,7 @@ public class FileTree extends JTree {
     /**
      * Expands the tree along the given path. If the paths contains not existing directories, the tree will be expanded
      * until a non existing directory appears.
-     * 
+     *
      * @param path the path as a String
      */
     public void expandPath(final String path) {
@@ -232,7 +232,7 @@ public class FileTree extends JTree {
 
     /**
      * Make sure expansion is threaded and updating the tree model only occurs within the event dispatching thread.
-     * 
+     *
      */
     class DirExpansionListener implements TreeExpansionListener {
         /**
@@ -270,7 +270,7 @@ public class FileTree extends JTree {
     }
 
     /**
-     * 
+     *
      * @author hornm, University of Konstanz
      */
     class DirSelectionListener implements TreeSelectionListener {
@@ -291,103 +291,6 @@ public class FileTree extends JTree {
 
 }
 
-// class IconCellRenderer extends JLabel implements TreeCellRenderer {
-// protected Color m_textSelectionColor;
-// protected Color m_textNonSelectionColor;
-// protected Color m_bkSelectionColor;
-// protected Color m_bkNonSelectionColor;
-// protected Color m_borderSelectionColor;
-//
-// protected boolean m_selected;
-//
-// public IconCellRenderer() {
-// super();
-// m_textSelectionColor = UIManager.getColor("Tree.selectionForeground");
-// m_textNonSelectionColor = UIManager.getColor("Tree.textForeground");
-// m_bkSelectionColor = UIManager.getColor("Tree.selectionBackground");
-// m_bkNonSelectionColor = UIManager.getColor("Tree.textBackground");
-// m_borderSelectionColor = UIManager
-// .getColor("Tree.selectionBorderColor");
-// setOpaque(false);
-// }
-//
-// public Component getTreeCellRendererComponent(final JTree tree,
-// final Object value, final boolean sel, final boolean expanded,
-// final boolean leaf, final int row, final boolean hasFocus)
-//
-// {
-// DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-// Object obj = node.getUserObject();
-// setText(obj.toString());
-//
-// if (obj instanceof Boolean)
-// setText("Retrieving data...");
-// // setIcon(null);
-//
-// setFont(tree.getFont());
-// setForeground(sel ? m_textSelectionColor : m_textNonSelectionColor);
-// setBackground(sel ? m_bkSelectionColor : m_bkNonSelectionColor);
-// m_selected = sel;
-// return this;
-// }
-//
-// @Override
-// public void paintComponent(final Graphics g) {
-// Color bColor = getBackground();
-//
-// g.setColor(bColor);
-// int offset = 0;
-// g.fillRect(offset, 0, getWidth() - 1 - offset, getHeight() - 1);
-//
-// if (m_selected) {
-// g.setColor(m_borderSelectionColor);
-// g.drawRect(offset, 0, getWidth() - 1 - offset, getHeight() - 1);
-// }
-// super.paintComponent(g);
-// }
-// }
-
-// class IconData {
-// protected Icon m_icon;
-// protected Icon m_expandedIcon;
-// protected Object m_data;
-//
-// public IconData(final Icon icon, final Object data) {
-// m_icon = icon;
-// m_expandedIcon = null;
-// m_data = data;
-// }
-//
-// public IconData(final Icon icon, final Icon expandedIcon, final Object data)
-// {
-// m_icon = icon;
-// m_expandedIcon = expandedIcon;
-// m_data = data;
-// }
-//
-// public Icon getIcon() {
-// return m_icon;
-// }
-//
-// public Icon getExpandedIcon() {
-// return m_expandedIcon != null ? m_expandedIcon : m_icon;
-// }
-//
-// public Object getObject() {
-// return m_data;
-// }
-//
-// @Override
-// public String toString() {
-// return m_data.toString();
-// }
-// }
-
-/*
- * Utility class representing a file or directory. Serves as the node object of
- * a <code>DefaultMutableTreeNode</code>.
- */
-
 /**
  * A tree node containing the file
  */
@@ -399,7 +302,7 @@ class FileNode {
 
     /**
      * creates a new FileNode object
-     * 
+     *
      * @param file
      */
     public FileNode(final File file) {
@@ -407,7 +310,7 @@ class FileNode {
     }
 
     /**
-     * 
+     *
      * @return the file represented by this node
      */
     public File getFile() {
@@ -425,7 +328,7 @@ class FileNode {
     /**
      * Expands a given root node, that is retrieving all files/directories contained root directory given by the root
      * node. Adding the retrieved files as new childs to the root node.
-     * 
+     *
      * @param parent the root node
      * @return true, if the expansion was successful
      */
@@ -494,7 +397,7 @@ class FileNode {
     }
 
     /**
-     * 
+     *
      * @return true, if this FileNode has subdirectories.
      */
 
@@ -513,7 +416,7 @@ class FileNode {
 
     /**
      * Compares to FileNodes by means of their file names.
-     * 
+     *
      * @param toCompare
      * @return result
      */
@@ -523,7 +426,7 @@ class FileNode {
 
     /**
      * Lists all files contained in the directory of represented by this file node.
-     * 
+     *
      * @return the file list if this node is a directory, else <code>null</code>
      */
     protected File[] listFiles() {

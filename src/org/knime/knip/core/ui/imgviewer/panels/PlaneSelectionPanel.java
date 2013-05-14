@@ -99,10 +99,10 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  * Allows the user to select a plane in a multdimensional space.
- * 
+ *
  * Publishes {@link PlaneSelectionEvent}
- * 
- * 
+ *
+ *
  * @author dietzc, hornm
  * @param <T> image type
  */
@@ -193,11 +193,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
         m_planeCheckBoxes[m_dim1].setEnabled(true);
         m_planeCheckBoxes[m_dim2].setEnabled(true);
 
-        // m_planeFields[m_dimY].setEditable(false);
-        // m_planeFields[m_dimY].setEditable(false);
-        // m_planeFields[m_dimX].setEnabled(true);
-        // m_planeFields[m_dimY].setEnabled(true);
-
         m_dim1 = dimX;
         m_dim2 = dimY;
         m_scrollBars[dimX].setEnabled(false);
@@ -206,11 +201,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
         m_planeCheckBoxes[m_dim2].setSelected(true);
         m_planeCheckBoxes[m_dim1].setEnabled(false);
         m_planeCheckBoxes[m_dim2].setEnabled(false);
-        //
-        // m_planeFields[m_dimY].setEditable(true);
-        // m_planeFields[m_dimY].setEditable(true);
-        // m_planeFields[m_dimX].setEnabled(false);
-        // m_planeFields[m_dimY].setEnabled(false);
 
         m_isAdjusting = false;
 
@@ -291,14 +281,14 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
             }
 
             m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1, m_dim2), Math.max(m_dim2, m_dim1),
-                                                           imgCoords));
+                    imgCoords));
             fireCalibrationEvent();
             m_eventService.publish(new ImgRedrawEvent());
         }
     }
 
     /**
-     * 
+     *
      * @param e
      * @param id
      */
@@ -317,7 +307,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
         }
         m_alterDim = (m_alterDim + 1) % 2;
         m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1, m_dim2), Math.max(m_dim2, m_dim1),
-                                                       getImageCoordinate()));
+                getImageCoordinate()));
         fireCalibrationEvent();
         m_eventService.publish(new ImgRedrawEvent());
 
@@ -417,7 +407,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     }
 
     /**
-     * 
+     *
      * @return the coordinates of the currently selected image (a newly generated array)
      */
     protected long[] getImageCoordinate() {
@@ -605,7 +595,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
             setPlaneDimensionIndices(m_dim1, m_dim2);
 
             m_eventService.publish(new PlaneSelectionEvent(Math.min(m_dim1, m_dim2), Math.max(m_dim2, m_dim1),
-                                                           getImageCoordinate()));
+                    getImageCoordinate()));
             fireCalibrationEvent();
         }
 

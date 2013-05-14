@@ -67,13 +67,7 @@ public class CentralizeOnePoint<T extends RealType<T>> implements UnaryOperation
 
         final Img<T> polarImg = m_factory.createPolarImage(src, m_radius, m_samplingRate);
 
-        // AWTImageTools.showInSameFrame(polarImg, 5);
-
         m_directionGradientOp.compute(polarImg, m_buffer);
-
-        // AWTImageTools.showInSameFrame(
-        // new ImgNormalize<T, Img<T>>().compute(m_buffer,
-        // ImgUtils.createEmptyCopy(m_buffer)), 5);
 
         final RandomAccess<T> randomAccess = m_buffer.randomAccess();
 
@@ -148,7 +142,7 @@ public class CentralizeOnePoint<T extends RealType<T>> implements UnaryOperation
 }
 
 /**
- * 
+ *
  * @author Christian Dietz, University of Konstanz
  */
 class BaseVals implements Comparable<BaseVals> {

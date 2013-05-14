@@ -1,18 +1,18 @@
 /*
  * Copyright 2010, 2011 Institut Pasteur.
- * 
+ *
  * This file is part of ICY.
- * 
+ *
  * ICY is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ICY is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ICY. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,7 @@
 /*
  * edited by
  * Michael Zinsmaier, University of Konstanz
- * 
+ *
  * I removed some methods that we didn't need. Thre remaining code is
  * the same as in the original implementation. The original file can be
  * found in the ICY release of the Spot Detection Plugin.
@@ -29,16 +29,16 @@
 package org.knime.knip.core.ops.spotdetection.icybased;
 
 /**
- * 
+ *
  * @author Nicolas Chenouard, Fabrice de Chaumont
- * 
+ *
  */
 public class B3SplineUDWT {
 
     /**
      * Compute the maximum feasible scale for a given 3D image size for as scale i, the minimum size of the image is 5
      * +4*(2^(i-1)-1) along each direction
-     * 
+     *
      * @param width
      * @param height
      * @param depth
@@ -68,7 +68,7 @@ public class B3SplineUDWT {
     /**
      * Compute the maximum feasible scale for a given 2D image size for as scale i, the minimum size of the image is 5
      * +4*(2^(i-1)-1) along each direction
-     * 
+     *
      * @param width
      * @param height
      * @return
@@ -97,8 +97,8 @@ public class B3SplineUDWT {
         // the minimum size for
         // numScales scales
         if ((width < minSize) || (height < minSize))// image size is too
-            // small, return an
-            // exception
+        // small, return an
+        // exception
         {
             return false;
         }
@@ -111,13 +111,13 @@ public class B3SplineUDWT {
         // the minimum size for
         // numScales scales
         if ((width < minSize) || (height < minSize) || (depth < minSize))// image
-            // size
-            // is
-            // too
-            // small,
-            // return
-            // an
-            // exception
+        // size
+        // is
+        // too
+        // small,
+        // return
+        // an
+        // exception
         {
             return false;
         }
@@ -130,7 +130,7 @@ public class B3SplineUDWT {
 
     /**
      * Check that the 3D image dimensions complies with the number of chosen scales
-     * 
+     *
      * @param width
      * @param height
      * @param depth
@@ -144,13 +144,13 @@ public class B3SplineUDWT {
         // the minimum size for
         // numScales scales
         if ((width < minSize) || (height < minSize) || (depth < minSize))// image
-            // size
-            // is
-            // too
-            // small,
-            // return
-            // an
-            // exception
+        // size
+        // is
+        // too
+        // small,
+        // return
+        // an
+        // exception
         {
             final String message =
                     "Number of scales too large for the size of the image. These settings require: width>"
@@ -161,7 +161,7 @@ public class B3SplineUDWT {
 
     /**
      * Check that the 2D image dimensions complies with the wavelet scale
-     * 
+     *
      * @param width
      * @param height
      * @param numScales
@@ -176,8 +176,8 @@ public class B3SplineUDWT {
         // numScales
         // scales
         if ((width < minSize) || (height < minSize))// image size is too
-            // small, return an
-            // exception
+        // small, return an
+        // exception
         {
             final String message =
                     "Number of scales too large for the size of the image. These settings require: width>"
@@ -188,7 +188,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the wavelet coefficients from wavelet scales
-     * 
+     *
      * @param scaleCoefficients
      * @param originalImage
      * @param numScales
@@ -233,7 +233,7 @@ public class B3SplineUDWT {
 
     /**
      * Reconstruct an image from the wavelet coefficients and a low pass residual image
-     * 
+     *
      * @param inputCoefficients
      * @param lowPassResidual
      * @param output
@@ -259,7 +259,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the wavelet coefficients from wavelet scales
-     * 
+     *
      * @param scaleCoefficients
      * @param originalImage
      * @param numScales
@@ -314,7 +314,7 @@ public class B3SplineUDWT {
     /**
      * filter a 2D image with the B3 spline wavelet scale kernel in the x direction when using the a trous algorithm,
      * and swap dimensions
-     * 
+     *
      * @param arrayIn
      * @param arrayOut
      * @param width
@@ -342,12 +342,11 @@ public class B3SplineUDWT {
         w0idx = 0;
 
         for (int y = 0; y < height; y++)// loop over the second
-            // dimension
+        // dimension
         {
             // manage the left border with mirror symmetry
             arrayOutIter = 0 + y;// output pointer initialization,
             // we swap dimensions at this point
-            // w0idx = arrayIn + y*width;
             w1idx1 = (w0idx + stepS) - 1;
             w2idx1 = w1idx1 + stepS;
             w1idx2 = w0idx + stepS;
@@ -357,7 +356,7 @@ public class B3SplineUDWT {
             while (cntX < stepS) {
                 arrayOut[arrayOutIter] =
                         (w2 * ((arrayIn[w2idx1]) + (arrayIn[w2idx2]))) + (w1 * ((arrayIn[w1idx1]) + (arrayIn[w1idx2])))
-                        + (w0 * (arrayIn[w0idx]));
+                                + (w0 * (arrayIn[w0idx]));
                 w1idx1--;
                 w2idx1--;
                 w1idx2++;
@@ -370,7 +369,7 @@ public class B3SplineUDWT {
             while (cntX < (2 * stepS)) {
                 arrayOut[arrayOutIter] =
                         (w2 * ((arrayIn[w2idx1]) + (arrayIn[w2idx2]))) + (w1 * ((arrayIn[w1idx1]) + (arrayIn[w1idx2])))
-                        + (w0 * (arrayIn[w0idx]));
+                                + (w0 * (arrayIn[w0idx]));
                 w1idx1++;
                 w2idx1--;
                 w1idx2++;
@@ -384,7 +383,7 @@ public class B3SplineUDWT {
             while (cntX < (width - (2 * stepS))) {
                 arrayOut[arrayOutIter] =
                         (w2 * ((arrayIn[w2idx1]) + (arrayIn[w2idx2]))) + (w1 * ((arrayIn[w1idx1]) + (arrayIn[w1idx2])))
-                        + (w0 * (arrayIn[w0idx]));
+                                + (w0 * (arrayIn[w0idx]));
                 w1idx1++;
                 w2idx1++;
                 w1idx2++;
@@ -398,7 +397,7 @@ public class B3SplineUDWT {
             while (cntX < (width - stepS)) {
                 arrayOut[arrayOutIter] =
                         (w2 * ((arrayIn[w2idx1]) + (arrayIn[w2idx2]))) + (w1 * ((arrayIn[w1idx1]) + (arrayIn[w1idx2])))
-                        + (w0 * (arrayIn[w0idx]));
+                                + (w0 * (arrayIn[w0idx]));
                 w1idx1++;
                 w2idx1++;
                 w1idx2++;
@@ -411,7 +410,7 @@ public class B3SplineUDWT {
             while (cntX < width) {
                 arrayOut[arrayOutIter] =
                         (w2 * ((arrayIn[w2idx1]) + (arrayIn[w2idx2]))) + (w1 * ((arrayIn[w1idx1]) + (arrayIn[w1idx2])))
-                        + (w0 * (arrayIn[w0idx]));
+                                + (w0 * (arrayIn[w0idx]));
                 w1idx1++;
                 w2idx1++;
                 w1idx2--;
@@ -425,7 +424,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the wavelet scale images for a 2D image
-     * 
+     *
      * @param dataIn
      * @param width
      * @param height
@@ -503,7 +502,7 @@ public class B3SplineUDWT {
     }
 
     /**
-     * 
+     *
      * @param arrayIn
      * @param arrayOut
      * @param width
@@ -527,9 +526,9 @@ public class B3SplineUDWT {
         // buffer for each 2D
         // location i
         for (int i = 0; i < (width * height); i++) // loop in 2D over the
-            // pixels of the
-            // slices, can be done
-            // in a parallel manner
+        // pixels of the
+        // slices, can be done
+        // in a parallel manner
         {
             for (int z = 0; z < depth; z++) {
                 bufferArrayIn[z] = arrayIn[z][i];
@@ -546,8 +545,8 @@ public class B3SplineUDWT {
             while (cntZ < stepS) {
                 bufferArrayOut[arrayOutIter] =
                         (w2 * ((bufferArrayIn[w2idx1]) + (bufferArrayIn[w2idx2])))
-                        + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
-                        + (w0 * (bufferArrayIn[w0idx]));
+                                + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
+                                + (w0 * (bufferArrayIn[w0idx]));
                 w1idx1--;
                 w2idx1--;
                 w1idx2++;
@@ -560,8 +559,8 @@ public class B3SplineUDWT {
             while (cntZ < (2 * stepS)) {
                 bufferArrayOut[arrayOutIter] =
                         (w2 * ((bufferArrayIn[w2idx1]) + (bufferArrayIn[w2idx2])))
-                        + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
-                        + (w0 * (bufferArrayIn[w0idx]));
+                                + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
+                                + (w0 * (bufferArrayIn[w0idx]));
                 w1idx1++;
                 w2idx1--;
                 w1idx2++;
@@ -575,8 +574,8 @@ public class B3SplineUDWT {
             while (cntZ < (depth - (2 * stepS))) {
                 bufferArrayOut[arrayOutIter] =
                         (w2 * ((bufferArrayIn[w2idx1]) + (bufferArrayIn[w2idx2])))
-                        + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
-                        + (w0 * (bufferArrayIn[w0idx]));
+                                + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
+                                + (w0 * (bufferArrayIn[w0idx]));
                 w1idx1++;
                 w2idx1++;
                 w1idx2++;
@@ -590,8 +589,8 @@ public class B3SplineUDWT {
             while (cntZ < (depth - stepS)) {
                 bufferArrayOut[arrayOutIter] =
                         (w2 * ((bufferArrayIn[w2idx1]) + (bufferArrayIn[w2idx2])))
-                        + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
-                        + (w0 * (bufferArrayIn[w0idx]));
+                                + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
+                                + (w0 * (bufferArrayIn[w0idx]));
                 w1idx1++;
                 w2idx1++;
                 w1idx2++;
@@ -604,8 +603,8 @@ public class B3SplineUDWT {
             while (cntZ < depth) {
                 bufferArrayOut[arrayOutIter] =
                         (w2 * ((bufferArrayIn[w2idx1]) + (bufferArrayIn[w2idx2])))
-                        + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
-                        + (w0 * (bufferArrayIn[w0idx]));
+                                + (w1 * ((bufferArrayIn[w1idx1]) + (bufferArrayIn[w1idx2])))
+                                + (w0 * (bufferArrayIn[w0idx]));
                 w1idx1++;
                 w2idx1++;
                 w1idx2--;
@@ -623,7 +622,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the scale images for a 3D image
-     * 
+     *
      * @param dataIn
      * @param width
      * @param height

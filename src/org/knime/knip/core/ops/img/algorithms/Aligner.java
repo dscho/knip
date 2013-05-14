@@ -21,17 +21,15 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * Image projection.
- * 
+ *
  * @author tcriess, University of Konstanz
  */
 public class Aligner<T extends RealType<T>, V extends RealType<V>> implements
-BinaryOutputOperation<Img<T>, Img<V>, Img<T>> {
+        BinaryOutputOperation<Img<T>, Img<V>, Img<T>> {
 
     public final static int MIN_DIMS = 3;
 
     public final static int MAX_DIMS = 5;
-
-    // private static final Img<FloatType> smoothkernel = getKernel();
 
     int[] m_selectedDims;
 
@@ -149,9 +147,6 @@ BinaryOutputOperation<Img<T>, Img<V>, Img<T>> {
                 ipmax[remainingDims[i]] = m_iv.min(remainingDims[i]);
             }
             Interval i = new FinalInterval(ipmin, ipmax);
-            // sis[(int) (t - tmin)] = new SubImg<T>(imgPlus, i);
-            // sis[(int) (t - tmin)] = new SubImg<T>(smoothedimg,
-            // i);
 
             tmpsis = new ImgView<V>(SubsetOperations.subsetview(src, i), imgPlus.factory());
             final long[] tmpmin = new long[tmpsis.numDimensions()];
@@ -206,7 +201,7 @@ BinaryOutputOperation<Img<T>, Img<V>, Img<T>> {
                 ref = tmax;
             } else if (m_alignmode == ALIGNMODES.PAIRWISE) {
                 ref = t - 1;
-            } else { // if (m_alignmode == ALIGNMODES.STEPWISE)
+            } else { // ALIGNMODES.STEPWISE
                 ref = ((long)Math.ceil(t / (double)m_stepsize) * m_stepsize) - m_stepsize;
                 if (ref < tstart) {
                     ref = tstart;
@@ -218,28 +213,6 @@ BinaryOutputOperation<Img<T>, Img<V>, Img<T>> {
             p.setMinimalPixelOverlap(m_minPixOverlap);
 
             if (p.process()) { // success
-                // List<PhaseCorrelationPeak> peaks =
-                // p.getAllShifts();
-                // int i=0;
-                // long poss[][] = new long[peaks.size()][];
-                // for(PhaseCorrelationPeak peak: peaks) {
-                // poss[i] = peak.getPosition();
-                // i++;
-                // }
-                // long[] pos = poss[0];
-                // double mins = 0.0;
-                // for(int kk=0; kk<poss[0].length; kk++) {
-                // mins += poss[0][kk]*poss[0][kk];
-                // }
-                // for(int k=1; k<poss.length; k++) {
-                // double s = 0.0;
-                // for(int kk=0; kk<poss[k].length; kk++) {
-                // s += poss[k][kk]*poss[k][kk];
-                // }
-                // if(s<mins) {
-                // pos = poss[k];
-                // }
-                // }
                 final PhaseCorrelationPeak pe = p.getShift();
                 final long[] pos = pe.getPosition();
                 if (m_alignmode == ALIGNMODES.STEPWISE) {
@@ -392,19 +365,6 @@ BinaryOutputOperation<Img<T>, Img<V>, Img<T>> {
         if (remainingDims.length > 0) {
             alignRemainingDims((int)tstart, (int)tend, res2, selectedDims1, selectedDim2, remainingDims, (int)tmin,
                                (int)tmax, ipmin, ipmax, spmin, spmax);
-            // for (int rd = 0; rd < remainingDims.length; rd++) {
-            // for (int rdplane = (int) spmin[remainingDims[rd]];
-            // rdplane <=
-            // spmax[remainingDims[rd]]; rdplane++) {
-            // ipmin[remainingDims[rd]] = rdplane;
-            // ipmax[remainingDims[rd]] = rdplane;
-            //
-            // alignPlane((int) tstart, (int) tend, res2,
-            // selectedDims1,
-            // selectedDim2, remainingDims, (int) tmin,
-            // (int) tmax, ipmin, ipmax, spmin, spmax);
-            // }
-            // }
         } else {
 
             alignPlane((int)tstart, (int)tend, res2, selectedDims1, selectedDim2, remainingDims, (int)tmin, (int)tmax,

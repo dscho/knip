@@ -21,11 +21,11 @@ import net.imglib2.view.Views;
 
 /**
  * Image projection.
- * 
+ *
  * @author jmetzner, University of Konstanz
  */
 public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> & RandomAccessibleInterval<T>>
-implements UnaryOperation<K, K> {
+        implements UnaryOperation<K, K> {
 
     public final static int MIN_DIMS = 1;
 
@@ -54,9 +54,6 @@ implements UnaryOperation<K, K> {
     /* Region of interest SrcCur */
     private Cursor<T> m_srcCursor;
 
-    /* Region of interest SrcCur */
-    // private RandomAccess<T> m_resRandomAccess;
-
     /* Inital ROI */
     private RectangleRegionOfInterest m_BeginRoi;
 
@@ -68,9 +65,6 @@ implements UnaryOperation<K, K> {
 
     /* Region of interest SrcCur */
     private Cursor<T> m_BeginTempRoiCur;
-
-    /* Region of interest SrcCur */
-    // private Cursor< T > m_BeginResRoiCur;
 
     /* Region of interest SrcCur */
     private int m_rowLength;
@@ -112,7 +106,7 @@ implements UnaryOperation<K, K> {
         try {
             temp =
                     new ArrayImgFactory().imgFactory(src.firstElement().createVariable())
-                    .create(dims, src.firstElement().createVariable());
+                            .create(dims, src.firstElement().createVariable());
             m_tempRandomAccess = temp.randomAccess();
         } catch (final IncompatibleTypeException e1) {
             throw new IllegalArgumentException("Cannot create temp img.");
@@ -164,7 +158,6 @@ implements UnaryOperation<K, K> {
                     m_SelectedRowRoi = new RectangleRegionOfInterest(m_SelectedRowRoiOrigin, m_SelectedRowRoiExtend);
                     m_SelectedRowTempRoiCur =
                             m_SelectedRowRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
-                    // m_SelectedRowRoi.setOrigin(m_SelectedRowRoiOrigin);
 
                     while (m_BeginTempRoiCur.hasNext()) {
                         m_BeginTempRoiCur.next();

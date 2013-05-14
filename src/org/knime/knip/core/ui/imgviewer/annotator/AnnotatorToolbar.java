@@ -65,38 +65,12 @@ public class AnnotatorToolbar extends ViewerComponent {
             jtb.setAlignmentX(Component.CENTER_ALIGNMENT);
             add(jtb);
         }
-
-        // JButton saveButton = new JButton( "Save" );
-        // saveButton.addActionListener( new ActionListener()
-        // {
-        //
-        // @Override
-        // public void actionPerformed( ActionEvent e )
-        // {
-        // m_eventService.publish( EventType.SAVEOVERLAY, new File(
-        // "/home/eethyo/lucia" ) );
-        // }
-        // } );
-        // add( saveButton );
-        //
-        // JButton loadButton = new JButton( "Load" );
-        // loadButton.addActionListener( new ActionListener()
-        // {
-        //
-        // @Override
-        // public void actionPerformed( ActionEvent e )
-        // {
-        // m_eventService.publish( EventType.LOADOVERLAY, new File(
-        // "/home/eethyo/lucia" ) );
-        // }
-        // } );
-        // add( loadButton );
     }
 
     private final void setButtonIcon(final AbstractButton jb, final String path) {
         final URL icon =
                 getClass().getClassLoader().getResource(getClass().getPackage().getName().replace('.', '/') + "/"
-                        + path);
+                                                                + path);
         jb.setHorizontalAlignment(SwingConstants.LEFT);
         if (icon != null) {
             jb.setIcon(new ImageIcon(icon));
@@ -126,8 +100,8 @@ public class AnnotatorToolbar extends ViewerComponent {
 
     public static ViewerComponent createStandardToolbar() {
         return new AnnotatorToolbar(new AnnotatorNoTool("pan"), new AnnotatorSelectionTool(), new AnnotatorPointTool(),
-                                    new AnnotatorRectangleTool(), new AnnotatorPolygonTool(), new AnnotatorSplineTool(),
-                                    new AnnotatorFreeFormTool(), new AnnotatorFreeLineTool());
+                new AnnotatorRectangleTool(), new AnnotatorPolygonTool(), new AnnotatorSplineTool(),
+                new AnnotatorFreeFormTool(), new AnnotatorFreeLineTool());
     }
 
     @Override

@@ -45,11 +45,11 @@ import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
 
 /**
- * 
+ *
  * Panel to draw a BufferedImage.
- * 
+ *
  * Propagates {@link ImgViewerRectChgEvent}.
- * 
+ *
  * @author dietzc, hornm, fschoenenberer
  */
 public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & RandomAccessible<T>> extends ViewerComponent {
@@ -138,23 +138,6 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
         m_imageCanvas.setBackground(Color.DARK_GRAY);
         // TODO discuss global key listener
-        // getToolkit().addAWTEventListener(new AWTEventListener() {
-        // @Override
-        // public void eventDispatched(AWTEvent awte) {
-        // KeyEvent e = (KeyEvent) awte;
-        // if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-        // if (e.getID() == KeyEvent.KEY_PRESSED) {
-        // m_imageCanvas.setCursor(new Cursor(
-        // Cursor.HAND_CURSOR));
-        // m_keyDraggingEnabled = true;
-        // } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-        // m_imageCanvas.setCursor(new Cursor(
-        // Cursor.DEFAULT_CURSOR));
-        // m_keyDraggingEnabled = false;
-        // }
-        // }
-        // }
-        // }, AWTEvent.KEY_EVENT_MASK);
 
         m_imageCanvas.addMouseListener(new MouseAdapter() {
             @Override
@@ -272,7 +255,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * Returns the visible bounding box in the image coordinate space.
-     * 
+     *
      * @return the visible bounding box.
      */
     public Rectangle getVisibleImageRect() {
@@ -287,7 +270,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
     private void fireImageCoordMousePressed(final MouseEvent e) {
         if (!isMouseEventBlocked()) {
             m_eventService
-            .publish(new ImgViewerMousePressedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
+                    .publish(new ImgViewerMousePressedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
         }
 
     }
@@ -295,8 +278,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
     private void fireImageCoordMouseReleased(final MouseEvent e) {
         if (!isMouseEventBlocked()) {
             m_eventService.publish(
-                                   // TODO CHANGE HERE TO FACTORS
-                                   new ImgViewerMouseReleasedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
+            // TODO CHANGE HERE TO FACTORS
+                    new ImgViewerMouseReleasedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
         }
 
     }
@@ -304,8 +287,8 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
     private void fireImageCoordMouseDragged(final MouseEvent e) {
         if (!isMouseEventBlocked()) {
             m_eventService.publish(
-                                   // TODO CHANGE HERE TO FACTORS
-                                   new ImgViewerMouseDraggedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
+            // TODO CHANGE HERE TO FACTORS
+                    new ImgViewerMouseDraggedEvent(e, m_factors, m_image.getWidth(), m_image.getHeight()));
         }
 
     }
@@ -333,7 +316,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * Scrolls the image so the rectangle gets visible.
-     * 
+     *
      * @param rect
      */
     @EventListener
@@ -373,7 +356,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
             // enlarge canvas
             final Dimension d =
                     new Dimension((int)(m_image.getWidth(null) * m_factors[0]),
-                                  (int)(m_image.getHeight(null) * m_factors[1]));
+                            (int)(m_image.getHeight(null) * m_factors[1]));
             m_imageCanvas.setSize(d);
             m_imageCanvas.setPreferredSize(d);
 
@@ -382,7 +365,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
             // apply old center
             m_imageScrollPane.getViewport().setViewPosition(new Point((int)(((imgCenterX - xCorrect) * m_factors[0])),
-                                                                      (int)(((imgCenterY - yCorrect) * m_factors[1]))));
+                                                                    (int)(((imgCenterY - yCorrect) * m_factors[1]))));
 
             m_oldFactors = m_factors.clone();
 
@@ -393,7 +376,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * An image with the message.
-     * 
+     *
      * @param message
      */
     @EventListener

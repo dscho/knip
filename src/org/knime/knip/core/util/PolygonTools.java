@@ -44,7 +44,7 @@
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
  * ------------------------------------------------------------------------
- * 
+ *
  * History
  *   30 Aug 2010 (hornm): created
  */
@@ -62,7 +62,7 @@ import org.knime.knip.core.algorithm.BresenhamAlgorithm;
 import org.knime.knip.core.data.algebra.RealVector;
 
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class PolygonTools {
@@ -73,7 +73,7 @@ public class PolygonTools {
 
     /**
      * Retrieves all positions of a line at the given position, specified direction and radius.
-     * 
+     *
      * @param pos the center position (2 dim!)
      * @param dir the direction (2 dim!)
      * @param radius the radius
@@ -81,16 +81,6 @@ public class PolygonTools {
      */
     public static int[][] getLineAt(final int[] pos, final float[] dir, final int radius) {
         new RealVector(dir).norm2().mapMultiply(radius).localize(dir);
-
-        // FloatPoint p1 = dir.multiply(radius).add(new
-        // FloatPoint(pos));
-        // FloatPoint p2 = dir.multiply(-radius).add(new
-        // FloatPoint(pos));
-        // double ytmp = (double) radius / (Math.abs(dir[0] / dir[1]) +
-        // 1);
-        // int x = (int) Math.round((double) radius - ytmp);
-        // int y = (int) Math.round(ytmp * Math.signum(dir[0] /
-        // dir[1]));
 
         int x = Math.abs(Math.round(dir[0]));
         int y = Math.abs(Math.round(dir[1]));
@@ -113,22 +103,10 @@ public class PolygonTools {
         y *= (int)Math.signum(dir[1]);
         x *= (int)Math.signum(dir[0]);
 
-        // if (Math.abs(x) == Math.abs(y) && Math.abs(x) != radius) {
-        // x = radius * x / Math.abs(x);
-        // y = radius * y / Math.abs(y);
-        // }
-        // x = (Math.abs(x) > Math.abs(y) && Math.abs(x) != radius) ?
-        // radius * x
-        // / Math.abs(x) : x;
-        // y = (Math.abs(y) > Math.abs(x) && Math.abs(y) != radius) ?
-        // radius * y
-        // / Math.abs(y) : y;
-
         final int[][] dir1 = BresenhamAlgorithm.rasterizeLine(new int[]{pos[0] - x, pos[1] - y}, pos);
         final int[][] dir2 = BresenhamAlgorithm.rasterizeLine(new int[]{pos[0] + x, pos[1] + y}, pos);
         final int[][] res = new int[(radius * 2) + 1][2];
-        // System.arraycopy(dir1, 0, res, 0, dir1.length);
-        // System.arraycopy(dir2, 0, res, radius + 1, dir2.length);
+
         for (int i = 0; i < dir1.length; i++) {
             res[i] = dir1[i];
         }
@@ -143,7 +121,7 @@ public class PolygonTools {
     /**
      * Extracts a polygon of a 2D binary image using the Square Tracing Algorithm (be aware of its drawbacks, e.g. if
      * the pattern is 4-connected!)
-     * 
+     *
      * @param img the image, note that only the first and second dimension are taken into account
      * @param offset an offset for the points to be set in the new polygon
      * @return
@@ -152,7 +130,7 @@ public class PolygonTools {
         final RandomAccess<BitType> cur =
                 new ExtendedRandomAccessibleInterval<BitType, RandomAccessibleInterval<BitType>>(img,
                         new OutOfBoundsConstantValueFactory<BitType, RandomAccessibleInterval<BitType>>(new BitType(
-                                                                                                                    false))).randomAccess();
+                                false))).randomAccess();
         boolean start = false;
         // find the starting point
         for (int i = 0; i < img.dimension(0); i++) {

@@ -29,7 +29,7 @@ import net.imglib2.type.numeric.integer.ByteType;
 
 /**
  * Class responsable for handling the zernike moments calculation.
- * 
+ *
  * @author Stefan, University of Konstanz
  */
 public class ZernikeFeatureComputer<T extends RealType<T>> {
@@ -47,7 +47,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * default constructor. initializes the data structures
-     * 
+     *
      * @param image the image
      * @param mask the mask
      */
@@ -55,47 +55,12 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
         m_interval = interval;
         m_width = (int)interval.dimension(0);
         m_height = (int)interval.dimension(1);
-        // if (mask.getWidth() != m_width || mask.getHeight() !=
-        // m_height) {
-        // throw new IllegalArgumentException(
-        // "Mask and image dimensions do not match");
-        // }
 
     }
 
-    // /**
-    // * constructor used for testing purposes, where we have no mask image,
-    // and
-    // * such consider all pixels as not being masked.
-    // *
-    // * @param image
-    // * the image
-    // */
-    // public ZernikeFeatureComputer(final Img<T> image,
-    // OutOfBoundsFactory<T, Img<T>> factory) {
-    // m_width = (int) image.dimension(0);
-    // m_height = (int) image.dimension(1);
-    //
-    // m_mask = new Segment(2);
-    //
-    // LocalizableByDimCursor<T> cur;
-    // if (factory != null)
-    // cur = image.createLocalizableByDimCursor(factory);
-    // else
-    // cur = image.createLocalizableByDimCursor();
-    //
-    // while (cur.hasNext()) {
-    // cur.fwd();
-    // m_mask.addPosition(new int[] { cur.getPosition(0),
-    // cur.getPosition(1) });
-    // }
-    // cur.close();
-    // m_image = image;
-    // }
-
     /**
      * compute F(m, n, s). see zernike documentation for more.
-     * 
+     *
      * @param m the "order"
      * @param n the "repetition"
      * @param s the index
@@ -120,7 +85,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * create the polynom R_mn. see zernike documentation for more.
-     * 
+     *
      * @param m the "order"
      * @param n the "repetition"
      * @return the F polynom
@@ -138,7 +103,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * implements the actual algoritm.
-     * 
+     *
      * @param m the "order" of the Zernike moment to be computed
      * @param n the "repetition"
      * @return the complex value of the Zernike moment
@@ -186,7 +151,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * return the number of zernike moment types that exist and have the order smaller than or equal to the parameter.
-     * 
+     *
      * @param orderMax the maximal order
      * @return the number of zernike moments which have the order smaller than or equal to this one
      */
@@ -197,7 +162,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * return the order of the i'th zernike moment from the string of moments which have the order <= the parameter.
      * indexes start with 0.
-     * 
+     *
      * @param orderMax the maximal order
      * @param index the index of the zernike moment in the string of moments with order <= orderMax
      * @return the order of the requested zernike moment
@@ -217,7 +182,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * return the order of the i'th zernike moment from the string of moments which have the order <= the parameter.
      * indexes start with 0.
-     * 
+     *
      * @param orderMax the maximal order
      * @param index the index of the zernike moment in the string of moments with order <= orderMax
      * @return the repetition of the requested zernike moment
@@ -237,7 +202,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * given the first few moments of an image, reconstruct it.
-     * 
+     *
      * @param width the width of the desired image
      * @param height the height of the image
      * @param features the first few zernike features. for any given order the features must for all repetitions
@@ -271,10 +236,6 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
                         final Complex valueVnm = new Complex(Math.cos(ang) * valueRnm, Math.sin(ang) * valueRnm);
                         final Complex toAdd = moment.multiplyTo(valueVnm);
 
-                        // assert
-                        // Math.abs(toAdd.getImaginary())
-                        // < 0.1;
-
                         image[i][j] += toAdd.getReal();
                     }
                 }
@@ -297,14 +258,14 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
         while (cur.hasNext()) {
             cur.fwd();
             cur.get()
-            .set((byte)(((image[cur.getIntPosition(0)][cur.getIntPosition(1)] - imageMin) / (imageMax - imageMin)) * 255));
+                    .set((byte)(((image[cur.getIntPosition(0)][cur.getIntPosition(1)] - imageMin) / (imageMax - imageMin)) * 255));
         }
         return res;
     }
 
     /**
      * represent a complex number with double coefficients.
-     * 
+     *
      * @author Stefan, University of Konstanz
      */
     public static class Complex {
@@ -316,7 +277,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * constructor for number with imaginary part = 0.
-         * 
+         *
          * @param real the real part
          */
         public Complex(final double real) {
@@ -326,7 +287,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * constructor.
-         * 
+         *
          * @param real the real part
          * @param imaginary the imaginary part
          */
@@ -351,18 +312,18 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * immutably multiply this complex number with the parameter.
-         * 
+         *
          * @return the result of the multiplication
          * @param c the thing to multiply this by
          */
         public Complex multiplyTo(final Complex c) {
             return new Complex((this.m_real * c.m_real) - (this.m_imaginary * c.m_imaginary),
-                               (this.m_real * c.m_imaginary) + (this.m_imaginary * c.m_real));
+                    (this.m_real * c.m_imaginary) + (this.m_imaginary * c.m_real));
         }
 
         /**
          * mutably add the parameter to this.
-         * 
+         *
          * @param c the thing to add with.
          */
         public void add(final Complex c) {
@@ -372,7 +333,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * return the conjugate of this number.
-         * 
+         *
          * @return the conjugate
          */
         public Complex conjugate() {
@@ -381,7 +342,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * return the absolute value of this complex number.
-         * 
+         *
          * @return the abs value
          */
         public double abs() {

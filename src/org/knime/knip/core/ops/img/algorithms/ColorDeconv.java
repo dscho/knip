@@ -8,11 +8,11 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * TODO: Verify the correctness of this implementation!! (e.g. compared to the ImageJ plugin)
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>> implements
-UnaryOperation<K, K> {
+        UnaryOperation<K, K> {
 
     private final int m_dimX;
 
@@ -27,12 +27,6 @@ UnaryOperation<K, K> {
     double[] m_M2 = {0, 0, 0, 0, 1, 0, 0, 0, 0};
 
     double[] m_M3 = {0, 0, 0, 0, 0, 0, 0, 0, 1};
-
-    // // the deconvolution vectors chosen by the user, i.e. the column
-    // // vectors for the destaining matrix
-    // double[] m_odR = { 0.0, 0.0, 0.0 };
-    // double[] m_odG = { 0.0, 0.0, 0.0 };
-    // double[] m_odB = { 0.0, 0.0, 0.0 };
 
     // minimum and maximum of color channels in image
     double m_min, m_max, m_range;
@@ -66,7 +60,7 @@ UnaryOperation<K, K> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return
      */
     @Override
@@ -144,21 +138,6 @@ UnaryOperation<K, K> {
                 outRA.setPosition(srcRA);
                 outRA.get().setReal(dcc[0] - m_min);
 
-                // convert the calculated optical densities back
-                // to rgb values
-                // and store them in the image
-                // for (int i = 0; i < Math.min(3,
-                // img.dimension(m_dimC)); i++)
-                // {
-                // srcRA.setPosition(i, m_dimC);
-                // dcc[i] = m_range * Math.exp(-dcc[i]);
-                //
-                // //
-                // if (dcc[i] > m_range)
-                // dcc[i] = m_range;
-                // srcRA.get().setReal(dcc[i] - m_min);
-                // }
-
             }
 
         }
@@ -183,7 +162,7 @@ UnaryOperation<K, K> {
         for (int i = 0; i < stainVectors.length; i++) {
             final double len =
                     Math.sqrt((stainVectors[i][0] * stainVectors[i][0]) + (stainVectors[i][1] * stainVectors[i][1])
-                              + (stainVectors[i][2] * stainVectors[i][2]));
+                            + (stainVectors[i][2] * stainVectors[i][2]));
             stainVectors[i][0] = stainVectors[i][0] / len;
             stainVectors[i][1] = stainVectors[i][1] / len;
             stainVectors[i][2] = stainVectors[i][2] / len;
@@ -264,7 +243,7 @@ UnaryOperation<K, K> {
     /**
      * die matrix ist links aufgebaut, die entsprechenen indizes im array rechts m11 m12 m13 0 1 2 a b c m21 m22 m23 3 4
      * 5 d e f m31 m32 m33 6 7 8 g h i
-     * 
+     *
      */
     private double[] inverseOf(final double[] m) {
         final double[] res = new double[9];
@@ -273,7 +252,7 @@ UnaryOperation<K, K> {
         // http://www.mathe-online.at/materialien/klaus.berger/files/Matrizen/determinante.pdf
         double det =
                 ((m[0] * m[4] * m[8]) + (m[1] * m[5] * m[6]) + (m[2] * m[3] * m[7])) - (m[6] * m[4] * m[2])
-                - (m[7] * m[5] * m[0]) - (m[8] * m[3] * m[1]);
+                        - (m[7] * m[5] * m[0]) - (m[8] * m[3] * m[1]);
 
         // berechne inverse einer matrix
         // http://de.wikipedia.org/wiki/Inverse_Matrix
@@ -292,7 +271,7 @@ UnaryOperation<K, K> {
     }
 
     /**
-     * 
+     *
      * @param a 3x3 matrix
      * @param b 3x3 matrix
      * @return the multiplied matrices

@@ -66,7 +66,7 @@ import org.knime.knip.core.util.ImgUtils;
 import org.knime.knip.core.util.PermutationSort;
 
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 @Deprecated
@@ -175,20 +175,8 @@ public class ContourDetector<T extends RealType<T>> {
                     tmpImg = polImg;
                 }
 
-                // AWTImageTools.showInFrame(tmpImg, "tmp img",
-                // 4);
-                // AWTImageTools.showInFrame(polImg, "pol img",
-                // 4);
-
-                // AWTImageTools.showInFrame(polImg,
-                // "pol img partially projected");
                 signs[i] = new Signature(tmpImg, m_maxLineVariance);
-                // AWTImageTools.showInFrame(signs[i].createImage(),
-                // "" + signs[i].getScore());
                 signs[i].setCentre(pos);
-                // AWTImageTools.showInFrame(signs[i].createImage(),
-                // "signature",
-                // 4);
                 i++;
             }
         }
@@ -269,7 +257,7 @@ public class ContourDetector<T extends RealType<T>> {
     /**
      * Distributes a set of points over an area of the specified width and height as a regular lattice (with gaps-pixel
      * space in between).
-     * 
+     *
      * @param gaps
      * @param width
      * @param height
