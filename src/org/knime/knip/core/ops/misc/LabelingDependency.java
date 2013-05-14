@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.imglib2.Cursor;
 import net.imglib2.labeling.Labeling;
@@ -14,25 +15,22 @@ import net.imglib2.ops.operation.UnaryOutputOperation;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 
 /**
- * Dependencies of labels to each other are computed. e.g. if one LabelingType
- * contains two labels A and B, then A has reflexive relation to B.
+ * Dependencies of labels to each other are computed. e.g. if one LabelingType contains two labels A and B, then A has
+ * reflexive relation to B.
  *
  * The node can be used in two modes:
  *
- * a. Intersection mode: A must appear at least once together with B two have a
- * relation to B.
+ * a. Intersection mode: A must appear at least once together with B two have a relation to B.
  *
  * b. Complete mode: A must always appear with B two have a relation to B.
  *
- * Two filters are helping to reduce the amount of labels, for which the
- * relations are computed. 1. The left one filters the labels on the left left
- * side of the relation 2. The right one filters the labels on the right side of
- * the relation. Both filters use the given Rules {@link RulebasedLabelFilter}.
+ * Two filters are helping to reduce the amount of labels, for which the relations are computed. 1. The left one filters
+ * the labels on the left left side of the relation 2. The right one filters the labels on the right side of the
+ * relation. Both filters use the given Rules {@link RulebasedLabelFilter}.
  *
  * @author dietzc, hornm
  **/
-public class LabelingDependency<L extends Comparable<L>> implements
-UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
+public class LabelingDependency<L extends Comparable<L>> implements UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
 
     private final RulebasedLabelFilter<L> m_leftFilter;
 
@@ -40,8 +38,12 @@ UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
 
     private final boolean m_intersectionMode;
 
-    public LabelingDependency(final RulebasedLabelFilter<L> leftFilter,
-                              final RulebasedLabelFilter<L> rightFilter,
+    /**
+     * @param leftFilter
+     * @param rightFilter
+     * @param intersectionMode
+     */
+    public LabelingDependency(final RulebasedLabelFilter<L> leftFilter, final RulebasedLabelFilter<L> rightFilter,
                               final boolean intersectionMode) {
         m_leftFilter = leftFilter;
         m_rightFilter = rightFilter;
@@ -63,37 +65,27 @@ UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
                 continue;
             }
 
-            for (final L outerL : m_leftFilter.filterLabeling(cursor
-                                                              .get().getLabeling())) {
+            for (final L outerL : m_leftFilter.filterLabeling(cursor.get().getLabeling())) {
 
                 if (!labelMap.containsKey(outerL)) {
-                    labelMap.put(outerL,
-                                 new HashMap<L, Integer>());
+                    labelMap.put(outerL, new HashMap<L, Integer>());
                     sizeMap.put(outerL, 0);
                 }
 
-                for (final L innerL : m_rightFilter
-                        .filterLabeling(cursor.get()
-                                        .getLabeling())) {
+                for (final L innerL : m_rightFilter.filterLabeling(cursor.get().getLabeling())) {
                     if (outerL.equals(innerL)) {
                         continue;
                     }
 
-                    if (!labelMap.get(outerL).containsKey(
-                                                          innerL)) {
-                        labelMap.get(outerL).put(
-                                                 innerL, 0);
+                    if (!labelMap.get(outerL).containsKey(innerL)) {
+                        labelMap.get(outerL).put(innerL, 0);
                     }
 
-                    labelMap.get(outerL)
-                    .put(innerL,
-                         labelMap.get(outerL)
-                         .get(innerL) + 1);
+                    labelMap.get(outerL).put(innerL, labelMap.get(outerL).get(innerL) + 1);
                 }
 
                 if (!m_intersectionMode) {
-                    sizeMap.put(outerL,
-                                sizeMap.get(outerL) + 1);
+                    sizeMap.put(outerL, sizeMap.get(outerL) + 1);
                 }
             }
         }
@@ -101,10 +93,10 @@ UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
         for (final L l : labelMap.keySet()) {
             final List<L> members = new ArrayList<L>();
             if (sizeMap.get(l) > 0) {
-                for (final L groupMember : labelMap.get(l).keySet()) {
-                    if (labelMap.get(l).get(groupMember)
-                            .equals(sizeMap.get(l))) {
-                        members.add(groupMember);
+                HashMap<L, Integer> hashMap = labelMap.get(l);
+                for (final Entry<L, Integer> entry : hashMap.entrySet()) {
+                    if (entry.getValue().equals(sizeMap.get(l))) {
+                        members.add(entry.getKey());
                     }
                 }
 
@@ -114,8 +106,7 @@ UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
                 }
             }
 
-            if ((members.size() > 0)
-                    || (m_rightFilter.getRules().size() == 0)) {
+            if ((members.size() > 0) || (m_rightFilter.getRules().size() == 0)) {
                 r.put(l, members);
             }
         }
@@ -125,8 +116,7 @@ UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
 
     @Override
     public UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> copy() {
-        return new LabelingDependency<L>(m_leftFilter.copy(),
-                m_leftFilter.copy(), m_intersectionMode);
+        return new LabelingDependency<L>(m_leftFilter.copy(), m_leftFilter.copy(), m_intersectionMode);
     }
 
     @Override
