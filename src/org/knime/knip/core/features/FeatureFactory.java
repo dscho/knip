@@ -64,19 +64,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Calculates a specific set of features (double values) for a particular
- * {@link FeatureTarget}. The feature factory itself basically takes care about
- * which features are enabled.
+ * Calculates a specific set of features (double values) for a particular {@link FeatureTarget}. The feature factory
+ * itself basically takes care about which features are enabled.
  *
  * @author hornm, University of Konstanz
  * @param <T>
  */
 public class FeatureFactory {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(FeatureFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FeatureFactory.class);
 
-    private final Map<Class<?>, List<FeatureTargetUpdater>> m_targetListeners = new HashMap<Class<?>, List<FeatureFactory.FeatureTargetUpdater>>();
+    private final Map<Class<?>, List<FeatureTargetUpdater>> m_targetListeners =
+            new HashMap<Class<?>, List<FeatureFactory.FeatureTargetUpdater>>();
 
     /*
      * objects to be shared among feature sets
@@ -100,22 +99,17 @@ public class FeatureFactory {
     /**
      * Creates a new feature factory
      *
-     * @param enableAll
-     *                if all features of the added feature sets have to be
-     *                enabled
+     * @param enableAll if all features of the added feature sets have to be enabled
      * @param fsets
      */
-    public FeatureFactory(final boolean enableAll,
-                          final Collection<? extends FeatureSet> fsets) {
+    public FeatureFactory(final boolean enableAll, final Collection<? extends FeatureSet> fsets) {
         this(enableAll, fsets.toArray(new FeatureSet[fsets.size()]));
     }
 
     /**
      * Creates a new feature factory
      *
-     * @param enableAll
-     *                if all features of the added feature sets have to be
-     *                enabled
+     * @param enableAll if all features of the added feature sets have to be enabled
      * @param fsets
      */
     public FeatureFactory(final boolean enableAll, final FeatureSet... fsets) {
@@ -124,34 +118,26 @@ public class FeatureFactory {
             // look for FeatureTargetListener annotations and add
             // them to
             // the listener map
-            collectFeatureTargetListenersRecursively(
-                                                     fset.getClass(), fset);
+            collectFeatureTargetListenersRecursively(fset.getClass(), fset);
 
             if (fset instanceof SharesObjects) {
-                final Class<?>[] clazzes = ((SharesObjects) fset)
-                        .getSharedObjectClasses();
+                final Class<?>[] clazzes = ((SharesObjects)fset).getSharedObjectClasses();
 
                 final Object[] instances = new Object[clazzes.length];
 
                 for (int i = 0; i < clazzes.length; i++) {
                     Object obj;
-                    if ((obj = m_sharedObjects
-                            .get(clazzes[i])) == null) {
+                    if ((obj = m_sharedObjects.get(clazzes[i])) == null) {
                         try {
                             obj = clazzes[i].newInstance();
                         } catch (final Exception e) {
-                            LOG.error("Can not create instance of class "
-                                    + clazzes[i]
-                                            + ".",
-                                            e);
+                            LOG.error("Can not create instance of class " + clazzes[i] + ".", e);
                         }
-                        m_sharedObjects.put(clazzes[i],
-                                            obj);
+                        m_sharedObjects.put(clazzes[i], obj);
                     }
                     instances[i] = obj;
                 }
-                ((SharesObjects) fset)
-                .setSharedObjectInstances(instances);
+                ((SharesObjects)fset).setSharedObjectInstances(instances);
 
             }
 
@@ -171,8 +157,7 @@ public class FeatureFactory {
 
     public void initFeatureFactory(final BitSet enabledFeatures) {
         if (m_enabled != null) {
-            throw new IllegalStateException(
-                                            "Feature factory was already initialized!");
+            throw new IllegalStateException("Feature factory was already initialized!");
         }
 
         if (enabledFeatures == null) {
@@ -187,36 +172,28 @@ public class FeatureFactory {
             if (m_enabled.get(i)) {
                 m_featIdxMap[featIdx] = i;
                 featIdx++;
-                m_featureSetList.get(i)
-                .enable(i
-                        - m_featureSetIdOffset
-                        .get(i));
+                m_featureSetList.get(i).enable(i - m_featureSetIdOffset.get(i));
             }
 
         }
     }
 
     /**
-     * Looks for FeatureTargetListener annotations and adds them to the
-     * listener map
+     * Looks for FeatureTargetListener annotations and adds them to the listener map
      */
-    protected void collectFeatureTargetListenersRecursively(final Class<?> clazz,
-                                                            final Object listener) {
+    protected void collectFeatureTargetListenersRecursively(final Class<?> clazz, final Object listener) {
         if (clazz == null) {
             return;
         }
 
         final Method[] methods = clazz.getMethods();
 
-        LOG.debug("Looking for FeatureTargetListener annotations for class "
-                + clazz
-                + ", methods:"
+        LOG.debug("Looking for FeatureTargetListener annotations for class " + clazz + ", methods:"
                 + Arrays.toString(methods));
 
         for (final Method method : methods) {
 
-            final FeatureTargetListener targetAnnotation = method
-                    .getAnnotation(FeatureTargetListener.class);
+            final FeatureTargetListener targetAnnotation = method.getAnnotation(FeatureTargetListener.class);
             if (targetAnnotation != null) {
 
                 final Class<?>[] types = method.getParameterTypes();
@@ -225,30 +202,22 @@ public class FeatureFactory {
                             + method + "' skipped.");
                 } else {
 
-                    LOG.debug("Found FeatureTargetListener: "
-                            + targetAnnotation
-                            + "  on method '"
-                            + method + "'");
+                    LOG.debug("Found FeatureTargetListener: " + targetAnnotation + "  on method '" + method + "'");
                     List<FeatureTargetUpdater> listeners;
-                    if ((listeners = m_targetListeners
-                            .get(types[0])) == null) {
+                    if ((listeners = m_targetListeners.get(types[0])) == null) {
                         listeners = new ArrayList<FeatureFactory.FeatureTargetUpdater>();
-                        m_targetListeners.put(types[0],
-                                              listeners);
+                        m_targetListeners.put(types[0], listeners);
                     }
-                    listeners.add(new FeatureTargetUpdater(
-                                                           listener, method));
+                    listeners.add(new FeatureTargetUpdater(listener, method));
                 }
 
             }
         }
 
-        collectFeatureTargetListenersRecursively(clazz.getSuperclass(),
-                                                 listener);
+        collectFeatureTargetListenersRecursively(clazz.getSuperclass(), listener);
         final Class<?>[] interfaces = clazz.getInterfaces();
         for (final Class<?> interfaze : interfaces) {
-            collectFeatureTargetListenersRecursively(interfaze,
-                                                     listener);
+            collectFeatureTargetListenersRecursively(interfaze, listener);
         }
     }
 
@@ -268,45 +237,33 @@ public class FeatureFactory {
         }
 
         try {
-            final List<FeatureTargetUpdater> ftus = m_targetListeners
-                    .get(clazz);
+            final List<FeatureTargetUpdater> ftus = m_targetListeners.get(clazz);
             if (ftus != null) {
                 for (final FeatureTargetUpdater ftu : ftus) {
                     ftu.updateFeatureTarget(obj);
                 }
                 return;
             } else {
-                updateFeatureTargetRecursively(obj,
-                                               clazz.getSuperclass());
+                updateFeatureTargetRecursively(obj, clazz.getSuperclass());
                 final Class<?>[] interfaces = clazz.getInterfaces();
                 for (final Class<?> interfaze : interfaces) {
-                    updateFeatureTargetRecursively(obj,
-                                                   interfaze);
+                    updateFeatureTargetRecursively(obj, interfaze);
                 }
 
             }
         } catch (final IllegalArgumentException e) {
-            LOG.debug("Error thrown: " + e.getMessage()
-                      + ". Class "
-                      + obj.getClass().getSimpleName() + "!");
+            LOG.debug("Error thrown: " + e.getMessage() + ". Class " + obj.getClass().getSimpleName() + "!");
         } catch (final Exception e) {
-            if (e instanceof RuntimeException) {
-                Throwable t = e.getCause();
+            Throwable t = e.getCause();
 
-                while (t instanceof InvocationTargetException) {
-                    t = t.getCause();
-                }
+            while (t instanceof InvocationTargetException) {
+                t = t.getCause();
+            }
 
-                if (t instanceof IllegalArgumentException) {
-                    LOG.debug("Error thrown: "
-                            + t.getMessage()
-                            + ". Class "
-                            + obj.getClass()
-                            .getSimpleName()
-                            + "!");
-                } else {
-                    t.printStackTrace();
-                }
+            if (t instanceof IllegalArgumentException) {
+                LOG.debug("Error thrown: " + t.getMessage() + ". Class " + obj.getClass().getSimpleName() + "!");
+            } else {
+                t.printStackTrace();
             }
         }
     }
@@ -314,12 +271,11 @@ public class FeatureFactory {
     /**
      *
      * @param featID
-     * @return the feature for the given feature ID, the feature id is
-     *         assigned according to the order the feature sets were added
+     * @return the feature for the given feature ID, the feature id is assigned according to the order the feature sets
+     *         were added
      */
     public double getFeatureValue(final int featID) {
-        return m_featureSetList.get(m_featIdxMap[featID]).value(
-                                                                getFeatureSetFeatureID(featID));
+        return m_featureSetList.get(m_featIdxMap[featID]).value(getFeatureSetFeatureID(featID));
     }
 
     /**
@@ -327,24 +283,8 @@ public class FeatureFactory {
      * @return the feature id in the feature set, where featID points to
      */
     protected int getFeatureSetFeatureID(final int featID) {
-        return m_featIdxMap[featID]
-                - m_featureSetIdOffset
-                .get(m_featIdxMap[featID]);
+        return m_featIdxMap[featID] - m_featureSetIdOffset.get(m_featIdxMap[featID]);
     }
-
-    // /**
-    // * Returns the enabled feature values for the given feature set class
-    // *
-    // * @return the feature value
-    // */
-    // public double[] getFeatureValues(Class<? extends FeatureSet> clazz) {
-    // FeatureSet fset = m_featureSetMap.get(clazz);
-    // double[] res = new double[fset.numFeatures()];
-    // for (int i = 0; i < res.length; i++) {
-    // res[i] = fset.value(i);
-    // }
-    // return res;
-    // }
 
     /**
      * @return the feature values of all enabled features
@@ -358,10 +298,8 @@ public class FeatureFactory {
      */
     public double[] getFeatureValues(final double[] vec) {
         int i = 0;
-        for (int feat = m_enabled.nextSetBit(0); feat >= 0; feat = m_enabled
-                .nextSetBit(feat + 1)) {
-            vec[i++] = m_featureSetList.get(feat).value(
-                                                        feat - m_featureSetIdOffset.get(feat));
+        for (int feat = m_enabled.nextSetBit(0); feat >= 0; feat = m_enabled.nextSetBit(feat + 1)) {
+            vec[i++] = m_featureSetList.get(feat).value(feat - m_featureSetIdOffset.get(feat));
         }
         return vec;
     }
@@ -386,39 +324,11 @@ public class FeatureFactory {
         final String[] res = new String[getNumFeatures()];
 
         int i = 0;
-        for (int feat = m_enabled.nextSetBit(0); feat >= 0; feat = m_enabled
-                .nextSetBit(feat + 1)) {
+        for (int feat = m_enabled.nextSetBit(0); feat >= 0; feat = m_enabled.nextSetBit(feat + 1)) {
             res[i++] = m_featNames.get(feat);
         }
         return res;
     }
-
-    // /**
-    // * The enabled features. A copy of the BitSet is made.
-    // *
-    // * To iteratively set and retrieve the according feature values, e.g.
-    // * use:
-    // *
-    // *
-    // * <code>
-    // * BitSet enabled = fac.getEnabledFeatures();
-    // * for (int featID = enabled.nextSetBit(0); featID >= 0; featID =
-    // enabled
-    // * .nextSetBit(featID + 1)) {
-    // * fac.setFeatureID(feadID);
-    // * fac.getFeatureValue();
-    // * }</code>
-    // *
-    // *
-    // * @return encoded in a bit set (1 is enabled). It returns a copy.
-    // */
-    // public BitSet getEnabledFeatures() {
-    // if (m_enabled == null) {
-    // m_enabled = new BitSet(getNumTotalFeatures());
-    // m_enabled.set(0, getNumTotalFeatures());
-    // }
-    // return (BitSet) m_enabled.clone();
-    // }
 
     /**
      * @param obj
@@ -439,8 +349,7 @@ public class FeatureFactory {
 
     private void isInitialized() {
         if (m_enabled == null) {
-            throw new IllegalStateException(
-                                            "Feature factory not initialized, yet!");
+            throw new IllegalStateException("Feature factory not initialized, yet!");
         }
     }
 
@@ -460,11 +369,9 @@ public class FeatureFactory {
                 m_method.invoke(m_listener, target);
             } catch (final Exception e) {
                 throw new RuntimeException(
-                                           "InvocationTargetException when invoking annotated method from FeatureTarget Update. Data: "
+                        "InvocationTargetException when invoking annotated method from FeatureTarget Update. Data: "
 
-                                                                + target.toString()
-                                                                + ", subscriber:"
-                                                                + m_listener, e);
+                        + target.toString() + ", subscriber:" + m_listener, e);
             }
         }
 

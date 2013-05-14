@@ -20,7 +20,6 @@ import org.knime.knip.core.awt.Real2GreyRenderer;
 import org.knime.knip.core.awt.Transparency;
 import org.knime.knip.core.awt.parametersupport.RendererWithHilite;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
-import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.HilitedLabelsChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgAndLabelingChgEvent;
@@ -39,8 +38,8 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
  *
  * @author dietzc, hornm, schoenenbergerf, zinsmaierm University of Konstanz
  */
-public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L extends Comparable<L>>
-extends LabelingBufferedImageProvider<L> {
+public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L extends Comparable<L>> extends
+        LabelingBufferedImageProvider<L> {
 
     /**
      *
@@ -80,11 +79,8 @@ extends LabelingBufferedImageProvider<L> {
 
         m_greyRenderer = new Real2GreyRenderer<T>();
         m_transparency = 128;
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>(
-                0, false);
-        m_config = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice()
-                .getDefaultConfiguration();
+        m_normalizationParameters = new NormalizationParametersChgEvent<T>(0, false);
+        m_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     @Override
@@ -158,57 +154,43 @@ extends LabelingBufferedImageProvider<L> {
     }
 
     private BufferedImage renderImage() {
-        final double[] normParams = m_normalizationParameters
-                .getNormalizationParameters(m_img, m_sel);
+        final double[] normParams = m_normalizationParameters.getNormalizationParameters(m_img, m_sel);
 
-        if (m_greyRenderer instanceof RendererWithNormalization) {
-            ((RendererWithNormalization) m_greyRenderer)
-            .setNormalizationParameters(
-                                        normParams[0],
-                                        normParams[1]);
-        }
+        m_greyRenderer.setNormalizationParameters(normParams[0], normParams[1]);
 
-        final ScreenImage ret = m_greyRenderer.render(m_img,
-                                                      m_sel.getPlaneDimIndex1(),
-                                                      m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
+        final ScreenImage ret =
+                m_greyRenderer.render(m_img, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
         return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
     }
 
-    private BufferedImage renderTogether(final BufferedImage img,
-                                         final BufferedImage labeling) {
-        m_rgb = m_config.createCompatibleImage(img.getWidth(),
-                                               img.getHeight(),
-                                               java.awt.Transparency.TRANSLUCENT);
+    private BufferedImage renderTogether(final BufferedImage img, final BufferedImage labeling) {
+        m_rgb = m_config.createCompatibleImage(img.getWidth(), img.getHeight(), java.awt.Transparency.TRANSLUCENT);
         m_rgbGraphics = m_rgb.getGraphics();
 
         m_rgbGraphics.drawImage(img, 0, 0, null);
-        m_rgbGraphics.drawImage(Transparency.makeColorTransparent(
-                                                                  labeling, Color.WHITE, m_transparency), 0, 0,
-                                                                  null);
+        m_rgbGraphics.drawImage(Transparency.makeColorTransparent(labeling, Color.WHITE, m_transparency), 0, 0, null);
 
         return m_rgb;
     }
 
     private BufferedImage renderLabeling() {
         if (m_renderer instanceof RendererWithLabels) {
-            final RendererWithLabels<L> r = (RendererWithLabels<L>) m_renderer;
+            final RendererWithLabels<L> r = (RendererWithLabels<L>)m_renderer;
             r.setActiveLabels(m_activeLabels);
             r.setOperator(m_operator);
             r.setLabelMapping(m_labelMapping);
             r.setRenderingWithLabelStrings(m_withLabelStrings);
         }
 
-        if ((m_renderer instanceof RendererWithHilite)
-                && (m_hilitedLabels != null)) {
-            final RendererWithHilite r = (RendererWithHilite) m_renderer;
+        if ((m_renderer instanceof RendererWithHilite) && (m_hilitedLabels != null)) {
+            final RendererWithHilite r = (RendererWithHilite)m_renderer;
             r.setHilitedLabels(m_hilitedLabels);
             r.setHiliteMode(m_isHiliteMode);
         }
 
-        final ScreenImage ret = m_renderer.render(m_src,
-                                                  m_sel.getPlaneDimIndex1(),
-                                                  m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
+        final ScreenImage ret =
+                m_renderer.render(m_src, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
         return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
     }
@@ -229,7 +211,6 @@ extends LabelingBufferedImageProvider<L> {
 
     }
 
-
     @EventListener
     public void onClose(final ViewClosedEvent event) {
         m_img = null;
@@ -248,46 +229,42 @@ extends LabelingBufferedImageProvider<L> {
     }
 
     /**
-     * {@link EventListener} for {@link NormalizationParametersChgEvent}
-     * events The {@link NormalizationParametersChgEvent} of the
-     * {@link AWTImageTools} will be updated
+     * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
+     * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
      *
      * @param normalizationParameters
      */
-     @EventListener
-     public void onUpdated(
-                           final NormalizationParametersChgEvent<T> normalizationParameters) {
-         m_normalizationParameters = normalizationParameters;
-         m_imgChanged = true;
-     }
+    @EventListener
+    public void onUpdated(final NormalizationParametersChgEvent<T> normalizationParameters) {
+        m_normalizationParameters = normalizationParameters;
+        m_imgChanged = true;
+    }
 
-     @EventListener
-     public void onUpdated(final HilitedLabelsChgEvent e) {
-         m_hilitedLabels = e.getHilitedLabels();
-         m_labChanged = true;
-     }
+    @EventListener
+    public void onUpdated(final HilitedLabelsChgEvent e) {
+        m_hilitedLabels = e.getHilitedLabels();
+        m_labChanged = true;
+    }
 
-     @EventListener
-     public void onUpdated(final LabelPanelIsHiliteModeEvent e) {
-         m_isHiliteMode = e.isHiliteMode();
-         m_labChanged = true;
-     }
+    @EventListener
+    public void onUpdated(final LabelPanelIsHiliteModeEvent e) {
+        m_isHiliteMode = e.isHiliteMode();
+        m_labChanged = true;
+    }
 
-     @Override
-     public void saveComponentConfiguration(final ObjectOutput out)
-             throws IOException {
-         super.saveComponentConfiguration(out);
-         out.writeInt(m_transparency);
-         m_normalizationParameters.writeExternal(out);
-     }
+    @Override
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
+        super.saveComponentConfiguration(out);
+        out.writeInt(m_transparency);
+        m_normalizationParameters.writeExternal(out);
+    }
 
-     @Override
-     public void loadComponentConfiguration(final ObjectInput in)
-             throws IOException, ClassNotFoundException {
-         super.loadComponentConfiguration(in);
-         m_transparency = in.readInt();
-         m_normalizationParameters = new NormalizationParametersChgEvent<T>();
-         m_normalizationParameters.readExternal(in);
-     }
+    @Override
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
+        super.loadComponentConfiguration(in);
+        m_transparency = in.readInt();
+        m_normalizationParameters = new NormalizationParametersChgEvent<T>();
+        m_normalizationParameters.readExternal(in);
+    }
 
 }
