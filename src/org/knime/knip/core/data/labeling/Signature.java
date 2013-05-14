@@ -432,19 +432,26 @@ public class Signature {
     /**
      * Compares to signatures.
      *
-     * @param s the signature to compare to
      * @return true, if the two signatures are exactly the same
      */
-    public boolean equals(final Signature s) {
-        if (s.length() != m_sign.length) {
+    @Override
+    public boolean equals(final Object arg0) {
+        if (arg0 instanceof Signature) {
+
+            Signature s = (Signature)arg0;
+            if (s.length() != m_sign.length) {
+                return false;
+            }
+            int diff = 0;
+            for (int i = 0; i < m_sign.length; i++) {
+                diff += Math.abs(m_sign[i] - s.getPosAt(i));
+            }
+
+            return diff < m_sign.length;
+        } else {
             return false;
         }
-        int diff = 0;
-        for (int i = 0; i < m_sign.length; i++) {
-            diff += Math.abs(m_sign[i] - s.getPosAt(i));
-        }
 
-        return diff < m_sign.length;
     }
 
     /**
