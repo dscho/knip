@@ -814,6 +814,22 @@ public class Signature {
          * {@inheritDoc}
          */
         @Override
+        public boolean equals(final Object obj) {
+            return ((IndexedDouble)obj).m_val == m_val;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return new Double(m_val).hashCode();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public int compareTo(final IndexedDouble val2) {
             return Double.compare(m_val, m_val);
         }
