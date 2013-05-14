@@ -25,16 +25,16 @@ package org.knime.knip.core.data.graphtheory;
 public class Edge {
 
     // node the edge points to
-    private Node head;
+    private Node m_head;
 
     // nect edge with the same originating node
-    private Edge next;
+    private Edge m_next;
 
     // reverse arc
-    private Edge sister;
+    private Edge m_sister;
 
     // residual capacity of this edge
-    private float residualCapacity;
+    private float m_residualCapacity;
 
     // special edges
     public final static Edge TERMINAL = new Edge();
@@ -43,11 +43,11 @@ public class Edge {
 
     public Edge() {
 
-        head = null;
-        next = null;
-        sister = null;
+        m_head = null;
+        m_next = null;
+        m_sister = null;
 
-        residualCapacity = 0;
+        m_residualCapacity = 0;
     }
 
     /**
@@ -56,7 +56,7 @@ public class Edge {
      * @return The head, i.e., the node this edge points to.
      */
     public Node getHead() {
-        return this.head;
+        return this.m_head;
     }
 
     /**
@@ -65,7 +65,7 @@ public class Edge {
      * @param head The head, i.e., the node this edge shall point to.
      */
     public void setHead(final Node head) {
-        this.head = head;
+        this.m_head = head;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Edge {
      * @param next The next edge.
      */
     public void setNext(final Edge next) {
-        this.next = next;
+        this.m_next = next;
     }
 
     /**
@@ -83,7 +83,7 @@ public class Edge {
      * @param sister The sister.
      */
     public void setSister(final Edge sister) {
-        this.sister = sister;
+        this.m_sister = sister;
     }
 
     /**
@@ -92,7 +92,7 @@ public class Edge {
      * @param residualCapacity The residual capacity.
      */
     public void setResidualCapacity(final float residualCapacity) {
-        this.residualCapacity = residualCapacity;
+        this.m_residualCapacity = residualCapacity;
     }
 
     /**
@@ -101,7 +101,7 @@ public class Edge {
      * @return The residualCapacity.
      */
     public float getResidualCapacity() {
-        return this.residualCapacity;
+        return this.m_residualCapacity;
     }
 
     /**
@@ -110,7 +110,7 @@ public class Edge {
      * @return The sister.
      */
     public Edge getSister() {
-        return this.sister;
+        return this.m_sister;
     }
 
     /**
@@ -119,6 +119,6 @@ public class Edge {
      * @return The next.
      */
     public Edge getNext() {
-        return this.next;
+        return this.m_next;
     }
 }

@@ -13,25 +13,25 @@ import net.imglib2.view.Views;
 
 /**
  * Bilateral filtering
- * 
+ *
  * @author tcriess, University of Konstanz
  */
 public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>>
-implements UnaryOperation<K, K> {
+        implements UnaryOperation<K, K> {
 
     public final static int MIN_DIMS = 2;
 
     public final static int MAX_DIMS = 2;
 
-    private double m_sigma_r = 15;
+    private double m_sigmaR = 15;
 
-    private double m_sigma_s = 5;
+    private double m_sigmaS = 5;
 
     private int m_radius = 10;
 
     public BilateralFilter(final double sigma_r, final double sigma_s, final int radius) {
-        m_sigma_r = sigma_r;
-        m_sigma_s = sigma_s;
+        m_sigmaR = sigma_r;
+        m_sigmaS = sigma_s;
         m_radius = radius;
     }
 
@@ -88,10 +88,10 @@ implements UnaryOperation<K, K> {
                 // d += (p[i]-q[i]-mi[i])*(p[i]-q[i]-mi[i]);
                 // }
                 d = Math.sqrt(d);
-                s = gauss(d, m_sigma_s);
+                s = gauss(d, m_sigmaS);
 
                 d = Math.abs(cp.get().getRealDouble() - cq.get().getRealDouble());
-                s *= gauss(d, m_sigma_r);
+                s *= gauss(d, m_sigmaR);
 
                 v += s * cq.get().getRealDouble();
                 w += s;
@@ -105,6 +105,6 @@ implements UnaryOperation<K, K> {
 
     @Override
     public UnaryOperation<K, K> copy() {
-        return new BilateralFilter<T, K>(m_sigma_r, m_sigma_s, m_radius);
+        return new BilateralFilter<T, K>(m_sigmaR, m_sigmaS, m_radius);
     }
 }

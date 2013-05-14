@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable {
-    protected int m_ClassIndex;
+    protected int m_classIndex;
 
-    protected String m_RelationName;
+    protected String m_relationName;
 
-    protected ArrayList<InstanceTmp> m_Instances;
+    protected ArrayList<InstanceTmp> m_instances;
 
-    protected ArrayList<AttributeTmp> m_Attributes;
+    protected ArrayList<AttributeTmp> m_attributes;
 
     public InstancesTmp(final InstancesTmp dataset, final int capacity) {
         initialize(dataset, capacity);
@@ -18,13 +18,13 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
 
     public InstancesTmp(final String name, final ArrayList<AttributeTmp> attInfo, final int capacity) {
 
-        m_RelationName = name;
-        m_ClassIndex = -1;
-        m_Attributes = attInfo;
+        m_relationName = name;
+        m_classIndex = -1;
+        m_attributes = attInfo;
         for (int i = 0; i < numAttributes(); i++) {
             attribute(i).setIndex(i);
         }
-        m_Instances = new ArrayList<InstanceTmp>(capacity);
+        m_instances = new ArrayList<InstanceTmp>(capacity);
     }
 
     protected void initialize(final InstancesTmp dataset, int capacity) {
@@ -34,34 +34,34 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
 
         // Strings only have to be "shallow" copied because
         // they can't be modified.
-        m_ClassIndex = dataset.m_ClassIndex;
-        m_RelationName = dataset.m_RelationName;
-        m_Attributes = dataset.m_Attributes;
-        m_Instances = new ArrayList<InstanceTmp>(capacity);
+        m_classIndex = dataset.m_classIndex;
+        m_relationName = dataset.m_relationName;
+        m_attributes = dataset.m_attributes;
+        m_instances = new ArrayList<InstanceTmp>(capacity);
     }
 
     @Override
     public InstanceTmp get(final int index) {
-        return m_Instances.get(index);
+        return m_instances.get(index);
     }
 
     public InstanceTmp instance(final int index) {
-        return m_Instances.get(index);
+        return m_instances.get(index);
     }
 
     public AttributeTmp attribute(final int index) {
 
-        return m_Attributes.get(index);
+        return m_attributes.get(index);
     }
 
     public int numAttributes() {
 
-        return m_Attributes.size();
+        return m_attributes.size();
     }
 
     @Override
     public boolean add(final InstanceTmp inst) {
-        return m_Instances.add(inst);
+        return m_instances.add(inst);
     }
 
     public int maxIndex(final double[] doubles) {
@@ -263,13 +263,13 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
 
         final AttributeStatsTmp result = new AttributeStatsTmp();
         if (attribute(index).isNominal()) {
-            result.nominalCounts = new int[attribute(index).numValues()];
-            result.nominalWeights = new double[attribute(index).numValues()];
+            result.m_nominalCounts = new int[attribute(index).numValues()];
+            result.m_nominalWeights = new double[attribute(index).numValues()];
         }
         if (attribute(index).isNumeric()) {
-            result.numericStats = new StatsTmp();
+            result.m_numericStats = new StatsTmp();
         }
-        result.totalCount = numInstances();
+        result.m_totalCount = numInstances();
 
         final double[] attVals = attributeToDoubleArray(index);
         final int[] sorted = sort(attVals);
@@ -279,7 +279,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
         for (int j = 0; j < numInstances(); j++) {
             final InstanceTmp current = instance(sorted[j]);
             if (current.isMissing(index)) {
-                result.missingCount = numInstances() - j;
+                result.m_missingCount = numInstances() - j;
                 break;
             }
             if (current.value(index) == prev) {
@@ -293,18 +293,18 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
             }
         }
         result.addDistinct(prev, currentCount, currentWeight);
-        result.distinctCount--; // So we don't count "missing" as a
+        result.m_distinctCount--; // So we don't count "missing" as a
         // value
         return result;
     }
 
     @Override
     public int size() {
-        return m_Instances.size();
+        return m_instances.size();
     }
 
     public int numInstances() {
-        return m_Instances.size();
+        return m_instances.size();
     }
 
 }

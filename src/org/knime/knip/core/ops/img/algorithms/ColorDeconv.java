@@ -20,13 +20,13 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
 
     private final int m_dimC;
 
-    double[] m_Ms = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    private double[] m_ms = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-    double[] m_M1 = {1, 0, 0, 0, 0, 0, 0, 0, 0};
+    private double[] m_m1 = {1, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    double[] m_M2 = {0, 0, 0, 0, 1, 0, 0, 0, 0};
+    private double[] m_m2 = {0, 0, 0, 0, 1, 0, 0, 0, 0};
 
-    double[] m_M3 = {0, 0, 0, 0, 0, 0, 0, 0, 1};
+    private double[] m_m3 = {0, 0, 0, 0, 0, 0, 0, 0, 1};
 
     // minimum and maximum of color channels in image
     double m_min, m_max, m_range;
@@ -203,15 +203,15 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
 
         // m_odR-B vectors are the column vectors of the staining matrix
         // m_Ms
-        m_Ms[0] = odR[0];
-        m_Ms[1] = odG[0];
-        m_Ms[2] = odB[0];
-        m_Ms[3] = odR[1];
-        m_Ms[4] = odG[1];
-        m_Ms[5] = odB[1];
-        m_Ms[6] = odR[2];
-        m_Ms[7] = odG[2];
-        m_Ms[8] = odB[2];
+        m_ms[0] = odR[0];
+        m_ms[1] = odG[0];
+        m_ms[2] = odB[0];
+        m_ms[3] = odR[1];
+        m_ms[4] = odG[1];
+        m_ms[5] = odB[1];
+        m_ms[6] = odR[2];
+        m_ms[7] = odG[2];
+        m_ms[8] = odB[2];
 
     }
 
@@ -222,11 +222,11 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
         // the user
         double[] m = new double[9];
         if (dim == 1) {
-            m = multMatrices(multMatrices(m_Ms, m_M1), inverseOf(m_Ms));
+            m = multMatrices(multMatrices(m_ms, m_m1), inverseOf(m_ms));
         } else if (dim == 2) {
-            m = multMatrices(multMatrices(m_Ms, m_M2), inverseOf(m_Ms));
+            m = multMatrices(multMatrices(m_ms, m_m2), inverseOf(m_ms));
         } else {
-            m = multMatrices(multMatrices(m_Ms, m_M3), inverseOf(m_Ms));
+            m = multMatrices(multMatrices(m_ms, m_m3), inverseOf(m_ms));
         }
 
         return m;

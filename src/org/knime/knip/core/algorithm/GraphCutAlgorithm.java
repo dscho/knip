@@ -49,39 +49,39 @@ public class GraphCutAlgorithm {
     }
 
     // number of nodes
-    private final int numNodes;
+    private final int m_numNodes;
 
     // maximum number of edges
-    private final int numEdges;
+    private final int m_numEdges;
 
     // list of all nodes in the graph
-    private final Node[] nodes;
+    private final Node[] m_nodes;
 
     // list of all edges in the graph
-    private final Edge[] edges;
+    private final Edge[] m_edges;
 
     // internal counter for edge creation
-    private int edgeNum;
+    private int m_edgeNum;
 
     // the total flow in the whole graph
-    private float totalFlow;
+    private float m_totalFlow;
 
     // counter for the numbers of iterations to maxflow
-    private int maxflowIteration;
+    private int m_maxflowIteration;
 
     // Lists of active nodes: activeQueueFirst points to first
     // elements of the lists, activeQueueLast to the last ones.
     // In between, nodes are connected via reference to next node
     // in each node.
-    private final Node[] activeQueueFirst;
+    private final Node[] m_activeQueueFirst;
 
-    private final Node[] activeQueueLast;
+    private final Node[] m_activeQueueLast;
 
     // list of orphans
-    private final LinkedList<Node> orphans;
+    private final LinkedList<Node> m_orphans;
 
     // counter for iterations of main loop
-    private int time;
+    private int m_time;
 
     /**
      * Initialises the graph cut implementation and allocates the memory needed for the given number of nodes and edges.
@@ -92,27 +92,27 @@ public class GraphCutAlgorithm {
      */
     public GraphCutAlgorithm(final int numNodes, final int numEdges) {
 
-        this.numNodes = numNodes;
-        this.numEdges = numEdges;
+        this.m_numNodes = numNodes;
+        this.m_numEdges = numEdges;
 
-        this.nodes = new Node[numNodes];
-        this.edges = new Edge[2 * numEdges];
+        this.m_nodes = new Node[numNodes];
+        this.m_edges = new Edge[2 * numEdges];
 
-        this.edgeNum = 0;
+        this.m_edgeNum = 0;
 
-        this.totalFlow = 0;
+        this.m_totalFlow = 0;
 
-        this.maxflowIteration = 0;
+        this.m_maxflowIteration = 0;
 
-        this.activeQueueFirst = new Node[2];
-        this.activeQueueLast = new Node[2];
+        this.m_activeQueueFirst = new Node[2];
+        this.m_activeQueueLast = new Node[2];
 
-        this.orphans = new LinkedList<Node>();
+        this.m_orphans = new LinkedList<Node>();
 
         assert (numNodes > 0) : "number of nodes must be > 0";
 
         for (int i = 0; i < numNodes; i++) {
-            nodes[i] = new Node();
+            m_nodes[i] = new Node();
         }
     }
 
@@ -125,9 +125,9 @@ public class GraphCutAlgorithm {
      */
     public void setTerminalWeights(final int nodeId, float source, float sink) {
 
-        assert ((nodeId >= 0) && (nodeId < numNodes)) : "nodeID out of Bounds";
+        assert ((nodeId >= 0) && (nodeId < m_numNodes)) : "nodeID out of Bounds";
 
-        final float delta = nodes[nodeId].getResidualCapacity();
+        final float delta = m_nodes[nodeId].getResidualCapacity();
 
         if (delta > 0) {
             source += delta;
@@ -135,9 +135,9 @@ public class GraphCutAlgorithm {
             sink -= delta;
         }
 
-        totalFlow += (source < sink) ? source : sink;
+        m_totalFlow += (source < sink) ? source : sink;
 
-        nodes[nodeId].setResidualCapacity(source - sink);
+        m_nodes[nodeId].setResidualCapacity(source - sink);
     }
 
     /**
@@ -168,24 +168,24 @@ public class GraphCutAlgorithm {
      */
     public void setEdgeWeight(final int nodeId1, final int nodeId2, final float weight1to2, final float weight2to1) {
 
-        assert ((nodeId1 >= 0) && (nodeId1 < numNodes)) : "nodeID1 out of bounds";
-        assert ((nodeId2 >= 0) && (nodeId2 < numNodes)) : "nodeID2 out of bounds";
+        assert ((nodeId1 >= 0) && (nodeId1 < m_numNodes)) : "nodeID1 out of bounds";
+        assert ((nodeId2 >= 0) && (nodeId2 < m_numNodes)) : "nodeID2 out of bounds";
         assert (nodeId1 != nodeId2) : "nodeID1 == nodeID is not allowed";
         assert (weight1to2 >= 0) : " weight have to be >= 0";
         assert (weight2to1 >= 0) : " weight have to be >= 0";
-        assert (edgeNum < (numEdges - 2)) : "max number of edges(" + numEdges + ") reached: " + edgeNum;
+        assert (m_edgeNum < (m_numEdges - 2)) : "max number of edges(" + m_numEdges + ") reached: " + m_edgeNum;
 
         // create new edges
         final Edge edge = new Edge();
-        edges[edgeNum] = edge;
-        edgeNum++;
+        m_edges[m_edgeNum] = edge;
+        m_edgeNum++;
         final Edge reverseEdge = new Edge();
-        edges[edgeNum] = reverseEdge;
-        edgeNum++;
+        m_edges[m_edgeNum] = reverseEdge;
+        m_edgeNum++;
 
         // get the nodes
-        final Node node1 = nodes[nodeId1];
-        final Node node2 = nodes[nodeId2];
+        final Node node1 = m_nodes[nodeId1];
+        final Node node2 = m_nodes[nodeId2];
 
         // link edges
         edge.setSister(reverseEdge);
@@ -217,7 +217,7 @@ public class GraphCutAlgorithm {
      */
     public float computeMaximumFlow(boolean reuseTrees, final List<Integer> changedNodes) {
 
-        if (maxflowIteration == 0) {
+        if (m_maxflowIteration == 0) {
             reuseTrees = false;
         }
 
@@ -330,7 +330,7 @@ public class GraphCutAlgorithm {
                 }
             }
 
-            time++;
+            m_time++;
 
             if (edge != null) {
                 // we found a path via edge
@@ -343,8 +343,8 @@ public class GraphCutAlgorithm {
                 augment(edge);
 
                 // adoption
-                while (orphans.size() > 0) {
-                    final Node orphan = orphans.poll();
+                while (m_orphans.size() > 0) {
+                    final Node orphan = m_orphans.poll();
                     if (orphan.isInSink()) {
                         processSinkOrphan(orphan);
                     } else {
@@ -357,19 +357,19 @@ public class GraphCutAlgorithm {
             }
         }
 
-        maxflowIteration++;
+        m_maxflowIteration++;
 
         // create list of changed nodes
         if (changedNodes != null) {
             changedNodes.clear();
-            for (int i = 0; i < nodes.length; i++) {
-                if (nodes[i].isInChangedList()) {
+            for (int i = 0; i < m_nodes.length; i++) {
+                if (m_nodes[i].isInChangedList()) {
                     changedNodes.add(i);
                 }
             }
         }
 
-        return totalFlow;
+        return m_totalFlow;
     }
 
     /**
@@ -381,9 +381,9 @@ public class GraphCutAlgorithm {
      */
     public Terminal getTerminal(final int nodeId) {
 
-        assert ((nodeId >= 0) && (nodeId < numNodes)) : "nodeID out of Bounds";
+        assert ((nodeId >= 0) && (nodeId < m_numNodes)) : "nodeID out of Bounds";
 
-        final Node node = nodes[nodeId];
+        final Node node = m_nodes[nodeId];
 
         if (node.getParent() != null) {
             return node.isInSink() ? Terminal.BACKGROUND : Terminal.FOREGROUND;
@@ -398,7 +398,7 @@ public class GraphCutAlgorithm {
      * @return The number of nodes
      */
     public int getNumNodes() {
-        return this.numNodes;
+        return this.m_numNodes;
     }
 
     /**
@@ -407,7 +407,7 @@ public class GraphCutAlgorithm {
      * @return The number of edges.
      */
     public int getNumEdges() {
-        return this.numEdges;
+        return this.m_numEdges;
     }
 
     /**
@@ -422,18 +422,18 @@ public class GraphCutAlgorithm {
      */
     public void markNode(final int nodeId) {
 
-        assert ((nodeId >= 0) && (nodeId < numNodes)) : "nodeID out of Bounds";
+        assert ((nodeId >= 0) && (nodeId < m_numNodes)) : "nodeID out of Bounds";
 
-        final Node node = nodes[nodeId];
+        final Node node = m_nodes[nodeId];
 
         if (node.getNext() == null) {
-            if (activeQueueLast[1] != null) {
-                activeQueueLast[1].setNext(node);
+            if (m_activeQueueLast[1] != null) {
+                m_activeQueueLast[1].setNext(node);
             } else {
-                activeQueueFirst[1] = node;
+                m_activeQueueFirst[1] = node;
             }
 
-            activeQueueLast[1] = node;
+            m_activeQueueLast[1] = node;
             node.setNext(node);
         }
 
@@ -450,13 +450,13 @@ public class GraphCutAlgorithm {
     private void setNodeActive(final Node node) {
 
         if (node.getNext() == null) {
-            if (activeQueueLast[1] != null) {
-                activeQueueLast[1].setNext(node);
+            if (m_activeQueueLast[1] != null) {
+                m_activeQueueLast[1].setNext(node);
             } else {
-                activeQueueFirst[1] = node;
+                m_activeQueueFirst[1] = node;
             }
 
-            activeQueueLast[1] = node;
+            m_activeQueueLast[1] = node;
             node.setNext(node);
         }
     }
@@ -471,17 +471,17 @@ public class GraphCutAlgorithm {
 
         while (true) {
 
-            node = activeQueueFirst[0];
+            node = m_activeQueueFirst[0];
 
             if (node == null) {
                 // queue 0 was empty, try other one
-                node = activeQueueFirst[1];
+                node = m_activeQueueFirst[1];
 
                 // swap queues
-                activeQueueFirst[0] = activeQueueFirst[1];
-                activeQueueLast[0] = activeQueueLast[1];
-                activeQueueFirst[1] = null;
-                activeQueueLast[1] = null;
+                m_activeQueueFirst[0] = m_activeQueueFirst[1];
+                m_activeQueueLast[0] = m_activeQueueLast[1];
+                m_activeQueueFirst[1] = null;
+                m_activeQueueLast[1] = null;
 
                 // if other queue was emtpy as well, return null
                 if (node == null) {
@@ -492,10 +492,10 @@ public class GraphCutAlgorithm {
             // remove current node from active list
             if (node.getNext() == node) {
                 // this was the last one
-                activeQueueFirst[0] = null;
-                activeQueueLast[0] = null;
+                m_activeQueueFirst[0] = null;
+                m_activeQueueLast[0] = null;
             } else {
-                activeQueueFirst[0] = node.getNext();
+                m_activeQueueFirst[0] = node.getNext();
             }
 
             // not in any list anymore
@@ -516,7 +516,7 @@ public class GraphCutAlgorithm {
 
         node.setParent(Edge.ORPHAN);
 
-        orphans.addFirst(node);
+        m_orphans.addFirst(node);
     }
 
     /**
@@ -526,7 +526,7 @@ public class GraphCutAlgorithm {
 
         node.setParent(Edge.ORPHAN);
 
-        orphans.addLast(node);
+        m_orphans.addLast(node);
     }
 
     /**
@@ -544,21 +544,21 @@ public class GraphCutAlgorithm {
      */
     private void maxflowInit() {
 
-        activeQueueFirst[0] = null;
-        activeQueueLast[0] = null;
-        activeQueueFirst[1] = null;
-        activeQueueLast[1] = null;
+        m_activeQueueFirst[0] = null;
+        m_activeQueueLast[0] = null;
+        m_activeQueueFirst[1] = null;
+        m_activeQueueLast[1] = null;
 
-        orphans.clear();
+        m_orphans.clear();
 
-        time = 0;
+        m_time = 0;
 
-        for (final Node node : nodes) {
+        for (final Node node : m_nodes) {
 
             node.setNext(null);
             node.setMarked(false);
             node.setInChangedList(false);
-            node.setTimestamp(time);
+            node.setTimestamp(m_time);
 
             if (node.getResidualCapacity() > 0) {
                 // node is connected to source
@@ -588,18 +588,18 @@ public class GraphCutAlgorithm {
         Node node1;
         Node node2;
 
-        Node queueStart = activeQueueFirst[1];
+        Node queueStart = m_activeQueueFirst[1];
 
         Edge edge;
 
-        activeQueueFirst[0] = null;
-        activeQueueLast[0] = null;
-        activeQueueFirst[1] = null;
-        activeQueueLast[1] = null;
+        m_activeQueueFirst[0] = null;
+        m_activeQueueLast[0] = null;
+        m_activeQueueFirst[1] = null;
+        m_activeQueueLast[1] = null;
 
-        orphans.clear();
+        m_orphans.clear();
 
-        time++;
+        m_time++;
 
         while ((node1 = queueStart) != null) {
 
@@ -661,13 +661,13 @@ public class GraphCutAlgorithm {
                 }
             }
             node1.setParent(Edge.TERMINAL);
-            node1.setTimestamp(time);
+            node1.setTimestamp(m_time);
             node1.setDistance(1);
         }
 
         // adoption
-        while (orphans.size() > 0) {
-            final Node orphan = orphans.poll();
+        while (m_orphans.size() > 0) {
+            final Node orphan = m_orphans.poll();
             if (orphan.isInSink()) {
                 processSinkOrphan(orphan);
             } else {
@@ -768,7 +768,7 @@ public class GraphCutAlgorithm {
             addOrphanAtFront(node);
         }
 
-        totalFlow += bottleneck;
+        m_totalFlow += bottleneck;
     }
 
     /**
@@ -791,14 +791,14 @@ public class GraphCutAlgorithm {
                     int distance = 0;
                     while (true) {
 
-                        if (node.getTimestamp() == time) {
+                        if (node.getTimestamp() == m_time) {
                             distance += node.getDistance();
                             break;
                         }
                         parentEdge = node.getParent();
                         distance++;
                         if (parentEdge == Edge.TERMINAL) {
-                            node.setTimestamp(time);
+                            node.setTimestamp(m_time);
                             node.setDistance(1);
                             break;
                         }
@@ -820,10 +820,10 @@ public class GraphCutAlgorithm {
                             minDistance = distance;
                         }
                         // set marks along the path
-                        for (node = orphanEdge.getHead(); node.getTimestamp() != time; node =
+                        for (node = orphanEdge.getHead(); node.getTimestamp() != m_time; node =
                                 node.getParent().getHead()) {
 
-                            node.setTimestamp(time);
+                            node.setTimestamp(m_time);
                             node.setDistance(distance);
                             distance--;
                         }
@@ -834,7 +834,7 @@ public class GraphCutAlgorithm {
 
         orphan.setParent(bestEdge);
         if (bestEdge != null) {
-            orphan.setTimestamp(time);
+            orphan.setTimestamp(m_time);
             orphan.setDistance(minDistance + 1);
         } else {
             // no parent found
@@ -880,14 +880,14 @@ public class GraphCutAlgorithm {
                     int distance = 0;
                     while (true) {
 
-                        if (node.getTimestamp() == time) {
+                        if (node.getTimestamp() == m_time) {
                             distance += node.getDistance();
                             break;
                         }
                         parentEdge = node.getParent();
                         distance++;
                         if (parentEdge == Edge.TERMINAL) {
-                            node.setTimestamp(time);
+                            node.setTimestamp(m_time);
                             node.setDistance(1);
                             break;
                         }
@@ -906,10 +906,10 @@ public class GraphCutAlgorithm {
                             minDistance = distance;
                         }
                         // set marks along the path
-                        for (node = orphanEdge.getHead(); node.getTimestamp() != time; node =
+                        for (node = orphanEdge.getHead(); node.getTimestamp() != m_time; node =
                                 node.getParent().getHead()) {
 
-                            node.setTimestamp(time);
+                            node.setTimestamp(m_time);
                             node.setDistance(distance);
                             distance--;
                         }
@@ -920,7 +920,7 @@ public class GraphCutAlgorithm {
 
         orphan.setParent(bestEdge);
         if (bestEdge != null) {
-            orphan.setTimestamp(time);
+            orphan.setTimestamp(m_time);
             orphan.setDistance(minDistance + 1);
         } else {
             // no parent found
@@ -954,11 +954,11 @@ public class GraphCutAlgorithm {
      * 
      */
     public float getEdgeWeight(final int nodeID1, final int nodeID2) {
-        final Node n1 = nodes[nodeID1];
-        final Node n2 = nodes[nodeID2];
+        final Node n1 = m_nodes[nodeID1];
+        final Node n2 = m_nodes[nodeID2];
         Edge e;
-        for (int i = 0; i < edgeNum; i++) {
-            e = edges[i];
+        for (int i = 0; i < m_edgeNum; i++) {
+            e = m_edges[i];
             if (e.getHead().equals(n1) && e.getSister().getHead().equals(n2)) {
                 return e.getResidualCapacity();
             }

@@ -15,19 +15,19 @@ import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
 public class SlidingShapeOpBinaryInside<T extends Type<T>, V extends Type<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
-extends SlidingShapeOp<T, V, IN, OUT> {
+        extends SlidingShapeOp<T, V, IN, OUT> {
 
-    private BinaryOperation<Iterator<T>, T, V> op;
+    private BinaryOperation<Iterator<T>, T, V> m_op;
 
     public SlidingShapeOpBinaryInside(final Shape neighborhood, final BinaryOperation<Iterator<T>, T, V> op,
                                       final OutOfBoundsFactory<T, IN> outofbounds) {
         super(neighborhood, outofbounds);
-        this.op = op;
+        this.m_op = op;
     }
 
     @Override
     public UnaryOperation<IN, OUT> copy() {
-        return new SlidingShapeOpBinaryInside<T, V, IN, OUT>(shape, op != null ? op.copy() : null, outofbounds);
+        return new SlidingShapeOpBinaryInside<T, V, IN, OUT>(m_shape, m_op != null ? m_op.copy() : null, m_outOfBounds);
     }
 
     @Override
@@ -36,7 +36,7 @@ extends SlidingShapeOp<T, V, IN, OUT> {
         final Cursor<T> inCursor = Views.iterable(SubsetOperations.subsetview(input, input)).cursor();
         final Cursor<V> outCursor = output.cursor();
         for (final Neighborhood<T> neighborhood : neighborhoods) {
-            op.compute(neighborhood.cursor(), inCursor.next(), outCursor.next());
+            m_op.compute(neighborhood.cursor(), inCursor.next(), outCursor.next());
         }
 
         return output;
@@ -44,7 +44,7 @@ extends SlidingShapeOp<T, V, IN, OUT> {
     }
 
     public void updateOperation(final BinaryOperation<Iterator<T>, T, V> op) {
-        this.op = op;
+        this.m_op = op;
     }
 
 }

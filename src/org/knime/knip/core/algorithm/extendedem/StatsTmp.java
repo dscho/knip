@@ -1,51 +1,51 @@
 package org.knime.knip.core.algorithm.extendedem;
 
 class StatsTmp {
-    public double count = 0;
+    public double m_count = 0;
 
-    public double sum = 0;
+    public double m_sum = 0;
 
-    public double sumSq = 0;
+    public double m_sumSq = 0;
 
-    public double stdDev = Double.NaN;
+    public double m_stdDev = Double.NaN;
 
-    public double mean = Double.NaN;
+    public double m_mean = Double.NaN;
 
-    public double min = Double.NaN;
+    public double m_min = Double.NaN;
 
-    public double max = Double.NaN;
+    public double m_max = Double.NaN;
 
     public void add(final double value, final double n) {
 
-        sum += value * n;
-        sumSq += value * value * n;
-        count += n;
-        if (Double.isNaN(min)) {
-            min = max = value;
-        } else if (value < min) {
-            min = value;
-        } else if (value > max) {
-            max = value;
+        m_sum += value * n;
+        m_sumSq += value * value * n;
+        m_count += n;
+        if (Double.isNaN(m_min)) {
+            m_min = m_max = value;
+        } else if (value < m_min) {
+            m_min = value;
+        } else if (value > m_max) {
+            m_max = value;
         }
     }
 
     public void calculateDerived() {
 
-        mean = Double.NaN;
-        stdDev = Double.NaN;
-        if (count > 0) {
-            mean = sum / count;
-            stdDev = Double.POSITIVE_INFINITY;
-            if (count > 1) {
-                stdDev = sumSq - ((sum * sum) / count);
-                stdDev /= (count - 1);
-                if (stdDev < 0) {
+        m_mean = Double.NaN;
+        m_stdDev = Double.NaN;
+        if (m_count > 0) {
+            m_mean = m_sum / m_count;
+            m_stdDev = Double.POSITIVE_INFINITY;
+            if (m_count > 1) {
+                m_stdDev = m_sumSq - ((m_sum * m_sum) / m_count);
+                m_stdDev /= (m_count - 1);
+                if (m_stdDev < 0) {
                     // System.err.println("Warning: stdDev value = "
                     // + stdDev
                     // + " -- rounded to zero.");
-                    stdDev = 0;
+                    m_stdDev = 0;
                 }
-                stdDev = Math.sqrt(stdDev);
+                m_stdDev = Math.sqrt(m_stdDev);
             }
         }
     }

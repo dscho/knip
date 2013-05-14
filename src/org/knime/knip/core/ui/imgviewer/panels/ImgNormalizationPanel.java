@@ -76,9 +76,9 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 
 /**
  * Settings to enhance the contrast of an image.
- * 
+ *
  * Publishes {@link NormalizationParametersChgEvent}.
- * 
+ *
  * @author dietzc, hornm, fschoenenberger, University of Konstanz
  * @param <T>
  * @param <I>
@@ -86,9 +86,9 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>> extends ViewerComponent {
 
     // 0..400 with steps of 1 <=> (0..50 with steps of 0.125) * 8
-    private final int SATURATION_SLIDER_MAX = 400;
+    private static final int SATURATION_SLIDER_MAX = 400;
 
-    private final float SATURATION_SLIDER_FACTOR = 8;
+    private static final float SATURATION_SLIDER_FACTOR = 8;
 
     /**
      *
@@ -115,10 +115,10 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>> exte
 
     /**
      * Creates {@link ImgNormalizationPanel} with the given default value for normalization.
-     * 
+     *
      * @param saturation the default saturation
-     * 
-     * 
+     *
+     *
      * @param normalize whether normalization should be enabled
      */
     public ImgNormalizationPanel(final double sat, final boolean normalize) {

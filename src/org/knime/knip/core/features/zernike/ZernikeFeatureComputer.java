@@ -48,7 +48,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * default constructor. initializes the data structures
      *
-     * @param image the image
+     * @param m_img the image
      * @param mask the mask
      */
     public ZernikeFeatureComputer(final IterableInterval<T> interval) {

@@ -26,91 +26,91 @@ package org.knime.knip.core.data.algebra;
  *************************************************************************/
 
 public class Complex {
-    private final double re; // the real part
+    private final double m_re; // the real part
 
-    private final double im; // the imaginary part
+    private final double m_im; // the imaginary part
 
     /** the maximum value that can be stored in an unsigned byte as integer. */
     private static final int UNSIGNEDBYTE_MAX = (1 << Byte.SIZE) - 1;
 
     // create a new object with the given real and imaginary parts
     public Complex(final double real, final double imag) {
-        re = real;
-        im = imag;
+        m_re = real;
+        m_im = imag;
     }
 
     // return a string representation of the invoking Complex object
     @Override
     public String toString() {
-        if (im == 0) {
-            return re + "";
+        if (m_im == 0) {
+            return m_re + "";
         }
-        if (re == 0) {
-            return im + "i";
+        if (m_re == 0) {
+            return m_im + "i";
         }
-        if (im < 0) {
-            return re + " - " + (-im) + "i";
+        if (m_im < 0) {
+            return m_re + " - " + (-m_im) + "i";
         }
-        return re + " + " + im + "i";
+        return m_re + " + " + m_im + "i";
     }
 
     // return abs/modulus/magnitude and angle/phase/argument
     public double abs() {
-        return Math.hypot(re, im);
+        return Math.hypot(m_re, m_im);
     } // Math.sqrt(re*re + im*im)
 
     public double phase() {
-        return Math.atan2(im, re);
+        return Math.atan2(m_im, m_re);
     } // between -pi and pi
 
     // return a new Complex object whose value is (this + b)
     public Complex plus(final Complex b) {
         final Complex a = this; // invoking object
-        final double real = a.re + b.re;
-        final double imag = a.im + b.im;
+        final double real = a.m_re + b.m_re;
+        final double imag = a.m_im + b.m_im;
         return new Complex(real, imag);
     }
 
     // return a new Complex object whose value is (this - b)
     public Complex minus(final Complex b) {
         final Complex a = this;
-        final double real = a.re - b.re;
-        final double imag = a.im - b.im;
+        final double real = a.m_re - b.m_re;
+        final double imag = a.m_im - b.m_im;
         return new Complex(real, imag);
     }
 
     // return a new Complex object whose value is (this * b)
     public Complex times(final Complex b) {
         final Complex a = this;
-        final double real = (a.re * b.re) - (a.im * b.im);
-        final double imag = (a.re * b.im) + (a.im * b.re);
+        final double real = (a.m_re * b.m_re) - (a.m_im * b.m_im);
+        final double imag = (a.m_re * b.m_im) + (a.m_im * b.m_re);
         return new Complex(real, imag);
     }
 
     // scalar multiplication
     // return a new object whose value is (this * alpha)
     public Complex times(final double alpha) {
-        return new Complex(alpha * re, alpha * im);
+        return new Complex(alpha * m_re, alpha * m_im);
     }
 
     // return a new Complex object whose value is the conjugate of this
     public Complex conjugate() {
-        return new Complex(re, -im);
+        return new Complex(m_re, -m_im);
     }
 
     // return a new Complex object whose value is the reciprocal of this
     public Complex reciprocal() {
-        final double scale = (re * re) + (im * im);
-        return new Complex(re / scale, -im / scale);
+        final double scale = (m_re * m_re) + (m_im * m_im);
+        return new Complex(m_re / scale, -m_im / scale);
     }
 
     // return the real or imaginary part
     public double re() {
-        return re;
+        return m_re;
     }
 
     public double im() {
-        return im;
+        return m_im;
     }
 
     // return a / b
@@ -122,17 +122,17 @@ public class Complex {
     // return a new Complex object whose value is the complex exponential of
     // this
     public Complex exp() {
-        return new Complex(Math.exp(re) * Math.cos(im), Math.exp(re) * Math.sin(im));
+        return new Complex(Math.exp(m_re) * Math.cos(m_im), Math.exp(m_re) * Math.sin(m_im));
     }
 
     // return a new Complex object whose value is the complex sine of this
     public Complex sin() {
-        return new Complex(Math.sin(re) * Math.cosh(im), Math.cos(re) * Math.sinh(im));
+        return new Complex(Math.sin(m_re) * Math.cosh(m_im), Math.cos(m_re) * Math.sinh(m_im));
     }
 
     // return a new Complex object whose value is the complex cosine of this
     public Complex cos() {
-        return new Complex(Math.cos(re) * Math.cosh(im), -Math.sin(re) * Math.sinh(im));
+        return new Complex(Math.cos(m_re) * Math.cosh(m_im), -Math.sin(m_re) * Math.sinh(m_im));
     }
 
     // return a new Complex object whose value is the complex tangent of
@@ -143,8 +143,8 @@ public class Complex {
 
     // a static version of plus
     public static Complex plus(final Complex a, final Complex b) {
-        final double real = a.re + b.re;
-        final double imag = a.im + b.im;
+        final double real = a.m_re + b.m_re;
+        final double imag = a.m_im + b.m_im;
         final Complex sum = new Complex(real, imag);
         return sum;
     }
@@ -186,7 +186,7 @@ public class Complex {
     }
 
     public double getMagnitude() {
-        return Math.sqrt((re * re) + (im * im));
+        return Math.sqrt((m_re * m_re) + (m_im * m_im));
     }
 
     public static void printComplexVector(final Complex[] g, final String title) {
@@ -195,8 +195,8 @@ public class Complex {
             if (g[i] == null) {
                 System.out.println(i + ": ******");
             } else {
-                double gr = g[i].re;
-                double gi = g[i].im;
+                double gr = g[i].m_re;
+                double gi = g[i].m_im;
                 gr = (Math.rint(gr * 1000) / 1000);
                 gi = (Math.rint(gi * 1000) / 1000);
                 if (gi >= 0) {

@@ -23,8 +23,8 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 /**
  * Creates an awt image from a plane selection, labeling and labeling renderer. Propagates {@link AWTImageChgEvent}.
- * 
- * @author hornm, University of Konstanz
+ *
+ * @author hornm, dietzc University of Konstanz
  */
 public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTImageProvider<LabelingType<L>> {
 
@@ -39,7 +39,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
 
     protected LabelingMapping<L> m_labelMapping;
 
-    private int m_ColorMapNr = SegmentColorTable.getColorMapNr();
+    private int m_colorMapNr = SegmentColorTable.getColorMapNr();
 
     private Color m_boundingBoxColor = SegmentColorTable.getBoundingBoxColor();
 
@@ -58,7 +58,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
 
     @EventListener
     public void onLabelColoringChangeEvent(final LabelColoringChangeEvent e) {
-        m_ColorMapNr = e.getColorMapNr();
+        m_colorMapNr = e.getColorMapNr();
         m_boundingBoxColor = e.getBoundingBoxColor();
     }
 
@@ -82,7 +82,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
         hash *= 31;
         hash += m_boundingBoxColor.hashCode();
         hash *= 31;
-        hash += m_ColorMapNr;
+        hash += m_colorMapNr;
         hash *= 31;
         if (m_withLabelStrings) {
             hash += 1;

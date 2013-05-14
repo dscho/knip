@@ -151,8 +151,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
 
     private CalibratedSpace m_calibratedSpace;
 
-    // private JTextField m_totalField;
-
     public PlaneSelectionPanel() {
         super("Plane selection", false);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -689,14 +687,14 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
 
     // Action for our key binding to perform when bound event occurs
     private class ForwardBackwardAction extends AbstractAction {
-        private final JScrollBar slider;
+        private final JScrollBar m_slider;
 
-        private final int scrollableIncrement;
+        private final int m_scrollableIncrement;
 
         public ForwardBackwardAction(final String name, final JScrollBar slider, final int scrollableIncrement) {
             super(name);
-            this.slider = slider;
-            this.scrollableIncrement = scrollableIncrement;
+            this.m_slider = slider;
+            this.m_scrollableIncrement = scrollableIncrement;
         }
 
         @Override
@@ -709,20 +707,20 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
             }
 
             final String name = getValue(Action.NAME).toString();
-            int value = slider.getValue();
+            int value = m_slider.getValue();
             if (name.equals("FORWARD")) {
-                value += scrollableIncrement;
+                value += m_scrollableIncrement;
                 if (value >= m_totalSlider.getMaximum()) {
                     return;
                 }
 
-                slider.setValue(value);
+                m_slider.setValue(value);
             } else if (name.equals("BACKWARD")) {
-                value -= scrollableIncrement;
+                value -= m_scrollableIncrement;
                 if (value < 0) {
                     return;
                 }
-                slider.setValue(value);
+                m_slider.setValue(value);
             }
         }
     }

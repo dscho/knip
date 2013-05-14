@@ -44,9 +44,6 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
      */
     private static final long serialVersionUID = 4797555800668312421L;
 
-    /**
-     * The bitmap mask.
-     */
     private Img<BitType> m_mask = null;
 
     private long[] m_center;
@@ -290,11 +287,11 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     }
 
     protected class ContourIterator implements Iterator<int[]> {
-        protected int i = -1;
+        protected int m_i = -1;
 
         @Override
         public boolean hasNext() {
-            return i < (length() - 1);
+            return m_i < (length() - 1);
         }
 
         @Override
@@ -307,8 +304,8 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            i++;
-            return new int[]{xpoints[i], ypoints[i]};
+            m_i++;
+            return new int[]{xpoints[m_i], ypoints[m_i]};
         }
 
     }

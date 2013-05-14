@@ -51,19 +51,19 @@
 package org.knime.knip.core.data;
 
 /**
- * 
- * @author hornm, University of Konstanz
+ *
+ * @author dietzc, University of Konstanz
  */
 public class IntegerLabelGenerator implements LabelGenerator<Integer> {
 
-    private int label = 1;
+    private int m_label = 1;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void reset() {
-        label = 1;
+        m_label = 1;
 
     }
 
@@ -72,7 +72,7 @@ public class IntegerLabelGenerator implements LabelGenerator<Integer> {
      */
     @Override
     public Integer nextLabel() {
-        return Integer.valueOf(label++);
+        return Integer.valueOf(m_label++);
     }
 
 }

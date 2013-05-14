@@ -58,27 +58,27 @@ import net.imglib2.type.numeric.integer.IntType;
  * Watershed algorithms. The watershed algorithm segments and labels an image using an analogy to a landscape. The image
  * intensities are turned into the z-height of the landscape and the landscape is "filled with water" and the bodies of
  * water label the landscape's pixels. Here is the reference for the original paper:
- * 
+ *
  * Lee Vincent, Pierre Soille, Watersheds in digital spaces: An efficient algorithm based on immersion simulations, IEEE
  * Trans. Pattern Anal. Machine Intell., 13(6) 583-598 (1991)
- * 
+ *
  * Watersheds are often performed on the gradient of an intensity image or one where the edges of the object boundaries
  * have been enhanced. The resulting image has a depressed object interior and a ridge which constrains the watershed
  * boundary.
- * 
+ *
  * @author Lee Kamentsky
  */
 public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<L>> implements
-OutputAlgorithm<Labeling<L>> {
+        OutputAlgorithm<Labeling<L>> {
 
     private static class PixelIntensity<U extends Comparable<U>> implements Comparable<PixelIntensity<U>> {
-        protected final long index;
+        protected final long m_index;
 
-        protected final long age;
+        protected final long m_age;
 
-        protected final double intensity;
+        protected final double m_intensity;
 
-        protected final List<U> labeling;
+        protected final List<U> m_labeling;
 
         public PixelIntensity(final long[] position, final long[] dimensions, final double intensity, final long age,
                               final List<U> labeling) {
@@ -89,23 +89,23 @@ OutputAlgorithm<Labeling<L>> {
                 multiplier *= dimensions[i];
             }
 
-            this.index = index;
-            this.intensity = intensity;
-            this.labeling = labeling;
-            this.age = age;
+            this.m_index = index;
+            this.m_intensity = intensity;
+            this.m_labeling = labeling;
+            this.m_age = age;
         }
 
         @Override
         public int compareTo(final PixelIntensity<U> other) {
-            int result = Double.compare(intensity, other.intensity);
+            int result = Double.compare(m_intensity, other.m_intensity);
             if (result == 0) {
-                result = Double.compare(age, other.age);
+                result = Double.compare(m_age, other.m_age);
             }
             return result;
         }
 
         void getPosition(final long[] position, final long[] dimensions) {
-            long idx = index;
+            long idx = m_index;
             for (int i = 0; i < dimensions.length; i++) {
                 position[i] = (int)(idx % dimensions[i]);
                 idx /= dimensions[i];
@@ -113,76 +113,76 @@ OutputAlgorithm<Labeling<L>> {
         }
 
         List<U> getLabeling() {
-            return labeling;
+            return m_labeling;
         }
     }
 
-    protected Img<T> image;
+    protected Img<T> m_img;
 
-    protected Labeling<L> seeds;
+    protected Labeling<L> m_seeds;
 
-    private long[][] structuringElement;
+    private long[][] m_structuringElement;
 
-    protected Labeling<L> output;
+    protected Labeling<L> m_output;
 
-    private String errorMessage;
+    private String m_errorMessage;
 
-    private Double threshold = null;
+    private Double m_threshold = null;
 
     /**
      * Provide the intensity image to be watershedded.
-     * 
-     * @param image the intensity image that defines the watershed landscape. Lower values will be labeled first.
+     *
+     * @param img the intensity image that defines the watershed landscape. Lower values will be labeled first.
      */
-    public void setIntensityImage(final Img<T> image) {
-        this.image = image;
+    public void setIntensityImage(final Img<T> img) {
+        this.m_img = img;
     }
 
     /**
      * Provide the seeds that mark the watersheds.
-     * 
+     *
      * @param seeds a labeling of the space, defining the first pixels in the space to be labeled. The seeded pixels
      *            will be similarly labeled in the output as will be their watershed neighbors.
      */
     public void setSeeds(final Labeling<L> seeds) {
-        this.seeds = seeds;
+        this.m_seeds = seeds;
     }
 
     /**
      * Set the structuring element that defines the connectivity
-     * 
+     *
      * @param structuringElement an array of offsets where each element of the array gives the offset of a connected
      *            pixel from a pixel of interest. You can use AllConnectedComponents.getStructuringElement to get an
      *            8-connected (or N-dimensional equivalent) structuring element (all adjacent pixels + diagonals).
      */
     public void setStructuringElement(final long[][] structuringElement) {
-        this.structuringElement = structuringElement.clone();
+        this.m_structuringElement = structuringElement.clone();
     }
 
     /**
      * Set the output labeling where the results will be stored. The class will provide one if none is supplied.
-     * 
+     *
      * @param outputLabeling
      */
     public void setOutputLabeling(final Labeling<L> outputLabeling) {
-        output = outputLabeling;
+        m_output = outputLabeling;
     }
 
     /**
      * Set the threshold where the watershed should stop no matter if another water basin was reached.
-     * 
+     *
      * @param threshold the threshold value (i.e. the upper bound), it stop growing if the pixel intensitiy is equal to
      *            the threshold
      */
     public void setThreshold(final double threshold) {
-        this.threshold = new Double(threshold);
+        this.m_threshold = new Double(threshold);
     }
 
     /**
      * The seeded watershed uses a pre-existing labeling of the space where the labels act as seeds for the output
      * watershed. The analogy would be to use dyed liquids emanating from the seeded pixels, flowing to the local minima
      * and then filling individual watersheds until the liquids meet at the boundaries.
-     * 
+     *
      * This implementation breaks ties by assigning the pixel to the label that occupied an adjacent pixel first.
      */
     @Override
@@ -191,15 +191,15 @@ OutputAlgorithm<Labeling<L>> {
             return false;
         }
 
-        if (structuringElement == null) {
-            structuringElement = AllConnectedComponents.getStructuringElement(image.numDimensions());
+        if (m_structuringElement == null) {
+            m_structuringElement = AllConnectedComponents.getStructuringElement(m_img.numDimensions());
         }
-        if (output == null) {
-            final long[] dimensions = new long[image.numDimensions()];
-            image.dimensions(dimensions);
+        if (m_output == null) {
+            final long[] dimensions = new long[m_img.numDimensions()];
+            m_img.dimensions(dimensions);
             final NativeImgLabeling<L, IntType> o =
                     new NativeImgLabeling<L, IntType>(new ArrayImgFactory<IntType>().create(dimensions, new IntType()));
-            output = o;
+            m_output = o;
         }
         /*
          * Make an OutOfBounds for the labels that returns empty labels
@@ -209,23 +209,23 @@ OutputAlgorithm<Labeling<L>> {
          */
         final OutOfBoundsFactory<LabelingType<L>, Labeling<L>> factory =
                 new LabelingOutOfBoundsRandomAccessFactory<L, Labeling<L>>();
-        final OutOfBounds<LabelingType<L>> outputAccess = factory.create(output);
+        final OutOfBounds<LabelingType<L>> outputAccess = factory.create(m_output);
 
-        final T maxVal = image.firstElement().createVariable();
+        final T maxVal = m_img.firstElement().createVariable();
         maxVal.setReal(maxVal.getMaxValue());
         final OutOfBoundsFactory<T, Img<T>> oobImageFactory = new OutOfBoundsConstantValueFactory<T, Img<T>>(maxVal);
-        final OutOfBounds<T> imageAccess = oobImageFactory.create(image);
+        final OutOfBounds<T> imageAccess = oobImageFactory.create(m_img);
 
         /*
          * Start by loading up a priority queue with the seeded pixels
          */
         final PriorityQueue<PixelIntensity<L>> pq = new PriorityQueue<PixelIntensity<L>>();
-        final Cursor<LabelingType<L>> c = seeds.localizingCursor();
+        final Cursor<LabelingType<L>> c = m_seeds.localizingCursor();
 
-        final long[] dimensions = new long[image.numDimensions()];
-        output.dimensions(dimensions);
-        final long[] position = new long[image.numDimensions()];
-        final long[] destPosition = new long[image.numDimensions()];
+        final long[] dimensions = new long[m_img.numDimensions()];
+        m_output.dimensions(dimensions);
+        final long[] position = new long[m_img.numDimensions()];
+        final long[] destPosition = new long[m_img.numDimensions()];
         long age = 0;
 
         while (c.hasNext()) {
@@ -245,7 +245,7 @@ OutputAlgorithm<Labeling<L>> {
                 continue;
             }
             final double intensity = imageAccess.get().getRealDouble();
-            if (!((threshold != null) && (intensity >= threshold.doubleValue()))) {
+            if (!((m_threshold != null) && (intensity >= m_threshold.doubleValue()))) {
                 final LabelingType<L> tDest = outputAccess.get();
                 l = tDest.intern(l);
                 tDest.setLabeling(l);
@@ -257,16 +257,16 @@ OutputAlgorithm<Labeling<L>> {
          * offsets so we can use Positionable.move to scan the image
          * array.
          */
-        final long[][] strelMoves = new long[structuringElement.length][];
-        final long[] currentOffset = new long[image.numDimensions()];
-        for (int i = 0; i < structuringElement.length; i++) {
-            strelMoves[i] = new long[image.numDimensions()];
-            for (int j = 0; j < image.numDimensions(); j++) {
-                strelMoves[i][j] = structuringElement[i][j] - currentOffset[j];
+        final long[][] strelMoves = new long[m_structuringElement.length][];
+        final long[] currentOffset = new long[m_img.numDimensions()];
+        for (int i = 0; i < m_structuringElement.length; i++) {
+            strelMoves[i] = new long[m_img.numDimensions()];
+            for (int j = 0; j < m_img.numDimensions(); j++) {
+                strelMoves[i][j] = m_structuringElement[i][j] - currentOffset[j];
                 if (i > 0) {
-                    currentOffset[j] += structuringElement[i][j] - structuringElement[i - 1][j];
+                    currentOffset[j] += m_structuringElement[i][j] - m_structuringElement[i - 1][j];
                 } else {
-                    currentOffset[j] += structuringElement[i][j];
+                    currentOffset[j] += m_structuringElement[i][j];
                 }
             }
         }
@@ -295,7 +295,7 @@ OutputAlgorithm<Labeling<L>> {
                 }
                 outputLabelingType.setLabeling(l);
                 final double intensity = imageAccess.get().getRealDouble();
-                if (!((threshold != null) && (intensity >= threshold.doubleValue()))) {
+                if (!((m_threshold != null) && (intensity >= m_threshold.doubleValue()))) {
                     outputAccess.localize(destPosition);
                     pq.add(new PixelIntensity<L>(destPosition, dimensions, intensity, age++, l));
                 }
@@ -306,29 +306,29 @@ OutputAlgorithm<Labeling<L>> {
 
     @Override
     public boolean checkInput() {
-        if (seeds == null) {
-            errorMessage = "The seed labeling was not provided. Call \"setSeeds\" to do this";
+        if (m_seeds == null) {
+            m_errorMessage = "The seed labeling was not provided. Call \"setSeeds\" to do this";
             return false;
         }
-        if (image == null) {
-            errorMessage = "The intensity image was not provided. Call \"setIntensityImage\" to do this";
+        if (m_img == null) {
+            m_errorMessage = "The intensity image was not provided. Call \"setIntensityImage\" to do this";
             return false;
         }
-        if (seeds.numDimensions() != image.numDimensions()) {
-            errorMessage =
+        if (m_seeds.numDimensions() != m_img.numDimensions()) {
+            m_errorMessage =
                     String.format("The dimensionality of the seed labeling (%dD) does not match that of the intensity image (%dD)",
-                                  seeds.numDimensions(), image.numDimensions());
+                                  m_seeds.numDimensions(), m_img.numDimensions());
             return false;
         }
-        if ((output != null) && (seeds.numDimensions() != output.numDimensions())) {
-            errorMessage =
+        if ((m_output != null) && (m_seeds.numDimensions() != m_output.numDimensions())) {
+            m_errorMessage =
                     String.format("The dimensionality of the seed labeling (%dD) does not match that of the output labeling (%dD)",
-                                  seeds.numDimensions(), output.numDimensions());
+                                  m_seeds.numDimensions(), m_output.numDimensions());
             return false;
         }
-        for (int i = 0; i < structuringElement.length; i++) {
-            if (structuringElement[i].length != seeds.numDimensions()) {
-                errorMessage =
+        for (int i = 0; i < m_structuringElement.length; i++) {
+            if (m_structuringElement[i].length != m_seeds.numDimensions()) {
+                m_errorMessage =
                         "Some or all of the structuring element offsets do not have the same number of dimensions as the image";
                 return false;
             }
@@ -338,11 +338,11 @@ OutputAlgorithm<Labeling<L>> {
 
     @Override
     public String getErrorMessage() {
-        return errorMessage;
+        return m_errorMessage;
     }
 
     @Override
     public Labeling<L> getResult() {
-        return output;
+        return m_output;
     }
 }

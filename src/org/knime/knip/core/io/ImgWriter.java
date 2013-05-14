@@ -88,19 +88,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides the functionality to write {@link Img}s using the <a href =
  * "http://loci.wisc.edu/bio-formats/">bioformats</a>-library.
- * 
- * 
+ *
+ *
  * @author hornm, University of Konstanz
  */
 public class ImgWriter {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(ImgWriter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImgWriter.class);
 
     /*
      * List of the names of the available writers associated with specific
      * formats.
      */
-    private String[] WRITERS;
+    private String[] m_writers;
 
     /* map from the writer names to the actual writers */
     private HashMap<String, IFormatWriter> m_mapWriters = null;
@@ -122,11 +122,11 @@ public class ImgWriter {
             final ClassList<IFormatWriter> defaultClasses = ImageWriter.getDefaultWriterClasses();
             writer = new loci.formats.ImageWriter(defaultClasses);
             final IFormatWriter[] writers = writer.getWriters();
-            WRITERS = new String[writers.length];
+            m_writers = new String[writers.length];
             m_mapWriters = new HashMap<String, IFormatWriter>();
             for (int i = 0; i < writers.length; i++) {
 
-                WRITERS[i] = writers[i].getFormat() + " (" + writers[i].getSuffixes()[0] + ")";
+                m_writers[i] = writers[i].getFormat() + " (" + writers[i].getSuffixes()[0] + ")";
                 // String[] suffixes = writers[i].getSuffixes();
                 // for (int j = 0; j < suffixes.length - 1; j++)
                 // {
@@ -135,7 +135,7 @@ public class ImgWriter {
                 // WRITERS[i] += suffixes[suffixes.length - 1] +
                 // ")";
 
-                m_mapWriters.put(WRITERS[i], writers[i]);
+                m_mapWriters.put(m_writers[i], writers[i]);
 
             }
         }
@@ -143,7 +143,7 @@ public class ImgWriter {
 
     /**
      * Returns the list of the possible compression types of the specific writer.
-     * 
+     *
      * @param writer the name of the writer
      * @return the list of possible compressions, <code>null</code> if there are no compression types
      */
@@ -162,12 +162,12 @@ public class ImgWriter {
      */
     public String[] getWriters() {
         retrieveSupportedWriters();
-        return WRITERS;
+        return m_writers;
     }
 
     /**
      * Gets one suffix normally used to identify the format associated with the specific writer.
-     * 
+     *
      * @param writer the writer
      * @return the suffix, e.g. '.tif'
      */
@@ -182,10 +182,10 @@ public class ImgWriter {
 
     /**
      * Writes the image plane stack to the given file. The resulting image format is determined by the given writer.
-     * 
+     *
      * @param img the image to be written
      * @param <T> the image type
-     * 
+     *
      * @param outfile the absolute path of the file to write in
      * @param writer the writer
      * @param compressionType the compression type, if available, can be <code>null</code>.
@@ -200,7 +200,7 @@ public class ImgWriter {
      */
     public <T extends RealType<T>> void writeImage(final Img<T> img, final String outfile, final String writer,
                                                    final String compressionType, final int[] dimMapping)
-                                                           throws FormatException, IOException, MissingLibraryException, ServiceException, DependencyException {
+            throws FormatException, IOException, MissingLibraryException, ServiceException, DependencyException {
         retrieveSupportedWriters();
         writeImage(img, outfile, m_mapWriters.get(writer), compressionType, dimMapping);
 
@@ -208,10 +208,10 @@ public class ImgWriter {
 
     /**
      * Writes the image plane stack to the given file. The resulting image format is determined by the given writer.
-     * 
+     *
      * @param img the image to be written
      * @param <T> the image type
-     * 
+     *
      * @param outfile the absolute path of the file to write in
      * @param writer the writer
      * @param compressionType the compression type, if available, can be <code>null</code>.
@@ -226,7 +226,7 @@ public class ImgWriter {
      */
     public <T extends RealType<T>> void writeImage(final Img<T> img, final String outfile, final IFormatWriter writer,
                                                    final String compressionType, final int[] dimMapping)
-                                                           throws FormatException, IOException, MissingLibraryException, ServiceException, DependencyException {
+            throws FormatException, IOException, MissingLibraryException, ServiceException, DependencyException {
 
         // create metadata object with minimum required metadata
         // fields
@@ -376,7 +376,7 @@ public class ImgWriter {
                             }
                         }
                         break;
-                        // five or more dimensions
+                    // five or more dimensions
                     default:
                         pos = new long[numDim];
                         for (int j = 0; j < map.length; j++) {
@@ -459,7 +459,7 @@ public class ImgWriter {
 
     /**
      * All operations to be done to close the image writer.
-     * 
+     *
      * @throws IOException
      */
     public void close() throws IOException {

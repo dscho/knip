@@ -69,26 +69,26 @@ import org.knime.knip.core.ui.event.EventService;
 
 /**
  * A Panel used to control the Transferfunctions and the actually drawn values of the image to be shown.
- * 
+ *
  * @author Clemens M�thing (clemens.muething@uni-konstanz.de)
  */
 public class TransferFunctionControlPanel extends JPanel implements TransferFunctionChgListener {
 
     public final class Memento {
 
-        private final HistogramPainter.Scale scale;
+        private TransferFunctionBundle m_currentBundle;
 
-        private TransferFunctionBundle currentBundle;
+        private final HistogramPainter.Scale m_scale;
 
-        private final Map<TransferFunctionBundle, TransferFunctionColor> map =
+        private final Map<TransferFunctionBundle, TransferFunctionColor> m_map =
                 new HashMap<TransferFunctionBundle, TransferFunctionColor>();
 
-        private final Histogram histogram;
+        private final Histogram m_histogram;
 
         public Memento(final HistogramPainter.Scale s, final TransferFunctionBundle cb, final Histogram hist) {
-            scale = s;
-            currentBundle = cb;
-            histogram = hist;
+            m_scale = s;
+            m_currentBundle = cb;
+            m_histogram = hist;
         }
     }
 
@@ -126,7 +126,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
             final TransferFunctionColor color = (TransferFunctionColor)m_focusBox.getSelectedItem();
 
             m_transferPanel.setTransferFocus(color);
-            m_memento.map.put(m_memento.currentBundle, color);
+            m_memento.m_map.put(m_memento.m_currentBundle, color);
         }
     }
 
@@ -172,7 +172,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Sets up a new TransferPanel.
-     * 
+     *
      * @param service The {@link EventService} to be used
      */
     public TransferFunctionControlPanel() {
@@ -244,27 +244,27 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
         final GroupLayout.ParallelGroup horizontal1 =
                 layout.createParallelGroup().addComponent(m_scaleBox, width, width, width)
-                .addComponent(m_bundleBox, width, width, width).addComponent(m_focusBox, width, width, width)
-                .addComponent(m_buttonApply);
+                        .addComponent(m_bundleBox, width, width, width).addComponent(m_focusBox, width, width, width)
+                        .addComponent(m_buttonApply);
 
         // do not stretch vertically
         final GroupLayout.SequentialGroup verticalButtons =
                 layout.createSequentialGroup()
-                .addComponent(m_scaleBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-                              GroupLayout.PREFERRED_SIZE)
-                              .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                              .addComponent(m_bundleBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-                                            GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(m_focusBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-                                                          GroupLayout.PREFERRED_SIZE);
+                        .addComponent(m_scaleBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+                                      GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(m_bundleBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+                                      GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(m_focusBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+                                      GroupLayout.PREFERRED_SIZE);
 
         final GroupLayout.ParallelGroup vertical0 =
                 layout.createParallelGroup().addComponent(m_transferPanel).addGroup(verticalButtons);
 
         final GroupLayout.ParallelGroup vertical1 =
                 layout.createParallelGroup().addComponent(m_boxNormalize).addComponent(glue)
-                .addComponent(m_boxOnlyOneFunc);
+                        .addComponent(m_boxOnlyOneFunc);
 
         final GroupLayout.ParallelGroup vertical2 =
                 layout.createParallelGroup().addComponent(m_boxAutoApply).addComponent(m_buttonApply);
@@ -272,12 +272,12 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
         // Set up the main sequential layouts
         final GroupLayout.SequentialGroup horizontal =
                 layout.createSequentialGroup().addGroup(horizontal0)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addGroup(horizontal1);
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addGroup(horizontal1);
 
         final GroupLayout.SequentialGroup vertical =
                 layout.createSequentialGroup().addGroup(vertical0)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addGroup(vertical1)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(vertical2);
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addGroup(vertical1)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(vertical2);
 
         // add everything to the layout
         layout.setHorizontalGroup(horizontal);
@@ -298,7 +298,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Used to determine the longest of the ComboBoxes.
-     * 
+     *
      * @return the largest dimension
      */
     private int getLongestComboBox() {
@@ -316,7 +316,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Get the current state of this control.
-     * 
+     *
      * @return the current state
      */
     public final Memento getState() {
@@ -325,9 +325,9 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Set the state of the control back.
-     * 
+     *
      * @param memento the state to set back to
-     * 
+     *
      * @return the current state
      */
     public final Memento setState(final Memento memento) {
@@ -340,46 +340,46 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
         m_memento = memento;
 
         // data
-        m_transferPanel.setHistogram(m_memento.histogram);
+        m_transferPanel.setHistogram(m_memento.m_histogram);
 
         // selected scale
-        m_scaleBox.setSelectedItem(m_memento.scale);
+        m_scaleBox.setSelectedItem(m_memento.m_scale);
 
         // list of bundles
         // remove the listener so that we do not get constant events
         m_bundleBox.removeActionListener(m_bundleAdapter);
 
         m_bundleBox.removeAllItems();
-        for (final TransferFunctionBundle b : m_memento.map.keySet()) {
+        for (final TransferFunctionBundle b : m_memento.m_map.keySet()) {
             m_bundleBox.addItem(b);
         }
 
-        m_bundleBox.setSelectedItem(m_memento.currentBundle);
+        m_bundleBox.setSelectedItem(m_memento.m_currentBundle);
 
         m_bundleBox.addActionListener(m_bundleAdapter);
 
         // current bundle
-        setActiveBundle(m_memento.currentBundle);
+        setActiveBundle(m_memento.m_currentBundle);
 
         return oldMemento;
     }
 
     /**
      * Convenience function to call getBundle with current mode.
-     * 
+     *
      * @return the bundle of the current mode
      */
     public final TransferFunctionBundle getBundle() {
-        return m_memento.currentBundle;
+        return m_memento.m_currentBundle;
     }
 
     /**
      * Create a new memento with new histogram data, but keep the state of the current TransferFunctionBundle.<br>
-     * 
+     *
      * To achieve this a deep copy of all currently set bundles is made and then put into this memento.
-     * 
+     *
      * @param hist the data for the histogram background
-     * 
+     *
      * @return the new memento
      */
     public final Memento createMemento(final Histogram hist) {
@@ -389,9 +389,9 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
     /**
      * Create a new memento using the passed data for the histogram, and copying the transfer functions from the passed
      * memento.<br>
-     * 
+     *
      * This will perform a deep copy of the functions in the passed memento.
-     * 
+     *
      * @param memento the memento used for copying the transfer functions
      * @param hist the new data
      * @return a new memento
@@ -402,10 +402,10 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
         TransferFunctionBundle current = null;
 
-        for (final TransferFunctionBundle b : memento.map.keySet()) {
+        for (final TransferFunctionBundle b : memento.m_map.keySet()) {
             final TransferFunctionBundle copy = b.copy();
 
-            if (b == memento.currentBundle) {
+            if (b == memento.m_currentBundle) {
                 current = copy;
             }
 
@@ -417,12 +417,12 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Create a new memento that can than be used to set the state.<br>
-     * 
+     *
      * I.e. if you want to set different data, first create an memento and then put it in the control.
-     * 
+     *
      * @param bundles a list of the bundles to display, the first element of this list will be active first
      * @param hist the data for the histogram
-     * 
+     *
      * @return the new memento
      */
     public final Memento createMemento(final List<TransferFunctionBundle> bundles, final Histogram hist) {
@@ -431,13 +431,13 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Create a new memento for that can than be used to set the state.<br>
-     * 
+     *
      * I.e. if you want to set different data, first create an memento and then put it in the control.
-     * 
+     *
      * @param bundles a list of the bundles to display, the first element of this list will be active first
      * @param hist the data for the histogram
      * @param current the bundle from the bundles list that should be active when this memento is put to use
-     * 
+     *
      * @return the new memento
      */
     public final Memento createMemento(final List<TransferFunctionBundle> bundles, final Histogram hist,
@@ -451,7 +451,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
         // set up the map
         for (final TransferFunctionBundle b : bundles) {
-            memento.map.put(b, b.getKeys().iterator().next());
+            memento.m_map.put(b, b.getKeys().iterator().next());
         }
 
         return memento;
@@ -459,19 +459,19 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Sets the mode this panel operates in and that of all its children.
-     * 
+     *
      * @param bundle the new active bundle
      */
     private void setActiveBundle(final TransferFunctionBundle bundle) {
 
         assert m_memento != null;
 
-        m_memento.currentBundle = bundle;
+        m_memento.m_currentBundle = bundle;
 
-        m_transferPanel.setBundle(m_memento.currentBundle);
+        m_transferPanel.setBundle(m_memento.m_currentBundle);
 
-        final Set<TransferFunctionColor> content = m_memento.currentBundle.getKeys();
-        final TransferFunctionColor focus = m_memento.map.get(m_memento.currentBundle);
+        final Set<TransferFunctionColor> content = m_memento.m_currentBundle.getKeys();
+        final TransferFunctionColor focus = m_memento.m_map.get(m_memento.m_currentBundle);
 
         // change contents or focus box
         // remove the adapter to not set focus to first inserted item
@@ -509,12 +509,12 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
     }
 
     public final TransferFunctionBundle getCurrentBundle() {
-        return m_memento.currentBundle;
+        return m_memento.m_currentBundle;
     }
 
     /**
      * Check wheter the only one function option is selected.
-     * 
+     *
      * @return true if force checkbox is selected.
      */
     public final boolean isOnlyOneFunc() {
@@ -527,7 +527,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Check wheter the autoapply option is currently given.
-     * 
+     *
      * @return true if autoapply checkbox is selected.
      */
     public final boolean isAutoApply() {

@@ -10,33 +10,38 @@ import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
+@SuppressWarnings("javadoc")
 public class Projector2D<A extends Type<A>, B extends Type<B>> extends Abstract2DProjector<A, B> {
 
-    final Converter<A, B> converter;
+    protected final IterableInterval<B> m_target;
 
-    final protected IterableInterval<B> target;
+    private final Converter<A, B> m_converter;
 
-    final int numDimensions;
+    private final int m_dimX;
 
-    private final int dimX;
+    private final int m_dimY;
 
-    private final int dimY;
+    private final RandomAccessibleInterval<A> m_source;
 
-    final int X = 0;
+    private static final int X = 0;
 
-    final int Y = 1;
+    private static final int Y = 1;
 
-    private final RandomAccessibleInterval<A> source;
-
+    /**
+     * @param dimX
+     * @param dimY
+     * @param source
+     * @param target
+     * @param converter
+     */
     public Projector2D(final int dimX, final int dimY, final RandomAccessibleInterval<A> source,
                        final IterableInterval<B> target, final Converter<A, B> converter) {
         super(source.numDimensions());
-        this.dimX = dimX;
-        this.dimY = dimY;
-        this.target = target;
-        this.source = source;
-        this.converter = converter;
-        this.numDimensions = source.numDimensions();
+        this.m_dimX = dimX;
+        this.m_dimY = dimY;
+        this.m_target = target;
+        this.m_source = source;
+        this.m_converter = converter;
     }
 
     @Override
@@ -46,20 +51,20 @@ public class Projector2D<A extends Type<A>, B extends Type<B>> extends Abstract2
             min[d] = max[d] = position[d];
         }
 
-        min[dimX] = target.min(X);
-        min[dimY] = target.min(Y);
-        max[dimX] = target.max(X);
-        max[dimY] = target.max(Y);
+        min[m_dimX] = m_target.min(X);
+        min[m_dimY] = m_target.min(Y);
+        max[m_dimX] = m_target.max(X);
+        max[m_dimY] = m_target.max(Y);
         final FinalInterval sourceInterval = new FinalInterval(min, max);
-        final RandomAccessibleInterval<A> subset = SubsetOperations.subsetview(source, sourceInterval);
+        final RandomAccessibleInterval<A> subset = SubsetOperations.subsetview(m_source, sourceInterval);
 
-        final Cursor<B> targetCursor = target.cursor();
+        final Cursor<B> targetCursor = m_target.cursor();
         final Cursor<A> sourceCursor = Views.iterable(subset).cursor();
 
         while (targetCursor.hasNext()) {
             targetCursor.fwd();
             sourceCursor.fwd();
-            converter.convert(sourceCursor.get(), targetCursor.get());
+            m_converter.convert(sourceCursor.get(), targetCursor.get());
         }
     }
 }

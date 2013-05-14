@@ -6,17 +6,17 @@ import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.type.numeric.RealType;
 
 public class ImgPlusFactory<T extends RealType<T>, V extends RealType<V>> implements
-UnaryObjectFactory<ImgPlus<T>, ImgPlus<V>> {
+        UnaryObjectFactory<ImgPlus<T>, ImgPlus<V>> {
 
-    private final V outType;
+    private final V m_outType;
 
     public ImgPlusFactory(final V outType) {
-        this.outType = outType;
+        this.m_outType = outType;
     }
 
     @Override
     public ImgPlus<V> instantiate(final ImgPlus<T> a) {
-        return new ImgPlus<V>(ImgUtils.createEmptyCopy(a, outType), a);
+        return new ImgPlus<V>(ImgUtils.createEmptyCopy(a, m_outType), a);
     }
 
     public static <T extends RealType<T>, V extends RealType<V>> ImgPlusFactory<T, V> get(final V outType) {
@@ -24,7 +24,7 @@ UnaryObjectFactory<ImgPlus<T>, ImgPlus<V>> {
     }
 
     public static <T extends RealType<T>, V extends RealType<V>> ImgPlusFactory<T, V>
-    get(final IterableInterval<V> interval) {
+            get(final IterableInterval<V> interval) {
         return new ImgPlusFactory<T, V>(interval.firstElement());
     }
 

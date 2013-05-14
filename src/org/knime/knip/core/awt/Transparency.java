@@ -68,11 +68,11 @@ public class Transparency {
         final ImageFilter filter = new RGBImageFilter() {
             // the color we are looking for... Alpha bits are set to
             // opaque
-            public int markerRGB = color.getRGB() | 0xFF000000;
+            public int m_markerRGB = color.getRGB() | 0xFF000000;
 
             @Override
             public final int filterRGB(final int x, final int y, final int rgb) {
-                if ((rgb | 0xFF000000) == markerRGB) {
+                if ((rgb | 0xFF000000) == m_markerRGB) {
                     // Mark the alpha bits as zero -
                     // transparent
                     return 0x00FFFFFF & rgb;
@@ -92,12 +92,12 @@ public class Transparency {
 
             // the color we are looking for... Alpha bits are set to
             // opaque
-            public int markerRGB = color.getRGB() | 0xFF000000;
+            public int m_markerRGB = color.getRGB() | 0xFF000000;
 
             @Override
             public final int filterRGB(final int x, final int y, final int rgb) {
 
-                if ((rgb | 0xFF000000) == markerRGB) {
+                if ((rgb | 0xFF000000) == m_markerRGB) {
                     // Mark the alpha bits as zero -
                     // transparent
                     return 0x00FFFFFF & rgb;

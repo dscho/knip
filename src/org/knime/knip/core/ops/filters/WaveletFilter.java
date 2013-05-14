@@ -33,38 +33,38 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
 
     private final ExecutorService m_executor;
 
-    private final double m_lambda_min;
+    private final double m_lambdaMin;
 
-    private final double m_lambda_max;
+    private final double m_lambdaMax;
 
     private final double m_ignorePercent;
 
     /* Inital ROI */
-    private RectangleRegionOfInterest m_SelectedRowRoi;
+    private RectangleRegionOfInterest m_selectedRowRoi;
 
     /* Inital origin of the sliding window */
-    private double[] m_SelectedRowRoiOrigin;
+    private double[] m_selectedRowRoiOrigin;
 
     /* Extend of the sliding window */
-    private double[] m_SelectedRowRoiExtend;
+    private double[] m_selectedRowRoiExtend;
 
     /* Region of interest SrcCur */
-    private Cursor<T> m_SelectedRowTempRoiCur;
+    private Cursor<T> m_selectedRowTempRoiCur;
 
     /* Region of interest SrcCur */
     private Cursor<T> m_srcCursor;
 
     /* Inital ROI */
-    private RectangleRegionOfInterest m_BeginRoi;
+    private RectangleRegionOfInterest m_beginRoi;
 
     /* Inital origin of the sliding window */
-    private double[] m_BeginRoiOrigin;
+    private double[] m_beginRoiOrigin;
 
     /* Extend of the sliding window */
-    private double[] m_BeginRoiExtend;
+    private double[] m_beginRoiExtend;
 
     /* Region of interest SrcCur */
-    private Cursor<T> m_BeginTempRoiCur;
+    private Cursor<T> m_beginTempRoiCur;
 
     /* Region of interest SrcCur */
     private int m_rowLength;
@@ -131,56 +131,56 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
         {
             for (int dim = 0; dim < numDim; ++dim) {
                 if (dimSrcCur[dim]) {
-                    if ((m_SelectedRowRoi == null)
-                            || ((m_SelectedRowRoiOrigin.length != m_SelectedRowRoi.numDimensions()) && (m_BeginRoi == null))
-                            || (m_BeginRoiOrigin.length != m_BeginRoi.numDimensions())) {
-                        m_SelectedRowRoiOrigin = new double[numDim];
-                        m_SelectedRowRoiExtend = new double[numDim];
-                        m_BeginRoiOrigin = new double[numDim];
-                        m_BeginRoiExtend = new double[numDim];
+                    if ((m_selectedRowRoi == null)
+                            || ((m_selectedRowRoiOrigin.length != m_selectedRowRoi.numDimensions()) && (m_beginRoi == null))
+                            || (m_beginRoiOrigin.length != m_beginRoi.numDimensions())) {
+                        m_selectedRowRoiOrigin = new double[numDim];
+                        m_selectedRowRoiExtend = new double[numDim];
+                        m_beginRoiOrigin = new double[numDim];
+                        m_beginRoiExtend = new double[numDim];
                     }
                     for (int d = 0; d < numDim; d++) {
                         if (dim == d) {
                             m_rowLength = (int)temp.dimension(d);
-                            m_SelectedRowRoiExtend[d] = temp.dimension(d);
-                            m_BeginRoiExtend[d] = 1;
+                            m_selectedRowRoiExtend[d] = temp.dimension(d);
+                            m_beginRoiExtend[d] = 1;
                         } else {
-                            m_SelectedRowRoiExtend[d] = 1;
-                            m_BeginRoiExtend[d] = temp.dimension(d);
+                            m_selectedRowRoiExtend[d] = 1;
+                            m_beginRoiExtend[d] = temp.dimension(d);
                         }
-                        m_SelectedRowRoiOrigin[d] = 0;
-                        m_BeginRoiOrigin[d] = 0;
+                        m_selectedRowRoiOrigin[d] = 0;
+                        m_beginRoiOrigin[d] = 0;
                     }
-                    m_BeginRoi = new RectangleRegionOfInterest(m_BeginRoiOrigin, m_BeginRoiExtend);
-                    m_BeginTempRoiCur = m_BeginRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
-                    m_BeginRoi.setOrigin(m_BeginRoiOrigin);
+                    m_beginRoi = new RectangleRegionOfInterest(m_beginRoiOrigin, m_beginRoiExtend);
+                    m_beginTempRoiCur = m_beginRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
+                    m_beginRoi.setOrigin(m_beginRoiOrigin);
 
-                    m_SelectedRowRoi = new RectangleRegionOfInterest(m_SelectedRowRoiOrigin, m_SelectedRowRoiExtend);
-                    m_SelectedRowTempRoiCur =
-                            m_SelectedRowRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
+                    m_selectedRowRoi = new RectangleRegionOfInterest(m_selectedRowRoiOrigin, m_selectedRowRoiExtend);
+                    m_selectedRowTempRoiCur =
+                            m_selectedRowRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
 
-                    while (m_BeginTempRoiCur.hasNext()) {
-                        m_BeginTempRoiCur.next();
-                        m_tempRandomAccess.setPosition(m_BeginTempRoiCur);
+                    while (m_beginTempRoiCur.hasNext()) {
+                        m_beginTempRoiCur.next();
+                        m_tempRandomAccess.setPosition(m_beginTempRoiCur);
                         final double[] pos = new double[numDim];
                         for (int d = 0; d < numDim; d++) {
                             pos[d] = m_tempRandomAccess.getDoublePosition(d);
                         }
-                        m_SelectedRowRoiOrigin = pos;
-                        m_SelectedRowRoi.setOrigin(m_SelectedRowRoiOrigin);
+                        m_selectedRowRoiOrigin = pos;
+                        m_selectedRowRoi.setOrigin(m_selectedRowRoiOrigin);
                         int p = 0;
                         final double[] row = new double[m_rowLength];
-                        while (m_SelectedRowTempRoiCur.hasNext()) {
-                            row[p++] = m_SelectedRowTempRoiCur.next().getRealDouble();
+                        while (m_selectedRowTempRoiCur.hasNext()) {
+                            row[p++] = m_selectedRowTempRoiCur.next().getRealDouble();
                         }
-                        m_SelectedRowTempRoiCur.reset();
+                        m_selectedRowTempRoiCur.reset();
                         final WaveletDecompositionThread wave = new WaveletDecompositionThread(row, pos);
                         final FutureTask<WaveletDecompositionThread> task =
                                 new FutureTask<WaveletDecompositionThread>(wave);
                         hashQueueDecomposition.add(task);
                         m_executor.execute(task);
                     }
-                    m_BeginTempRoiCur.reset();
+                    m_beginTempRoiCur.reset();
 
                     while (!hashQueueDecomposition.isEmpty()) {
                         final FutureTask<WaveletDecompositionThread> result = hashQueueDecomposition.poll();
@@ -219,8 +219,8 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
 
             while (m_tempCursor.hasNext()) {
 
-                if ((m_tempCursor.next().getRealDouble() < m_lambda_max)
-                        && (m_tempCursor.get().getRealDouble() > m_lambda_min)) {
+                if ((m_tempCursor.next().getRealDouble() < m_lambdaMax)
+                        && (m_tempCursor.get().getRealDouble() > m_lambdaMin)) {
                     m_tempCursor.get().setZero();
                 }
                 for (int i = 0; i < useDims.length; ++i) {
@@ -239,57 +239,57 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
 
             for (int dim = numDim - 1; 0 <= dim; --dim) {
                 if (dimSrcCur[dim]) {
-                    if ((m_SelectedRowRoi == null)
-                            || ((m_SelectedRowRoiOrigin.length != m_SelectedRowRoi.numDimensions()) && (m_BeginRoi == null))
-                            || (m_BeginRoiOrigin.length != m_BeginRoi.numDimensions())) {
-                        m_SelectedRowRoiOrigin = new double[numDim];
-                        m_SelectedRowRoiExtend = new double[numDim];
-                        m_BeginRoiOrigin = new double[numDim];
-                        m_BeginRoiExtend = new double[numDim];
+                    if ((m_selectedRowRoi == null)
+                            || ((m_selectedRowRoiOrigin.length != m_selectedRowRoi.numDimensions()) && (m_beginRoi == null))
+                            || (m_beginRoiOrigin.length != m_beginRoi.numDimensions())) {
+                        m_selectedRowRoiOrigin = new double[numDim];
+                        m_selectedRowRoiExtend = new double[numDim];
+                        m_beginRoiOrigin = new double[numDim];
+                        m_beginRoiExtend = new double[numDim];
                     }
                     for (int d = 0; d < numDim; d++) {
                         if (dim == d) {
                             m_rowLength = (int)temp.dimension(d);
-                            m_SelectedRowRoiExtend[d] = temp.dimension(d);
-                            m_BeginRoiExtend[d] = 1;
+                            m_selectedRowRoiExtend[d] = temp.dimension(d);
+                            m_beginRoiExtend[d] = 1;
                         } else {
-                            m_SelectedRowRoiExtend[d] = 1;
-                            m_BeginRoiExtend[d] = temp.dimension(d);
+                            m_selectedRowRoiExtend[d] = 1;
+                            m_beginRoiExtend[d] = temp.dimension(d);
                         }
-                        m_SelectedRowRoiOrigin[d] = 0;
-                        m_BeginRoiOrigin[d] = 0;
+                        m_selectedRowRoiOrigin[d] = 0;
+                        m_beginRoiOrigin[d] = 0;
                     }
-                    m_BeginRoi = new RectangleRegionOfInterest(m_BeginRoiOrigin, m_BeginRoiExtend);
-                    m_BeginTempRoiCur = m_BeginRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
-                    m_BeginRoi.setOrigin(m_BeginRoiOrigin);
+                    m_beginRoi = new RectangleRegionOfInterest(m_beginRoiOrigin, m_beginRoiExtend);
+                    m_beginTempRoiCur = m_beginRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
+                    m_beginRoi.setOrigin(m_beginRoiOrigin);
 
-                    m_SelectedRowRoi = new RectangleRegionOfInterest(m_SelectedRowRoiOrigin, m_SelectedRowRoiExtend);
-                    m_SelectedRowTempRoiCur =
-                            m_SelectedRowRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
+                    m_selectedRowRoi = new RectangleRegionOfInterest(m_selectedRowRoiOrigin, m_selectedRowRoiExtend);
+                    m_selectedRowTempRoiCur =
+                            m_selectedRowRoi.getIterableIntervalOverROI(Views.extendValue(temp, obj)).cursor();
                     // m_SelectedRowRoi.setOrigin(m_SelectedRowRoiOrigin);
 
-                    while (m_BeginTempRoiCur.hasNext()) {
-                        m_BeginTempRoiCur.next();
-                        m_tempRandomAccess.setPosition(m_BeginTempRoiCur);
+                    while (m_beginTempRoiCur.hasNext()) {
+                        m_beginTempRoiCur.next();
+                        m_tempRandomAccess.setPosition(m_beginTempRoiCur);
                         final double[] pos = new double[numDim];
                         for (int d = 0; d < numDim; d++) {
                             pos[d] = m_tempRandomAccess.getDoublePosition(d);
                         }
-                        m_SelectedRowRoiOrigin = pos;
-                        m_SelectedRowRoi.setOrigin(m_SelectedRowRoiOrigin);
+                        m_selectedRowRoiOrigin = pos;
+                        m_selectedRowRoi.setOrigin(m_selectedRowRoiOrigin);
                         int p = 0;
                         final double[] row = new double[m_rowLength];
-                        while (m_SelectedRowTempRoiCur.hasNext()) {
-                            row[p++] = m_SelectedRowTempRoiCur.next().getRealDouble();
+                        while (m_selectedRowTempRoiCur.hasNext()) {
+                            row[p++] = m_selectedRowTempRoiCur.next().getRealDouble();
                         }
-                        m_SelectedRowTempRoiCur.reset();
+                        m_selectedRowTempRoiCur.reset();
                         final WaveletCompositionThread wave = new WaveletCompositionThread(row, pos);
                         final FutureTask<WaveletCompositionThread> task =
                                 new FutureTask<WaveletCompositionThread>(wave);
                         hashQueueComposition.add(task);
                         m_executor.execute(task);
                     }
-                    m_BeginTempRoiCur.reset();
+                    m_beginTempRoiCur.reset();
 
                     while (!hashQueueComposition.isEmpty()) {
                         final FutureTask<WaveletCompositionThread> result = hashQueueComposition.poll();
@@ -428,13 +428,13 @@ public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> 
     public WaveletFilter(final ExecutorService executor, final double lambda_min, final double lambda_max,
                          final double ignorePercent) {
         m_executor = executor;
-        m_lambda_min = lambda_min;
-        m_lambda_max = lambda_max;
+        m_lambdaMin = lambda_min;
+        m_lambdaMax = lambda_max;
         m_ignorePercent = ignorePercent;
     }
 
     @Override
     public UnaryOperation<K, K> copy() {
-        return new WaveletFilter<T, K>(m_executor, m_lambda_min, m_lambda_max, m_ignorePercent);
+        return new WaveletFilter<T, K>(m_executor, m_lambdaMin, m_lambdaMax, m_ignorePercent);
     }
 }

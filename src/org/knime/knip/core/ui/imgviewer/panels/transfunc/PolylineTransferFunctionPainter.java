@@ -91,19 +91,19 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
      * Simple class that represents a line segment.
      */
     private class LineSegment {
-        private final PolylineTransferFunction.Point p0;
+        private final PolylineTransferFunction.Point m_p0;
 
-        private final PolylineTransferFunction.Point p1;
+        private final PolylineTransferFunction.Point m_p1;
 
         public LineSegment(final PolylineTransferFunction.Point point0, final PolylineTransferFunction.Point point1) {
-            p0 = point0;
-            p1 = point1;
+            m_p0 = point0;
+            m_p1 = point1;
         }
 
         @Override
         public int hashCode() {
-            final int hash = p0.hashCode();
-            return (hash * 31) + p1.hashCode();
+            final int hash = m_p0.hashCode();
+            return (hash * 31) + m_p1.hashCode();
         }
 
         @Override
@@ -114,8 +114,8 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
                 final LineSegment l = (LineSegment)o;
                 boolean eq = true;
 
-                eq = p0.equals(l.p0) ? eq & true : eq & false;
-                eq = p1.equals(l.p1) ? eq & true : eq & false;
+                eq = m_p0.equals(l.m_p0) ? eq & true : eq & false;
+                eq = m_p1.equals(l.m_p1) ? eq & true : eq & false;
 
                 return eq;
             }
@@ -243,16 +243,16 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     private boolean moveLineSegmentHorizontal(final LineSegment line, final MouseEvent event) {
 
-        final int x0 = (event.getX() - m_oldX) + getXPanelCoordinate(line.p0.getX());
+        final int x0 = (event.getX() - m_oldX) + getXPanelCoordinate(line.m_p0.getX());
 
-        final int x1 = (event.getX() - m_oldX) + getXPanelCoordinate(line.p1.getX());
+        final int x1 = (event.getX() - m_oldX) + getXPanelCoordinate(line.m_p1.getX());
 
         // make sure the ramp cannot be changed when hitting the borders
         // so that the gradient can not be altered
         // also do not move if one of the points is fixed
-        if ((x0 >= 0) && (x1 <= m_paintArea.getWidth()) && !line.p0.getFixed() && !line.p1.getFixed()) {
-            moveControlPointX(line.p0, x0);
-            moveControlPointX(line.p1, x1);
+        if ((x0 >= 0) && (x1 <= m_paintArea.getWidth()) && !line.m_p0.getFixed() && !line.m_p1.getFixed()) {
+            moveControlPointX(line.m_p0, x0);
+            moveControlPointX(line.m_p1, x1);
             return true;
         }
 
@@ -261,15 +261,15 @@ public class PolylineTransferFunctionPainter implements TransferFunctionPainter 
 
     private boolean moveLineSegmentVertical(final LineSegment line, final MouseEvent event) {
 
-        final int y0 = (event.getY() - m_oldY) + getYPanelCoordinate(line.p0.getY());
+        final int y0 = (event.getY() - m_oldY) + getYPanelCoordinate(line.m_p0.getY());
 
-        final int y1 = (event.getY() - m_oldY) + getYPanelCoordinate(line.p1.getY());
+        final int y1 = (event.getY() - m_oldY) + getYPanelCoordinate(line.m_p1.getY());
 
         // make sure the ramp cannot be changed when hitting the borders
         // so that the gradient can not be altered
         if ((y0 >= 0) && (y0 <= m_paintArea.getHeight()) && (y1 >= 0) && (y1 <= m_paintArea.getHeight())) {
-            moveControlPointY(line.p0, y0);
-            moveControlPointY(line.p1, y1);
+            moveControlPointY(line.m_p0, y0);
+            moveControlPointY(line.m_p1, y1);
             return true;
         }
 

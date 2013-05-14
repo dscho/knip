@@ -10,7 +10,7 @@ import net.imglib2.RealPoint;
 import net.imglib2.roi.PolygonRegionOfInterest;
 
 /**
- * 
+ *
  * @author hornm, dietzc, fschoenenberger
  */
 public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolygonOverlayElement<L> {
@@ -189,7 +189,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolyg
         for (i = 0; i < n; i++) {
             C[i] =
                     new Cubic(x[i], D[i], (3 * (x[i + 1] - x[i])) - (2 * D[i]) - D[i + 1], (2 * (x[i] - x[i + 1]))
-                              + D[i] + D[i + 1]);
+                            + D[i] + D[i + 1]);
         }
         return C;
     }
@@ -239,10 +239,10 @@ public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolyg
 
         D[n] = y[n] / H;
         D[n - 1] = y[n - 1] - ((v[n] + w[n]) * D[n]); /*
-         * This equation is
-         * WRONG! in my copy
-         * of Spath
-         */
+                                                      * This equation is
+                                                      * WRONG! in my copy
+                                                      * of Spath
+                                                      */
         for (k = n - 2; k >= 0; k--) {
             D[k] = y[k] - (v[k + 1] * D[k + 1]) - (w[k + 1] * D[n]);
         }
@@ -252,7 +252,7 @@ public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolyg
         for (k = 0; k < n; k++) {
             C[k] =
                     new Cubic(x[k], D[k], (3 * (x[k + 1] - x[k])) - (2 * D[k]) - D[k + 1], (2 * (x[k] - x[k + 1]))
-                              + D[k] + D[k + 1]);
+                            + D[k] + D[k + 1]);
         }
         C[n] = new Cubic(x[n], D[n], (3 * (x[0] - x[n])) - (2 * D[n]) - D[0], (2 * (x[n] - x[0])) + D[n] + D[0]);
         return C;
@@ -269,18 +269,18 @@ public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolyg
     /* this class represents a cubic polynomial */
     private class Cubic<OverlayClass> {
 
-        float a, b, c, d; /* a + b*u + c*u^2 +d*u^3 */
+        float m_a, m_b, m_c, m_d; /* a + b*u + c*u^2 +d*u^3 */
 
         public Cubic(final float a, final float b, final float c, final float d) {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-            this.d = d;
+            this.m_a = a;
+            this.m_b = b;
+            this.m_c = c;
+            this.m_d = d;
         }
 
         /** evaluate cubic */
         public float eval(final float u) {
-            return (((((d * u) + c) * u) + b) * u) + a;
+            return (((((m_d * u) + m_c) * u) + m_b) * u) + m_a;
         }
     }
 

@@ -16,15 +16,15 @@ import net.imglib2.type.numeric.RealType;
 public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE extends Iterator<T>> implements
         BinaryOperation<TYPE, T, V> {
 
-    private final double sigma;
+    private final double m_sigma;
 
-    private final double sigmaFactor;
+    private final double m_sigmaFactor;
 
     private final double m_sigmaMultiplied;
 
-    private final double pixelFraction;
+    private final double m_pixelFraction;
 
-    private final boolean outlierDetection;
+    private final boolean m_outlierDetection;
 
     /**
      * @param sigma
@@ -34,11 +34,11 @@ public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE exte
      */
     public SigmaFilter(final double sigma, final double sigmaFactor, final double pixelFraction,
                        final boolean outlierDetection) {
-        this.sigma = sigma;
-        this.sigmaFactor = sigmaFactor;
-        m_sigmaMultiplied = sigmaFactor * sigma;
-        this.pixelFraction = pixelFraction;
-        this.outlierDetection = outlierDetection;
+        this.m_sigma = sigma;
+        this.m_sigmaFactor = sigmaFactor;
+        this.m_sigmaMultiplied = sigmaFactor * sigma;
+        this.m_pixelFraction = pixelFraction;
+        this.m_outlierDetection = outlierDetection;
     }
 
     @Override
@@ -60,12 +60,12 @@ public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE exte
             ctrAll++;
         }
 
-        final int minPixels = (int)Math.floor(ctrAll * pixelFraction);
+        final int minPixels = (int)Math.floor(ctrAll * m_pixelFraction);
 
         if (ctrInRange >= minPixels) {
             output.setReal(sumInRange / ctrInRange);
         } else {
-            if (outlierDetection) {
+            if (m_outlierDetection) {
                 output.setReal((sumAll - center) / (ctrAll - 1));
             } else {
                 output.setReal(sumAll / ctrAll);
@@ -78,6 +78,6 @@ public class SigmaFilter<T extends RealType<T>, V extends RealType<V>, TYPE exte
 
     @Override
     public BinaryOperation<TYPE, T, V> copy() {
-        return new SigmaFilter<T, V, TYPE>(sigma, sigmaFactor, pixelFraction, outlierDetection);
+        return new SigmaFilter<T, V, TYPE>(m_sigma, m_sigmaFactor, m_pixelFraction, m_outlierDetection);
     }
 }

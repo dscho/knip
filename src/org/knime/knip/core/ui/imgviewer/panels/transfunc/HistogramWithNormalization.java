@@ -61,24 +61,24 @@ public class HistogramWithNormalization implements Histogram {
 
     private class Iter implements Iterator<Integer> {
 
-        private final int end;
+        private final int m_end;
 
-        private int pos;
+        private int m_pos;
 
         public Iter(final int s, final int e) {
-            pos = s;
-            end = e;
+            m_pos = s;
+            m_end = e;
         }
 
         @Override
         public boolean hasNext() {
-            return pos < end;
+            return m_pos < m_end;
         }
 
         @Override
         public Integer next() {
-            if (pos < end) {
-                return m_data[pos++];
+            if (m_pos < m_end) {
+                return m_data[m_pos++];
             } else {
                 throw new NoSuchElementException();
             }

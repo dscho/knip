@@ -77,7 +77,7 @@ import loci.formats.gui.BufferedImageReader;
 
 /**
  * A JPanel to provide a preview of the image itself or the meta data.
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class ImagePreviewPanel extends JPanel implements Runnable {
@@ -97,12 +97,12 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
 
     private JTable m_metadataTable;
 
-    private final JPanel image = new JPanel();
+    private final JPanel m_image = new JPanel();
 
-    private final JPanel table = new JPanel();
+    private final JPanel m_table = new JPanel();
 
     private static final String[] CORE_METADATA = new String[]{"SizeX", "SizeY", "SizeZ", "SizeT", "SizeC", "IsRGB",
-        "PixelType", "LittleEndian", "DimensionsOrder", "IsInterleaved"};
+            "PixelType", "LittleEndian", "DimensionsOrder", "IsInterleaved"};
 
     /**
      *
@@ -111,7 +111,7 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
         super();
         // image.setPreferredSize(new Dimension(300, 250));
         // table.setPreferredSize(new Dimension(300, 100));
-        table.setLayout(new BoxLayout(table, BoxLayout.Y_AXIS));
+        m_table.setLayout(new BoxLayout(m_table, BoxLayout.Y_AXIS));
         m_reader = new BufferedImageReader(new ImageReader());
         setPreferredSize(new Dimension(300, 250));
         setFont(new Font(getFont().getName(), Font.PLAIN, 20));
@@ -119,7 +119,7 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
         m_iconLabel = new JLabel();
         m_iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        image.add("Image", m_iconLabel);
+        m_image.add("Image", m_iconLabel);
         m_metadata = new String[][]{{"", ""}};
         m_metadataTable = new JTable(new AbstractTableModel() {
             /**
@@ -156,15 +156,15 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
         sp.setPreferredSize(new Dimension(300, 100));
         // table.setTableHeader(null);
         // sp.setColumnHeaderView(null);
-        table.add("Metadata", sp);
-        add(image);
-        add(table);
+        m_table.add("Metadata", sp);
+        add(m_image);
+        add(m_table);
 
     }
 
     /**
      * Sets the preview to the specified file. This methods opens the file and updates the preview panel.
-     * 
+     *
      * @param filename
      */
     public void setImage(final String filename) {

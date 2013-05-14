@@ -100,7 +100,7 @@ import org.knime.knip.core.ops.bittype.PositionsToBitTypeImage;
  * final CellClumpedSplitter<T, L> op = new CellClumpedSplitter<T, L>(NeighborhoodType.SIXTEEN, m_executor, ...);<br>
  * m_executor.shutdown();<br>
  * </code>
- * 
+ *
  * @author metznerj, University of Konstanz
  */
 public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperation<Labeling<L>, Labeling<Integer>> {
@@ -212,15 +212,15 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                 new NativeImgLabeling<Integer, IntType>(new NtreeImgFactory<IntType>().create(cellLabeling,
                                                                                               new IntType()));
         new CCA<BitType, Img<BitType>, Labeling<Integer>>(AbstractRegionGrowing.get8ConStructuringElement(maxima
-                                                                                                          .numDimensions()), new BitType()).compute(maxima, lab);
+                .numDimensions()), new BitType()).compute(maxima, lab);
 
         final Collection<Integer> labels = lab.firstElement().getMapping().getLabels();
         final ArrayList<long[]> centroidsList = new ArrayList<long[]>();
         for (final Integer i : labels) {
             final IterableInterval<BitType> ii =
                     lab.getIterableRegionOfInterest(i)
-                    .getIterableIntervalOverROI(new ConstantRandomAccessible<BitType>(new BitType(), lab
-                            .numDimensions()));
+                            .getIterableIntervalOverROI(new ConstantRandomAccessible<BitType>(new BitType(), lab
+                                                                .numDimensions()));
             final double[] centroidD = new Centroid().compute(ii, new double[ii.numDimensions()]);
 
             final long[] centroidL = new long[numDim];
@@ -251,7 +251,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
         while (!cellsQueue.isEmpty()) {
             final FutureTask<Long> task =
                     new FutureTask<Long>(new ClusterThread(cellLabeling.getIterableRegionOfInterest(cellsQueue.poll()),
-                                                           distanceMap, localMaxima, res, boundaries));
+                            distanceMap, localMaxima, res, boundaries));
             m_splittedQueue.add(task);
             m_executor.execute(task);
         }
@@ -282,37 +282,37 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
         /*
          * num dimensions
          */
-        private final int t_numDim;
+        private final int m_numDim;
 
         /*
          * predicted number of clusters
          */
-        private int t_predictionOfCluster;
+        private int m_predictionOfCluster;
 
         /*
          * lambda for h-maxima transformation
          */
-        private int t_lambda = 0;
+        private int m_lambda = 0;
 
         /*
          * max distance in distancemap of tar
          */
-        private float t_max = 0;
+        private float m_max = 0;
 
         /*
          * seed points
          */
-        private ArrayList<long[]> t_seedPoints = new ArrayList<long[]>();
+        private ArrayList<long[]> m_seedPoints = new ArrayList<long[]>();
 
         /*
          * center point of tar
          */
-        private final int[] t_centerPoint;
+        private final int[] m_centerPoint;
 
         /*
          * data set of the clumped cell.
          */
-        private InstancesTmp t_dataSet;
+        private InstancesTmp m_dataSet;
 
         /*
          * distanceMap image roi Cursor
@@ -347,17 +347,17 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
         /*
          * result of the em
          */
-        private ExtendedEM r_EM;
+        private ExtendedEM m_EM;
 
         /*
          * result of validation
          */
-        private double r_validationMax = -Double.MAX_VALUE;
+        private double m_validationMax = -Double.MAX_VALUE;
 
         /*
          * founded clusters
          */
-        private int r_numOfCluster;
+        private int m_numOfCluster;
 
         /*
          * boundaries of src/res image
@@ -371,11 +371,11 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         private final InstanceTmp m_inst;
 
-        private ArrayList<AttributeTmp> attr;
+        private ArrayList<AttributeTmp> m_attr;
 
         /**
          * Constructor
-         * 
+         *
          * @param roi target
          * @param distanceMap distance map
          * @param localMaxima local maxima of distance map
@@ -384,17 +384,17 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
          */
         public ClusterThread(final IterableRegionOfInterest roi, final Img<FloatType> distanceMap,
                              final Img<BitType> localMaxima, final Labeling<Integer> res, final long[] dimension) {
-            t_numDim = distanceMap.numDimensions();
+            m_numDim = distanceMap.numDimensions();
             m_localMaximaAccess = localMaxima.randomAccess();
             m_distanceMapRoiCursor = roi.getIterableIntervalOverROI(distanceMap).localizingCursor();
             m_res = res;
             m_resRandomAccess = res.randomAccess();
             m_distanceMapRandomAccess = distanceMap.randomAccess();
-            t_centerPoint = new int[t_numDim];
+            m_centerPoint = new int[m_numDim];
             m_boundaries = dimension.clone();
-            m_pos = new double[t_numDim];
+            m_pos = new double[m_numDim];
             m_inst = new InstanceTmp(1, m_pos);
-            m_inst.setDataset(t_dataSet);
+            m_inst.setDataset(m_dataSet);
         }
 
         @Override
@@ -405,7 +405,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
              * normalized data
              */
             preprocessData();
-            while (t_predictionOfCluster > 1) {
+            while (m_predictionOfCluster > 1) {
                 do {
                     /*
                      * evaluate h-Maxima transformation.
@@ -413,8 +413,8 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                      * together(decrease predicted number of
                      * clusters)
                      */
-                } while ((t_seedPoints = hMaximaTransformation(++t_lambda)).size() > t_predictionOfCluster);
-                if (t_seedPoints.size() == t_predictionOfCluster) {
+                } while ((m_seedPoints = hMaximaTransformation(++m_lambda)).size() > m_predictionOfCluster);
+                if (m_seedPoints.size() == m_predictionOfCluster) {
                     /*
                      * create new seeding points for EM
                      */
@@ -436,17 +436,17 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                     /*
                      * change the better result
                      */
-                    if (validation > r_validationMax) {
-                        r_validationMax = validation;
-                        r_EM = EM;
-                        r_numOfCluster = t_predictionOfCluster;
+                    if (validation > m_validationMax) {
+                        m_validationMax = validation;
+                        m_EM = EM;
+                        m_numOfCluster = m_predictionOfCluster;
                     }
                 }
                 /*
                  * decrease predicted number of clusters for
                  * next iteration
                  */
-                --t_predictionOfCluster;
+                --m_predictionOfCluster;
             }
             /*
              * set label for every cluster in res
@@ -454,13 +454,13 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
             synchronized (m_res) {
                 final Map<Integer, List<Integer>> listMap = new HashMap<Integer, List<Integer>>();
 
-                for (int c = 0; c < (r_numOfCluster == 0 ? 1 : r_numOfCluster); ++c) {
+                for (int c = 0; c < (m_numOfCluster == 0 ? 1 : m_numOfCluster); ++c) {
                     final List<Integer> labeling = new ArrayList<Integer>();
                     labeling.add(++m_label);
                     listMap.put(c, m_resRandomAccess.get().intern(labeling));
                 }
                 m_distanceMapRoiCursor.reset();
-                if (r_EM != null) {
+                if (m_EM != null) {
                     /*
                      * result processing only if there is an
                      * EM result
@@ -468,10 +468,10 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                     while (m_distanceMapRoiCursor.hasNext()) {
                         m_distanceMapRoiCursor.fwd();
                         m_resRandomAccess.setPosition(m_distanceMapRoiCursor);
-                        for (int d = 0; d < t_numDim; ++d) {
+                        for (int d = 0; d < m_numDim; ++d) {
                             m_pos[d] = m_resRandomAccess.getDoublePosition(d);
                         }
-                        final double[] p = r_EM.distributionForInstance(m_inst);
+                        final double[] p = m_EM.distributionForInstance(m_inst);
                         double pMax = Double.MIN_VALUE;
                         int cMax = -1;
                         for (int c = 0; c < p.length; ++c) {
@@ -499,7 +499,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * Performs EM Algorithm
-         * 
+         *
          * @param seedPoints seed points
          * @return result of EM Algorithm
          * @throws Exception
@@ -521,11 +521,11 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
             /*
              * set number of clusters
              */
-            res.setNumClusters(t_predictionOfCluster);
+            res.setNumClusters(m_predictionOfCluster);
             /*
              * build clusterer
              */
-            res.buildClusterer(t_dataSet);
+            res.buildClusterer(m_dataSet);
             /*
              * get result center points
              */
@@ -534,11 +534,11 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * build cluster size via nearest Neighbor to seeding points
-         * 
+         *
          * @return
          */
         private int[] clusterSizesByNearestNeighbor() {
-            final int[] res = new int[t_predictionOfCluster];
+            final int[] res = new int[m_predictionOfCluster];
             double distance;
             int container = 0;
             m_distanceMapRoiCursor.reset();
@@ -547,12 +547,12 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                 distance = Double.MAX_VALUE;
                 for (int i = 0; i < res.length; ++i) {
                     double distanceTemp = 0;
-                    for (int d = 0; d < t_numDim; ++d) {
-                        final double v = m_distanceMapRoiCursor.getLongPosition(d) - t_seedPoints.get(i)[d];
+                    for (int d = 0; d < m_numDim; ++d) {
+                        final double v = m_distanceMapRoiCursor.getLongPosition(d) - m_seedPoints.get(i)[d];
                         distanceTemp += v * v;
                     }
                     distanceTemp = Math.sqrt(distanceTemp);
-                    m_distanceMapRandomAccess.setPosition(t_seedPoints.get(i));
+                    m_distanceMapRandomAccess.setPosition(m_seedPoints.get(i));
                     if (distanceTemp < distance) {
                         distance = distanceTemp;
                         container = i;
@@ -565,15 +565,15 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * gets new cluster centers from a finished em
-         * 
+         *
          * @param extendedEM result of EM
          * @return cluster centers
          */
         private ArrayList<long[]> getNewClusterCenters(final ExtendedEM extendedEM) {
             final ArrayList<long[]> emClusterCenters = new ArrayList<long[]>();
             for (final double[][] a : extendedEM.getClusterModelsNumericAtts()) {
-                final long[] pos = new long[t_numDim];
-                for (int d = 0; d < t_numDim; ++d) {
+                final long[] pos = new long[m_numDim];
+                for (int d = 0; d < m_numDim; ++d) {
                     pos[d] = (long)a[d][0];
                 }
                 emClusterCenters.add(pos);
@@ -594,7 +594,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
             while (m_distanceMapRoiCursor.hasNext()) {
                 final float p = m_distanceMapRoiCursor.next().getRealFloat();
                 if (p > 0) {
-                    t_max = Math.max(t_max, p);
+                    m_max = Math.max(m_max, p);
                     min = Math.min(min, p);
                     ++n;
                 }
@@ -603,28 +603,28 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                 // AWTImageTools.showInSameFrame(localMaxima,
                 // 1.0d);
                 if (m_localMaximaAccess.get().get()) {
-                    final long[] pos = new long[t_numDim];
-                    for (int d = 0; d < t_numDim; ++d) {
+                    final long[] pos = new long[m_numDim];
+                    for (int d = 0; d < m_numDim; ++d) {
                         pos[d] = m_distanceMapRoiCursor.getLongPosition(d);
                     }
-                    t_seedPoints.add(pos);
+                    m_seedPoints.add(pos);
                     avg += m_distanceMapRoiCursor.get().getRealDouble();
                 }
             }
-            t_max -= min;
-            t_predictionOfCluster = t_seedPoints.size();
+            m_max -= min;
+            m_predictionOfCluster = m_seedPoints.size();
             /*
              * remove seeds under the average
              */
 
             // TODO: Parameter
-            avg = (avg / t_predictionOfCluster) * m_ignoreValueBelowAvgPrecent;
-            for (int i = 0; i < t_predictionOfCluster; ++i) {
-                m_distanceMapRandomAccess.setPosition(t_seedPoints.get(i));
+            avg = (avg / m_predictionOfCluster) * m_ignoreValueBelowAvgPrecent;
+            for (int i = 0; i < m_predictionOfCluster; ++i) {
+                m_distanceMapRandomAccess.setPosition(m_seedPoints.get(i));
                 final double p = m_distanceMapRandomAccess.get().getRealDouble();
                 if ((p < avg) || (p < m_minMaximaSize)) {
-                    t_seedPoints.remove(i);
-                    --t_predictionOfCluster;
+                    m_seedPoints.remove(i);
+                    --m_predictionOfCluster;
                     --i;
                 }
             }
@@ -633,38 +633,38 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
              * create EM data only if m > 1 (#2+ centroids were
              * found)
              */
-            if ((t_predictionOfCluster) > 1) {
+            if ((m_predictionOfCluster) > 1) {
                 /*
                  * create cluster center points
                  */
-                attr = new ArrayList<AttributeTmp>(t_numDim);
-                for (int d = 0; d < t_numDim; ++d) {
-                    attr.add(new AttributeTmp("d" + d, AttributeTmp.NUMERIC));
+                m_attr = new ArrayList<AttributeTmp>(m_numDim);
+                for (int d = 0; d < m_numDim; ++d) {
+                    m_attr.add(new AttributeTmp("d" + d, AttributeTmp.NUMERIC));
                 }
 
-                t_dataSet = new InstancesTmp("CellClumpedSplitter", attr, n);
+                m_dataSet = new InstancesTmp("CellClumpedSplitter", m_attr, n);
                 m_distanceMapRoiCursor.reset();
 
                 while (m_distanceMapRoiCursor.hasNext()) {
                     final float v = m_distanceMapRoiCursor.next().getRealFloat();
-                    final InstanceTmp row = new InstanceTmp(t_numDim);
-                    for (int d = 0; d < t_numDim; ++d) {
+                    final InstanceTmp row = new InstanceTmp(m_numDim);
+                    for (int d = 0; d < m_numDim; ++d) {
                         final double p = m_distanceMapRoiCursor.getDoublePosition(d);
-                        t_centerPoint[d] += p;
-                        row.setValue(attr.get(d), p);
+                        m_centerPoint[d] += p;
+                        row.setValue(m_attr.get(d), p);
                     }
-                    row.setWeight((v - min) / (t_max - min));
-                    t_dataSet.add(row);
+                    row.setWeight((v - min) / (m_max - min));
+                    m_dataSet.add(row);
                 }
-                for (int i = 0; i < t_centerPoint.length; ++i) {
-                    t_centerPoint[i] /= n;
+                for (int i = 0; i < m_centerPoint.length; ++i) {
+                    m_centerPoint[i] /= n;
                 }
             }
         }
 
         /**
          * after h maxima transformation calculate centroids. uses old seeding points for "caa" flooding points
-         * 
+         *
          * @param lambda given depth
          * @return predicted center points
          */
@@ -674,12 +674,12 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
              * H Maxima Transformation
              */
 
-            Iterator<long[]> iter = t_seedPoints.iterator();
+            Iterator<long[]> iter = m_seedPoints.iterator();
             while (iter.hasNext()) {
                 m_localMaximaAccess.setPosition(iter.next());
                 m_localMaximaAccess.get().set(true);
             }
-            final double tresh = t_max - (lambda);
+            final double tresh = m_max - (lambda);
 
             m_distanceMapRoiCursor.reset();
             while (m_distanceMapRoiCursor.hasNext()) {
@@ -698,19 +698,19 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
             /*
              * old seeding points for "cca" flooding point
              */
-            iter = t_seedPoints.iterator();
+            iter = m_seedPoints.iterator();
             final Queue<long[]> q = new LinkedList<long[]>();
             while (iter.hasNext()) {
                 int n = 0;
-                final long[] centroid = new long[t_numDim];
+                final long[] centroid = new long[m_numDim];
                 q.add(iter.next());
                 while (!q.isEmpty()) {
                     final long[] p = q.poll();
                     m_localMaximaAccess.setPosition(p);
                     if (m_localMaximaAccess.get().get()) {
                         ++n;
-                        final long[] perm = new long[t_numDim];
-                        for (int d = 0; d < t_numDim; ++d) {
+                        final long[] perm = new long[m_numDim];
+                        for (int d = 0; d < m_numDim; ++d) {
                             centroid[d] += p[d];
                             perm[d] = -1;
                         }
@@ -719,7 +719,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                          * add neighbours to queue
                          */
                         long[] nextPos;
-                        int i = t_numDim - 1;
+                        int i = m_numDim - 1;
                         boolean add;
                         while (i > -1) {
                             nextPos = p.clone();
@@ -727,7 +727,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                             /*
                              * Modify position
                              */
-                            for (int j = 0; j < t_numDim; j++) {
+                            for (int j = 0; j < m_numDim; j++) {
                                 nextPos[j] += perm[j];
                                 /*
                                  * Check
@@ -758,7 +758,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
                     }
                 }
                 if (n > 0) {
-                    for (int d = 0; d < t_numDim; ++d) {
+                    for (int d = 0; d < m_numDim; ++d) {
                         centroid[d] /= n;
                     }
                     res.add(centroid);
@@ -769,15 +769,15 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * construct new seeding points
-         * 
+         *
          * @return Instance of seeding points
          */
         private InstancesTmp prepareSeedingPointsForEM() {
-            final InstancesTmp res = new InstancesTmp("centers", attr, t_seedPoints.size());
-            for (final long[] t : t_seedPoints) {
-                final InstanceTmp row = new InstanceTmp(t_numDim);
-                for (int d = 0; d < t_numDim; ++d) {
-                    row.setValue(attr.get(d), (int)t[d]);
+            final InstancesTmp res = new InstancesTmp("centers", m_attr, m_seedPoints.size());
+            for (final long[] t : m_seedPoints) {
+                final InstanceTmp row = new InstanceTmp(m_numDim);
+                for (int d = 0; d < m_numDim; ++d) {
+                    row.setValue(m_attr.get(d), (int)t[d]);
                 }
                 res.add(row);
             }
@@ -786,7 +786,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * calculate the separation of given clustering
-         * 
+         *
          * @param extendedEM result of finished EM
          * @param emClusterCenters new calculated cluster centers
          * @return separation of given clustering
@@ -795,16 +795,16 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
         private double getSeperation(final ExtendedEM extendedEM, final ArrayList<long[]> emClusterCenters)
                 throws Exception {
             double res = 0;
-            for (int i = 0; i < t_predictionOfCluster; ++i) {
+            for (int i = 0; i < m_predictionOfCluster; ++i) {
                 m_distanceMapRoiCursor.reset();
                 double sum = 0;
-                for (int d = 0; d < t_numDim; ++d) {
-                    final double mioverallm = (emClusterCenters.get(i)[d] - t_centerPoint[d]);
+                for (int d = 0; d < m_numDim; ++d) {
+                    final double mioverallm = (emClusterCenters.get(i)[d] - m_centerPoint[d]);
                     sum += mioverallm * mioverallm;
                 }
                 while (m_distanceMapRoiCursor.hasNext()) {
                     m_distanceMapRoiCursor.fwd();
-                    for (int d = 0; d < t_numDim; ++d) {
+                    for (int d = 0; d < m_numDim; ++d) {
                         m_pos[d] = m_distanceMapRoiCursor.getDoublePosition(d);
                     }
                     res += extendedEM.distributionForInstance(m_inst)[i] * sum;
@@ -815,7 +815,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * calculate the compactness of given clustering
-         * 
+         *
          * @param extendedEM result of finished EM
          * @param emClusterCenters new calculated cluster centers
          * @return compactness of given clustering
@@ -824,18 +824,18 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
         private double getCompactness(final ExtendedEM extendedEM, final ArrayList<long[]> emClusterCenters)
                 throws Exception {
             double res = 0;
-            for (int i = 0; i < t_predictionOfCluster; ++i) {
+            for (int i = 0; i < m_predictionOfCluster; ++i) {
                 double pkixkmiSum = 0;// numerator
                 double pkiSum = 0;// denominator
                 m_distanceMapRoiCursor.reset();
                 while (m_distanceMapRoiCursor.hasNext()) {
                     m_distanceMapRoiCursor.fwd();
                     double sum = 0;
-                    for (int d = 0; d < t_numDim; ++d) {
+                    for (int d = 0; d < m_numDim; ++d) {
                         final double xkmi = (m_distanceMapRoiCursor.getDoublePosition(d) - emClusterCenters.get(i)[d]);
                         sum += xkmi * xkmi;
                     }
-                    for (int d = 0; d < t_numDim; ++d) {
+                    for (int d = 0; d < m_numDim; ++d) {
                         m_pos[d] = m_distanceMapRoiCursor.getDoublePosition(d);
                     }
                     final double pki = extendedEM.distributionForInstance(m_inst)[i];

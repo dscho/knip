@@ -26,46 +26,46 @@ package org.knime.knip.core.data.graphtheory;
 public class Node {
 
     // first outgoing edge
-    private Edge firstOutgoing;
+    private Edge m_firstOutgoing;
 
     // parent (in the tree structure)
-    private Edge parent;
+    private Edge m_parent;
 
     // next active node
-    private Node next;
+    private Node m_next;
 
     // timestamp indicating when distance was computed
-    private int timestamp;
+    private int m_timestamp;
 
     // distance to the terminal
-    private int distance;
+    private int m_distance;
 
     // indicates whether this node belongs to the sink or the source tree
-    private boolean inSink;
+    private boolean m_inSink;
 
     // indicates whether this node was changed
-    private boolean marked;
+    private boolean m_marked;
 
     // indicates whether this node is in the changed list
-    private boolean inChangedList;
+    private boolean m_inChangedList;
 
     // the residual capacity of this node to the sink (<0) or from the
     // source
     // (>0)
-    private float residualCapacity;
+    private float m_residualCapacity;
 
     public Node() {
 
-        firstOutgoing = null;
-        parent = null;
-        next = null;
+        m_firstOutgoing = null;
+        m_parent = null;
+        m_next = null;
 
-        timestamp = 0;
-        distance = 0;
-        inSink = false;
-        marked = false;
+        m_timestamp = 0;
+        m_distance = 0;
+        m_inSink = false;
+        m_marked = false;
 
-        residualCapacity = 0;
+        m_residualCapacity = 0;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Node {
      * @return The first outgoing node
      */
     public Edge getFirstOutgoing() {
-        return this.firstOutgoing;
+        return this.m_firstOutgoing;
     }
 
     /**
@@ -83,7 +83,7 @@ public class Node {
      * @param firstOutgoing The firstOutgoing.
      */
     public void setFirstOutgoing(final Edge firstOutgoing) {
-        this.firstOutgoing = firstOutgoing;
+        this.m_firstOutgoing = firstOutgoing;
     }
 
     /**
@@ -92,7 +92,7 @@ public class Node {
      * @return The parent of this node.
      */
     public Edge getParent() {
-        return this.parent;
+        return this.m_parent;
     }
 
     /**
@@ -101,7 +101,7 @@ public class Node {
      * @param parent The new parent.
      */
     public void setParent(final Edge parent) {
-        this.parent = parent;
+        this.m_parent = parent;
     }
 
     /**
@@ -110,7 +110,7 @@ public class Node {
      * @return The next active node.
      */
     public Node getNext() {
-        return this.next;
+        return this.m_next;
     }
 
     /**
@@ -119,7 +119,7 @@ public class Node {
      * @param next The next node.
      */
     public void setNext(final Node next) {
-        this.next = next;
+        this.m_next = next;
     }
 
     /**
@@ -128,7 +128,7 @@ public class Node {
      * @return The timestamp.
      */
     public int getTimestamp() {
-        return this.timestamp;
+        return this.m_timestamp;
     }
 
     /**
@@ -137,7 +137,7 @@ public class Node {
      * @param timestamp The timestamp.
      */
     public void setTimestamp(final int timestamp) {
-        this.timestamp = timestamp;
+        this.m_timestamp = timestamp;
     }
 
     /**
@@ -146,7 +146,7 @@ public class Node {
      * @return The distance.
      */
     public int getDistance() {
-        return this.distance;
+        return this.m_distance;
     }
 
     /**
@@ -155,7 +155,7 @@ public class Node {
      * @param distance The distance.
      */
     public void setDistance(final int distance) {
-        this.distance = distance;
+        this.m_distance = distance;
     }
 
     /**
@@ -164,7 +164,7 @@ public class Node {
      * @return <tt>true</tt>, if this node is connected to the sink.
      */
     public boolean isInSink() {
-        return this.inSink;
+        return this.m_inSink;
     }
 
     /**
@@ -173,7 +173,7 @@ public class Node {
      * @param inSink <tt>true</tt>, if this node is connected to the sink.
      */
     public void setInSink(final boolean inSink) {
-        this.inSink = inSink;
+        this.m_inSink = inSink;
     }
 
     /**
@@ -182,7 +182,7 @@ public class Node {
      * @return <tt>true</tt>, if this node is marked.
      */
     public boolean isMarked() {
-        return this.marked;
+        return this.m_marked;
     }
 
     /**
@@ -191,7 +191,7 @@ public class Node {
      * @param marked <tt>true</tt> to mark this node
      */
     public void setMarked(final boolean marked) {
-        this.marked = marked;
+        this.m_marked = marked;
     }
 
     /**
@@ -200,7 +200,7 @@ public class Node {
      * @param residualCapacity The residual capacity.
      */
     public void setResidualCapacity(final float residualCapacity) {
-        this.residualCapacity = residualCapacity;
+        this.m_residualCapacity = residualCapacity;
     }
 
     /**
@@ -209,7 +209,7 @@ public class Node {
      * @return <tt>true</tt>, if this node is in changedNodes.
      */
     public boolean isInChangedList() {
-        return this.inChangedList;
+        return this.m_inChangedList;
     }
 
     /**
@@ -218,7 +218,7 @@ public class Node {
      * @param inChangedList <tt>true</tt>, if this node is in changedNodes
      */
     public void setInChangedList(final boolean inChangedList) {
-        this.inChangedList = inChangedList;
+        this.m_inChangedList = inChangedList;
     }
 
     /**
@@ -227,6 +227,6 @@ public class Node {
      * @return The residual capacity.
      */
     public float getResidualCapacity() {
-        return this.residualCapacity;
+        return this.m_residualCapacity;
     }
 }

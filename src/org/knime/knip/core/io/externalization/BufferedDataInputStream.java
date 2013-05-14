@@ -33,16 +33,16 @@ import java.io.InputStreamReader;
  * take advantage of NIO.]
  * <p>
  * Testing and timing routines are provided in the nom.tam.util.test.BufferedFileTester class.
- * 
+ *
  * Version 1.1: October 12, 2000: Fixed handling of EOF to return partially read arrays when EOF is detected. Version
  * 1.2: July 20, 2009: Added handling of very large Object arrays. Additional work is required to handle very large
  * arrays generally.
  */
 public class BufferedDataInputStream extends BufferedInputStream {
 
-    private long primitiveArrayCount;
+    private long m_primitiveArrayCount;
 
-    private final byte[] bb = new byte[8];
+    private final byte[] m_bb = new byte[8];
 
     /**
      * Use the BufferedInputStream constructor
@@ -60,7 +60,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
     /**
      * Read a byte array. This is the only method for reading arrays in the fundamental I/O classes.
-     * 
+     *
      * @param obuf The byte array.
      * @param offset The starting offset into the array.
      * @param len The number of bytes to read.
@@ -94,7 +94,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
     /**
      * Read a boolean value.
-     * 
+     *
      * @return b The value read.
      */
     public boolean readBoolean() throws IOException {
@@ -109,7 +109,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
     /**
      * Read a byte value in the range -128 to 127.
-     * 
+     *
      * @return The byte value as a byte (see read() to return the value as an integer.
      */
     public byte readByte() throws IOException {
@@ -118,7 +118,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
     /**
      * Read a byte value in the range 0-255.
-     * 
+     *
      * @return The byte value as an integer.
      */
     public int readUnsignedByte() throws IOException {
@@ -127,50 +127,50 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
     /**
      * Read an integer.
-     * 
+     *
      * @return The integer value.
      */
     public int readInt() throws IOException {
 
-        if (read(bb, 0, 4) < 4) {
+        if (read(m_bb, 0, 4) < 4) {
             throw new EOFException();
         }
-        final int i = (bb[0] << 24) | ((bb[1] & 0xFF) << 16) | ((bb[2] & 0xFF) << 8) | (bb[3] & 0xFF);
+        final int i = (m_bb[0] << 24) | ((m_bb[1] & 0xFF) << 16) | ((m_bb[2] & 0xFF) << 8) | (m_bb[3] & 0xFF);
         return i;
     }
 
     /**
      * Read a 2-byte value as a short (-32788 to 32767)
-     * 
+     *
      * @return The short value.
      */
     public short readShort() throws IOException {
 
-        if (read(bb, 0, 2) < 2) {
+        if (read(m_bb, 0, 2) < 2) {
             throw new EOFException();
         }
 
-        final short s = (short)((bb[0] << 8) | (bb[1] & 0xFF));
+        final short s = (short)((m_bb[0] << 8) | (m_bb[1] & 0xFF));
         return s;
     }
 
     /**
      * Read a 2-byte value in the range 0-65536.
-     * 
+     *
      * @return the value as an integer.
      */
     public int readUnsignedShort() throws IOException {
 
-        if (read(bb, 0, 2) < 2) {
+        if (read(m_bb, 0, 2) < 2) {
             throw new EOFException();
         }
 
-        return ((bb[0] & 0xFF) << 8) | (bb[1] & 0xFF);
+        return ((m_bb[0] & 0xFF) << 8) | (m_bb[1] & 0xFF);
     }
 
     /**
      * Read a 2-byte value as a character.
-     * 
+     *
      * @return The character read.
      */
     public char readChar() throws IOException {
@@ -186,57 +186,57 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
     /**
      * Read a long.
-     * 
+     *
      * @return The value read.
      */
     public long readLong() throws IOException {
 
         // use two ints as intermediarys to
         // avoid casts of bytes to longs...
-        if (read(bb, 0, 8) < 8) {
+        if (read(m_bb, 0, 8) < 8) {
             throw new EOFException();
         }
-        final int i1 = (bb[0] << 24) | ((bb[1] & 0xFF) << 16) | ((bb[2] & 0xFF) << 8) | (bb[3] & 0xFF);
-        final int i2 = (bb[4] << 24) | ((bb[5] & 0xFF) << 16) | ((bb[6] & 0xFF) << 8) | (bb[7] & 0xFF);
+        final int i1 = (m_bb[0] << 24) | ((m_bb[1] & 0xFF) << 16) | ((m_bb[2] & 0xFF) << 8) | (m_bb[3] & 0xFF);
+        final int i2 = (m_bb[4] << 24) | ((m_bb[5] & 0xFF) << 16) | ((m_bb[6] & 0xFF) << 8) | (m_bb[7] & 0xFF);
         return (((long)i1) << 32) | (i2 & 0x00000000ffffffffL);
     }
 
     /**
      * Read a 4 byte real number.
-     * 
+     *
      * @return The value as a float.
      */
     public float readFloat() throws IOException {
 
-        if (read(bb, 0, 4) < 4) {
+        if (read(m_bb, 0, 4) < 4) {
             throw new EOFException();
         }
 
-        final int i = (bb[0] << 24) | ((bb[1] & 0xFF) << 16) | ((bb[2] & 0xFF) << 8) | (bb[3] & 0xFF);
+        final int i = (m_bb[0] << 24) | ((m_bb[1] & 0xFF) << 16) | ((m_bb[2] & 0xFF) << 8) | (m_bb[3] & 0xFF);
         return Float.intBitsToFloat(i);
 
     }
 
     /**
      * Read an 8 byte real number.
-     * 
+     *
      * @return The value as a double.
      */
     public double readDouble() throws IOException {
 
-        if (read(bb, 0, 8) < 8) {
+        if (read(m_bb, 0, 8) < 8) {
             throw new EOFException();
         }
 
-        final int i1 = (bb[0] << 24) | ((bb[1] & 0xFF) << 16) | ((bb[2] & 0xFF) << 8) | (bb[3] & 0xFF);
-        final int i2 = (bb[4] << 24) | ((bb[5] & 0xFF) << 16) | ((bb[6] & 0xFF) << 8) | (bb[7] & 0xFF);
+        final int i1 = (m_bb[0] << 24) | ((m_bb[1] & 0xFF) << 16) | ((m_bb[2] & 0xFF) << 8) | (m_bb[3] & 0xFF);
+        final int i2 = (m_bb[4] << 24) | ((m_bb[5] & 0xFF) << 16) | ((m_bb[6] & 0xFF) << 8) | (m_bb[7] & 0xFF);
 
         return Double.longBitsToDouble((((long)i1) << 32) | (i2 & 0x00000000ffffffffL));
     }
 
     /**
      * Read a buffer and signal an EOF if the buffer cannot be fully read.
-     * 
+     *
      * @param b The buffer to be read.
      */
     public void readFully(final byte[] b) throws IOException {
@@ -245,10 +245,10 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
     /**
      * Read a buffer and signal an EOF if the requested elements cannot be read.
-     * 
+     *
      * This differs from read(b,off,len) since that call will not signal and end of file unless no bytes can be read.
      * However both of these routines will attempt to fill their buffers completely.
-     * 
+     *
      * @param b The input buffer.
      * @param off The requested offset into the buffer.
      * @param len The number of bytes requested.
@@ -267,10 +267,10 @@ public class BufferedDataInputStream extends BufferedInputStream {
     /**
      * Skip the requested number of bytes. This differs from the skip call in that it takes an long argument and will
      * throw an end of file if the full number of bytes cannot be skipped.
-     * 
+     *
      * @param toSkip The number of bytes to skip.
      */
-    private byte[] skipBuf = null;
+    private byte[] m_skipBuf = null;
 
     public int skipBytes(final int toSkip) throws IOException {
         return (int)skipBytes((long)toSkip);
@@ -297,18 +297,18 @@ public class BufferedDataInputStream extends BufferedInputStream {
                 // skip....
                 // Real IO errors will presumably casue an error
                 // in these reads too.
-                if (skipBuf == null) {
-                    skipBuf = new byte[8192];
+                if (m_skipBuf == null) {
+                    m_skipBuf = new byte[8192];
                 }
                 while (need > 8192) {
-                    final int got = read(skipBuf, 0, 8192);
+                    final int got = read(m_skipBuf, 0, 8192);
                     if (got <= 0) {
                         break;
                     }
                     need -= got;
                 }
                 while (need > 0) {
-                    final int got = read(skipBuf, 0, (int)need);
+                    final int got = read(m_skipBuf, 0, (int)need);
                     if (got <= 0) {
                         break;
                     }
@@ -328,7 +328,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
     /**
      * Read a String in the UTF format. The implementation of this is very inefficient and use of this class is not
      * recommended for applications which will use this routine heavily.
-     * 
+     *
      * @return The String that was read.
      * @throws IOException
      */
@@ -346,7 +346,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
     /**
      * Emulate the deprecated DataInputStream.readLine() method. Originally we used the method itself, but Alan Brighton
      * suggested using a BufferedReader to eliminate the deprecation warning. This method is slow regardless.
-     * 
+     *
      * @return The String read.
      * @throws IOException
      * @deprecated Use BufferedReader methods.
@@ -367,7 +367,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
      * This routine provides efficient reading of arrays of any primitive type. It is an error to invoke this method
      * with an object that is not an array of some primitive type. Note that there is no corresponding capability to
      * writePrimitiveArray in BufferedDataOutputStream to read in an array of Strings.
-     * 
+     *
      * @param o The object to be read. It must be an array of a primitive type, or an array of Object's.
      * @deprecated See readLArray(Object o).
      */
@@ -379,16 +379,16 @@ public class BufferedDataInputStream extends BufferedInputStream {
         // primitiveArrayCount can be wrong and also the
         // input data can be mixed up.
 
-        primitiveArrayCount = 0;
+        m_primitiveArrayCount = 0;
         return (int)readLArray(o);
     }
 
     /**
      * Read an object. An EOF will be signaled if the object cannot be fully read. The getPrimitiveArrayCount() method
      * may then be used to get a minimum number of bytes read.
-     * 
+     *
      * @param o The object to be read. This object should be a primitive (possibly multi-dimensional) array.
-     * 
+     *
      * @returns The number of bytes read.
      * @deprecated See readLArray(Object) which handles large arrays properly.
      */
@@ -400,25 +400,25 @@ public class BufferedDataInputStream extends BufferedInputStream {
     /**
      * Read an object. An EOF will be signaled if the object cannot be fully read. The getPrimitiveArrayCount() method
      * may then be used to get a minimum number of bytes read.
-     * 
+     *
      * @param o The object to be read. This object should be a primitive (possibly multi-dimensional) array.
-     * 
+     *
      * @returns The number of bytes read.
      */
     public long readLArray(final Object o) throws IOException {
-        primitiveArrayCount = 0;
+        m_primitiveArrayCount = 0;
         return primitiveArrayRecurse(o);
     }
 
     /**
      * Read recursively over a multi-dimensional array.
-     * 
+     *
      * @return The number of bytes read.
      */
     protected long primitiveArrayRecurse(final Object o) throws IOException {
 
         if (o == null) {
-            return primitiveArrayCount;
+            return m_primitiveArrayCount;
         }
 
         final String className = o.getClass().getName();
@@ -438,33 +438,33 @@ public class BufferedDataInputStream extends BufferedInputStream {
             // functions.
             switch (className.charAt(1)) {
                 case 'Z':
-                    primitiveArrayCount += read((boolean[])o, 0, ((boolean[])o).length);
+                    m_primitiveArrayCount += read((boolean[])o, 0, ((boolean[])o).length);
                     break;
                 case 'B':
                     final int len = read((byte[])o, 0, ((byte[])o).length);
-                    primitiveArrayCount += len;
+                    m_primitiveArrayCount += len;
 
                     if (len < ((byte[])o).length) {
                         throw new EOFException();
                     }
                     break;
                 case 'C':
-                    primitiveArrayCount += read((char[])o, 0, ((char[])o).length);
+                    m_primitiveArrayCount += read((char[])o, 0, ((char[])o).length);
                     break;
                 case 'S':
-                    primitiveArrayCount += read((short[])o, 0, ((short[])o).length);
+                    m_primitiveArrayCount += read((short[])o, 0, ((short[])o).length);
                     break;
                 case 'I':
-                    primitiveArrayCount += read((int[])o, 0, ((int[])o).length);
+                    m_primitiveArrayCount += read((int[])o, 0, ((int[])o).length);
                     break;
                 case 'J':
-                    primitiveArrayCount += read((long[])o, 0, ((long[])o).length);
+                    m_primitiveArrayCount += read((long[])o, 0, ((long[])o).length);
                     break;
                 case 'F':
-                    primitiveArrayCount += read((float[])o, 0, ((float[])o).length);
+                    m_primitiveArrayCount += read((float[])o, 0, ((float[])o).length);
                     break;
                 case 'D':
-                    primitiveArrayCount += read((double[])o, 0, ((double[])o).length);
+                    m_primitiveArrayCount += read((double[])o, 0, ((double[])o).length);
                     break;
                 case 'L':
 
@@ -484,13 +484,13 @@ public class BufferedDataInputStream extends BufferedInputStream {
                     throw new IOException("Invalid object passed to BufferedDataInputStream.readArray: " + className);
             }
         }
-        return primitiveArrayCount;
+        return m_primitiveArrayCount;
     }
 
     /**
      * Ensure that the requested number of bytes are available in the buffer or throw an EOF if they cannot be obtained.
      * Note that this routine will try to fill the buffer completely.
-     * 
+     *
      * @param The required number of bytes.
      */
     private void fillBuf(int need) throws IOException {
@@ -611,7 +611,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
 
                 i[ii] =
                         (buf[pos] << 24) | ((buf[pos + 1] & 0xFF) << 16) | ((buf[pos + 2] & 0xFF) << 8)
-                        | (buf[pos + 3] & 0xFF);
+                                | (buf[pos + 3] & 0xFF);
                 pos += 4;
             }
         } catch (final EOFException e) {
@@ -636,10 +636,10 @@ public class BufferedDataInputStream extends BufferedInputStream {
                 }
                 final int i1 =
                         (buf[pos] << 24) | ((buf[pos + 1] & 0xFF) << 16) | ((buf[pos + 2] & 0xFF) << 8)
-                        | (buf[pos + 3] & 0xFF);
+                                | (buf[pos + 3] & 0xFF);
                 final int i2 =
                         (buf[pos + 4] << 24) | ((buf[pos + 5] & 0xFF) << 16) | ((buf[pos + 6] & 0xFF) << 8)
-                        | (buf[pos + 7] & 0xFF);
+                                | (buf[pos + 7] & 0xFF);
                 l[i] = (((long)i1) << 32) | (i2 & 0x00000000FFFFFFFFL);
                 pos += 8;
             }
@@ -666,7 +666,7 @@ public class BufferedDataInputStream extends BufferedInputStream {
                 }
                 final int t =
                         (buf[pos] << 24) | ((buf[pos + 1] & 0xFF) << 16) | ((buf[pos + 2] & 0xFF) << 8)
-                        | (buf[pos + 3] & 0xFF);
+                                | (buf[pos + 3] & 0xFF);
                 f[i] = Float.intBitsToFloat(t);
                 pos += 4;
             }
@@ -693,10 +693,10 @@ public class BufferedDataInputStream extends BufferedInputStream {
                 }
                 final int i1 =
                         (buf[pos] << 24) | ((buf[pos + 1] & 0xFF) << 16) | ((buf[pos + 2] & 0xFF) << 8)
-                        | (buf[pos + 3] & 0xFF);
+                                | (buf[pos + 3] & 0xFF);
                 final int i2 =
                         (buf[pos + 4] << 24) | ((buf[pos + 5] & 0xFF) << 16) | ((buf[pos + 6] & 0xFF) << 8)
-                        | (buf[pos + 7] & 0xFF);
+                                | (buf[pos + 7] & 0xFF);
                 d[i] = Double.longBitsToDouble((((long)i1) << 32) | (i2 & 0x00000000FFFFFFFFL));
                 pos += 8;
             }

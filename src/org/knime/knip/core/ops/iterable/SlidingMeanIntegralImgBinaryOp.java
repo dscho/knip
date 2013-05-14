@@ -39,8 +39,8 @@ extends SlidingShapeOp<T, V, IN, OUT> {
 
     @Override
     public UnaryOperation<IN, OUT> copy() {
-        return new SlidingMeanIntegralImgBinaryOp<T, V, IN, OUT>(m_binaryOp.copy(), (RectangleShape)shape, m_span,
-                outofbounds);
+        return new SlidingMeanIntegralImgBinaryOp<T, V, IN, OUT>(m_binaryOp.copy(), (RectangleShape)m_shape, m_span,
+                m_outOfBounds);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -63,7 +63,7 @@ extends SlidingShapeOp<T, V, IN, OUT> {
         // Result: We have a IntegralImage
 
         final IntervalView<T> extended =
-                Views.offset(Views.interval(Views.extend(input, outofbounds), new FinalInterval(min, max)), min);
+                Views.offset(Views.interval(Views.extend(input, m_outOfBounds), new FinalInterval(min, max)), min);
 
         final RandomAccessibleInterval<IntType> ii = Operations.compute(m_iiOp, extended);
 

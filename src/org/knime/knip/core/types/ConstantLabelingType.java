@@ -60,7 +60,7 @@ public class ConstantLabelingType<T extends Comparable<T>> extends LabelingType<
     /**
      * ConstantLabelingType. Nothing happens here
      * 
-     * @param labeling
+     * @param m_labeling
      */
     @Override
     public void setLabel(final T label) {

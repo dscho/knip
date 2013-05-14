@@ -7,39 +7,39 @@ import net.imglib2.meta.ImageMetadata;
 
 public class ImageMetadataImpl implements ImageMetadata {
 
-    private int validBits;
+    private int m_validBits;
 
-    private final ArrayList<Double> channelMin;
+    private final ArrayList<Double> m_channelMin;
 
-    private final ArrayList<Double> channelMax;
+    private final ArrayList<Double> m_channelMax;
 
-    private int compositeChannelCount = 1;
+    private int m_compositeChannelCount = 1;
 
-    private final ArrayList<ColorTable> lut;
+    private final ArrayList<ColorTable> m_lut;
 
     public ImageMetadataImpl() {
-        this.channelMin = new ArrayList<Double>();
-        this.channelMax = new ArrayList<Double>();
+        this.m_channelMin = new ArrayList<Double>();
+        this.m_channelMax = new ArrayList<Double>();
 
-        this.lut = new ArrayList<ColorTable>();
+        this.m_lut = new ArrayList<ColorTable>();
     }
 
     @Override
     public int getValidBits() {
-        return validBits;
+        return m_validBits;
     }
 
     @Override
     public void setValidBits(final int bits) {
-        validBits = bits;
+        m_validBits = bits;
     }
 
     @Override
     public double getChannelMinimum(final int c) {
-        if ((c < 0) || (c >= channelMin.size())) {
+        if ((c < 0) || (c >= m_channelMin.size())) {
             return Double.NaN;
         }
-        final Double d = channelMin.get(c);
+        final Double d = m_channelMin.get(c);
         return d == null ? Double.NaN : d;
     }
 
@@ -48,21 +48,21 @@ public class ImageMetadataImpl implements ImageMetadata {
         if (c < 0) {
             throw new IllegalArgumentException("Invalid channel: " + c);
         }
-        if (c >= channelMin.size()) {
-            channelMin.ensureCapacity(c + 1);
-            for (int i = channelMin.size(); i <= c; i++) {
-                channelMin.add(null);
+        if (c >= m_channelMin.size()) {
+            m_channelMin.ensureCapacity(c + 1);
+            for (int i = m_channelMin.size(); i <= c; i++) {
+                m_channelMin.add(null);
             }
         }
-        channelMin.set(c, min);
+        m_channelMin.set(c, min);
     }
 
     @Override
     public double getChannelMaximum(final int c) {
-        if ((c < 0) || (c >= channelMax.size())) {
+        if ((c < 0) || (c >= m_channelMax.size())) {
             return Double.NaN;
         }
-        final Double d = channelMax.get(c);
+        final Double d = m_channelMax.get(c);
         return d == null ? Double.NaN : d;
     }
 
@@ -71,47 +71,47 @@ public class ImageMetadataImpl implements ImageMetadata {
         if (c < 0) {
             throw new IllegalArgumentException("Invalid channel: " + c);
         }
-        if (c >= channelMax.size()) {
-            channelMax.ensureCapacity(c + 1);
-            for (int i = channelMax.size(); i <= c; i++) {
-                channelMax.add(null);
+        if (c >= m_channelMax.size()) {
+            m_channelMax.ensureCapacity(c + 1);
+            for (int i = m_channelMax.size(); i <= c; i++) {
+                m_channelMax.add(null);
             }
         }
-        channelMax.set(c, max);
+        m_channelMax.set(c, max);
     }
 
     @Override
     public int getCompositeChannelCount() {
-        return compositeChannelCount;
+        return m_compositeChannelCount;
     }
 
     @Override
     public void setCompositeChannelCount(final int value) {
-        compositeChannelCount = value;
+        m_compositeChannelCount = value;
     }
 
     @Override
     public void initializeColorTables(final int count) {
-        lut.ensureCapacity(count);
-        lut.clear();
+        m_lut.ensureCapacity(count);
+        m_lut.clear();
         for (int i = 0; i < count; i++) {
-            lut.add(null);
+            m_lut.add(null);
         }
     }
 
     @Override
     public int getColorTableCount() {
-        return lut.size();
+        return m_lut.size();
     }
 
     @Override
     public ColorTable getColorTable(final int no) {
-        return lut.get(no);
+        return m_lut.get(no);
     }
 
     @Override
     public void setColorTable(final ColorTable colorTable, final int no) {
-        lut.set(no, colorTable);
+        m_lut.set(no, colorTable);
     }
 
 }

@@ -11,24 +11,24 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 public abstract class SlidingShapeOp<T extends Type<T>, V extends Type<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
-implements UnaryOperation<IN, OUT> {
+        implements UnaryOperation<IN, OUT> {
 
-    protected final Shape shape;
+    protected final Shape m_shape;
 
-    protected final OutOfBoundsFactory<T, IN> outofbounds;
+    protected final OutOfBoundsFactory<T, IN> m_outOfBounds;
 
     public SlidingShapeOp(final Shape shape, final OutOfBoundsFactory<T, IN> outofbounds) {
-        this.shape = shape;
-        this.outofbounds = outofbounds;
+        this.m_shape = shape;
+        this.m_outOfBounds = outofbounds;
     }
 
     @Override
     public OUT compute(final IN input, final OUT output) {
 
         // Neighboor update
-        final IntervalView<T> interval = Views.interval(Views.extend(input, outofbounds), input);
+        final IntervalView<T> interval = Views.interval(Views.extend(input, m_outOfBounds), input);
 
-        final IterableInterval<Neighborhood<T>> neighborhoods = shape.neighborhoods(interval);
+        final IterableInterval<Neighborhood<T>> neighborhoods = m_shape.neighborhoods(interval);
 
         // Create an iterable to check iteration order
         if (!neighborhoods.iterationOrder().equals(output.iterationOrder())) {

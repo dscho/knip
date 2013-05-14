@@ -224,7 +224,7 @@ public class FeatureFactory {
     /**
      * Updates a feature target.
      *
-     * @param target
+     * @param m_target
      * @param obj
      */
     public void updateFeatureTarget(final Object obj) {

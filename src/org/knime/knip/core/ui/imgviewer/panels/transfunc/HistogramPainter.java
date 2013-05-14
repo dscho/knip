@@ -83,31 +83,31 @@ public class HistogramPainter implements MouseMotionListener {
     private static final int MIN_HEIGHT = 50;
 
     private class Bin {
-        private final Color colorSelection = ColorDispenser.INSTANCE.next();
+        private final Color m_colorSelection = ColorDispenser.INSTANCE.next();
 
-        private Color color;
+        private final Color m_colorDefault;
 
-        private final Color colorDefault;
+        private final Rectangle m_rectangleLog;
 
-        private final Rectangle rectangleLog;
+        private final Rectangle m_rectangleLinear;
 
-        private final Rectangle rectangleLinear;
+        private final Rectangle m_rectangleSelection;
 
-        private final Rectangle rectangleSelection;
+        private final int m_count;
 
-        private final int count;
+        private final double[] m_values;
 
-        private final double[] values;
+        private Color m_color;
 
         public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final int c,
                    final double[] val, final Color col) {
-            values = val.clone();
-            rectangleLog = recLog;
-            rectangleLinear = recLin;
-            rectangleSelection = recSelection;
-            count = c;
-            color = col;
-            colorDefault = col;
+            m_values = val.clone();
+            m_rectangleLog = recLog;
+            m_rectangleLinear = recLin;
+            m_rectangleSelection = recSelection;
+            m_count = c;
+            m_color = col;
+            m_colorDefault = col;
         }
 
         public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final int c,
@@ -116,11 +116,11 @@ public class HistogramPainter implements MouseMotionListener {
         }
 
         public void hilite() {
-            color = HILITE;
+            m_color = HILITE;
         }
 
         public void unhilite() {
-            color = colorDefault;
+            m_color = m_colorDefault;
         }
     }
 
@@ -179,7 +179,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Set up a new histogram that will be painted using log scale.
-     * 
+     *
      * @param hist the hist to draw
      */
     public HistogramPainter(final Histogram hist) {
@@ -195,7 +195,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Set up a new histogram that will be drawn into with the given scale.
-     * 
+     *
      * @param hist the hist to draw
      * @param scale the scale to use
      */
@@ -206,7 +206,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Set the histogram to display a new data set.
-     * 
+     *
      * @param hist
      */
     public final void setHistogram(final Histogram hist) {
@@ -277,7 +277,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Paint this histogram using the given Graphics2D object.
-     * 
+     *
      * @see javax.swing.JComponent#paintComponent(Graphics)
      * @param g2 the Graphics2D object to use for drawing
      */
@@ -321,22 +321,22 @@ public class HistogramPainter implements MouseMotionListener {
 
         for (final Bin bin : m_bins) {
             if (selection) {
-                g2.setColor(bin.colorSelection);
-                g2.fill(bin.rectangleSelection);
+                g2.setColor(bin.m_colorSelection);
+                g2.fill(bin.m_rectangleSelection);
             } else {
-                if (bin.color.equals(HILITE)) {
+                if (bin.m_color.equals(HILITE)) {
                     final GradientPaint gp =
                             new GradientPaint(0, m_paintArea.height, HILITE_BACKGROUND, 0, 0, BACKGROUND);
                     g2.setPaint(gp);
-                    g2.fill(bin.rectangleSelection);
+                    g2.fill(bin.m_rectangleSelection);
                 }
 
-                g2.setPaint(bin.color);
+                g2.setPaint(bin.m_color);
 
                 if (m_scale == Scale.LINEAR) {
-                    g2.fill(bin.rectangleLinear);
+                    g2.fill(bin.m_rectangleLinear);
                 } else {
-                    g2.fill(bin.rectangleLog);
+                    g2.fill(bin.m_rectangleLog);
                 }
 
             }
@@ -345,7 +345,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Calculate the height to which the bar with the given value should be drawn.
-     * 
+     *
      * @param val the value
      * @return the height to draw to in int
      */
@@ -372,9 +372,9 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Sets the scale used to display the histogram.
-     * 
+     *
      * Note: To acutally see the changes, the calling class has to issue a repaint() itself.
-     * 
+     *
      * @param scale the scale
      */
     public final void setScale(final Scale scale) {
@@ -395,8 +395,8 @@ public class HistogramPainter implements MouseMotionListener {
         final Formatter formatter = new Formatter(sb);
 
         for (final Bin bin : m_bins) {
-            if (bin.colorSelection.equals(c)) {
-                formatter.format("Count %10d from %15.5g to %15.5g", bin.count, bin.values[0], bin.values[1]);
+            if (bin.m_colorSelection.equals(c)) {
+                formatter.format("Count %10d from %15.5g to %15.5g", bin.m_count, bin.m_values[0], bin.m_values[1]);
                 bin.hilite();
             } else {
                 bin.unhilite();

@@ -1,53 +1,53 @@
 package org.knime.knip.core.algorithm.extendedem;
 
 class AttributeStatsTmp {
-    public int[] nominalCounts;
+    public int[] m_nominalCounts;
 
-    public double[] nominalWeights;
+    public double[] m_nominalWeights;
 
-    public int totalCount = 0;
+    public int m_totalCount = 0;
 
-    public int missingCount = 0;
+    public int m_missingCount = 0;
 
-    public int uniqueCount = 0;
+    public int m_uniqueCount = 0;
 
-    public int intCount = 0;
+    public int m_intCount = 0;
 
-    public int realCount = 0;
+    public int m_realCount = 0;
 
-    public int distinctCount = 0;
+    public int m_distinctCount = 0;
 
-    public StatsTmp numericStats;
+    public StatsTmp m_numericStats;
 
-    public double SMALL = 1e-6;
+    public double m_small = 1e-6;
 
     public boolean eq(final double a, final double b) {
 
-        return ((a - b) < SMALL) && ((b - a) < SMALL);
+        return ((a - b) < m_small) && ((b - a) < m_small);
     }
 
     protected void addDistinct(final double value, final int count, final double weight) {
 
         if (count > 0) {
             if (count == 1) {
-                uniqueCount++;
+                m_uniqueCount++;
             }
             if (eq(value, ((int)value))) {
-                intCount += count;
+                m_intCount += count;
             } else {
-                realCount += count;
+                m_realCount += count;
             }
-            if (nominalCounts != null) {
-                nominalCounts[(int)value] = count;
-                nominalWeights[(int)value] = weight;
+            if (m_nominalCounts != null) {
+                m_nominalCounts[(int)value] = count;
+                m_nominalWeights[(int)value] = weight;
             }
-            if (numericStats != null) {
+            if (m_numericStats != null) {
                 // numericStats.add(value, count);
-                numericStats.add(value, weight);
-                numericStats.calculateDerived();
+                m_numericStats.add(value, weight);
+                m_numericStats.calculateDerived();
             }
         }
-        distinctCount++;
+        m_distinctCount++;
     }
 
 }

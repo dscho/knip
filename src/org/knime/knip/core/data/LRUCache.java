@@ -66,27 +66,27 @@ import java.util.Map;
  */
 public class LRUCache<K, V> {
 
-    private static final float hashTableLoadFactor = 0.75f;
+    private static final float HASH_TABLE_LOAD_FACTOR = 0.75f;
 
-    private LinkedHashMap<K, V> map;
+    private LinkedHashMap<K, V> m_map;
 
-    private int cacheSize;
+    private int m_cacheSize;
 
     /**
      * Creates a new LRU cache.
-     * 
+     *
      * @param cacheSize the maximum number of entries that will be kept in this cache.
      */
     public LRUCache(final int cacheSize) {
-        this.cacheSize = cacheSize;
-        final int hashTableCapacity = (int)Math.ceil(cacheSize / hashTableLoadFactor) + 1;
-        map = new LinkedHashMap<K, V>(hashTableCapacity, hashTableLoadFactor, true) {
+        this.m_cacheSize = cacheSize;
+        final int hashTableCapacity = (int)Math.ceil(cacheSize / HASH_TABLE_LOAD_FACTOR) + 1;
+        m_map = new LinkedHashMap<K, V>(hashTableCapacity, HASH_TABLE_LOAD_FACTOR, true) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override
             protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
-                return size() > LRUCache.this.cacheSize;
+                return size() > LRUCache.this.m_cacheSize;
             }
         };
     }
@@ -94,47 +94,47 @@ public class LRUCache<K, V> {
     /**
      * Retrieves an entry from the cache.<br>
      * The retrieved entry becomes the MRU (most recently used) entry.
-     * 
+     *
      * @param key the key whose associated value is to be returned.
      * @return the value associated to this key, or null if no value with this key exists in the cache.
      */
     public synchronized V get(final K key) {
-        return map.get(key);
+        return m_map.get(key);
     }
 
     /**
      * Adds an entry to this cache. If the cache is full, the LRU (least recently used) entry is dropped.
-     * 
+     *
      * @param key the key with which the specified value is to be associated.
      * @param value a value to be associated with the specified key.
      */
     public synchronized void put(final K key, final V value) {
-        map.put(key, value);
+        m_map.put(key, value);
     }
 
     /**
      * Clears the cache.
      */
     public synchronized void clear() {
-        map.clear();
+        m_map.clear();
     }
 
     /**
      * Returns the number of used entries in the cache.
-     * 
+     *
      * @return the number of entries currently in the cache.
      */
     public synchronized int usedEntries() {
-        return map.size();
+        return m_map.size();
     }
 
     /**
      * Returns a <code>Collection</code> that contains a copy of all cache entries.
-     * 
+     *
      * @return a <code>Collection</code> with a copy of the cache content.
      */
     public synchronized Collection<Map.Entry<K, V>> getAll() {
-        return new ArrayList<Map.Entry<K, V>>(map.entrySet());
+        return new ArrayList<Map.Entry<K, V>>(m_map.entrySet());
     }
 
 } // end class LRUCache

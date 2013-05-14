@@ -78,7 +78,7 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet, Sh
 
     private ObjectCalcAndCache m_ocac;
 
-    private final BitSet enabledFeatures = new BitSet(numFeatures());
+    private final BitSet m_enabledFeatures = new BitSet(numFeatures());
 
     private IterableInterval<T> m_interval;
 
@@ -115,7 +115,7 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet, Sh
 
         final CooccurrenceMatrix coocMat =
                 m_ocac.cooccurenceMatrix(m_interval, m_dimX, m_dimY, m_distance, m_nrGrayLevels, m_matrixOrientation,
-                                         enabledFeatures);
+                                         m_enabledFeatures);
 
         return coocMat.getFeature(id);
     }
@@ -149,7 +149,7 @@ public class HaralickFeatureSet<T extends RealType<T>> implements FeatureSet, Sh
      */
     @Override
     public void enable(final int id) {
-        enabledFeatures.set(id);
+        m_enabledFeatures.set(id);
     }
 
     @FeatureTargetListener

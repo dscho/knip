@@ -51,14 +51,13 @@ import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
  * Propagates {@link ImgViewerRectChgEvent}.
  *
  * @author dietzc, hornm, fschoenenberer
+ * @param <T>
+ * @param <I>
  */
 public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & RandomAccessible<T>> extends ViewerComponent {
 
     private static BufferedImage TEXTMSGIMG = new BufferedImage(100, 50, BufferedImage.TYPE_INT_RGB);
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     private final JPanel m_imageCanvas;
@@ -89,9 +88,9 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     private Rectangle m_dragRect;
 
-    private boolean horScrollbarMoved = false;
+    private boolean m_horScrollbarMoved = false;
 
-    private boolean verScrollbarMoved = false;
+    private boolean m_verScrollbarMoved = false;
 
     protected Rectangle m_currentRectangle;
 
@@ -204,11 +203,11 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         m_imageScrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(final AdjustmentEvent e) {
-                if (verScrollbarMoved) {
-                    verScrollbarMoved = false;
+                if (m_verScrollbarMoved) {
+                    m_verScrollbarMoved = false;
                     return;
                 }
-                horScrollbarMoved = true;
+                m_horScrollbarMoved = true;
                 handleScrollbarEvent();
             }
         });
@@ -216,11 +215,11 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
         m_imageScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(final AdjustmentEvent e) {
-                if (horScrollbarMoved) {
-                    horScrollbarMoved = false;
+                if (m_horScrollbarMoved) {
+                    m_horScrollbarMoved = false;
                     return;
                 }
-                verScrollbarMoved = true;
+                m_verScrollbarMoved = true;
                 handleScrollbarEvent();
             }
         });

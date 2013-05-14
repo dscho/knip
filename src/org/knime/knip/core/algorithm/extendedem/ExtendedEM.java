@@ -88,13 +88,13 @@ public class ExtendedEM {
     private InstancesTmp m_theInstances = null;
 
     /** number of clusters selected by the user or cross validation */
-    private int m_num_clusters;
+    private int m_numClusters;
 
     /** number of attributes */
-    private int m_num_attribs;
+    private int m_numAttribs;
 
     /** maximum iterations to perform */
-    private int m_max_iterations;
+    private int m_maxIterations;
 
     /** attribute min values */
     private double[] m_minValues;
@@ -109,10 +109,10 @@ public class ExtendedEM {
     private boolean m_verbose;
 
     /** the default seed value */
-    protected int m_SeedDefault = 1;
+    protected int m_seedDefault = 1;
 
     /** The random number seed. */
-    private final int m_Seed = m_SeedDefault;
+    private final int m_seed = m_seedDefault;
 
     private void normalize(final double[] doubles) {
 
@@ -151,9 +151,9 @@ public class ExtendedEM {
         }
 
         if (n < 0) {
-            m_num_clusters = -1;
+            m_numClusters = -1;
         } else {
-            m_num_clusters = n;
+            m_numClusters = n;
         }
     }
 
@@ -176,7 +176,7 @@ public class ExtendedEM {
     }
 
     public void setMaxInterations(final int max) {
-        m_max_iterations = max;
+        m_maxIterations = max;
     }
 
     /**
@@ -188,22 +188,22 @@ public class ExtendedEM {
     private void EM_Init(final InstancesTmp inst) throws Exception {
         int i, j;
 
-        m_weights = new double[inst.numInstances()][m_num_clusters];
-        m_modelNormal = new double[m_num_clusters][m_num_attribs][3];
-        m_priors = new double[m_num_clusters];
+        m_weights = new double[inst.numInstances()][m_numClusters];
+        m_modelNormal = new double[m_numClusters][m_numAttribs][3];
+        m_priors = new double[m_numClusters];
 
         final int[] clusterSizes = m_clusterSizes;
         final InstancesTmp centers = m_centers;
 
-        for (i = 0; i < m_num_clusters; i++) {
+        for (i = 0; i < m_numClusters; i++) {
             final InstanceTmp center = centers.instance(i);
-            for (j = 0; j < m_num_attribs; j++) {
+            for (j = 0; j < m_numAttribs; j++) {
                 final double minStdD = (m_minStdDevPerAtt != null) ? m_minStdDevPerAtt[j] : m_minStdDev;
                 final double mean = (center.isMissing(j)) ? inst.meanOrMode(j) : center.value(j);
                 m_modelNormal[i][j][0] = mean;
-                double stdv = ((m_maxValues[j] - m_minValues[j]) / (2 * m_num_clusters));
+                double stdv = ((m_maxValues[j] - m_minValues[j]) / (2 * m_numClusters));
                 if (stdv < minStdD) {
-                    stdv = inst.attributeStats(j).numericStats.stdDev;
+                    stdv = inst.attributeStats(j).m_numericStats.m_stdDev;
                     if (Double.isInfinite(stdv)) {
                         stdv = minStdD;
                     }
@@ -219,7 +219,7 @@ public class ExtendedEM {
                 m_modelNormal[i][j][2] = 1.0;
             }
         }
-        for (j = 0; j < m_num_clusters; j++) {
+        for (j = 0; j < m_numClusters; j++) {
             // m_priors[j] += 1.0;
             m_priors[j] = clusterSizes[j];
         }
@@ -234,12 +234,12 @@ public class ExtendedEM {
      **/
     private void estimate_priors(final InstancesTmp inst) throws Exception {
 
-        for (int i = 0; i < m_num_clusters; i++) {
+        for (int i = 0; i < m_numClusters; i++) {
             m_priors[i] = 0.0;
         }
 
         for (int i = 0; i < inst.numInstances(); i++) {
-            for (int j = 0; j < m_num_clusters; j++) {
+            for (int j = 0; j < m_numClusters; j++) {
                 m_priors[j] += inst.instance(i).weight() * m_weights[i][j];
             }
         }
@@ -251,8 +251,8 @@ public class ExtendedEM {
      * New probability estimators for an iteration
      */
     private void new_estimators() {
-        for (int i = 0; i < m_num_clusters; i++) {
-            for (int j = 0; j < m_num_attribs; j++) {
+        for (int i = 0; i < m_numClusters; i++) {
+            for (int j = 0; j < m_numAttribs; j++) {
                 m_modelNormal[i][j][0] = m_modelNormal[i][j][1] = m_modelNormal[i][j][2] = 0.0;
             }
         }
@@ -271,8 +271,8 @@ public class ExtendedEM {
         new_estimators();
         estimate_priors(inst);
 
-        for (i = 0; i < m_num_clusters; i++) {
-            for (j = 0; j < m_num_attribs; j++) {
+        for (i = 0; i < m_numClusters; i++) {
+            for (j = 0; j < m_numAttribs; j++) {
                 for (l = 0; l < inst.numInstances(); l++) {
                     final InstanceTmp in = inst.instance(l);
                     if (!in.isMissing(j)) {
@@ -285,9 +285,9 @@ public class ExtendedEM {
         }
 
         // calcualte mean and std deviation for numeric attributes
-        for (j = 0; j < m_num_attribs; j++) {
+        for (j = 0; j < m_numAttribs; j++) {
             if (!inst.attribute(j).isNominal()) {
-                for (i = 0; i < m_num_clusters; i++) {
+                for (i = 0; i < m_numClusters; i++) {
                     if (m_modelNormal[i][j][2] <= 0) {
                         m_modelNormal[i][j][1] = Double.MAX_VALUE;
                         m_modelNormal[i][j][0] = m_minStdDev;
@@ -308,7 +308,7 @@ public class ExtendedEM {
                         m_modelNormal[i][j][1] = Math.sqrt(m_modelNormal[i][j][1]);
 
                         if ((m_modelNormal[i][j][1] <= minStdD)) {
-                            m_modelNormal[i][j][1] = inst.attributeStats(j).numericStats.stdDev;
+                            m_modelNormal[i][j][1] = inst.attributeStats(j).m_numericStats.m_stdDev;
                             if ((m_modelNormal[i][j][1] <= minStdD)) {
                                 m_modelNormal[i][j][1] = minStdD;
                             }
@@ -361,8 +361,8 @@ public class ExtendedEM {
      **/
     public ExtendedEM() {
         // super();
-        m_SeedDefault = 100;
-        m_max_iterations = 100;
+        m_seedDefault = 100;
+        m_maxIterations = 100;
     }
 
     /**
@@ -441,7 +441,7 @@ public class ExtendedEM {
         }
 
         // m_num_instances = m_theInstances.numInstances();
-        m_num_attribs = m_theInstances.numAttributes();
+        m_numAttribs = m_theInstances.numAttributes();
 
         // fit full training set
         EM_Init(m_theInstances);
@@ -467,7 +467,7 @@ public class ExtendedEM {
         int restartCount = 0;
         while (!ok) {
             try {
-                for (i = 0; i < m_max_iterations; i++) {
+                for (i = 0; i < m_maxIterations; i++) {
                     llkold = llk;
                     llk = E(inst, true);
 
@@ -495,7 +495,7 @@ public class ExtendedEM {
                 }
                 if (restartCount > 5) {
                     // System.err.println("Reducing the number of clusters");
-                    m_num_clusters--;
+                    m_numClusters--;
                     restartCount = 0;
                 }
                 EM_Init(m_theInstances);
@@ -511,7 +511,7 @@ public class ExtendedEM {
      * @return the seed for the random number generation
      */
     public int getSeed() {
-        return m_Seed;
+        return m_seed;
     }
 
     /**
@@ -576,12 +576,12 @@ public class ExtendedEM {
 
         int i, j;
         double logprob;
-        final double[] wghts = new double[m_num_clusters];
+        final double[] wghts = new double[m_numClusters];
 
-        for (i = 0; i < m_num_clusters; i++) {
+        for (i = 0; i < m_numClusters; i++) {
             logprob = 0.0;
 
-            for (j = 0; j < m_num_attribs; j++) {
+            for (j = 0; j < m_numAttribs; j++) {
                 if (!inst.isMissing(j)) {
                     logprob += logNormalDens(inst.value(j), m_modelNormal[i][j][0], m_modelNormal[i][j][1]);
                 }
