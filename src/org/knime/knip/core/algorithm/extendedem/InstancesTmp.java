@@ -96,7 +96,8 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
 
     private int partition(final int[] array, final int[] index, int l, int r) {
 
-        final double pivot = array[index[(l + r) / 2]];
+        final long avg = (l + r) / 2;
+        final double pivot = array[index[(int)avg]];
         int help;
 
         while (l < r) {
@@ -183,7 +184,8 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
 
     private int partition(final double[] array, final int[] index, int l, int r) {
 
-        final double pivot = array[index[(l + r) / 2]];
+        final long avg = (l + r) / 2;
+        final double pivot = array[index[(int)avg]];
         int help;
 
         while (l < r) {
