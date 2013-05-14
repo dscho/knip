@@ -19,17 +19,21 @@ import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.awt.specializedrendering.Projector2D;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
-public class RandomColorLabelingRenderer<L extends Comparable<L>> extends
-ProjectingRenderer<LabelingType<L>> implements
-RendererWithLabels<L>, RendererWithHilite {
+public class RandomColorLabelingRenderer<L extends Comparable<L>> extends ProjectingRenderer<LabelingType<L>> implements
+        RendererWithLabels<L>, RendererWithHilite {
 
     private static int WHITE_RGB = Color.WHITE.getRGB();
 
     private LabelingTypeARGBConverter<L> m_converter;
+
     private Operator m_operator;
+
     private Set<String> m_activeLabels;
+
     private LabelingMapping<L> m_labelMapping;
+
     private Set<String> m_hilitedLabels;
+
     private boolean m_isHiliteMode;
 
     private boolean m_rebuildRequired;
@@ -74,18 +78,16 @@ RendererWithLabels<L>, RendererWithHilite {
     }
 
     @Override
-    protected Abstract2DProjector<LabelingType<L>, ARGBType> getProjector(
-                                                                          final int dimX, final int dimY,
-                                                                          final RandomAccessibleInterval<LabelingType<L>> source,
-                                                                          final ARGBScreenImage target) {
+    protected Abstract2DProjector<LabelingType<L>, ARGBType>
+            getProjector(final int dimX, final int dimY, final RandomAccessibleInterval<LabelingType<L>> source,
+                         final ARGBScreenImage target) {
 
         if (m_rebuildRequired) {
             m_rebuildRequired = false;
             rebuildLabelConverter();
         }
 
-        return new Projector2D<LabelingType<L>, ARGBType>(dimX, dimY,
-                source, target, m_converter);
+        return new Projector2D<LabelingType<L>, ARGBType>(dimX, dimY, source, target, m_converter);
     }
 
     // create the converter
@@ -97,34 +99,30 @@ RendererWithLabels<L>, RendererWithHilite {
 
         for (int i = 0; i < labelListIndexSize; i++) {
 
-            final int color = getColorForLabeling(m_activeLabels,
-                                                  m_operator, m_hilitedLabels,
-                                                  m_isHiliteMode,
-                                                  m_labelMapping.listAtIndex(i));
+            final int color =
+                    getColorForLabeling(m_activeLabels, m_operator, m_hilitedLabels, m_isHiliteMode,
+                                        m_labelMapping.listAtIndex(i));
             colorTable.put(i, color);
         }
 
         m_converter = new LabelingTypeARGBConverter<L>(colorTable);
     }
 
-    private int getColorForLabeling(final Set<String> activeLabels, final Operator op,
-                                    final Set<String> hilitedLabels, final boolean isHiliteMode,
-                                    final List<L> labeling) {
+    private int getColorForLabeling(final Set<String> activeLabels, final Operator op, final Set<String> hilitedLabels,
+                                    final boolean isHiliteMode, final List<L> labeling) {
 
         if (labeling.size() == 0) {
             return WHITE_RGB;
         }
 
         // standard case no filtering / highlighting
-        if ((activeLabels == null) && (hilitedLabels == null)
-                && !isHiliteMode) {
+        if ((activeLabels == null) && (hilitedLabels == null) && !isHiliteMode) {
             return SegmentColorTable.getColor(labeling);
         }
 
         List<L> filteredLabels;
         if (activeLabels != null) {
-            filteredLabels = intersection(activeLabels, op,
-                                          labeling);
+            filteredLabels = intersection(activeLabels, op, labeling);
         } else {
             filteredLabels = labeling; // do not filter
         }
@@ -136,9 +134,7 @@ RendererWithLabels<L>, RendererWithHilite {
             if (checkHilite(filteredLabels, hilitedLabels)) {
                 return SegmentColorTable.HILITED_RGB;
             } else {
-                return isHiliteMode ? SegmentColorTable.NOTSELECTED_RGB
-                        : SegmentColorTable
-                        .getColor(labeling);
+                return isHiliteMode ? SegmentColorTable.NOTSELECTED_RGB : SegmentColorTable.getColor(labeling);
             }
         }
     }
@@ -146,8 +142,7 @@ RendererWithLabels<L>, RendererWithHilite {
     private boolean checkHilite(final List<L> labeling, final Set<String> hilitedLabels) {
         if ((hilitedLabels != null) && (hilitedLabels.size() > 0)) {
             for (int i = 0; i < labeling.size(); i++) {
-                if (hilitedLabels.contains(labeling.get(i)
-                                           .toString())) {
+                if (hilitedLabels.contains(labeling.get(i).toString())) {
                     return true;
                 }
             }
@@ -155,15 +150,13 @@ RendererWithLabels<L>, RendererWithHilite {
         return false;
     }
 
-    private List<L> intersection(final Set<String> activeLabels, final Operator op,
-                                 final List<L> labeling) {
+    private List<L> intersection(final Set<String> activeLabels, final Operator op, final List<L> labeling) {
 
         final List<L> intersected = new ArrayList<L>(4);
 
         if (op == Operator.OR) {
             for (int i = 0; i < labeling.size(); i++) {
-                if (activeLabels.contains(labeling.get(i)
-                                          .toString())) {
+                if (activeLabels.contains(labeling.get(i).toString())) {
                     intersected.add(labeling.get(i));
                 }
             }
@@ -174,8 +167,7 @@ RendererWithLabels<L>, RendererWithHilite {
         } else if (op == Operator.XOR) {
             boolean addedOne = false;
             for (int i = 0; i < labeling.size(); i++) {
-                if (activeLabels.contains(labeling.get(i)
-                                          .toString())) {
+                if (activeLabels.contains(labeling.get(i).toString())) {
 
                     if (!addedOne) {
                         intersected.add(labeling.get(i));
@@ -188,8 +180,6 @@ RendererWithLabels<L>, RendererWithHilite {
                     }
                 }
             }
-        } else {
-            // operator not supported return just the empty list
         }
 
         return intersected;
