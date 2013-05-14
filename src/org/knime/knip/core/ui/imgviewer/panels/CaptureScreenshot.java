@@ -83,13 +83,15 @@ public class CaptureScreenshot extends ViewerComponent {
 
     private final JTextField m_fieldName = new JTextField();
 
-    JButton m_captureButton = new JButton(new ImageIcon(getClass()
-                                                        .getResource("CameraIcon.png")));
-    JButton m_dirButton = new JButton(new ImageIcon(getClass().getResource(
-            "FolderIcon.png")));
+    JButton m_captureButton = new JButton(new ImageIcon(getClass().getResource("CameraIcon.png")));
+
+    JButton m_dirButton = new JButton(new ImageIcon(getClass().getResource("FolderIcon.png")));
 
     private final JFileChooser m_chooser = new JFileChooser();
 
+    /**
+     *
+     */
     public CaptureScreenshot() {
         super("Screenshot", false);
 
@@ -101,25 +103,18 @@ public class CaptureScreenshot extends ViewerComponent {
 
         final GroupLayout layout = new GroupLayout(this);
 
-        final GroupLayout.SequentialGroup horizontal0 = layout
-                .createSequentialGroup()
-                .addComponent(m_fieldName)
-                .addPreferredGap(
-                                 LayoutStyle.ComponentPlacement.RELATED)
-                                 .addComponent(m_dirButton);
+        final GroupLayout.SequentialGroup horizontal0 =
+                layout.createSequentialGroup().addComponent(m_fieldName)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(m_dirButton);
 
-        layout.setHorizontalGroup(layout.createParallelGroup()
-                                  .addGroup(horizontal0).addComponent(separator)
-                                  .addComponent(m_captureButton));
+        layout.setHorizontalGroup(layout.createParallelGroup().addGroup(horizontal0).addComponent(separator)
+                .addComponent(m_captureButton));
 
-        final GroupLayout.SequentialGroup vertical0 = layout
-                .createSequentialGroup()
-                .addComponent(m_fieldName)
-                .addComponent(separator)
-                .addComponent(m_captureButton);
+        final GroupLayout.SequentialGroup vertical0 =
+                layout.createSequentialGroup().addComponent(m_fieldName).addComponent(separator)
+                        .addComponent(m_captureButton);
 
-        layout.setVerticalGroup(layout.createParallelGroup()
-                                .addGroup(vertical0).addComponent(m_dirButton));
+        layout.setVerticalGroup(layout.createParallelGroup().addGroup(vertical0).addComponent(m_dirButton));
 
         setLayout(layout);
     }
@@ -130,9 +125,8 @@ public class CaptureScreenshot extends ViewerComponent {
             public void actionPerformed(final ActionEvent e) {
                 if (m_currentImage != null) {
                     try {
-                        final RenderedImage ri = (RenderedImage) m_currentImage;
-                        ImageIO.write(ri, "png",
-                                      getFile());
+                        final RenderedImage ri = (RenderedImage)m_currentImage;
+                        ImageIO.write(ri, "png", getFile());
                     } catch (final ClassCastException exception) {
                         System.err.println("Could not cast image to RenderedImage, not writing image");
                     } catch (final IOException exception) {
@@ -145,8 +139,8 @@ public class CaptureScreenshot extends ViewerComponent {
         m_dirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final int val = m_chooser
-                        .showOpenDialog(CaptureScreenshot.this);
+                //TODO: Handle return value?
+                m_chooser.showOpenDialog(CaptureScreenshot.this);
             }
         });
     }
@@ -157,22 +151,18 @@ public class CaptureScreenshot extends ViewerComponent {
 
         int counter = 1;
         while (file.exists()) {
-            file = new File(path + "_"
-                    + Integer.toString(counter++) + ".png");
+            file = new File(path + "_" + Integer.toString(counter++) + ".png");
         }
 
         return file;
     }
 
     private String getFileName() {
-        return m_chooser.getSelectedFile()
-                + System.getProperty("file.separator")
-                + m_fieldName.getText();
+        return m_chooser.getSelectedFile() + System.getProperty("file.separator") + m_fieldName.getText();
     }
 
     private void setUpFileChooser() {
-        m_chooser.setCurrentDirectory(new File(System
-                                               .getProperty("user.home")));
+        m_chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         m_chooser.setDialogTitle("Choose a directory");
         m_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         m_chooser.setAcceptAllFileFilterUsed(false);
@@ -214,14 +204,12 @@ public class CaptureScreenshot extends ViewerComponent {
     }
 
     @Override
-    public void saveComponentConfiguration(final ObjectOutput out)
-            throws IOException {
+    public void saveComponentConfiguration(final ObjectOutput out) throws IOException {
         // not used
     }
 
     @Override
-    public void loadComponentConfiguration(final ObjectInput in)
-            throws IOException, ClassNotFoundException {
+    public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         // not used
     }
 

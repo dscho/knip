@@ -203,12 +203,6 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
         final org.knime.knip.core.algorithm.GraphCutAlgorithm graphCut =
                 new org.knime.knip.core.algorithm.GraphCutAlgorithm((int)numNodes, (int)numEdges);
 
-        /*
-         * computing the edge weights and Computing the maximum weight
-         * for the K-value (p. 108 "Interactive Graph Cuts")
-         */
-        float K_value = 0;
-
         // the neighbor position for looking at the adjacent nodes
         final long[] dims = new long[res.numDimensions()];
         res.dimensions(dims);
@@ -249,30 +243,6 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
 
                     srcRandomAcess.fwd(d);
 
-                    // // float weight = -((intensity1 -
-                    // intensity2)
-                    // // * (intensity1 - intensity2) / (2 *
-                    // stdDev * stdDev));
-                    // float weight = 0;
-                    //
-                    // for (int i = 0; i <
-                    // nodeValues.length; i++) {
-                    // weight -= Math
-                    // .pow(nodeValues[i] -
-                    // neighborValues[i], 2)
-                    // / (2 * stdDev[i] * stdDev[i]);
-                    // }
-                    // weight /= (float) numFeat;
-                    //
-                    // // save maximum value for K
-                    // K_value = Math.max(K_value, weight);
-                    //
-                    // // assumption distance between nodes
-                    // is 1
-                    // weight = (float) Math.exp(weight);
-                    //
-                    // weight *= (1 - m_pottsWeight);
-
                     // setting all edge weights to
                     // pottsWeight
                     graphCut.setEdgeWeight(nodeID, neighborID, (float)m_pottsWeight);
@@ -280,9 +250,6 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
             }
 
         }
-
-        // K has to be bigger than all weights in the graph ==> +1
-        K_value = (K_value * dims.length) + 1;
 
         /*
          * computing the weights to source and sink using the K-value

@@ -35,6 +35,7 @@ import org.knime.knip.core.ui.imgviewer.events.OverlayChgEvent;
 
 /**
  * Overlay
+ *
  * @TODO: Replace by ImageJ2 implementations or actually use ImageJ2?
  *
  * @author dietzc, hornm, schoenenbergerf
@@ -255,8 +256,13 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient, Ext
                                     .create(m_dims, new IntType()));
             }
         } catch (final IncompatibleTypeException e1) {
-            res = new NativeImgLabeling<String, IntType>(new PlanarImgFactory<IntType>().create(m_dims, new IntType()));
             throw new RuntimeException(e1);
+        } finally {
+            if (res == null) {
+                res =
+                        new NativeImgLabeling<String, IntType>(new PlanarImgFactory<IntType>().create(m_dims,
+                                                                                                      new IntType()));
+            }
         }
 
         final long[] minExtend = new long[res.numDimensions()];
