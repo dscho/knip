@@ -8,6 +8,7 @@ import java.io.ObjectOutput;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
+import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
@@ -37,14 +38,13 @@ AWTImageProvider<T> {
 
     @Override
     protected Image createImage() {
-        final int[] hist = Operations
+        final OpsHistogram hist = Operations
                 .compute(new MakeHistogram<T>(),
                          Views.iterable(SubsetOperations
                                         .subsetview(m_src,
-                                                    m_sel.getInterval(m_src))))
-                                                    .hist();
+                                                    m_sel.getInterval(m_src))));
         m_eventService.publish(new HistogramChgEvent(hist));
-        return AWTImageTools.drawHistogram(hist, m_histHeight);
+        return AWTImageTools.drawHistogram(hist.hist(), m_histHeight);
 
     }
 

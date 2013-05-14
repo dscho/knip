@@ -7,13 +7,12 @@ import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.type.numeric.RealType;
 
 /**
- * TODO: Verify the correctness of this implementation!! (e.g. compared to the
- * ImageJ plugin)
+ * TODO: Verify the correctness of this implementation!! (e.g. compared to the ImageJ plugin)
  *
  * @author hornm, University of Konstanz
  */
-public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>>
-implements UnaryOperation<K, K> {
+public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>> implements
+        UnaryOperation<K, K> {
 
     private final int m_dimX;
 
@@ -21,13 +20,13 @@ implements UnaryOperation<K, K> {
 
     private final int m_dimC;
 
-    double[] m_Ms = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    double[] m_Ms = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-    double[] m_M1 = { 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+    double[] m_M1 = {1, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    double[] m_M2 = { 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+    double[] m_M2 = {0, 0, 0, 0, 1, 0, 0, 0, 0};
 
-    double[] m_M3 = { 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+    double[] m_M3 = {0, 0, 0, 0, 0, 0, 0, 0, 1};
 
     // // the deconvolution vectors chosen by the user, i.e. the column
     // // vectors for the destaining matrix
@@ -44,11 +43,9 @@ implements UnaryOperation<K, K> {
      * @param dimX
      * @param dimY
      * @param dimC
-     * @param stainVectors
-     *                maximal 3, minimal 1 vector
+     * @param stainVectors maximal 3, minimal 1 vector
      */
-    public ColorDeconv(final int dimX, final int dimY, final int dimC,
-                       final double[]... stainVectors) {
+    public ColorDeconv(final int dimX, final int dimY, final int dimC, final double[]... stainVectors) {
         m_dimX = dimX;
         m_dimY = dimY;
         m_dimC = dimC;
@@ -57,6 +54,12 @@ implements UnaryOperation<K, K> {
 
     }
 
+    /**
+     * @param dimX
+     * @param dimY
+     * @param dimC
+     * @param stain
+     */
     public ColorDeconv(final int dimX, final int dimY, final int dimC, final PredefinedStain stain) {
         this(dimX, dimY, dimC, stain.getVectors());
     }
@@ -101,20 +104,17 @@ implements UnaryOperation<K, K> {
                 // read the rgb values of each pixel and convert
                 // them to their
                 // optical density, see the paper!
-                for (int i = 0; i < Math.min(3,
-                                             in.dimension(m_dimC)); i++) {
+                for (int i = 0; i < Math.min(3, in.dimension(m_dimC)); i++) {
                     srcRA.setPosition(i, m_dimC);
                     // convert to optical densities
-                    fodI[i] = rgbToOD(srcRA.get()
-                                      .getRealDouble());
+                    fodI[i] = rgbToOD(srcRA.get().getRealDouble());
                 }
 
                 // deconvolve through the destaining matrix
                 dcc = multMatWithVec(Mds1, fodI);
 
                 srcRA.setPosition(0, m_dimC);
-                dcc[0] = m_range
-                        * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
+                dcc[0] = m_range * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
                 //
                 if (dcc[0] > m_range) {
                     dcc[0] = m_range;
@@ -125,8 +125,7 @@ implements UnaryOperation<K, K> {
                 // deconvolve through the destaining matrix
                 dcc = multMatWithVec(Mds2, fodI);
                 srcRA.setPosition(1, m_dimC);
-                dcc[0] = m_range
-                        * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
+                dcc[0] = m_range * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
                 //
                 if (dcc[0] > m_range) {
                     dcc[0] = m_range;
@@ -137,8 +136,7 @@ implements UnaryOperation<K, K> {
                 // deconvolve through the destaining matrix
                 dcc = multMatWithVec(Mds3, fodI);
                 srcRA.setPosition(2, m_dimC);
-                dcc[0] = m_range
-                        * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
+                dcc[0] = m_range * Math.exp(-(dcc[0] + dcc[1] + dcc[2]));
                 //
                 if (dcc[0] > m_range) {
                     dcc[0] = m_range;
@@ -183,18 +181,15 @@ implements UnaryOperation<K, K> {
 
         // the vectors need to be normalized !!
         for (int i = 0; i < stainVectors.length; i++) {
-            final double len = Math.sqrt((stainVectors[i][0]
-                    * stainVectors[i][0])
-                    + (stainVectors[i][1]
-                            * stainVectors[i][1])
-                            + (stainVectors[i][2]
-                                    * stainVectors[i][2]));
+            final double len =
+                    Math.sqrt((stainVectors[i][0] * stainVectors[i][0]) + (stainVectors[i][1] * stainVectors[i][1])
+                            + (stainVectors[i][2] * stainVectors[i][2]));
             stainVectors[i][0] = stainVectors[i][0] / len;
             stainVectors[i][1] = stainVectors[i][1] / len;
             stainVectors[i][2] = stainVectors[i][2] / len;
         }
 
-        final double[] odR = stainVectors[0];
+        final double[] odR = stainVectors[0].clone();
         double[] odG;
         double[] odB;
         if (stainVectors.length > 1) {
@@ -213,20 +208,17 @@ implements UnaryOperation<K, K> {
             if (((odR[0] * odR[0]) + (odG[0] * odG[0])) > 1) {
                 odB[0] = 0;
             } else {
-                odB[0] = Math.sqrt(1.0 - (odR[0] * odR[0])
-                                   - (odG[0] * odG[0]));
+                odB[0] = Math.sqrt(1.0 - (odR[0] * odR[0]) - (odG[0] * odG[0]));
             }
             if (((odR[1] * odR[1]) + (odG[1] * odG[1])) > 1) {
                 odB[1] = 0;
             } else {
-                odB[1] = Math.sqrt(1.0 - (odR[1] * odR[1])
-                                   - (odG[1] * odG[1]));
+                odB[1] = Math.sqrt(1.0 - (odR[1] * odR[1]) - (odG[1] * odG[1]));
             }
             if (((odR[2] * odR[2]) + (odG[2] * odG[2])) > 1) {
                 odB[2] = 0;
             } else {
-                odB[2] = Math.sqrt(1.0 - (odR[2] * odR[2])
-                                   - (odG[2] * odG[2]));
+                odB[2] = Math.sqrt(1.0 - (odR[2] * odR[2]) - (odG[2] * odG[2]));
             }
         }
 
@@ -251,14 +243,11 @@ implements UnaryOperation<K, K> {
         // the user
         double[] m = new double[9];
         if (dim == 1) {
-            m = multMatrices(multMatrices(m_Ms, m_M1),
-                             inverseOf(m_Ms));
+            m = multMatrices(multMatrices(m_Ms, m_M1), inverseOf(m_Ms));
         } else if (dim == 2) {
-            m = multMatrices(multMatrices(m_Ms, m_M2),
-                             inverseOf(m_Ms));
+            m = multMatrices(multMatrices(m_Ms, m_M2), inverseOf(m_Ms));
         } else {
-            m = multMatrices(multMatrices(m_Ms, m_M3),
-                             inverseOf(m_Ms));
+            m = multMatrices(multMatrices(m_Ms, m_M3), inverseOf(m_Ms));
         }
 
         return m;
@@ -273,9 +262,8 @@ implements UnaryOperation<K, K> {
     }
 
     /**
-     * die matrix ist links aufgebaut, die entsprechenen indizes im array
-     * rechts m11 m12 m13 0 1 2 a b c m21 m22 m23 3 4 5 d e f m31 m32 m33 6
-     * 7 8 g h i
+     * die matrix ist links aufgebaut, die entsprechenen indizes im array rechts m11 m12 m13 0 1 2 a b c m21 m22 m23 3 4
+     * 5 d e f m31 m32 m33 6 7 8 g h i
      *
      */
     private double[] inverseOf(final double[] m) {
@@ -283,9 +271,9 @@ implements UnaryOperation<K, K> {
 
         // berechne die determinante einer 3x3 matrix
         // http://www.mathe-online.at/materialien/klaus.berger/files/Matrizen/determinante.pdf
-        double det = ((m[0] * m[4] * m[8]) + (m[1] * m[5] * m[6]) + (m[2]
-                * m[3] * m[7])) - (m[6] * m[4] * m[2]) - (m[7]
-                        * m[5] * m[0]) - (m[8] * m[3] * m[1]);
+        double det =
+                ((m[0] * m[4] * m[8]) + (m[1] * m[5] * m[6]) + (m[2] * m[3] * m[7])) - (m[6] * m[4] * m[2])
+                        - (m[7] * m[5] * m[0]) - (m[8] * m[3] * m[1]);
 
         // berechne inverse einer matrix
         // http://de.wikipedia.org/wiki/Inverse_Matrix
@@ -305,10 +293,8 @@ implements UnaryOperation<K, K> {
 
     /**
      *
-     * @param a
-     *                3x3 matrix
-     * @param b
-     *                3x3 matrix
+     * @param a 3x3 matrix
+     * @param b 3x3 matrix
      * @return the multiplied matrices
      */
     private double[] multMatrices(final double[] a, final double[] b) {
@@ -331,136 +317,98 @@ implements UnaryOperation<K, K> {
         HandE("H&E") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { .644211, .716556, .266844 },
-                        { .092789, .954111, 0.283111 } };
+                return new double[][]{{.644211, .716556, .266844}, {.092789, .954111, 0.283111}};
             }
 
         },
         HandETwo("H&E2") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { .49015734, .076897085,
-                            .41040173 },
-                            { .04615336, .842068, .5373925 } };
+                return new double[][]{{.49015734, .076897085, .41040173}, {.04615336, .842068, .5373925}};
             }
 
         },
         HDAB("H DAB") {
             @Override
             public double[][] getVectors() {
-                return new double[][] { { .650, .704, .286 },
-                        { .268, .570, .776 } };
+                return new double[][]{{.650, .704, .286}, {.268, .570, .776}};
             }
 
         },
         FEULGEN("Feulgen Light Green") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { .46420921, .83008335,
-                            .30827187 },
-                            { .94705542, 0.25373821,
-                                0.19650764 } };
+                return new double[][]{{.46420921, .83008335, .30827187}, {.94705542, 0.25373821, 0.19650764}};
             }
 
         },
         GIEMSA("Giemsa") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.834750233, 0.513556283,
-                            0.196330403 },
-                            { 0.092789, 0.954111, 0.283111 } };
+                return new double[][]{{0.834750233, 0.513556283, 0.196330403}, {0.092789, 0.954111, 0.283111}};
             }
 
         },
         FASTRED("FastRed FastBlue DAB") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.21393921, 0.85112669,
-                            0.47794022 },
-                            { 0.74890292, 0.60624161,
-                                0.26731082 } };
+                return new double[][]{{0.21393921, 0.85112669, 0.47794022}, {0.74890292, 0.60624161, 0.26731082}};
             }
         },
         METHYLGREEN("Methyl Green DAB") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.98003, 0.144316, 0.133146 },
-                        { 0.268, 0.570, 0.776 } };
+                return new double[][]{{0.98003, 0.144316, 0.133146}, {0.268, 0.570, 0.776}};
             }
         },
         HAndEDAB("H&E DAB") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.650, 0.704, 0.286 },
-                        { 0.072, 0.990, 0.105 },
-                        { 0.268, 0.570, 0.776 } };
+                return new double[][]{{0.650, 0.704, 0.286}, {0.072, 0.990, 0.105}, {0.268, 0.570, 0.776}};
             }
         },
         HAEC("H AEC") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.650, 0.704, 0.286 },
-                        { 0.2743, 0.6796, 0.6803 } };
+                return new double[][]{{0.650, 0.704, 0.286}, {0.2743, 0.6796, 0.6803}};
             }
         },
         AZANMALLORY("Azan-Mallory") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { .853033, .508733, .112656 },
-                        { 0.09289875, 0.8662008,
-                            0.49098468 },
-                            { 0.10732849, 0.36765403,
-                                0.9237484 } };
+                return new double[][]{{.853033, .508733, .112656}, {0.09289875, 0.8662008, 0.49098468},
+                        {0.10732849, 0.36765403, 0.9237484}};
             }
         },
         MASSONTRICHROME("Masson Trichrome") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.7995107, 0.5913521,
-                            0.10528667 },
-                            { 0.09997159, 0.73738605,
-                                0.6680326 } };
+                return new double[][]{{0.7995107, 0.5913521, 0.10528667}, {0.09997159, 0.73738605, 0.6680326}};
             }
         },
         ALCIAN("Alcian blue & H") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.874622, 0.457711, 0.158256 },
-                        { 0.552556, 0.7544, 0.353744 } };
+                return new double[][]{{0.874622, 0.457711, 0.158256}, {0.552556, 0.7544, 0.353744}};
             }
         },
 
         HPAS("H PAS") {
             @Override
             public double[][] getVectors() {
-                return new double[][] {
-                        { 0.644211, 0.716556, 0.266844 },
-                        { 0.175411, 0.972178, 0.154589 } };
+                return new double[][]{{0.644211, 0.716556, 0.266844}, {0.175411, 0.972178, 0.154589}};
             }
         },
         CMY("CMY") {
             @Override
             public double[][] getVectors() {
-                return new double[][] { { 0, 1, 1 },
-                        { 1, 0, 1 }, { 1, 1, 0 } };
+                return new double[][]{{0, 1, 1}, {1, 0, 1}, {1, 1, 0}};
             }
         },
         RGB("RGB") {
             @Override
             public double[][] getVectors() {
-                return new double[][] { { 1, 0, 0 },
-                        { 0, 1, 0 }, { 0, 0, 1 } };
+                return new double[][]{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
             }
         };
 
@@ -489,8 +437,7 @@ implements UnaryOperation<K, K> {
 
     @Override
     public UnaryOperation<K, K> copy() {
-        return new ColorDeconv<T, K>(m_dimX, m_dimY, m_dimC,
-                m_stainVectors.clone());
+        return new ColorDeconv<T, K>(m_dimX, m_dimY, m_dimC, m_stainVectors.clone());
     }
 
 }

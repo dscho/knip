@@ -68,46 +68,50 @@ import javax.swing.event.EventListenerList;
 import org.knime.knip.core.ui.imgviewer.ColorDispenser;
 
 /**
- *
- *
  * @author muethingc
  */
 public class HistogramPainter implements MouseMotionListener {
 
     private static final Color DEFAULT = Color.BLACK;
+
     private static final Color HILITE = Color.orange;
+
     private static final Color HILITE_BACKGROUND = Color.lightGray;
+
     private static final Color BACKGROUND = Color.white;
 
     private static final int MIN_HEIGHT = 50;
 
     private class Bin {
-        private final Color colorSelection = ColorDispenser.INSTANCE
-                .next();
+        private final Color colorSelection = ColorDispenser.INSTANCE.next();
+
         private Color color;
+
         private final Color colorDefault;
+
         private final Rectangle rectangleLog;
+
         private final Rectangle rectangleLinear;
+
         private final Rectangle rectangleSelection;
 
         private final int count;
+
         private final double[] values;
 
-        public Bin(final Rectangle recLog, final Rectangle recLin,
-                   final Rectangle recSelection,
-                   final int c, final double[] val, final Color col) {
+        public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final int c,
+                   final double[] val, final Color col) {
+            values = val.clone();
             rectangleLog = recLog;
             rectangleLinear = recLin;
             rectangleSelection = recSelection;
             count = c;
-            values = val;
             color = col;
             colorDefault = col;
         }
 
-        public Bin(final Rectangle recLog, final Rectangle recLin,
-                   final Rectangle recSelection,
-                   final int c, final double[] val) {
+        public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final int c,
+                   final double[] val) {
             this(recLog, recLin, recSelection, c, val, DEFAULT);
         }
 
@@ -123,8 +127,10 @@ public class HistogramPainter implements MouseMotionListener {
     /**
      * The scale the histogram is drawn with.
      */
-     public enum Scale {
-        LOG("log"), LINEAR("linear");
+    public enum Scale {
+        @SuppressWarnings("javadoc")
+        LOG("log"), @SuppressWarnings("javadoc")
+        LINEAR("linear");
 
         private final String m_name;
 
@@ -138,322 +144,300 @@ public class HistogramPainter implements MouseMotionListener {
         }
     }
 
-     // used for determining how to draw the data
-     private int m_max = Integer.MIN_VALUE;
-     private int m_min = Integer.MAX_VALUE;
-     private double m_maxLog;
-     private double m_minLog;
-
-     // the data to draw
-     private Histogram m_histogram = null;
-
-     // Stores the current scale to draw in
-     private Scale m_scale;
-
-     // the extra info to paint close to the cursor
-     private String m_msg = "";
-
-     // list of listeners
-     private final EventListenerList m_listener = new EventListenerList();
-
-     // the area being drawn onto
-     private Rectangle m_paintArea = new Rectangle(10, 10);
-
-     // all bins we are drawing
-     private final List<Bin> m_bins = new ArrayList<Bin>();
-
-     // the backbuffer for selection detection
-     private BufferedImage m_backBuf = new BufferedImage(10, 10,
-                                                         BufferedImage.TYPE_INT_ARGB);
-
-     /**
-      * Set up a new histogram that will be painted using log scale.
-      *
-      * @param hist
-      *                the hist to draw
-      */
-     public HistogramPainter(final Histogram hist) {
-         this(hist, Scale.LOG);
-     }
-
-     /**
-      * Sets up a new histogram that will initally not draw anthing and be
-      * set to log scale.
-      */
-     public HistogramPainter() {
-         this(null);
-     }
-
-     /**
-      * Set up a new histogram that will be drawn into with the given scale.
-      *
-      * @param hist
-      *                the hist to draw
-      * @param scale
-      *                the scale to use
-      */
-     public HistogramPainter(final Histogram hist, final Scale scale) {
-         setHistogram(hist);
-         m_scale = scale;
-     }
-
-     /**
-      * Set the histogram to display a new data set.
-      *
-      * @param hist
-      */
-     public final void setHistogram(final Histogram hist) {
-         m_histogram = hist;
-
-         if (m_histogram == null) {
-             return;
-         }
-
-         findMinMax();
-
-         calcBins();
-     }
-
-     private final void calcBins() {
-         assert m_paintArea != null;
-
-         m_bins.clear();
-
-         if (m_histogram == null) {
-             return;
-         }
-
-         final int height = m_paintArea.height;
-
-         final float pixelWidth = calcPixelSize(m_paintArea.width,
-                                                m_histogram.size());
-         float pos = 0f;
-
-         for (int i = 0; i < m_histogram.size(); i++) {
-             final int left = (int) pos;
-             pos += pixelWidth;
-             final int right = (int) pos;
-
-             final int[] h = calculateBarDrawHeight(m_histogram.count(i),
-                                                    height);
-
-             final Rectangle log = new Rectangle(left, height - h[0],
-                                                 right - left, h[0]);
-
-             final Rectangle linear = new Rectangle(left, height - h[1],
-                                                    right - left, h[1]);
-
-             final Rectangle selection = new Rectangle(left, 0, right
-                                                       - left, height);
-
-             m_bins.add(new Bin(log, linear, selection, m_histogram
-                                .count(i),
-                                m_histogram.values(i)));
-         }
-     }
-
-     private final void findMinMax() {
-         assert m_histogram != null;
-
-         m_max = Integer.MIN_VALUE;
-         m_min = Integer.MAX_VALUE;
-
-         for (final Integer v : m_histogram) {
-             m_max = v > m_max ? v : m_max;
-             m_min = v < m_min ? v : m_min;
-         }
-
-         m_maxLog = Math.log(m_max);
-         m_minLog = Math.log(m_min);
-
-         if (m_minLog == Double.NEGATIVE_INFINITY) {
-             m_minLog = 0;
-         }
-     }
-
-     private float calcPixelSize(final int width, final int bins) {
-         return (float) width / (float) (bins);
-     }
-
-     /**
-      * Paint this histogram using the given Graphics2D object.
-      *
-      * @see javax.swing.JComponent#paintComponent(Graphics)
-      * @param g2
-      *                the Graphics2D object to use for drawing
-      */
-     public final void paint(final Graphics2D g2) {
-
-         final Rectangle newArea = g2.getClipBounds();
-
-         if (!newArea.equals(m_paintArea)) {
-             m_paintArea = newArea;
-             calcBins();
-
-             m_backBuf = new BufferedImage(m_paintArea.width,
-                                           m_paintArea.height,
-                                           BufferedImage.TYPE_INT_ARGB);
-         }
-
-         // paint the background
-         g2.setColor(BACKGROUND);
-         g2.fill(m_paintArea);
-
-         if (m_histogram != null) {
-             paintHistogram(g2, false);
-         } else {
-             g2.setFont(new Font(g2.getFont().getFontName(),
-                                 Font.BOLD, 20));
-             g2.drawString("No data present", 20,
-                           m_paintArea.height / 2);
-         }
-
-         repaintBackBuffer();
-     }
-
-     private void repaintBackBuffer() {
-         assert m_backBuf.getHeight() == m_paintArea.height;
-         assert m_backBuf.getWidth() == m_paintArea.width;
-
-         final Graphics2D g2 = m_backBuf.createGraphics();
-         g2.setColor(ColorDispenser.BACKGROUND_COLOR);
-         g2.fill(m_paintArea);
-
-         paintHistogram(g2, true);
-     }
-
-     private void paintHistogram(final Graphics2D g2, final boolean selection) {
-
-         for (final Bin bin : m_bins) {
-             if (selection) {
-                 g2.setColor(bin.colorSelection);
-                 g2.fill(bin.rectangleSelection);
-             } else {
-                 if (bin.color.equals(HILITE)) {
-                     final GradientPaint gp = new GradientPaint(0,
-                                                                m_paintArea.height,
-                                                                HILITE_BACKGROUND, 0,
-                                                                0, BACKGROUND);
-                     g2.setPaint(gp);
-                     g2.fill(bin.rectangleSelection);
-                 }
-
-                 g2.setPaint(bin.color);
-
-                 if (m_scale == Scale.LINEAR) {
-                     g2.fill(bin.rectangleLinear);
-                 } else {
-                     g2.fill(bin.rectangleLog);
-                 }
-
-             }
-         }
-     }
-
-     /**
-      * Calculate the height to which the bar with the given value should be
-      * drawn.
-      *
-      * @param val
-      *                the value
-      * @return the height to draw to in int
-      */
-      private int[] calculateBarDrawHeight(final double val, final int height) {
-
-          final int[] res = new int[2];
-
-          final double max = m_maxLog - m_minLog;
-          double log = Math.log(val);
-
-          if (log == Double.NEGATIVE_INFINITY) {
-              log = 0;
-          }
-
-          // Normalize to log scale
-          final double l = (log - m_minLog) / max;
-          res[0] = (int) (l * height);
-
-          final double frac = val / m_max;
-          res[1] = (int) (frac * height);
-
-          return res;
-      }
-
-      /**
-       * Sets the scale used to display the histogram.
-       *
-       * Note: To acutally see the changes, the calling class has to issue a
-       * repaint() itself.
-       *
-       * @param scale
-       *                the scale
-       */
-      public final void setScale(final Scale scale) {
-          m_scale = scale;
-      }
-
-      @Override
-      public void mouseDragged(final MouseEvent arg0) {
-          // ignore
-      }
-
-      @Override
-      public void mouseMoved(final MouseEvent event) {
-
-          final Color c = new Color(
-                                    m_backBuf.getRGB(event.getX(), event.getY()));
-
-          final StringBuilder sb = new StringBuilder();
-          final Formatter formatter = new Formatter(sb);
-
-          for (final Bin bin : m_bins) {
-              if (bin.colorSelection.equals(c)) {
-                  formatter.format(
-                                   "Count %10d from %15.5g to %15.5g",
-                                   bin.count, bin.values[0],
-                                   bin.values[1]);
-                  bin.hilite();
-              } else {
-                  bin.unhilite();
-              }
-          }
-
-          m_msg = sb.toString();
-
-          fireChangeEvent();
-      }
-
-      public final String getMessage() {
-          return m_msg;
-      }
-
-      private void fireChangeEvent() {
-          for (final ChangeListener l : m_listener
-                  .getListeners(ChangeListener.class)) {
-              l.stateChanged(new ChangeEvent(this));
-          }
-      }
-
-      public final void addChangeListener(final ChangeListener l) {
-          m_listener.add(ChangeListener.class, l);
-      }
-
-      public final void removeChangeListener(final ChangeListener l) {
-          m_listener.remove(ChangeListener.class, l);
-      }
-
-      public final Dimension getMinimumSize() {
-
-          int width;
-          if (m_histogram == null) {
-              width = 100;
-          } else {
-              width = m_histogram.size();
-          }
-          return new Dimension(width, MIN_HEIGHT);
-      }
-
-      public final Dimension getPreferredSize() {
-          return getMinimumSize();
-      }
+    // used for determining how to draw the data
+    private int m_max = Integer.MIN_VALUE;
+
+    //
+    private int m_min = Integer.MAX_VALUE;
+
+    //
+    private double m_maxLog;
+
+    //
+    private double m_minLog;
+
+    // the data to draw
+    private Histogram m_histogram = null;
+
+    // Stores the current scale to draw in
+    private Scale m_scale;
+
+    // the extra info to paint close to the cursor
+    private String m_msg = "";
+
+    // list of listeners
+    private final EventListenerList m_listener = new EventListenerList();
+
+    // the area being drawn onto
+    private Rectangle m_paintArea = new Rectangle(10, 10);
+
+    // all bins we are drawing
+    private final List<Bin> m_bins = new ArrayList<Bin>();
+
+    // the backbuffer for selection detection
+    private BufferedImage m_backBuf = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+
+    /**
+     * Set up a new histogram that will be painted using log scale.
+     *
+     * @param hist the hist to draw
+     */
+    public HistogramPainter(final Histogram hist) {
+        this(hist, Scale.LOG);
+    }
+
+    /**
+     * Sets up a new histogram that will initally not draw anthing and be set to log scale.
+     */
+    public HistogramPainter() {
+        this(null);
+    }
+
+    /**
+     * Set up a new histogram that will be drawn into with the given scale.
+     *
+     * @param hist the hist to draw
+     * @param scale the scale to use
+     */
+    public HistogramPainter(final Histogram hist, final Scale scale) {
+        setHistogram(hist);
+        m_scale = scale;
+    }
+
+    /**
+     * Set the histogram to display a new data set.
+     *
+     * @param hist
+     */
+    public final void setHistogram(final Histogram hist) {
+        m_histogram = hist;
+
+        if (m_histogram == null) {
+            return;
+        }
+
+        findMinMax();
+
+        calcBins();
+    }
+
+    private final void calcBins() {
+        assert m_paintArea != null;
+
+        m_bins.clear();
+
+        if (m_histogram == null) {
+            return;
+        }
+
+        final int height = m_paintArea.height;
+
+        final float pixelWidth = calcPixelSize(m_paintArea.width, m_histogram.size());
+        float pos = 0f;
+
+        for (int i = 0; i < m_histogram.size(); i++) {
+            final int left = (int)pos;
+            pos += pixelWidth;
+            final int right = (int)pos;
+
+            final int[] h = calculateBarDrawHeight(m_histogram.count(i), height);
+
+            final Rectangle log = new Rectangle(left, height - h[0], right - left, h[0]);
+
+            final Rectangle linear = new Rectangle(left, height - h[1], right - left, h[1]);
+
+            final Rectangle selection = new Rectangle(left, 0, right - left, height);
+
+            m_bins.add(new Bin(log, linear, selection, m_histogram.count(i), m_histogram.values(i)));
+        }
+    }
+
+    private final void findMinMax() {
+        assert m_histogram != null;
+
+        m_max = Integer.MIN_VALUE;
+        m_min = Integer.MAX_VALUE;
+
+        for (final Integer v : m_histogram) {
+            m_max = v > m_max ? v : m_max;
+            m_min = v < m_min ? v : m_min;
+        }
+
+        m_maxLog = Math.log(m_max);
+        m_minLog = Math.log(m_min);
+
+        if (m_minLog == Double.NEGATIVE_INFINITY) {
+            m_minLog = 0;
+        }
+    }
+
+    private float calcPixelSize(final int width, final int bins) {
+        return (float)width / (float)(bins);
+    }
+
+    /**
+     * Paint this histogram using the given Graphics2D object.
+     *
+     * @see javax.swing.JComponent#paintComponent(Graphics)
+     * @param g2 the Graphics2D object to use for drawing
+     */
+    public final void paint(final Graphics2D g2) {
+
+        final Rectangle newArea = g2.getClipBounds();
+
+        if (!newArea.equals(m_paintArea)) {
+            m_paintArea = newArea;
+            calcBins();
+
+            m_backBuf = new BufferedImage(m_paintArea.width, m_paintArea.height, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        // paint the background
+        g2.setColor(BACKGROUND);
+        g2.fill(m_paintArea);
+
+        if (m_histogram != null) {
+            paintHistogram(g2, false);
+        } else {
+            g2.setFont(new Font(g2.getFont().getFontName(), Font.BOLD, 20));
+            g2.drawString("No data present", 20, m_paintArea.height / 2);
+        }
+
+        repaintBackBuffer();
+    }
+
+    private void repaintBackBuffer() {
+        assert m_backBuf.getHeight() == m_paintArea.height;
+        assert m_backBuf.getWidth() == m_paintArea.width;
+
+        final Graphics2D g2 = m_backBuf.createGraphics();
+        g2.setColor(ColorDispenser.BACKGROUND_COLOR);
+        g2.fill(m_paintArea);
+
+        paintHistogram(g2, true);
+    }
+
+    private void paintHistogram(final Graphics2D g2, final boolean selection) {
+
+        for (final Bin bin : m_bins) {
+            if (selection) {
+                g2.setColor(bin.colorSelection);
+                g2.fill(bin.rectangleSelection);
+            } else {
+                if (bin.color.equals(HILITE)) {
+                    final GradientPaint gp =
+                            new GradientPaint(0, m_paintArea.height, HILITE_BACKGROUND, 0, 0, BACKGROUND);
+                    g2.setPaint(gp);
+                    g2.fill(bin.rectangleSelection);
+                }
+
+                g2.setPaint(bin.color);
+
+                if (m_scale == Scale.LINEAR) {
+                    g2.fill(bin.rectangleLinear);
+                } else {
+                    g2.fill(bin.rectangleLog);
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Calculate the height to which the bar with the given value should be drawn.
+     *
+     * @param val the value
+     * @return the height to draw to in int
+     */
+    private int[] calculateBarDrawHeight(final double val, final int height) {
+
+        final int[] res = new int[2];
+
+        final double max = m_maxLog - m_minLog;
+        double log = Math.log(val);
+
+        if (log == Double.NEGATIVE_INFINITY) {
+            log = 0;
+        }
+
+        // Normalize to log scale
+        final double l = (log - m_minLog) / max;
+        res[0] = (int)(l * height);
+
+        final double frac = val / m_max;
+        res[1] = (int)(frac * height);
+
+        return res;
+    }
+
+    /**
+     * Sets the scale used to display the histogram.
+     *
+     * Note: To acutally see the changes, the calling class has to issue a repaint() itself.
+     *
+     * @param scale the scale
+     */
+    public final void setScale(final Scale scale) {
+        m_scale = scale;
+    }
+
+    @Override
+    public void mouseDragged(final MouseEvent arg0) {
+        // ignore
+    }
+
+    @Override
+    public void mouseMoved(final MouseEvent event) {
+
+        final Color c = new Color(m_backBuf.getRGB(event.getX(), event.getY()));
+
+        final StringBuilder sb = new StringBuilder();
+        final Formatter formatter = new Formatter(sb);
+
+        for (final Bin bin : m_bins) {
+            if (bin.colorSelection.equals(c)) {
+                formatter.format("Count %10d from %15.5g to %15.5g", bin.count, bin.values[0], bin.values[1]);
+                bin.hilite();
+            } else {
+                bin.unhilite();
+            }
+        }
+
+        m_msg = sb.toString();
+
+        fireChangeEvent();
+    }
+
+    public final String getMessage() {
+        return m_msg;
+    }
+
+    private void fireChangeEvent() {
+        for (final ChangeListener l : m_listener.getListeners(ChangeListener.class)) {
+            l.stateChanged(new ChangeEvent(this));
+        }
+    }
+
+    public final void addChangeListener(final ChangeListener l) {
+        m_listener.add(ChangeListener.class, l);
+    }
+
+    public final void removeChangeListener(final ChangeListener l) {
+        m_listener.remove(ChangeListener.class, l);
+    }
+
+    public final Dimension getMinimumSize() {
+
+        int width;
+        if (m_histogram == null) {
+            width = 100;
+        } else {
+            width = m_histogram.size();
+        }
+        return new Dimension(width, MIN_HEIGHT);
+    }
+
+    public final Dimension getPreferredSize() {
+        return getMinimumSize();
+    }
 }

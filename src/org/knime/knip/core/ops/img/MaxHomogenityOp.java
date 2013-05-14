@@ -13,18 +13,23 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.view.Views;
 
+/**
+ *
+ * @author dietyc
+ */
 //TODO: Use circle instead of rectangle??
 //TODO: Input: RandomAccessibleInterval Output: IterableInterval
-public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleInterval<T>>
-implements UnaryOperation<I, I> {
+public class MaxHomogenityOp<T extends RealType<T>, I extends RandomAccessibleInterval<T>> implements
+        UnaryOperation<I, I> {
 
     private final long[] m_span;
+
     private final double m_lambda;
+
     private final OutOfBoundsFactory<T, I> m_outofbounds;
 
-    public MaxHomogenityOp(final double lambda, final long[] span,
-                           final OutOfBoundsFactory<T, I> outofbounds) {
-        m_span = span;
+    public MaxHomogenityOp(final double lambda, final long[] span, final OutOfBoundsFactory<T, I> outofbounds) {
+        m_span = span.clone();
         m_lambda = lambda;
         m_outofbounds = outofbounds;
 
@@ -34,8 +39,7 @@ implements UnaryOperation<I, I> {
     public I compute(final I input, final I output) {
 
         final IterableInterval<T> inputIterable = Views.iterable(input);
-        final PolygonRegionOfInterest[] rois = createROIs(inputIterable
-                                                          .firstElement().createVariable(), m_span);
+        final PolygonRegionOfInterest[] rois = createROIs(inputIterable.firstElement().createVariable(), m_span);
 
         final double[] displacement = new double[input.numDimensions()];
         final double[] position = new double[input.numDimensions()];
@@ -56,26 +60,17 @@ implements UnaryOperation<I, I> {
             }
 
             // Can be done more nicely? dont know
-                    int r = 0;
+            int r = 0;
             for (final PolygonRegionOfInterest roi : rois) {
                 roi.move(displacement);
                 // CODE START
-                final Cursor<T> roiCursor = roi
-                        .getIterableIntervalOverROI(
-                                                    Views.extend(input,
-                                                                 m_outofbounds))
-                                                                 .cursor();
+                final Cursor<T> roiCursor = roi.getIterableIntervalOverROI(Views.extend(input, m_outofbounds)).cursor();
 
-                means[r] = new Mean<T, DoubleType>().compute(
-                                                             roiCursor, new DoubleType())
-                                                             .getRealDouble();
+                means[r] = new Mean<T, DoubleType>().compute(roiCursor, new DoubleType()).getRealDouble();
 
                 roiCursor.reset();
-                stddevs[r] = Math
-                        .sqrt(new Variance<T, DoubleType>()
-                              .compute(roiCursor,
-                                       new DoubleType())
-                                       .getRealDouble());
+                stddevs[r] =
+                        Math.sqrt(new Variance<T, DoubleType>().compute(roiCursor, new DoubleType()).getRealDouble());
 
                 minStdDev = Math.min(stddevs[r], minStdDev);
 
@@ -127,28 +122,26 @@ implements UnaryOperation<I, I> {
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1, new Point(new long[] { span[0], 0 }));
+        rois[t].addVertex(1, new Point(new long[]{span[0], 0}));
 
-        rois[t].addVertex(2, new Point(new long[] { span[0], span[1] }));
+        rois[t].addVertex(2, new Point(new long[]{span[0], span[1]}));
         t++;
 
         // T1
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1, new Point(new long[] { span[0], 0 }));
+        rois[t].addVertex(1, new Point(new long[]{span[0], 0}));
 
-        rois[t].addVertex(2,
-                          new Point(new long[] { span[0], -span[1] }));
+        rois[t].addVertex(2, new Point(new long[]{span[0], -span[1]}));
         t++;
 
         // T2
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1,
-                          new Point(new long[] { span[0], -span[1] }));
-        rois[t].addVertex(2, new Point(new long[] { 0, -span[1] }));
+        rois[t].addVertex(1, new Point(new long[]{span[0], -span[1]}));
+        rois[t].addVertex(2, new Point(new long[]{0, -span[1]}));
 
         t++;
 
@@ -156,9 +149,8 @@ implements UnaryOperation<I, I> {
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1, new Point(new long[] { 0, -span[1] }));
-        rois[t].addVertex(2, new Point(
-                                       new long[] { -span[0], -span[1] }));
+        rois[t].addVertex(1, new Point(new long[]{0, -span[1]}));
+        rois[t].addVertex(2, new Point(new long[]{-span[0], -span[1]}));
 
         t++;
 
@@ -166,9 +158,8 @@ implements UnaryOperation<I, I> {
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1, new Point(new long[] { -span[0], 0 }));
-        rois[t].addVertex(2, new Point(
-                                       new long[] { -span[0], -span[1] }));
+        rois[t].addVertex(1, new Point(new long[]{-span[0], 0}));
+        rois[t].addVertex(2, new Point(new long[]{-span[0], -span[1]}));
 
         t++;
 
@@ -176,9 +167,8 @@ implements UnaryOperation<I, I> {
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1, new Point(new long[] { -span[0], 0 }));
-        rois[t].addVertex(2,
-                          new Point(new long[] { -span[0], span[1] }));
+        rois[t].addVertex(1, new Point(new long[]{-span[0], 0}));
+        rois[t].addVertex(2, new Point(new long[]{-span[0], span[1]}));
 
         t++;
 
@@ -186,9 +176,8 @@ implements UnaryOperation<I, I> {
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1, new Point(new long[] { 0, span[1] }));
-        rois[t].addVertex(2,
-                          new Point(new long[] { -span[0], span[1] }));
+        rois[t].addVertex(1, new Point(new long[]{0, span[1]}));
+        rois[t].addVertex(2, new Point(new long[]{-span[0], span[1]}));
 
         t++;
 
@@ -196,8 +185,8 @@ implements UnaryOperation<I, I> {
         rois[t] = new PolygonRegionOfInterest();
         rois[t].addVertex(0, origin);
 
-        rois[t].addVertex(1, new Point(new long[] { 0, span[1] }));
-        rois[t].addVertex(2, new Point(new long[] { span[0], span[1] }));
+        rois[t].addVertex(1, new Point(new long[]{0, span[1]}));
+        rois[t].addVertex(2, new Point(new long[]{span[0], span[1]}));
 
         t++;
 
@@ -206,8 +195,7 @@ implements UnaryOperation<I, I> {
 
     @Override
     public UnaryOperation<I, I> copy() {
-        return new MaxHomogenityOp<T, I>(m_lambda, m_span.clone(),
-                m_outofbounds);
+        return new MaxHomogenityOp<T, I>(m_lambda, m_span.clone(), m_outofbounds);
     }
 
 }

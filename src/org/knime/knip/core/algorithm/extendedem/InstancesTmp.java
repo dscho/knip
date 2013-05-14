@@ -5,16 +5,18 @@ import java.util.ArrayList;
 
 public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable {
     protected int m_ClassIndex;
+
     protected String m_RelationName;
+
     protected ArrayList<InstanceTmp> m_Instances;
+
     protected ArrayList<AttributeTmp> m_Attributes;
 
     public InstancesTmp(final InstancesTmp dataset, final int capacity) {
         initialize(dataset, capacity);
     }
 
-    public InstancesTmp(final String name, final ArrayList<AttributeTmp> attInfo,
-                        final int capacity) {
+    public InstancesTmp(final String name, final ArrayList<AttributeTmp> attInfo, final int capacity) {
 
         m_RelationName = name;
         m_ClassIndex = -1;
@@ -58,7 +60,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
     }
 
     @Override
-    public boolean add(final InstanceTmp inst){
+    public boolean add(final InstanceTmp inst) {
         return m_Instances.add(inst);
     }
 
@@ -119,8 +121,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
         return r;
     }
 
-    private void quickSort(final int[] array, final int[] index,
-                           final int left, final int right) {
+    private void quickSort(final int[] array, final int[] index, final int left, final int right) {
 
         if (left < right) {
             final int middle = partition(array, index, left, right);
@@ -180,8 +181,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
         return index;
     }
 
-    private int partition(final double[] array, final int[] index, int l,
-                          int r) {
+    private int partition(final double[] array, final int[] index, int l, int r) {
 
         final double pivot = array[index[(l + r) / 2]];
         int help;
@@ -208,8 +208,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
         return r;
     }
 
-    private void quickSort(final double[] array, final int[] index,
-                           final int left, final int right) {
+    private void quickSort(final double[] array, final int[] index, final int left, final int right) {
 
         if (left < right) {
             final int middle = partition(array, index, left, right);
@@ -228,9 +227,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
             for (int j = 0; j < numInstances(); j++) {
                 if (!instance(j).isMissing(attIndex)) {
                     found += instance(j).weight();
-                    result += instance(j).weight()
-                            * instance(j).value(
-                                                attIndex);
+                    result += instance(j).weight() * instance(j).value(attIndex);
                 }
             }
             if (found <= 0) {
@@ -242,9 +239,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
             counts = new int[attribute(attIndex).numValues()];
             for (int j = 0; j < numInstances(); j++) {
                 if (!instance(j).isMissing(attIndex)) {
-                    counts[(int) instance(j)
-                           .value(attIndex)] += instance(
-                                                         j).weight();
+                    counts[(int)instance(j).value(attIndex)] += instance(j).weight();
                 }
             }
             return maxIndex(counts);
@@ -266,10 +261,8 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
 
         final AttributeStatsTmp result = new AttributeStatsTmp();
         if (attribute(index).isNominal()) {
-            result.nominalCounts = new int[attribute(index)
-                                           .numValues()];
-            result.nominalWeights = new double[attribute(index)
-                                               .numValues()];
+            result.nominalCounts = new int[attribute(index).numValues()];
+            result.nominalWeights = new double[attribute(index).numValues()];
         }
         if (attribute(index).isNumeric()) {
             result.numericStats = new StatsTmp();
@@ -291,8 +284,7 @@ public class InstancesTmp extends ArrayList<InstanceTmp> implements Serializable
                 currentCount++;
                 currentWeight += current.weight();
             } else {
-                result.addDistinct(prev, currentCount,
-                                   currentWeight);
+                result.addDistinct(prev, currentCount, currentWeight);
                 currentCount = 1;
                 currentWeight = current.weight();
                 prev = current.value(index);

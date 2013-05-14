@@ -18,23 +18,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Renders the real values of a X,Y slice as ScreenImage. The position in the
- * colorDim defines which of the provided color tables is used.
+ * Renders the real values of a X,Y slice as ScreenImage. The position in the colorDim defines which of the provided
+ * color tables is used.
  *
  * @author zinsmaie
  *
  * @param <R>
  */
-public class Real2TableColorRenderer<R extends RealType<R>> extends
-ProjectingRenderer<R> implements RendererWithNormalization,
-RendererWithColorTable {
+public class Real2TableColorRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
+        RendererWithNormalization, RendererWithColorTable {
 
-    public final static Logger LOGGER = LoggerFactory
-            .getLogger(Real2TableColorRenderer.class);
+    public final static Logger LOGGER = LoggerFactory.getLogger(Real2TableColorRenderer.class);
 
     // default
     private RealTableColorARGBConverter<R> m_converter;
+
     private final int m_colorDim;
+
     private ColorTable[] m_colorTables;
 
     public Real2TableColorRenderer(final int colorDim) {
@@ -43,16 +43,16 @@ RendererWithColorTable {
     }
 
     @Override
-    public ScreenImage render(final RandomAccessibleInterval<R> source, final int dimX,
-                              final int dimY, final long[] planePos) {
+    public ScreenImage render(final RandomAccessibleInterval<R> source, final int dimX, final int dimY,
+                              final long[] planePos) {
 
         // default implementation
-        final ColorTable ct = m_colorTables[(int) planePos[m_colorDim]];
+        final ColorTable ct = m_colorTables[(int)planePos[m_colorDim]];
 
         if (ct instanceof ColorTable8) {
-            m_converter.setColorTable((ColorTable8) ct);
+            m_converter.setColorTable((ColorTable8)ct);
         } else if (ct instanceof ColorTable16) {
-            m_converter.setColorTable((ColorTable16) ct);
+            m_converter.setColorTable((ColorTable16)ct);
         } else {
             // fall back linear 8 gray ramp
             LOGGER.warn("Unsupported color table format. Using linear grey ramp.");
@@ -69,22 +69,20 @@ RendererWithColorTable {
 
     @Override
     public String toString() {
-        return "ColorTable based Image Renderer (dim:" + m_colorDim
-                + ")";
+        return "ColorTable based Image Renderer (dim:" + m_colorDim + ")";
     }
 
     @Override
-    protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX,
-                                                            final int dimY, final RandomAccessibleInterval<R> source,
+    protected Abstract2DProjector<R, ARGBType> getProjector(final int dimX, final int dimY,
+                                                            final RandomAccessibleInterval<R> source,
                                                             final ARGBScreenImage target) {
 
-        return new Projector2D<R, ARGBType>(dimX, dimY, source, target,
-                m_converter);
+        return new Projector2D<R, ARGBType>(dimX, dimY, source, target, m_converter);
     }
 
     @Override
     public void setColorTables(final ColorTable[] tables) {
-        m_colorTables = tables;
+        m_colorTables = tables.clone();
     }
 
 }

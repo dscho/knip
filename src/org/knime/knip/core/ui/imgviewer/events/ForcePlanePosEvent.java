@@ -54,15 +54,17 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  *
- * @author hornm, University of Konstanz
+ * @author zinsmaierm, University of Konstanz
  */
 public class ForcePlanePosEvent implements KNIPEvent {
 
     private final long[] m_position;
 
+    /**
+     * @param position
+     */
     public ForcePlanePosEvent(final long[] position) {
-        m_position = position;
-
+        m_position = position.clone();
     }
 
     /**

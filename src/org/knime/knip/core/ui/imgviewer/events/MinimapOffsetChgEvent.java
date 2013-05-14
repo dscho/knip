@@ -54,14 +54,17 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  *
- * @author hornm, University of Konstanz
+ * @author zinsmaierm, dietzc, hornm, University of Konstanz
  */
 public class MinimapOffsetChgEvent implements KNIPEvent {
 
     private final int[] m_offest;
 
+    /**
+     * @param offest
+     */
     public MinimapOffsetChgEvent(final int[] offest) {
-        m_offest = offest;
+        m_offest = offest.clone();
 
     }
 

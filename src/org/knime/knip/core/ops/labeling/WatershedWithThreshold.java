@@ -156,7 +156,7 @@ public class WatershedWithThreshold<T extends RealType<T>, L extends Comparable<
      *            8-connected (or N-dimensional equivalent) structuring element (all adjacent pixels + diagonals).
      */
     public void setStructuringElement(final long[][] structuringElement) {
-        this.structuringElement = structuringElement;
+        this.structuringElement = structuringElement.clone();
     }
 
     /**

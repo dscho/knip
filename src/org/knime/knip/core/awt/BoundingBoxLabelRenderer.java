@@ -21,18 +21,17 @@ import org.knime.knip.core.awt.parametersupport.RendererWithHilite;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
-public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>>
-implements ImageRenderer<LabelingType<L>>,
-RendererWithLabels<L>, RendererWithHilite {
+public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>> implements ImageRenderer<LabelingType<L>>,
+        RendererWithLabels<L>, RendererWithHilite {
 
-    private final Color HILITED_RGB_COLOR = new Color(
-                                                      SegmentColorTable.HILITED_RGB);
+    private final Color HILITED_RGB_COLOR = new Color(SegmentColorTable.HILITED_RGB);
 
     private Color getBOX_RGB_COLOR() {
         return SegmentColorTable.getBoundingBoxColor();
     };
 
     private Set<String> m_hilitedLabels;
+
     private Set<String> m_activeLabels;
 
     protected double m_scale = 1.0;
@@ -40,20 +39,17 @@ RendererWithLabels<L>, RendererWithHilite {
     protected boolean m_withLabelStrings = true;
 
     @Override
-    public ScreenImage render(
-                              final RandomAccessibleInterval<LabelingType<L>> source,
-                              final int dimX, final int dimY, final long[] planePos) {
-        return render(dimX, dimY, planePos, source, m_activeLabels,
-                      m_scale, m_withLabelStrings);
+    public ScreenImage render(final RandomAccessibleInterval<LabelingType<L>> source, final int dimX, final int dimY,
+                              final long[] planePos) {
+        return render(dimX, dimY, planePos, source, m_activeLabels, m_scale, m_withLabelStrings);
     }
 
     private ScreenImage render(final int dimX, final int dimY, final long[] planePos,
                                final RandomAccessibleInterval<LabelingType<L>> labeling,
-                               final Set<String> activeLabels, final double scale,
-                               final boolean withLabelString) {
+                               final Set<String> activeLabels, final double scale, final boolean withLabelString) {
         Labeling<L> subLab = null;
         if (labeling instanceof Labeling) {
-            subLab = (Labeling<L>) labeling;
+            subLab = (Labeling<L>)labeling;
         } else {
             subLab = new LabelingView<L>(labeling, null);
         }
@@ -68,17 +64,15 @@ RendererWithLabels<L>, RendererWithHilite {
             max[dimX] = subLab.max(dimX);
             max[dimY] = subLab.max(dimY);
 
-            subLab = new LabelingView<L>(
-                    SubsetOperations.subsetview(subLab,
-                                                new FinalInterval(min,
-                                                                  max)),
-                                                                  subLab.<L> factory());
+            subLab =
+                    new LabelingView<L>(SubsetOperations.subsetview(subLab, new FinalInterval(min, max)),
+                            subLab.<L> factory());
         }
 
         final long[] dims = new long[subLab.numDimensions()];
         subLab.dimensions(dims);
-        final int width = (int) Math.round(dims[dimX] * scale) + 1;
-        final int height = (int) Math.round(dims[dimY] * scale) + 1;
+        final int width = (int)Math.round(dims[dimX] * scale) + 1;
+        final int height = (int)Math.round(dims[dimY] * scale) + 1;
 
         final ScreenImage res = createCanvas(width, height);
         final Graphics g = res.image().getGraphics();
@@ -87,8 +81,7 @@ RendererWithLabels<L>, RendererWithHilite {
         for (final L label : subLab.getLabels()) {
 
             // test hilite
-            if ((m_hilitedLabels != null)
-                    && m_hilitedLabels.contains(label)) {
+            if ((m_hilitedLabels != null) && m_hilitedLabels.contains(label)) {
                 g.setColor(HILITED_RGB_COLOR);
             } else {
                 g.setColor(getBOX_RGB_COLOR());
@@ -102,24 +95,17 @@ RendererWithLabels<L>, RendererWithHilite {
             }
 
             // test active labels (null = all active)
-            if ((activeLabels == null)
-                    || activeLabels.contains(label)) {
+            if ((activeLabels == null) || activeLabels.contains(label)) {
 
-                final IterableRegionOfInterest roi = subLab
-                        .getIterableRegionOfInterest(label);
-                final Interval ii = roi
-                        .getIterableIntervalOverROI(subLab);
-                g.drawRect((int) (ii.min(X) * scale),
-                           (int) (ii.min(Y) * scale),
-                           (int) ((ii.dimension(X) - 1) * scale),
-                           (int) ((ii.dimension(Y) - 1) * scale));
+                final IterableRegionOfInterest roi = subLab.getIterableRegionOfInterest(label);
+                final Interval ii = roi.getIterableIntervalOverROI(subLab);
+                g.drawRect((int)(ii.min(X) * scale), (int)(ii.min(Y) * scale), (int)((ii.dimension(X) - 1) * scale),
+                           (int)((ii.dimension(Y) - 1) * scale));
 
                 if (withLabelString) {
                     if (scale > .6) {
 
-                        g.drawString(label.toString(),
-                                     (int) ((ii.min(X) + 1) * scale),
-                                     (int) ((ii.min(Y) + 10) * scale));
+                        g.drawString(label.toString(), (int)((ii.min(X) + 1) * scale), (int)((ii.min(Y) + 10) * scale));
                     }
                 }
             }

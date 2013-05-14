@@ -5,23 +5,19 @@ import java.util.Random;
 /**
  * <!-- globalinfo-start --> Simple EM (expectation maximisation) class.<br/>
  * <br/>
- * EM assigns a probability distribution to each instance which indicates the
- * probability of it belonging to each of the clusters. EM can decide how many
- * clusters to create by cross validation, or you may specify apriori how many
- * clusters to generate.<br/>
+ * EM assigns a probability distribution to each instance which indicates the probability of it belonging to each of the
+ * clusters. EM can decide how many clusters to create by cross validation, or you may specify apriori how many clusters
+ * to generate.<br/>
  * <br/>
- * The cross validation performed to determine the number of clusters is done in
- * the following steps:<br/>
+ * The cross validation performed to determine the number of clusters is done in the following steps:<br/>
  * 1. the number of clusters is set to 1<br/>
  * 2. the training set is split randomly into 10 folds.<br/>
  * 3. EM is performed 10 times using the 10 folds the usual CV way.<br/>
  * 4. the loglikelihood is averaged over all 10 results.<br/>
- * 5. if loglikelihood has increased the number of clusters is increased by 1
- * and the program continues at step 2. <br/>
+ * 5. if loglikelihood has increased the number of clusters is increased by 1 and the program continues at step 2. <br/>
  * <br/>
- * The number of folds is fixed to 10, as long as the number of instances in the
- * training set is not smaller 10. If this is the case the number of folds is
- * set equal to the number of instances.
+ * The number of folds is fixed to 10, as long as the number of instances in the training set is not smaller 10. If this
+ * is the case the number of folds is set equal to the number of instances.
  * <p/>
  * <!-- globalinfo-end -->
  *
@@ -139,13 +135,11 @@ public class ExtendedEM {
     private void normalize(final double[] doubles, final double sum) {
 
         if (Double.isNaN(sum)) {
-            throw new IllegalArgumentException(
-                                               "Can't normalize array. Sum is NaN.");
+            throw new IllegalArgumentException("Can't normalize array. Sum is NaN.");
         }
         if (sum == 0) {
             // Maybe this should just be a return.
-            throw new IllegalArgumentException(
-                    "Can't normalize array. Sum is zero.");
+            throw new IllegalArgumentException("Can't normalize array. Sum is zero.");
         }
         for (int i = 0; i < doubles.length; i++) {
             doubles[i] /= sum;
@@ -155,18 +149,14 @@ public class ExtendedEM {
     /**
      * Set the number of clusters (-1 to select by CV).
      *
-     * @param n
-     *                the number of clusters
-     * @throws Exception
-     *                 if n is 0
+     * @param n the number of clusters
+     * @throws Exception if n is 0
      */
 
     public void setNumClusters(final int n) throws Exception {
 
         if (n == 0) {
-            throw new Exception(
-                                "Number of clusters must be > 0. (or -1 to "
-                                        + "select by cross validation).");
+            throw new Exception("Number of clusters must be > 0. (or -1 to " + "select by cross validation).");
         }
 
         if (n < 0) {
@@ -188,13 +178,10 @@ public class ExtendedEM {
         m_centers = inst;
     }
 
-    public void setClusterNominalCounts(final int[][][] nominalCounts) {
-    }
-
     private int[] m_clusterSizes;
 
     public void setClusterSizes(final int[] clusterSizes) {
-        m_clusterSizes = clusterSizes;
+        m_clusterSizes = clusterSizes.clone();
     }
 
     public void setMaxInterations(final int max) {
@@ -204,10 +191,8 @@ public class ExtendedEM {
     /**
      * Initialise estimators and storage.
      *
-     * @param inst
-     *                the instances
-     * @throws Exception
-     *                 if initialization fails
+     * @param inst the instances
+     * @throws Exception if initialization fails
      **/
     private void EM_Init(final InstancesTmp inst) throws Exception {
         int i, j;
@@ -223,28 +208,25 @@ public class ExtendedEM {
         for (i = 0; i < m_num_clusters; i++) {
             final InstanceTmp center = centers.instance(i);
             for (j = 0; j < m_num_attribs; j++) {
-                final double minStdD = (m_minStdDevPerAtt != null) ? m_minStdDevPerAtt[j]
-                        : m_minStdDev;
-                final double mean = (center.isMissing(j)) ? inst
-                        .meanOrMode(j) : center
-                        .value(j);
-                        m_modelNormal[i][j][0] = mean;
-                        double stdv = ((m_maxValues[j] - m_minValues[j]) / (2 * m_num_clusters));
-                        if (stdv < minStdD) {
-                            stdv = inst.attributeStats(j).numericStats.stdDev;
-                            if (Double.isInfinite(stdv)) {
-                                stdv = minStdD;
-                            }
-                            if (stdv < minStdD) {
-                                stdv = minStdD;
-                            }
-                        }
-                        if (stdv <= 0) {
-                            stdv = m_minStdDev;
-                        }
+                final double minStdD = (m_minStdDevPerAtt != null) ? m_minStdDevPerAtt[j] : m_minStdDev;
+                final double mean = (center.isMissing(j)) ? inst.meanOrMode(j) : center.value(j);
+                m_modelNormal[i][j][0] = mean;
+                double stdv = ((m_maxValues[j] - m_minValues[j]) / (2 * m_num_clusters));
+                if (stdv < minStdD) {
+                    stdv = inst.attributeStats(j).numericStats.stdDev;
+                    if (Double.isInfinite(stdv)) {
+                        stdv = minStdD;
+                    }
+                    if (stdv < minStdD) {
+                        stdv = minStdD;
+                    }
+                }
+                if (stdv <= 0) {
+                    stdv = m_minStdDev;
+                }
 
-                        m_modelNormal[i][j][1] = stdv;
-                        m_modelNormal[i][j][2] = 1.0;
+                m_modelNormal[i][j][1] = stdv;
+                m_modelNormal[i][j][2] = 1.0;
             }
         }
         for (j = 0; j < m_num_clusters; j++) {
@@ -257,10 +239,8 @@ public class ExtendedEM {
     /**
      * calculate prior probabilites for the clusters
      *
-     * @param inst
-     *                the instances
-     * @throws Exception
-     *                 if priors can't be calculated
+     * @param inst the instances
+     * @throws Exception if priors can't be calculated
      **/
     private void estimate_priors(final InstancesTmp inst) throws Exception {
 
@@ -270,8 +250,7 @@ public class ExtendedEM {
 
         for (int i = 0; i < inst.numInstances(); i++) {
             for (int j = 0; j < m_num_clusters; j++) {
-                m_priors[j] += inst.instance(i).weight()
-                        * m_weights[i][j];
+                m_priors[j] += inst.instance(i).weight() * m_weights[i][j];
             }
         }
 
@@ -292,10 +271,8 @@ public class ExtendedEM {
     /**
      * The M step of the EM algorithm.
      *
-     * @param inst
-     *                the training instances
-     * @throws Exception
-     *                 if something goes wrong
+     * @param inst the training instances
+     * @throws Exception if something goes wrong
      */
     private void M(final InstancesTmp inst) throws Exception {
 
@@ -309,16 +286,9 @@ public class ExtendedEM {
                 for (l = 0; l < inst.numInstances(); l++) {
                     final InstanceTmp in = inst.instance(l);
                     if (!in.isMissing(j)) {
-                        m_modelNormal[i][j][0] += (in
-                                .value(j)
-                                * in.weight() * m_weights[l][i]);
-                        m_modelNormal[i][j][2] += in
-                                .weight()
-                                * m_weights[l][i];
-                        m_modelNormal[i][j][1] += (in
-                                .value(j)
-                                * in.value(j)
-                                * in.weight() * m_weights[l][i]);
+                        m_modelNormal[i][j][0] += (in.value(j) * in.weight() * m_weights[l][i]);
+                        m_modelNormal[i][j][2] += in.weight() * m_weights[l][i];
+                        m_modelNormal[i][j][1] += (in.value(j) * in.value(j) * in.weight() * m_weights[l][i]);
                     }
                 }
             }
@@ -335,24 +305,21 @@ public class ExtendedEM {
                     } else {
 
                         // variance
-                        m_modelNormal[i][j][1] = (m_modelNormal[i][j][1] - ((m_modelNormal[i][j][0]
-                                * m_modelNormal[i][j][0]) / m_modelNormal[i][j][2]))
-                                / (m_modelNormal[i][j][2]);
+                        m_modelNormal[i][j][1] =
+                                (m_modelNormal[i][j][1] - ((m_modelNormal[i][j][0] * m_modelNormal[i][j][0]) / m_modelNormal[i][j][2]))
+                                        / (m_modelNormal[i][j][2]);
 
                         if (m_modelNormal[i][j][1] < 0) {
                             m_modelNormal[i][j][1] = 0;
                         }
 
                         // std dev
-                        final double minStdD = (m_minStdDevPerAtt != null) ? m_minStdDevPerAtt[j]
-                                : m_minStdDev;
+                        final double minStdD = (m_minStdDevPerAtt != null) ? m_minStdDevPerAtt[j] : m_minStdDev;
 
-                        m_modelNormal[i][j][1] = Math
-                                .sqrt(m_modelNormal[i][j][1]);
+                        m_modelNormal[i][j][1] = Math.sqrt(m_modelNormal[i][j][1]);
 
                         if ((m_modelNormal[i][j][1] <= minStdD)) {
-                            m_modelNormal[i][j][1] = inst
-                                    .attributeStats(j).numericStats.stdDev;
+                            m_modelNormal[i][j][1] = inst.attributeStats(j).numericStats.stdDev;
                             if ((m_modelNormal[i][j][1] <= minStdD)) {
                                 m_modelNormal[i][j][1] = minStdD;
                             }
@@ -373,19 +340,14 @@ public class ExtendedEM {
     }
 
     /**
-     * The E step of the EM algorithm. Estimate cluster membership
-     * probabilities.
+     * The E step of the EM algorithm. Estimate cluster membership probabilities.
      *
-     * @param inst
-     *                the training instances
-     * @param change_weights
-     *                whether to change the weights
+     * @param inst the training instances
+     * @param change_weights whether to change the weights
      * @return the average log likelihood
-     * @throws Exception
-     *                 if computation fails
+     * @throws Exception if computation fails
      */
-    private double E(final InstancesTmp inst, final boolean change_weights)
-            throws Exception {
+    private double E(final InstancesTmp inst, final boolean change_weights) throws Exception {
 
         double loglk = 0.0, sOW = 0.0;
 
@@ -428,11 +390,9 @@ public class ExtendedEM {
     }
 
     /**
-     * Updates the minimum and maximum values for all the attributes based
-     * on a new instance.
+     * Updates the minimum and maximum values for all the attributes based on a new instance.
      *
-     * @param instance
-     *                the new instance
+     * @param instance the new instance
      */
     private void updateMinMax(final InstanceTmp instance) {
 
@@ -443,12 +403,10 @@ public class ExtendedEM {
                     m_maxValues[j] = instance.value(j);
                 } else {
                     if (instance.value(j) < m_minValues[j]) {
-                        m_minValues[j] = instance
-                                .value(j);
+                        m_minValues[j] = instance.value(j);
                     } else {
                         if (instance.value(j) > m_maxValues[j]) {
-                            m_maxValues[j] = instance
-                                    .value(j);
+                            m_maxValues[j] = instance.value(j);
                         }
                     }
                 }
@@ -469,13 +427,10 @@ public class ExtendedEM {
      */
 
     /**
-     * Generates a clusterer. Has to initialize all fields of the clusterer
-     * that are not being set via options.
+     * Generates a clusterer. Has to initialize all fields of the clusterer that are not being set via options.
      *
-     * @param data
-     *                set of instances serving as training data
-     * @throws Exception
-     *                 if the clusterer has not been generated successfully
+     * @param data set of instances serving as training data
+     * @throws Exception if the clusterer has not been generated successfully
      */
     public void buildClusterer(final InstancesTmp data) throws Exception {
         m_theInstances = data;
@@ -499,8 +454,7 @@ public class ExtendedEM {
     /**
      * Perform the EM algorithm
      *
-     * @throws Exception
-     *                 if something goes wrong
+     * @throws Exception if something goes wrong
      */
     private void doEM() throws Exception {
 
@@ -527,19 +481,14 @@ public class ExtendedEM {
     }
 
     /**
-     * iterates the E and M steps until the log likelihood of the data
-     * converges.
+     * iterates the E and M steps until the log likelihood of the data converges.
      *
-     * @param inst
-     *                the training instances.
-     * @param report
-     *                be verbose.
+     * @param inst the training instances.
+     * @param report be verbose.
      * @return the log likelihood of the data
-     * @throws Exception
-     *                 if something goes wrong
+     * @throws Exception if something goes wrong
      */
-    private double iterate(final InstancesTmp inst, final boolean report)
-            throws Exception {
+    private double iterate(final InstancesTmp inst, final boolean report) throws Exception {
 
         int i;
         double llkold = 0.0;
@@ -555,8 +504,7 @@ public class ExtendedEM {
                     llk = E(inst, true);
 
                     if (report) {
-                        System.out.println("Loglikely: "
-                                + llk);
+                        System.out.println("Loglikely: " + llk);
                     }
 
                     if (i > 0) {
@@ -601,11 +549,9 @@ public class ExtendedEM {
     /**
      * Computes the density for a given instance.
      *
-     * @param instance
-     *                the instance to compute the density for
+     * @param instance the instance to compute the density for
      * @return the density.
-     * @exception Exception
-     *                    if the density could not be computed successfully
+     * @exception Exception if the density could not be computed successfully
      */
     private int maxIndex(final double[] doubles) {
 
@@ -622,8 +568,7 @@ public class ExtendedEM {
         return maxIndex;
     }
 
-    public double logDensityForInstance(final InstanceTmp instance)
-            throws Exception {
+    public double logDensityForInstance(final InstanceTmp instance) throws Exception {
 
         final double[] a = logJointDensitiesForInstance(instance);
         final double max = a[maxIndex(a)];
@@ -653,14 +598,11 @@ public class ExtendedEM {
     }
 
     /**
-     * Computes the log of the conditional density (per cluster) for a given
-     * instance.
+     * Computes the log of the conditional density (per cluster) for a given instance.
      *
-     * @param inst
-     *                the instance to compute the density for
+     * @param inst the instance to compute the density for
      * @return an array containing the estimated densities
-     * @throws Exception
-     *                 if the density could not be computed successfully
+     * @throws Exception if the density could not be computed successfully
      */
     public double[] logDensityPerClusterForInstance(final InstanceTmp inst) {
 
@@ -674,9 +616,7 @@ public class ExtendedEM {
 
             for (j = 0; j < m_num_attribs; j++) {
                 if (!inst.isMissing(j)) {
-                    logprob += logNormalDens(inst.value(j),
-                                             m_modelNormal[i][j][0],
-                                             m_modelNormal[i][j][1]);
+                    logprob += logNormalDens(inst.value(j), m_modelNormal[i][j][0], m_modelNormal[i][j][1]);
                     /*
                      * System.err.println(logNormalDens(inst.
                      * value(j), m_modelNormal[i][j][0],
@@ -710,16 +650,12 @@ public class ExtendedEM {
     /**
      * Density function of normal distribution.
      *
-     * @param x
-     *                input value
-     * @param mean
-     *                mean of distribution
-     * @param stdDev
-     *                standard deviation of distribution
+     * @param x input value
+     * @param mean mean of distribution
+     * @param stdDev standard deviation of distribution
      * @return the density
      */
-    private double logNormalDens(final double x, final double mean,
-                                 final double stdDev) {
+    private double logNormalDens(final double x, final double mean, final double stdDev) {
 
         final double diff = x - mean;
         // System.err.println("x: "+x+" mean: "+mean+" diff: "+diff+" stdv: "+stdDev);
@@ -727,8 +663,7 @@ public class ExtendedEM {
         // / (2 *
         // stdDev * stdDev)));
 
-        return -((diff * diff) / (2 * stdDev * stdDev)) - m_normConst
-                - Math.log(stdDev);
+        return -((diff * diff) / (2 * stdDev * stdDev)) - m_normConst - Math.log(stdDev);
     }
 
     public class DiscreteEstimator {
@@ -736,8 +671,7 @@ public class ExtendedEM {
 
         private double m_SumOfCounts;
 
-        public DiscreteEstimator(final int numSymbols,
-                                 final boolean laplace) {
+        public DiscreteEstimator(final int numSymbols, final boolean laplace) {
 
             m_Counts = new double[numSymbols];
             m_SumOfCounts = 0;
@@ -751,7 +685,7 @@ public class ExtendedEM {
 
         public void addValue(final double data, final double weight) {
 
-            m_Counts[(int) data] += weight;
+            m_Counts[(int)data] += weight;
             m_SumOfCounts += weight;
         }
 
@@ -760,7 +694,7 @@ public class ExtendedEM {
             if (m_SumOfCounts == 0) {
                 return 0;
             }
-            return m_Counts[(int) data] / m_SumOfCounts;
+            return m_Counts[(int)data] / m_SumOfCounts;
         }
     }
 
@@ -772,11 +706,9 @@ public class ExtendedEM {
     /**
      * Returns the logs of the joint densities for a given instance.
      *
-     * @param inst
-     *                the instance
+     * @param inst the instance
      * @return the array of values
-     * @exception Exception
-     *                    if values could not be computed
+     * @exception Exception if values could not be computed
      */
     public double[] logJointDensitiesForInstance(final InstanceTmp inst) {
 

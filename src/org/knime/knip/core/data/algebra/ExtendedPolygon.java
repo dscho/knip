@@ -61,8 +61,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     /**
      * Wraps the given polygon.
      *
-     * @param poly
-     *                polygon to wrap
+     * @param poly polygon to wrap
      */
     public ExtendedPolygon(final Polygon poly) {
         super(poly.xpoints, poly.ypoints, poly.npoints);
@@ -75,13 +74,12 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     public long[] getBoundingBoxCenter() {
         final Rectangle r = getBounds();
 
-        return new long[] { r.x + (r.width / 2), r.y + (r.height / 2) };
+        return new long[]{r.x + (r.width / 2), r.y + (r.height / 2)};
 
     }
 
     /**
-     * The center of the polygon. If no center was set, the bounding box
-     * center will be returned (not a copy!)
+     * The center of the polygon. If no center was set, the bounding box center will be returned (not a copy!)
      *
      * @return
      */
@@ -94,14 +92,14 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     }
 
     /**
-     * Sets the new center of the polygon. No checks are made, whether it
-     * lies outside of the contour and, furthermore, NO copy is made!
+     * Sets the new center of the polygon. No checks are made, whether it lies outside of the contour and, furthermore,
+     * NO copy is made!
      *
      * @param p
      */
 
     public void setCenter(final long[] p) {
-        m_center = p;
+        m_center = p.clone();
     }
 
     /**
@@ -116,14 +114,12 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         final Rectangle r = getBounds();
         final int w = r.width;
         final int h = r.height;
-        m_mask = new ArrayImgFactory<BitType>().create(
-                                                       new int[] { w, h }, new BitType());
+        m_mask = new ArrayImgFactory<BitType>().create(new int[]{w, h}, new BitType());
         final Cursor<BitType> c = m_mask.localizingCursor();
 
         while (c.hasNext()) {
             c.fwd();
-            if (contains(new Point(r.x + c.getIntPosition(0), r.y
-                                   + c.getIntPosition(1)))) {
+            if (contains(new Point(r.x + c.getIntPosition(0), r.y + c.getIntPosition(1)))) {
                 c.get().set(true);
             }
         }
@@ -153,7 +149,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         if ((index < 0) || (index >= npoints)) {
             return null;
         } else {
-            return new int[] { xpoints[index], ypoints[index] };
+            return new int[]{xpoints[index], ypoints[index]};
         }
     }
 
@@ -168,23 +164,19 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
         Vector n;
 
         n = new Vector(getPointAt((i - 3) % length())).mapMultiply(-1);
-        n = n.add(new Vector(getPointAt((i - 2) % length()))
-        .mapMultiply(-1));
-        n = n.add(new Vector(getPointAt((i - 1) % length()))
-        .mapMultiply(-1));
+        n = n.add(new Vector(getPointAt((i - 2) % length())).mapMultiply(-1));
+        n = n.add(new Vector(getPointAt((i - 1) % length())).mapMultiply(-1));
         n = n.add(new Vector(getPointAt((i + 1) % length())));
         n = n.add(new Vector(getPointAt((i + 2) % length())));
         n = n.add(new Vector(getPointAt((i + 3) % length())));
-        n = new Vector(new int[] { -n.getIntPosition(1),
-                n.getIntPosition(0) });
+        n = new Vector(new int[]{-n.getIntPosition(1), n.getIntPosition(0)});
         final float[] res = new float[n.numDimensions()];
         n.localize(res);
         return res;
     }
 
     /**
-     * Calculates the angle of the normal vector of the point at the given
-     * index.
+     * Calculates the angle of the normal vector of the point at the given index.
      *
      * @param index
      * @return
@@ -193,7 +185,7 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
     public double getAngleAtPoint(final int index) {
         float[] n = getNormalVecAtPoint(index);
         // orthogonal
-        n = new float[] { -n[1], n[0] };
+        n = new float[]{-n[1], n[0]};
         final double ang = Math.atan2(n[0], n[1]);
         return (Math.abs(ang) != ang ? (2 * Math.PI) + ang : ang);
     }
@@ -226,12 +218,11 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
             allPoints.add(p);
         }
 
-        final double stepsize = (Math.max(1.0, (double) allPoints.size()
-                                          / (double) (maxNumPoints + 1)));
+        final double stepsize = (Math.max(1.0, (double)allPoints.size() / (double)(maxNumPoints + 1)));
         final ExtendedPolygon res = new ExtendedPolygon();
 
         for (double i = 0; i < (allPoints.size() - (2 * stepsize)); i += stepsize) {
-            final int[] p = allPoints.get((int) Math.round(i));
+            final int[] p = allPoints.get((int)Math.round(i));
             res.addPoint(p[0], p[1]);
         }
 
@@ -255,20 +246,14 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
             final Img<BitType> mask2 = p2.createBitmask();
 
             final Cursor<BitType> mask1Cur = mask1.localizingCursor();
-            final RandomAccess<BitType> mask2RA = Views.extendValue(
-                                                                    mask2, new BitType(false))
-                                                                    .randomAccess();
+            final RandomAccess<BitType> mask2RA = Views.extendValue(mask2, new BitType(false)).randomAccess();
 
             final int[] pos = new int[2];
             while (mask1Cur.hasNext()) {
                 mask1Cur.fwd();
                 if (mask1Cur.get().get()) {
-                    pos[0] = (r1.x
-                            + mask1Cur.getIntPosition(0))
-                            - r2.x;
-                    pos[1] = (r1.y
-                            + mask1Cur.getIntPosition(1))
-                            - r2.y;
+                    pos[0] = (r1.x + mask1Cur.getIntPosition(0)) - r2.x;
+                    pos[1] = (r1.y + mask1Cur.getIntPosition(1)) - r2.y;
                     mask2RA.setPosition(pos);
                     if (mask2RA.get().get()) {
                         overlapPix++;
@@ -286,19 +271,18 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
             }
 
             // Segmentation test = new Segmentation(new int[] { 700,
-                    // 700 });
+            // 700 });
             // test.addSegment(new int[] { r1.x, r1.y },
-                               // c1.createBitmask());
+            // c1.createBitmask());
             // test.addSegment(new int[] { r2.x, r2.y },
-                               // c2.createBitmask());
+            // c2.createBitmask());
             //
             // AWTImageTools.showInFrame(AWTImageTools.makeImage(test,
-                                                                 // SegmentRenderer.MASK_RENDERER));
+            // SegmentRenderer.MASK_RENDERER));
             // System.out.println((double) overlapPix
             // / Math.min(mask1Pix, mask2Pix));
 
-            return (double) overlapPix
-                    / Math.min(mask1Pix, mask2Pix);
+            return (double)overlapPix / Math.min(mask1Pix, mask2Pix);
 
         }
 
@@ -336,84 +320,79 @@ public class ExtendedPolygon extends Polygon implements Iterable<int[]> {
                 throw new NoSuchElementException();
             }
             i++;
-            return new int[] { xpoints[i], ypoints[i] };
+            return new int[]{xpoints[i], ypoints[i]};
         }
 
     }
 
     /**
-     * Shows images for debugging purposes: the lines along the normal
-     * vectors at each point of the contour, ...
+     * Shows images for debugging purposes: the lines along the normal vectors at each point of the contour, ...
      *
      * @param srcImg
      */
-     public <T extends RealType<T>> void showDebugImage(final Img<T> srcImg) {
+    public <T extends RealType<T>> void showDebugImage(final Img<T> srcImg) {
 
-         final Img<ByteType> res = new ArrayImgFactory<ByteType>().create(
-                                                                          srcImg, new ByteType());
+        final Img<ByteType> res = new ArrayImgFactory<ByteType>().create(srcImg, new ByteType());
 
-         final RandomAccess<ByteType> resRA = res.randomAccess();
+        final RandomAccess<ByteType> resRA = res.randomAccess();
 
-         final RandomAccess<T> srcCur = srcImg.randomAccess();
+        final RandomAccess<T> srcCur = srcImg.randomAccess();
 
-         final int samplePoints = 100;
-         final int radius = 20;
-         final Img<T> cImg = srcImg.factory().create(
-                                                     new int[] { radius * 2, samplePoints },
-                                                     srcImg.firstElement().createVariable());
-         final RandomAccess<T> cImgRA = cImg.randomAccess();
+        final int samplePoints = 100;
+        final int radius = 20;
+        final Img<T> cImg =
+                srcImg.factory().create(new int[]{radius * 2, samplePoints}, srcImg.firstElement().createVariable());
+        final RandomAccess<T> cImgRA = cImg.randomAccess();
 
-         int[][] line;
-         final ExtendedPolygon tmp = resamplePolygon(samplePoints);
-         for (int i = 0; i < tmp.length(); i++) {
-             line = PolygonTools.getLineAt(tmp.getPointAt(i),
-                                           tmp.getNormalVecAtPoint(i), radius);
-             int j = 0;
-             for (final int[] p : line) {
-                 resRA.setPosition(p[0], 0);
-                 resRA.setPosition(p[1], 1);
-                 resRA.get().set((byte) 50);
+        int[][] line;
+        final ExtendedPolygon tmp = resamplePolygon(samplePoints);
+        for (int i = 0; i < tmp.length(); i++) {
+            line = PolygonTools.getLineAt(tmp.getPointAt(i), tmp.getNormalVecAtPoint(i), radius);
+            int j = 0;
+            for (final int[] p : line) {
+                resRA.setPosition(p[0], 0);
+                resRA.setPosition(p[1], 1);
+                resRA.get().set((byte)50);
 
-                 srcCur.setPosition(p[0], 0);
-                 srcCur.setPosition(p[1], 1);
+                srcCur.setPosition(p[0], 0);
+                srcCur.setPosition(p[1], 1);
 
-                 cImgRA.setPosition(j, 0);
-                 cImgRA.setPosition(i, 1);
+                cImgRA.setPosition(j, 0);
+                cImgRA.setPosition(i, 1);
 
-                 cImgRA.get().setReal(
-                                      srcCur.get().getRealDouble());
-                 j++;
+                cImgRA.get().setReal(srcCur.get().getRealDouble());
+                j++;
 
-             }
-             resRA.setPosition(tmp.getPointAt(i)[0], 0);
-             resRA.setPosition(tmp.getPointAt(i)[1], 1);
-             resRA.get().set((byte) 128);
+            }
+            resRA.setPosition(tmp.getPointAt(i)[0], 0);
+            resRA.setPosition(tmp.getPointAt(i)[1], 1);
+            resRA.get().set((byte)128);
 
-         }
-         // loci.formats.gui.AWTImageTools.showInFrame(cImg, "contour",
-                                                       // 4);
-         // AWTImageTools.showInFrame(res, "contours", 2);
-     }
+        }
+        // loci.formats.gui.AWTImageTools.showInFrame(cImg, "contour",
+        // 4);
+        // AWTImageTools.showInFrame(res, "contours", 2);
+    }
 
-     /**
-      * @return
-      */
-     public void getCenterOfGravityAndUpdate(final int[] currentPos) {
+    /**
+     * @return
+     */
+    public void getCenterOfGravityAndUpdate(final int[] currentPos) {
 
-         int x = 0;
-         int y = 0;
+        int x = 0;
+        int y = 0;
 
-         double total = 0;
-         for (final int[] p : this) {
-             x += p[0];
-             y += p[1];
+        double total = 0;
+        for (final int[] p : this) {
+            x += p[0];
+            y += p[1];
 
-             total++;
-         }
+            total++;
+        }
 
-         currentPos[0] = (int) Math.round(x / (total));
-         currentPos[1] = (int) Math.round(y / (total));
+        currentPos[0] = (int)Math.round(x / (total));
+        currentPos[1] = (int)Math.round(y / (total));
 
-     }
+    }
 
 }

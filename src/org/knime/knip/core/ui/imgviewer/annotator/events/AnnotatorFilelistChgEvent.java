@@ -54,14 +54,17 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  *
- * @author hornm, University of Konstanz
+ * @author dietzc, University of Konstanz
  */
 public class AnnotatorFilelistChgEvent implements KNIPEvent {
 
     private final String[] m_fileList;
 
+    /**
+     * @param fileList
+     */
     public AnnotatorFilelistChgEvent(final String[] fileList) {
-        m_fileList = fileList;
+        m_fileList = fileList.clone();
 
     }
 

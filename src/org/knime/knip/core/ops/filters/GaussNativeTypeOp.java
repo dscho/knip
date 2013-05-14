@@ -12,16 +12,27 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
+/**
+ *
+ * @author dietyc
+ * @param <T>
+ */
 public class GaussNativeTypeOp<T extends RealType<T> & NativeType<T>, TYPE extends RandomAccessibleInterval<T>>
-implements UnaryOperation<TYPE, TYPE> {
+        implements UnaryOperation<TYPE, TYPE> {
 
     private final double[] m_sigmas;
+
     private final OutOfBoundsFactory<T, TYPE> m_fac;
+
     private final int m_numThreads;
 
-    public GaussNativeTypeOp(final int numThreads, final double[] sigmas,
-                             final OutOfBoundsFactory<T, TYPE> factory) {
-        m_sigmas = sigmas;
+    /**
+     * @param numThreads
+     * @param sigmas
+     * @param factory
+     */
+    public GaussNativeTypeOp(final int numThreads, final double[] sigmas, final OutOfBoundsFactory<T, TYPE> factory) {
+        m_sigmas = sigmas.clone();
         m_fac = factory;
         m_numThreads = 1;
     }
@@ -31,17 +42,13 @@ implements UnaryOperation<TYPE, TYPE> {
     public TYPE compute(final TYPE input, final TYPE output) {
 
         if (m_sigmas.length != input.numDimensions()) {
-            throw new IllegalArgumentException(
-                                               "Size of sigma array doesn't fit to input image");
+            throw new IllegalArgumentException("Size of sigma array doesn't fit to input image");
         }
 
-        final RandomAccessible<FloatType> rIn = (RandomAccessible<FloatType>) Views
-                .extend(input, m_fac);
+        final RandomAccessible<FloatType> rIn = (RandomAccessible<FloatType>)Views.extend(input, m_fac);
 
         try {
-            SeparableSymmetricConvolution.convolve(
-                                                   Gauss3.halfkernels(m_sigmas), rIn,
-                                                   output, 1);
+            SeparableSymmetricConvolution.convolve(Gauss3.halfkernels(m_sigmas), rIn, output, 1);
 
         } catch (final IncompatibleTypeException e) {
             throw new RuntimeException(e);
@@ -52,8 +59,7 @@ implements UnaryOperation<TYPE, TYPE> {
 
     @Override
     public UnaryOperation<TYPE, TYPE> copy() {
-        return new GaussNativeTypeOp<T, TYPE>(m_numThreads,
-                m_sigmas.clone(), m_fac);
+        return new GaussNativeTypeOp<T, TYPE>(m_numThreads, m_sigmas.clone(), m_fac);
     }
 
 }

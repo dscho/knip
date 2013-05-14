@@ -4,14 +4,19 @@ import java.util.Arrays;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
 
+/**
+ *
+ * @author zinsmaierm
+ */
 public class CalibrationUpdateEvent implements KNIPEvent {
 
     private final int[] m_selectedDims;
+
     private final double[] m_scaleFactors;
 
     public CalibrationUpdateEvent(final double[] scaleFactors, final int[] selectedDims) {
-        m_selectedDims = selectedDims;
-        m_scaleFactors = scaleFactors;
+        m_selectedDims = selectedDims.clone();
+        m_scaleFactors = scaleFactors.clone();
     }
 
     @Override
@@ -24,10 +29,16 @@ public class CalibrationUpdateEvent implements KNIPEvent {
         return this.equals(thatEvent);
     }
 
+    /**
+     * @return
+     */
     public int[] getSelectedDims() {
         return m_selectedDims;
     }
 
+    /**
+     * @return
+     */
     public double[] getScaleFactors() {
         return m_scaleFactors;
     }
@@ -52,7 +63,7 @@ public class CalibrationUpdateEvent implements KNIPEvent {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final CalibrationUpdateEvent other = (CalibrationUpdateEvent) obj;
+        final CalibrationUpdateEvent other = (CalibrationUpdateEvent)obj;
         if (!Arrays.equals(m_scaleFactors, other.m_scaleFactors)) {
             return false;
         }

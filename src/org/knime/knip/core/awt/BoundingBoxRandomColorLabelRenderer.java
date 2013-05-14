@@ -12,13 +12,16 @@ import net.imglib2.type.Type;
 
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
-public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<L>>
-extends BoundingBoxLabelRenderer<L> {
+public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<L>> extends BoundingBoxLabelRenderer<L> {
 
     private final RandomColorLabelingRenderer<L> m_labelRenderer;
+
     private RandomAccessibleInterval<LabelingType<L>> m_source;
+
     private int m_dimX;
+
     private int m_dimY;
+
     private long[] m_planePos;
 
     public BoundingBoxRandomColorLabelRenderer() {
@@ -26,14 +29,13 @@ extends BoundingBoxLabelRenderer<L> {
     }
 
     @Override
-    public ScreenImage render(
-                              final RandomAccessibleInterval<LabelingType<L>> source,
-                              final int dimX, final int dimY,
+    public ScreenImage render(final RandomAccessibleInterval<LabelingType<L>> source, final int dimX, final int dimY,
                               final long[] planePos) {
         m_dimX = dimX;
         m_dimY = dimY;
-        m_planePos = planePos;
         m_source = source;
+        m_planePos = planePos.clone();
+
         return super.render(source, dimX, dimY, planePos);
     }
 
@@ -41,12 +43,9 @@ extends BoundingBoxLabelRenderer<L> {
     protected ScreenImage createCanvas(final int width, final int height) {
 
         final ScreenImage ret = new ARGBScreenImage(width, height);
-        final ScreenImage labelRendererResult = m_labelRenderer.render(
-                                                                       m_source,
-                                                                       m_dimX, m_dimY, m_planePos);
+        final ScreenImage labelRendererResult = m_labelRenderer.render(m_source, m_dimX, m_dimY, m_planePos);
         final Graphics g = ret.image().getGraphics();
-        g.drawImage(labelRendererResult.image(), 0, 0, width, height,
-                    null);
+        g.drawImage(labelRendererResult.image(), 0, 0, width, height, null);
 
         return ret;
     }
