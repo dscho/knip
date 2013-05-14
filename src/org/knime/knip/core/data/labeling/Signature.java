@@ -761,7 +761,7 @@ public class Signature {
         @Override
         public boolean equals(final Object obj) {
             if (obj instanceof IndexedDouble) {
-                return ((IndexedDouble)obj).m_val == m_val;
+                return Math.abs(m_val - ((IndexedDouble)obj).m_val) < 0.0000001;
             } else {
                 return false;
             }
@@ -840,7 +840,7 @@ public class Signature {
         @Override
         public boolean equals(final Object obj) {
             if (obj instanceof Path) {
-                return ((Path)obj).m_globalScore == m_globalScore;
+                return Math.abs(m_globalScore - ((Path)obj).m_globalScore) < 0.0000001;
             } else {
                 return false;
             }
