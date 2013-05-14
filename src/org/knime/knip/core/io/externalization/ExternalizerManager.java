@@ -80,15 +80,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manages a set of externalizers, e.g. registered via the according extension
- * point.
+ * Manages a set of externalizers, e.g. registered via the according extension point.
  *
  * @author hornm, University of Konstanz
  */
 public final class ExternalizerManager {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(ExternalizerManager.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ExternalizerManager.class);
 
     /* maps the externalizer object type to the externalizer */
     private static final Map<Class<?>, Externalizer> CLASS_EXT_MAP = new HashMap<Class<?>, Externalizer>();
@@ -136,17 +134,14 @@ public final class ExternalizerManager {
         LOGGER.debug("Available externalizers used to write objects:");
         for (final Class<?> type : CLASS_EXT_MAP.keySet()) {
             final Externalizer ext = CLASS_EXT_MAP.get(type);
-            LOGGER.debug("--- type=" + type.getSimpleName()
-                         + ";id=" + ext.getId() + ";extClass="
-                         + ext.getClass().getSimpleName());
+            LOGGER.debug("--- type=" + type.getSimpleName() + ";id=" + ext.getId() + ";extClass="
+                    + ext.getClass().getSimpleName());
         }
 
         LOGGER.debug("Available externalizers used to read objects:");
         for (final String id : ID_EXT_MAP.keySet()) {
             final Externalizer ext = ID_EXT_MAP.get(id);
-            LOGGER.debug("--- type="
-                    + ext.getType().getSimpleName()
-                    + ";id=" + id + ";extClass="
+            LOGGER.debug("--- type=" + ext.getType().getSimpleName() + ";id=" + id + ";extClass="
                     + ext.getClass().getSimpleName());
         }
 
@@ -157,10 +152,8 @@ public final class ExternalizerManager {
     }
 
     /**
-     * Recursively retrieves the right {@link Externalizer} for the given
-     * object, beginning with the class itself. If for a class no
-     * externalizer is registered, the super-classes will be checked
-     * iteratively.
+     * Recursively retrieves the right {@link Externalizer} for the given object, beginning with the class itself. If
+     * for a class no externalizer is registered, the super-classes will be checked iteratively.
      *
      *
      *
@@ -170,30 +163,26 @@ public final class ExternalizerManager {
      * @return
      * @throws Exception
      */
-    public static synchronized <T> T read(final BufferedDataInputStream in)
-            throws Exception {
+    public static synchronized <T> T read(final BufferedDataInputStream in) throws Exception {
         final String key = readString(in);
         final Externalizer<T> ext = ID_EXT_MAP.get(key);
         if (ext == null) {
-            throw new IOException(
-                                  "No externalizer available with id "
-                                          + key);
+            throw new IOException("No externalizer available with id " + key);
         }
         return ext.read(in);
     }
 
     /**
-     * Writes the given object to the output stream using the most specific
-     * externalizer from the registered externalizers.
+     * Writes the given object to the output stream using the most specific externalizer from the registered
+     * externalizers.
      *
      * @param <T>
      * @param out
      * @param obj
      * @throws Exception
      */
-    public static synchronized <T> void write(final BufferedDataOutputStream out,
-                                              final T obj) throws Exception {
-        write(out, obj, (Class<T>) obj.getClass());
+    public static synchronized <T> void write(final BufferedDataOutputStream out, final T obj) throws Exception {
+        write(out, obj, (Class<T>)obj.getClass());
     }
 
     /**
@@ -205,8 +194,8 @@ public final class ExternalizerManager {
      * @param type
      * @throws Exception
      */
-    public static synchronized <T> void write(final BufferedDataOutputStream out,
-                                              final T obj, final Class<T> type) throws Exception {
+    public static synchronized <T> void write(final BufferedDataOutputStream out, final T obj, final Class<T> type)
+            throws Exception {
         Externalizer<T> ext;
         if ((ext = CLASS_EXT_MAP.get(type)) == null) {
             write(out, obj, type.getSuperclass());
@@ -226,47 +215,39 @@ public final class ExternalizerManager {
      * @param ext
      * @throws Exception
      */
-    public static synchronized <T> void write(final BufferedDataOutputStream out,
-                                              final T obj, final Externalizer<T> ext) throws Exception {
+    public static synchronized <T> void
+            write(final BufferedDataOutputStream out, final T obj, final Externalizer<T> ext) throws Exception {
         writeString(out, ext.getId());
         ext.write(out, obj);
     }
 
     /**
-     * Registers a new externalizer at the manager. Already existing
-     * externalizers for a certain type or id will not be replaced if they
-     * priority is higher.
+     * Registers a new externalizer at the manager. Already existing externalizers for a certain type or id will not be
+     * replaced if they priority is higher.
      *
      * @param <T>
-     * @param ext
-     *                the externalizer - must not be a inner class of
-     *                another class
+     * @param ext the externalizer - must not be a inner class of another class
      */
-    public static synchronized <T> void registerExternalizer(
-                                                             final Externalizer<T> ext) {
+    public static synchronized <T> void registerExternalizer(final Externalizer<T> ext) {
         Externalizer<T> tmpExt;
-        if (((tmpExt = CLASS_EXT_MAP.get(ext.getType())) == null)
-                || (tmpExt.getPriority() < ext.getPriority())) {
+        if (((tmpExt = CLASS_EXT_MAP.get(ext.getType())) == null) || (tmpExt.getPriority() < ext.getPriority())) {
             CLASS_EXT_MAP.put(ext.getType(), ext);
             CLASS_ID_MAP.put(ext.getType(), ext.getId());
         }
         tmpExt = null;
-        if (((tmpExt = ID_EXT_MAP.get(ext.getId())) == null)
-                || (tmpExt.getPriority() < ext.getPriority())) {
+        if (((tmpExt = ID_EXT_MAP.get(ext.getId())) == null) || (tmpExt.getPriority() < ext.getPriority())) {
             ID_EXT_MAP.put(ext.getId(), ext);
         }
 
     }
 
-    private static void writeString(final BufferedDataOutputStream out, final String s)
-            throws IOException {
+    private static void writeString(final BufferedDataOutputStream out, final String s) throws IOException {
         final char[] c = s.toCharArray();
         out.writeInt(c.length);
         out.write(c);
     }
 
-    private static String readString(final BufferedDataInputStream in)
-            throws IOException {
+    private static String readString(final BufferedDataInputStream in) throws IOException {
         final char[] s = new char[in.readInt()];
         in.read(s);
         return new String(s);
@@ -275,59 +256,38 @@ public final class ExternalizerManager {
     /**
      * Registers all extension point implementations.
      */
-     private static void registerExtensionPoints() {
-         try {
-             final IExtensionRegistry registry = Platform
-                     .getExtensionRegistry();
-             final IExtensionPoint point = registry
-                     .getExtensionPoint(EXT_POINT_ID);
-             if (point == null) {
-                 LOGGER.error("Invalid extension point: "
-                         + EXT_POINT_ID);
-                 throw new IllegalStateException(
-                                                 "ACTIVATION ERROR: "
-                                                         + " --> Invalid extension point: "
-                                                         + EXT_POINT_ID);
-             }
-             for (final IConfigurationElement elem : point
-                     .getConfigurationElements()) {
-                 final String operator = elem
-                         .getAttribute(EXT_POINT_ATTR_DF);
-                 final String decl = elem
-                         .getDeclaringExtension()
-                         .getUniqueIdentifier();
+    private static void registerExtensionPoints() {
+        try {
+            final IExtensionRegistry registry = Platform.getExtensionRegistry();
+            final IExtensionPoint point = registry.getExtensionPoint(EXT_POINT_ID);
+            if (point == null) {
+                LOGGER.error("Invalid extension point: " + EXT_POINT_ID);
+                throw new IllegalStateException("ACTIVATION ERROR: " + " --> Invalid extension point: " + EXT_POINT_ID);
+            }
+            for (final IConfigurationElement elem : point.getConfigurationElements()) {
+                final String operator = elem.getAttribute(EXT_POINT_ATTR_DF);
+                final String decl = elem.getDeclaringExtension().getUniqueIdentifier();
 
-                 if ((operator == null) || operator.isEmpty()) {
-                     LOGGER.error("The extension '"
-                             + decl
-                             + "' doesn't provide the required attribute '"
-                             + EXT_POINT_ATTR_DF
-                             + "'");
-                     LOGGER.error("Extension " + decl
-                                  + " ignored.");
-                     continue;
-                 }
+                if ((operator == null) || operator.isEmpty()) {
+                    LOGGER.error("The extension '" + decl + "' doesn't provide the required attribute '"
+                            + EXT_POINT_ATTR_DF + "'");
+                    LOGGER.error("Extension " + decl + " ignored.");
+                    continue;
+                }
 
-                 try {
-                     final Externalizer ext = (Externalizer) elem
-                             .createExecutableExtension(EXT_POINT_ATTR_DF);
-                     registerExternalizer(ext);
-                 } catch (final Throwable t) {
-                     LOGGER.error("Problems during initialization of "
-                             + "Externalizer (with id '"
-                             + operator + "'.)");
-                     if (decl != null) {
-                         LOGGER.error("Extension "
-                                 + decl
-                                 + " ignored.",
-                                 t);
-                     }
-                 }
-             }
-         } catch (final Exception e) {
-             LOGGER.error("Exception while registering "
-                     + "Externalizer extensions");
-         }
-     }
+                try {
+                    final Externalizer ext = (Externalizer)elem.createExecutableExtension(EXT_POINT_ATTR_DF);
+                    registerExternalizer(ext);
+                } catch (final Exception e) {
+                    LOGGER.error("Problems during initialization of " + "Externalizer (with id '" + operator + "'.)");
+                    if (decl != null) {
+                        LOGGER.error("Extension " + decl + " ignored.", e.getCause());
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Exception while registering " + "Externalizer extensions");
+        }
+    }
 
 }
