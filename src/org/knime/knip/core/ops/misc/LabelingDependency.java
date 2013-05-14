@@ -17,17 +17,17 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 /**
  * Dependencies of labels to each other are computed. e.g. if one LabelingType contains two labels A and B, then A has
  * reflexive relation to B.
- * 
+ *
  * The node can be used in two modes:
- * 
+ *
  * a. Intersection mode: A must appear at least once together with B two have a relation to B.
- * 
+ *
  * b. Complete mode: A must always appear with B two have a relation to B.
- * 
+ *
  * Two filters are helping to reduce the amount of labels, for which the relations are computed. 1. The left one filters
  * the labels on the left left side of the relation 2. The right one filters the labels on the right side of the
  * relation. Both filters use the given Rules {@link RulebasedLabelFilter}.
- * 
+ *
  * @author dietzc, hornm
  **/
 public class LabelingDependency<L extends Comparable<L>> implements UnaryOutputOperation<Labeling<L>, Map<L, List<L>>> {
@@ -90,24 +90,24 @@ public class LabelingDependency<L extends Comparable<L>> implements UnaryOutputO
             }
         }
 
-        for (final L l : labelMap.keySet()) {
+        for (final Entry<L, HashMap<L, Integer>> outerEntry : labelMap.entrySet()) {
             final List<L> members = new ArrayList<L>();
-            if (sizeMap.get(l) > 0) {
-                final HashMap<L, Integer> hashMap = labelMap.get(l);
+            if (sizeMap.get(outerEntry.getKey()) > 0) {
+                final HashMap<L, Integer> hashMap = outerEntry.getValue();
                 for (final Entry<L, Integer> entry : hashMap.entrySet()) {
-                    if (entry.getValue().equals(sizeMap.get(l))) {
+                    if (entry.getValue().equals(sizeMap.get(outerEntry.getKey()))) {
                         members.add(entry.getKey());
                     }
                 }
 
             } else {
-                for (final L groupMember : labelMap.get(l).keySet()) {
+                for (final L groupMember : outerEntry.getValue().keySet()) {
                     members.add(groupMember);
                 }
             }
 
             if ((members.size() > 0) || (m_rightFilter.getRules().size() == 0)) {
-                r.put(l, members);
+                r.put(outerEntry.getKey(), members);
             }
         }
         return r;

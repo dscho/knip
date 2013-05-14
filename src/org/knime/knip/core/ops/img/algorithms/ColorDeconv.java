@@ -43,7 +43,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
         m_dimX = dimX;
         m_dimY = dimY;
         m_dimC = dimC;
-        m_stainVectors = stainVectors;
+        m_stainVectors = stainVectors.clone();
         calcDeconvolutionVectors(stainVectors);
 
     }

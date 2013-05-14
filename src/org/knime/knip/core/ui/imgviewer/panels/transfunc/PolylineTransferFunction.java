@@ -55,9 +55,9 @@ import java.util.List;
 
 /**
  * Stores all necessary info about a single Transferfunction.
- * 
+ *
  * The function is always considered to be piecewise and to be fixed at the left and right boundaries.
- * 
+ *
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  */
 public class PolylineTransferFunction implements TransferFunction, Iterable<PolylineTransferFunction.Point> {
@@ -85,9 +85,9 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Sets up a new point at the given location and stores wheter it should be fixed in x direction or not.
-         * 
+         *
          * The location is always stored as a fractinal value, i.e. a value between 0.0 and 1.0.
-         * 
+         *
          * @param x the x position
          * @param y the y position
          * @param fixed wheter the point can be moved along the x axis
@@ -106,7 +106,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Sets up a new point at the given location and sets it to be not fixed.
-         * 
+         *
          * @param x the x position
          * @param y the y position
          */
@@ -116,7 +116,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * A copy constructor.
-         * 
+         *
          * @param p the point to copy
          */
         public Point(final Point p) {
@@ -128,7 +128,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Get x.
-         * 
+         *
          * @return current value of x
          */
         public final double getX() {
@@ -137,7 +137,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Get y.
-         * 
+         *
          * @return current value of y
          */
         public final double getY() {
@@ -146,7 +146,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Wheter or not the point is fixed.
-         * 
+         *
          * @return true/false
          */
         public final boolean getFixed() {
@@ -155,7 +155,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Check if this point is currently highlighted.
-         * 
+         *
          * @return true/false
          */
         public final boolean getSelected() {
@@ -164,7 +164,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Set selection value.
-         * 
+         *
          * @param value wheter or not this point is selected
          */
         public final void setSelected(final boolean value) {
@@ -173,9 +173,9 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Set a new position along the x axis.
-         * 
+         *
          * Values larger 1.0 will be set to 1.0 and values smaller 0.0 to 0.0.
-         * 
+         *
          * @param value the new value
          */
         private void setX(final double value) {
@@ -195,9 +195,9 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * Set a new position along the y axis.
-         * 
+         *
          * Values larger 1.0 will be set to 1.0 and values smaller 0.0 to 0.0.
-         * 
+         *
          * @param value the new value
          */
         private void setY(final double value) {
@@ -214,7 +214,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see Comparable#compareTo(Point)
          */
         @Override
@@ -233,6 +233,10 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
          */
         @Override
         public boolean equals(final Object obj) {
+            if (obj == null) {
+                return false;
+            }
+
             return ((Point)obj).getX() == m_x;
         }
 
@@ -259,10 +263,10 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * Set up a new Transferfunction with two fixed points left and right.
-     * 
-     * 
+     *
+     *
      * This points will be positioned at (0,0) and (1,1).
-     * 
+     *
      */
     public PolylineTransferFunction() {
 
@@ -278,7 +282,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * A copy constuctor, resulting in a deep copy.
-     * 
+     *
      * @param tf the function to copy
      */
     public PolylineTransferFunction(final PolylineTransferFunction tf) {
@@ -405,7 +409,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * Add a point to this Transferfunction.
-     * 
+     *
      * @param x the x value
      * @param y the y value
      * @return the added Point
@@ -420,7 +424,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * Remove a point from this Transferfunction.
-     * 
+     *
      * @param p the point
      */
     public final boolean removePoint(final Point p) {
@@ -434,9 +438,9 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * Get a list of all visible Points.<br>
-     * 
+     *
      * This only includes the Points that are between the zoom values.
-     * 
+     *
      * @return all points
      */
     public final List<Point> getPoints() {
@@ -455,7 +459,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * Move a point to a new position.
-     * 
+     *
      * @param p the point to move
      * @param x the x value
      * @param y the y value
@@ -478,9 +482,9 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * Get the value of this transfer function at the given position.
-     * 
+     *
      * If pos is smaller than 0.0, it will be set to 0.0. If it is larger than 1.0, it will be set to 1.0.
-     * 
+     *
      * @param pos the desired position
      * @return the value at the position
      */
@@ -522,7 +526,7 @@ public class PolylineTransferFunction implements TransferFunction, Iterable<Poly
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Iterable#iterator()
      */
     @Override
