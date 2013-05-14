@@ -56,16 +56,16 @@ import java.util.List;
 /**
  * Stores all necessary info about a single Transferfunction.
  *
- * The function is always considered to be piecewise and to be fixed at the left
- * and right boundaries.
+ * The function is always considered to be piecewise and to be fixed at the left and right boundaries.
  *
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  */
-public class PolylineTransferFunction implements TransferFunction,
-Iterable<PolylineTransferFunction.Point> {
+public class PolylineTransferFunction implements TransferFunction, Iterable<PolylineTransferFunction.Point> {
 
     private static double MIN = 0.0;
+
     private static double MAX = 1.0;
+
     private static double EPSILON = 0.0001;
 
     /**
@@ -74,31 +74,26 @@ Iterable<PolylineTransferFunction.Point> {
     public class Point implements Comparable<Point> {
 
         private double m_x = MIN;
+
         private double m_y = MIN;
 
         private boolean m_fixed = false;
+
         private boolean m_selected = false;
+
         private boolean m_temp = false;
 
         /**
-         * Sets up a new point at the given location and stores wheter
-         * it should be fixed in x direction or not.
+         * Sets up a new point at the given location and stores wheter it should be fixed in x direction or not.
          *
-         * The location is always stored as a fractinal value, i.e. a
-         * value between 0.0 and 1.0.
+         * The location is always stored as a fractinal value, i.e. a value between 0.0 and 1.0.
          *
-         * @param x
-         *                the x position
-         * @param y
-         *                the y position
-         * @param fixed
-         *                wheter the point can be moved along the x axis
-         * @param temp
-         *                wheter the point is only a temp point for
-         *                zooming
+         * @param x the x position
+         * @param y the y position
+         * @param fixed wheter the point can be moved along the x axis
+         * @param temp wheter the point is only a temp point for zooming
          */
-        public Point(final double x, final double y,
-                     final boolean fixed, final boolean temp) {
+        public Point(final double x, final double y, final boolean fixed, final boolean temp) {
             setX(x);
             setY(y);
             m_fixed = fixed;
@@ -110,13 +105,10 @@ Iterable<PolylineTransferFunction.Point> {
         }
 
         /**
-         * Sets up a new point at the given location and sets it to be
-         * not fixed.
+         * Sets up a new point at the given location and sets it to be not fixed.
          *
-         * @param x
-         *                the x position
-         * @param y
-         *                the y position
+         * @param x the x position
+         * @param y the y position
          */
         public Point(final double x, final double y) {
             this(x, y, false);
@@ -125,8 +117,7 @@ Iterable<PolylineTransferFunction.Point> {
         /**
          * A copy constructor.
          *
-         * @param p
-         *                the point to copy
+         * @param p the point to copy
          */
         public Point(final Point p) {
             this.m_x = p.m_x;
@@ -174,8 +165,7 @@ Iterable<PolylineTransferFunction.Point> {
         /**
          * Set selection value.
          *
-         * @param value
-         *                wheter or not this point is selected
+         * @param value wheter or not this point is selected
          */
         public final void setSelected(final boolean value) {
             m_selected = value;
@@ -184,11 +174,9 @@ Iterable<PolylineTransferFunction.Point> {
         /**
          * Set a new position along the x axis.
          *
-         * Values larger 1.0 will be set to 1.0 and values smaller 0.0
-         * to 0.0.
+         * Values larger 1.0 will be set to 1.0 and values smaller 0.0 to 0.0.
          *
-         * @param value
-         *                the new value
+         * @param value the new value
          */
         private void setX(final double value) {
             if (!m_fixed) {
@@ -208,11 +196,9 @@ Iterable<PolylineTransferFunction.Point> {
         /**
          * Set a new position along the y axis.
          *
-         * Values larger 1.0 will be set to 1.0 and values smaller 0.0
-         * to 0.0.
+         * Values larger 1.0 will be set to 1.0 and values smaller 0.0 to 0.0.
          *
-         * @param value
-         *                the new value
+         * @param value the new value
          */
         private void setY(final double value) {
             m_y = value;
@@ -241,16 +227,34 @@ Iterable<PolylineTransferFunction.Point> {
                 return 1;
             }
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object obj) {
+            return ((Point)obj).getX() == m_x;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return new Double(m_x).hashCode();
+        }
     }
 
     private List<Point> m_points = null;
 
     // lower and upper end of the zoomed in function
     private Point m_lower;
+
     private Point m_upper;
 
     // used for calculating the stretch factor
     private double m_minsf = MIN;
+
     private double m_maxsf = MAX;
 
     /**
@@ -275,8 +279,7 @@ Iterable<PolylineTransferFunction.Point> {
     /**
      * A copy constuctor, resulting in a deep copy.
      *
-     * @param tf
-     *                the function to copy
+     * @param tf the function to copy
      */
     public PolylineTransferFunction(final PolylineTransferFunction tf) {
 
@@ -321,8 +324,7 @@ Iterable<PolylineTransferFunction.Point> {
     public final void zoom(final double min, final double max) {
 
         if (min > max) {
-            throw new IllegalArgumentException(
-                                               "Min must be smaller than max value");
+            throw new IllegalArgumentException("Min must be smaller than max value");
         }
 
         if (min == max) {
@@ -404,10 +406,8 @@ Iterable<PolylineTransferFunction.Point> {
     /**
      * Add a point to this Transferfunction.
      *
-     * @param x
-     *                the x value
-     * @param y
-     *                the y value
+     * @param x the x value
+     * @param y the y value
      * @return the added Point
      */
     public final Point addPoint(final double x, final double y) {
@@ -421,8 +421,7 @@ Iterable<PolylineTransferFunction.Point> {
     /**
      * Remove a point from this Transferfunction.
      *
-     * @param p
-     *                the point
+     * @param p the point
      */
     public final boolean removePoint(final Point p) {
         if (!p.getFixed()) {
@@ -444,10 +443,8 @@ Iterable<PolylineTransferFunction.Point> {
 
         final List<Point> result = new ArrayList<Point>();
 
-        int i = m_points.indexOf(m_lower) == -1 ? 0 : m_points
-                .indexOf(m_lower);
-        final int limit = m_points.indexOf(m_upper) == -1 ? m_points.size() - 1
-                : m_points.indexOf(m_upper);
+        int i = m_points.indexOf(m_lower) == -1 ? 0 : m_points.indexOf(m_lower);
+        final int limit = m_points.indexOf(m_upper) == -1 ? m_points.size() - 1 : m_points.indexOf(m_upper);
 
         for (; i <= limit; i++) {
             result.add(m_points.get(i));
@@ -459,15 +456,11 @@ Iterable<PolylineTransferFunction.Point> {
     /**
      * Move a point to a new position.
      *
-     * @param p
-     *                the point to move
-     * @param x
-     *                the x value
-     * @param y
-     *                the y value
+     * @param p the point to move
+     * @param x the x value
+     * @param y the y value
      */
-    public final void movePoint(final Point p, final double x,
-                                final double y) {
+    public final void movePoint(final Point p, final double x, final double y) {
         p.setX(x);
         p.setY(y);
 
@@ -486,11 +479,9 @@ Iterable<PolylineTransferFunction.Point> {
     /**
      * Get the value of this transfer function at the given position.
      *
-     * If pos is smaller than 0.0, it will be set to 0.0. If it is larger
-     * than 1.0, it will be set to 1.0.
+     * If pos is smaller than 0.0, it will be set to 0.0. If it is larger than 1.0, it will be set to 1.0.
      *
-     * @param pos
-     *                the desired position
+     * @param pos the desired position
      * @return the value at the position
      */
     @Override
@@ -524,8 +515,7 @@ Iterable<PolylineTransferFunction.Point> {
             }
         }
 
-        final double m = (right.getY() - left.getY())
-                / (right.getX() - left.getX());
+        final double m = (right.getY() - left.getY()) / (right.getX() - left.getX());
 
         return ((pos - left.getX()) * m) + left.getY();
     }
