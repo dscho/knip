@@ -18,22 +18,16 @@ import org.knime.knip.core.ui.event.EventServiceClient;
  *
  * @param <T>
  */
-public abstract class ViewerComponent extends JPanel implements
-EventServiceClient {
+public abstract class ViewerComponent extends JPanel implements EventServiceClient {
 
     protected enum Position {
         CENTER, NORTH, SOUTH, WEST, EAST, HIDDEN;
 
     }
 
-    /* def */
-    private static final long serialVersionUID = 1L;
-
     /**
-     * @param title
-     *                a unique title for this option panel
-     * @param isBorderHidden
-     *                if true, a border is drawn arround the component
+     * @param title a unique title for this option panel
+     * @param isBorderHidden if true, a border is drawn arround the component
      */
     public ViewerComponent(final String title, final boolean isBorderHidden) {
 
@@ -56,16 +50,14 @@ EventServiceClient {
     /**
      * Set the parent component of this viewer component
      *
-     * @param parent
-     *                parent component
+     * @param parent parent component
      */
     public abstract void setParent(Component parent);
 
     /**
-     * Returns the position in the BorderLayout. Possible values are
-     * {@link BorderLayout#NORTH}, {@link BorderLayout#SOUTH},
-     * {@link BorderLayout#WEST},{@link BorderLayout#EAST},
-     * {@link BorderLayout#CENTER},HIDDEN
+     * Returns the position in the BorderLayout. Possible values are {@link BorderLayout#NORTH},
+     * {@link BorderLayout#SOUTH}, {@link BorderLayout#WEST},{@link BorderLayout#EAST}, {@link BorderLayout#CENTER}
+     * ,HIDDEN
      *
      * A component with hidden position will not be rendered
      *
@@ -84,13 +76,11 @@ EventServiceClient {
      * @param out
      * @throws IOException
      */
-    public abstract void saveComponentConfiguration(ObjectOutput out)
-            throws IOException;
+    public abstract void saveComponentConfiguration(ObjectOutput out) throws IOException;
 
     /**
      * Deserialization
      */
-    public abstract void loadComponentConfiguration(ObjectInput in)
-            throws IOException, ClassNotFoundException;
+    public abstract void loadComponentConfiguration(ObjectInput in) throws IOException, ClassNotFoundException;
 
 }
