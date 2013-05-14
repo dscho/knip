@@ -1,6 +1,5 @@
 package org.knime.knip.core.ui.imgviewer.events;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -11,32 +10,56 @@ import java.util.LinkedList;
 import org.knime.knip.core.data.labeling.LabelFilter;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
-public class NameSetbasedLabelFilter<L extends Comparable<L>> implements
-LabelFilter<L>, Externalizable, KNIPEvent {
+/**
+ *
+ * @author dietyc
+ */
+public class NameSetbasedLabelFilter<L extends Comparable<L>> implements LabelFilter<L>, KNIPEvent {
 
     private HashSet<String> m_filterSet;
+
     private boolean m_includeMatches;
 
+    /**
+     * Default constructor
+     */
+    public NameSetbasedLabelFilter() {
+    }
+
+    /**
+     * @param includeMatches
+     */
     public NameSetbasedLabelFilter(final boolean includeMatches) {
         m_filterSet = new HashSet<String>();
         m_includeMatches = includeMatches;
     }
 
-    public NameSetbasedLabelFilter(final HashSet<String> filterSet,
-                                   final boolean includeMatches) {
+    /**
+     * @param filterSet
+     * @param includeMatches
+     */
+    public NameSetbasedLabelFilter(final HashSet<String> filterSet, final boolean includeMatches) {
         m_filterSet = filterSet;
         m_includeMatches = includeMatches;
     }
 
-
+    /**
+     * @param filter
+     */
     public void addFilter(final String filter) {
         m_filterSet.add(filter);
     }
 
+    /**
+     * @param filterSet
+     */
     public void setFilterSet(final HashSet<String> filterSet) {
         m_filterSet = filterSet;
     }
 
+    /**
+     * @return
+     */
     public int sizeOfFilterSet() {
         return m_filterSet.size();
     }
@@ -45,7 +68,6 @@ LabelFilter<L>, Externalizable, KNIPEvent {
     public ExecutionPriority getExecutionOrder() {
         return ExecutionPriority.NORMAL;
     }
-
 
     @Override
     public <E extends KNIPEvent> boolean isRedundant(final E thatEvent) {
@@ -59,9 +81,8 @@ LabelFilter<L>, Externalizable, KNIPEvent {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException,
-    ClassNotFoundException {
-        m_filterSet = (HashSet<String>) in.readObject();
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        m_filterSet = (HashSet<String>)in.readObject();
         m_includeMatches = in.readBoolean();
     }
 
@@ -83,10 +104,8 @@ LabelFilter<L>, Externalizable, KNIPEvent {
             }
         }
 
-
         return ret;
     }
-
 
     @Override
     public void clear() {
