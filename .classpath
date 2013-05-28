@@ -29,7 +29,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/junit-3.8.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.5-20130525.174526-162.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20130525.174200-168.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/kryo-2.21-shaded.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/kryo-2.21-shaded.jar" sourcepath="/home/dietyc/.m2/repository/com/esotericsoftware/kryo/kryo/2.21/kryo-2.21-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-legacy-4.5-20130525.174243-161.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.5-20130525.174317-166.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.5-20130525.174218-168.jar"/>
