@@ -145,7 +145,7 @@ public final class FilterTools {
 
         final Img<T> vector =
                 new ArrayImgFactory<T>().create(new long[]{src.dimension(vectorDim)}, src.firstElement()
-                                                .createVariable());
+                        .createVariable());
 
         final Cursor<T> vecCur = vector.localizingCursor();
         final RandomAccess<T> srcRA = src.randomAccess();

@@ -81,8 +81,8 @@ public class PolarImageFactory<T extends RealType<T>> {
 
         @SuppressWarnings("rawtypes")
         final Img<T> res =
-        new ArrayImgFactory().create(new int[]{radius, length}, m_interval.randomAccess().get()
-                                     .createVariable());
+                new ArrayImgFactory().create(new int[]{radius, length}, m_interval.randomAccess().get()
+                        .createVariable());
 
         return createPolarImage(center, length, res);
 

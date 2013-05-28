@@ -10,7 +10,7 @@ import net.imglib2.RealPoint;
 import net.imglib2.roi.PolygonRegionOfInterest;
 
 /**
- *
+ * 
  * @author hornm, dietzc, fschoenenberger
  */
 public class SplineOverlayElement<L extends Comparable<L>> extends AbstractPolygonOverlayElement<L> {

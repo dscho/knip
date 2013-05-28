@@ -77,7 +77,7 @@ import loci.formats.gui.BufferedImageReader;
 
 /**
  * A JPanel to provide a preview of the image itself or the meta data.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ImagePreviewPanel extends JPanel implements Runnable {
@@ -160,7 +160,7 @@ public class ImagePreviewPanel extends JPanel implements Runnable {
 
     /**
      * Sets the preview to the specified file. This methods opens the file and updates the preview panel.
-     *
+     * 
      * @param filename
      */
     public void setImage(final String filename) {

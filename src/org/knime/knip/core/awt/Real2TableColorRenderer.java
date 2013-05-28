@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @param <R>
  */
 public class Real2TableColorRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
-RendererWithNormalization, RendererWithColorTable {
+        RendererWithNormalization, RendererWithColorTable {
 
     public final static Logger LOGGER = LoggerFactory.getLogger(Real2TableColorRenderer.class);
 

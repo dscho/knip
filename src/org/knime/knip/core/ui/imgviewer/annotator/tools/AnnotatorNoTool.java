@@ -50,8 +50,8 @@ public class AnnotatorNoTool extends AnnotatorTool {
 
     @Override
     public void
-    onMouseReleasedRight(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
-                         final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
+            onMouseReleasedRight(final ImgViewerMouseEvent e, final OverlayElement2D currentOverlayElement,
+                                 final PlaneSelectionEvent selection, final Overlay overlay, final String... labels) {
     }
 
     @Override

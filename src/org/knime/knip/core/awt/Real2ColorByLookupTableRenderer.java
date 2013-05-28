@@ -17,7 +17,7 @@ import org.knime.knip.core.awt.specializedrendering.RealGreyARGBByLookupTableCon
  * @author muethingc
  */
 public class Real2ColorByLookupTableRenderer<T extends RealType<T>> extends ProjectingRenderer<T> implements
-RendererWithLookupTable<T, ARGBType> {
+        RendererWithLookupTable<T, ARGBType> {
 
     /**
      * A simple class that can be injected in the converter so that we will always get some result.

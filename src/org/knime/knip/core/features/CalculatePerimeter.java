@@ -1,7 +1,6 @@
 package org.knime.knip.core.features;
 
 import net.imglib2.Cursor;
-import net.imglib2.algorithm.convolver.DirectConvolver;
 import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
@@ -16,6 +15,7 @@ import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.view.Views;
 
+import org.knime.knip.core.algorithm.convolvers.DirectConvolver;
 import org.knime.knip.core.features.seg.ExtractOutlineImg;
 
 /**
@@ -36,8 +36,8 @@ public class CalculatePerimeter implements UnaryOutputOperation<Img<BitType>, Do
     private static synchronized Img<UnsignedShortType> getKernel() {
         @SuppressWarnings("unchecked")
         final ArrayImg<UnsignedShortType, ShortArray> img =
-        (ArrayImg<UnsignedShortType, ShortArray>)new ArrayImgFactory<UnsignedShortType>().create(new long[]{3,
-                3}, new UnsignedShortType());
+                (ArrayImg<UnsignedShortType, ShortArray>)new ArrayImgFactory<UnsignedShortType>().create(new long[]{3,
+                        3}, new UnsignedShortType());
 
         final short[] storage = img.update(null).getCurrentStorageArray();
 
@@ -60,9 +60,9 @@ public class CalculatePerimeter implements UnaryOutputOperation<Img<BitType>, Do
         try {
             img =
                     (Img<UnsignedShortType>)m_convolve
-                    .compute(Views.extend(op, new OutOfBoundsMirrorFactory<BitType, Img<BitType>>(
-                            Boundary.SINGLE)), getKernel(), op.factory().imgFactory(new UnsignedShortType())
-                            .create(op, new UnsignedShortType()));
+                            .compute(Views.extend(op, new OutOfBoundsMirrorFactory<BitType, Img<BitType>>(
+                                    Boundary.SINGLE)), getKernel(), op.factory().imgFactory(new UnsignedShortType())
+                                    .create(op, new UnsignedShortType()));
         } catch (final IncompatibleTypeException e) {
             // If factory not compatible
             img = new ArrayImgFactory<UnsignedShortType>().create(op, new UnsignedShortType());

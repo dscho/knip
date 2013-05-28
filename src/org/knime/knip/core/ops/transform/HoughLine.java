@@ -95,7 +95,7 @@ public class HoughLine<T extends RealType<T> & NativeType<T>, S extends RealType
 
     /**
      * Place a vote of value 1.
-     *
+     * 
      * @param loc the integer array indicating the location where the vote is to be placed in voteSpace.
      * @return whether the vote was successful. This here particular method should always return true.
      */

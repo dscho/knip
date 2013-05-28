@@ -100,7 +100,7 @@ import org.knime.knip.core.ops.bittype.PositionsToBitTypeImage;
  * final CellClumpedSplitter<T, L> op = new CellClumpedSplitter<T, L>(NeighborhoodType.SIXTEEN, m_executor, ...);<br>
  * m_executor.shutdown();<br>
  * </code>
- *
+ * 
  * @author metznerj, University of Konstanz
  */
 public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperation<Labeling<L>, Labeling<Integer>> {
@@ -368,7 +368,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * Constructor
-         *
+         * 
          * @param roi target
          * @param distanceMap distance map
          * @param localMaxima local maxima of distance map
@@ -492,7 +492,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * Performs EM Algorithm
-         *
+         * 
          * @param seedPoints seed points
          * @return result of EM Algorithm
          */
@@ -526,7 +526,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * build cluster size via nearest Neighbor to seeding points
-         *
+         * 
          * @return
          */
         private int[] clusterSizesByNearestNeighbor() {
@@ -557,7 +557,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * gets new cluster centers from a finished em
-         *
+         * 
          * @param extendedEM result of EM
          * @return cluster centers
          */
@@ -656,7 +656,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * after h maxima transformation calculate centroids. uses old seeding points for "caa" flooding points
-         *
+         * 
          * @param lambda given depth
          * @return predicted center points
          */
@@ -761,7 +761,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * construct new seeding points
-         *
+         * 
          * @return Instance of seeding points
          */
         private InstancesTmp prepareSeedingPointsForEM() {
@@ -778,7 +778,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * calculate the separation of given clustering
-         *
+         * 
          * @param extendedEM result of finished EM
          * @param emClusterCenters new calculated cluster centers
          * @return separation of given clustering
@@ -805,7 +805,7 @@ public class CellClumpedSplitter<L extends Comparable<L>> implements UnaryOperat
 
         /**
          * calculate the compactness of given clustering
-         *
+         * 
          * @param extendedEM result of finished EM
          * @param emClusterCenters new calculated cluster centers
          * @return compactness of given clustering

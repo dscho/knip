@@ -21,7 +21,7 @@ import org.knime.knip.core.ops.integralimage.IntegralImgND;
 import org.knime.knip.core.ops.integralimage.IntegralImgSumAgent;
 
 public class SlidingMeanIntegralImgBinaryOp<T extends RealType<T>, V extends RealType<V>, IN extends RandomAccessibleInterval<T>, OUT extends IterableInterval<V>>
-extends SlidingShapeOp<T, V, IN, OUT> {
+        extends SlidingShapeOp<T, V, IN, OUT> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private final IntegralImgND m_iiOp = new IntegralImgND(new ArrayImgFactory());

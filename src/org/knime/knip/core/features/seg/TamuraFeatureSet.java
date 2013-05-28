@@ -64,7 +64,7 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author Christian Dietz, University of Konstanz
  * @param <T>
  */

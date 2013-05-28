@@ -14,9 +14,9 @@ import net.imglib2.type.logic.BitType;
  * as all pixels, which are next to the pixels which are on the border of the connected component. Please be aware that
  * for a correct calculation of the Perimeter only one connected component should be contained in the {@link Img} of
  * {@link BitType}
- *
+ * 
  * @author Christian Dietz
- *
+ * 
  */
 public class ExtractOutlineImg implements UnaryOperation<Img<BitType>, Img<BitType>> {
 

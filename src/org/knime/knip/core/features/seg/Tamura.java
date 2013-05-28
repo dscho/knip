@@ -136,7 +136,7 @@ public class Tamura<T extends RealType<T>> {
         double result = 0;
         result =
                 Math.abs(this.averageOverNeighborhoods(x + (int)Math.pow(2, k - 1), y, k)
-                         - this.averageOverNeighborhoods(x - (int)Math.pow(2, k - 1), y, k));
+                        - this.averageOverNeighborhoods(x - (int)Math.pow(2, k - 1), y, k));
         return result;
     }
 
@@ -152,7 +152,7 @@ public class Tamura<T extends RealType<T>> {
         double result = 0;
         result =
                 Math.abs(this.averageOverNeighborhoods(x, y + (int)Math.pow(2, k - 1), k)
-                         - this.averageOverNeighborhoods(x, y - (int)Math.pow(2, k - 1), k));
+                        - this.averageOverNeighborhoods(x, y - (int)Math.pow(2, k - 1), k));
         return result;
     }
 

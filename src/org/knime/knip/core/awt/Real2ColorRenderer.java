@@ -11,7 +11,7 @@ import org.knime.knip.core.awt.converter.RealColorARGBConverter;
 import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
 
 public class Real2ColorRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
-RendererWithNormalization {
+        RendererWithNormalization {
 
     private RealColorARGBConverter<R> m_converter;
 

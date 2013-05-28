@@ -76,7 +76,7 @@ import org.knime.knip.core.data.LabelGenerator;
  * @author hornm, University of Konstanz
  */
 public class ImgProbabilitySeeds<T extends RealType<T>, L extends Comparable<L>> implements
-UnaryOperation<Img<T>, Labeling<L>> {
+        UnaryOperation<Img<T>, Labeling<L>> {
 
     private final int m_avgDistance;
 

@@ -22,7 +22,7 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
  * @author dietzc
  */
 public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparable<L>> extends
-ViewInfoPanel<LabelingType<L>> {
+        ViewInfoPanel<LabelingType<L>> {
 
     /**
      *
@@ -116,7 +116,7 @@ ViewInfoPanel<LabelingType<L>> {
     public void onImgChanged(final ImgAndLabelingChgEvent<T, L> e) {
         m_imgRA =
                 Views.extendValue(e.getRandomAccessibleInterval(), e.getIterableInterval().firstElement())
-                .randomAccess();
+                        .randomAccess();
 
         super.manualTextUpdate("", m_imageInfo);
     }

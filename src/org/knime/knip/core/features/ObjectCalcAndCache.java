@@ -70,9 +70,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.knime.knip.core.data.labeling.Signature;
 
 /**
- *
+ * 
  * Utility class which calculates caches commonly used objects.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ObjectCalcAndCache {

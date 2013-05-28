@@ -61,7 +61,7 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  * @param <T> image type
  */

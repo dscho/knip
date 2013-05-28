@@ -113,7 +113,7 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements E
             return new double[]{
                     Normalize.normalizationFactor(oldMinMax.a.getRealDouble(), oldMinMax.b.getRealDouble(),
                                                   element.getMinValue(), element.getMaxValue()),
-                                                  oldMinMax.a.getRealDouble()};
+                    oldMinMax.a.getRealDouble()};
         }
 
     }

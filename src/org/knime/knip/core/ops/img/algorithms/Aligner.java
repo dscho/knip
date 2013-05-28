@@ -21,7 +21,7 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * Image projection.
- *
+ * 
  * @author tcriess, University of Konstanz
  */
 public class Aligner<T extends RealType<T>, V extends RealType<V>> implements

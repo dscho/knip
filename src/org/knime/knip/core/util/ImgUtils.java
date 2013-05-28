@@ -34,7 +34,7 @@ public class ImgUtils {
     }
 
     public synchronized static <T extends RealType<T>, O extends NativeType<O>> Img<O>
-    createEmptyCopy(final Img<T> in, final ImgFactory<O> fac, final O type) {
+            createEmptyCopy(final Img<T> in, final ImgFactory<O> fac, final O type) {
         return fac.create(in, type);
     }
 

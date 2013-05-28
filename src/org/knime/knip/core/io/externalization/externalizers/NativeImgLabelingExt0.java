@@ -118,7 +118,7 @@ public class NativeImgLabelingExt0 implements Externalizer<NativeImgLabeling> {
     }
 
     private class ExtNativeImgLabeling<T extends Comparable<T>, I extends IntegerType<I>> extends
-    NativeImgLabeling<T, I> {
+            NativeImgLabeling<T, I> {
         /**
          * @param img
          */

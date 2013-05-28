@@ -141,7 +141,7 @@ public class CentralizeOnePoint<T extends RealType<T>> implements UnaryOperation
 }
 
 /**
- *
+ * 
  * @author Christian Dietz, University of Konstanz
  */
 class BaseVals implements Comparable<BaseVals> {

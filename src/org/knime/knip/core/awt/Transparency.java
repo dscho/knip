@@ -59,7 +59,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class Transparency {

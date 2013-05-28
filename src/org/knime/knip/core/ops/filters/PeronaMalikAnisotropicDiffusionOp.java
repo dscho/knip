@@ -26,10 +26,10 @@ public class PeronaMalikAnisotropicDiffusionOp<T extends RealType<T> & NativeTyp
     private final int m_numThreads;
 
     /**
-     *
+     * 
      * Constructs a wrapping operation to execute the (elsewhere implemented) Perona & Malik Anisotropic Diffusion
      * scheme. See {@link PeronaMalikAnisotropicDiffusion}.
-     *
+     * 
      * @param deltat the integration constant for the numerical integration scheme. Typically less that 1.
      * @param n the number of Iterations
      * @param fun the diffusion function to be used

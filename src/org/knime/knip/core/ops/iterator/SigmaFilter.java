@@ -6,9 +6,9 @@ import net.imglib2.ops.operation.BinaryOperation;
 import net.imglib2.type.numeric.RealType;
 
 /**
- *
+ * 
  * @author wilderm, University of Konstanz
- *
+ * 
  * @param <T>
  * @param <Integer>
  * @param <TYPE>

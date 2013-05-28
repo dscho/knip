@@ -77,7 +77,7 @@ public class PartialProjectionNodeTools {
                     resCur.get().set(srcRA.get());
                 }
                 srcRA.setPosition(((resCur.getLongPosition(projDim) + img.dimension(projDim)) - i)
-                                  % img.dimension(projDim), projDim);
+                                          % img.dimension(projDim), projDim);
                 if (srcRA.get().compareTo(resCur.get()) > 0) {
                     resCur.get().set(srcRA.get());
                 }

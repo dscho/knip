@@ -63,7 +63,7 @@ import org.knime.knip.core.awt.parametersupport.RendererWithNormalization;
  * @author hornm, University of Konstanz
  */
 public class Real2GreyColorRenderer<R extends RealType<R>> extends ProjectingRenderer<R> implements
-RendererWithNormalization {
+        RendererWithNormalization {
 
     private final int m_colorDim;
 

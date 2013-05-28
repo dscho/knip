@@ -58,7 +58,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 import org.knime.knip.core.algorithm.types.ThresholdingType;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  */
 public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsHistogram, DoubleType> {

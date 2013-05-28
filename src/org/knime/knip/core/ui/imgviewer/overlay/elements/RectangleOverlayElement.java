@@ -93,12 +93,12 @@ public class RectangleOverlayElement<L extends Comparable<L>> extends AbstractPo
     public RectangleOverlayElement(final long[] min, final long[] max, final long[] planePos, final int[] orientation,
                                    final String... labels) {
         this(new Rectangle((int)min[orientation[0]], (int)min[orientation[1]],
-                           (int)((max[orientation[0]] - min[orientation[0]]) + 1),
-                           (int)((max[orientation[1]] - min[orientation[1]]) + 1)), planePos, orientation, labels);
+                (int)((max[orientation[0]] - min[orientation[0]]) + 1),
+                (int)((max[orientation[1]] - min[orientation[1]]) + 1)), planePos, orientation, labels);
     }
 
     public void
-    setRectangle(final long minExtendX, final long minExtendY, final long maxExtendX, final long maxExtendY) {
+            setRectangle(final long minExtendX, final long minExtendY, final long maxExtendX, final long maxExtendY) {
         m_poly.reset();
 
         add(minExtendX, minExtendY);

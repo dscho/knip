@@ -39,7 +39,7 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
  * @author dietzc, hornm, schoenenbergerf, zinsmaierm University of Konstanz
  */
 public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L extends Comparable<L>> extends
-LabelingBufferedImageProvider<L> {
+        LabelingBufferedImageProvider<L> {
 
     /**
      *

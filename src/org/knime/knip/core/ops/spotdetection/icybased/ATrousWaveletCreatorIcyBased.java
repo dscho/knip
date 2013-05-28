@@ -21,7 +21,7 @@ import net.imglib2.view.Views;
  * @param <T>
  */
 public class ATrousWaveletCreatorIcyBased<T extends RealType<T>> implements
-UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>> {
+        UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>> {
 
     private final Integer[] m_skipLevels;
 
@@ -80,8 +80,8 @@ UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>>
      *         holding i wavelet coefficients and the residual level.
      */
     private RandomAccessibleInterval<FloatType>
-    createCoefficients(final RandomAccessibleInterval<T> input2D,
-                       final RandomAccessibleInterval<FloatType> outputStack) {
+            createCoefficients(final RandomAccessibleInterval<T> input2D,
+                               final RandomAccessibleInterval<FloatType> outputStack) {
 
         // make it 1D
         final int sizeX = (int)input2D.dimension(0);
@@ -104,10 +104,10 @@ UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>>
             // calculate coefficients (wavelet scaleX - wavelet scaleY)
             final float[][] coefficients =
                     waveletTransform
-                    .b3WaveletCoefficients2D(waveletTransform
-                                             .b3WaveletScales2D(dataIn, sizeX, sizeY,
-                                                                (int)(outputStack.dimension(2) - 1)),
-                                                                dataIn, (int)(outputStack.dimension(2) - 1), sizeX * sizeY);
+                            .b3WaveletCoefficients2D(waveletTransform
+                                                             .b3WaveletScales2D(dataIn, sizeX, sizeY,
+                                                                                (int)(outputStack.dimension(2) - 1)),
+                                                     dataIn, (int)(outputStack.dimension(2) - 1), sizeX * sizeY);
 
             // write it back into an image
             final RandomAccess<FloatType> ra = outputStack.randomAccess();

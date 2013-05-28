@@ -15,9 +15,9 @@ import net.imglib2.Point;
 
 /**
  * Class representing a simple point in the image. It mainly serves to facilitate simple operations on the coordinates.
- *
+ * 
  * @author hornm, schoenen University of Konstanz
- *
+ * 
  */
 
 public class Vector extends Point implements Cloneable {
@@ -60,7 +60,7 @@ public class Vector extends Point implements Cloneable {
 
     /**
      * Two norm.
-     *
+     * 
      * @return normalized vector
      */
     public Vector norm2() {
@@ -69,7 +69,7 @@ public class Vector extends Point implements Cloneable {
 
     /**
      * Addition. The points must be of same dimensionality, no check is made.
-     *
+     * 
      * @param p
      * @return the resulting point
      */
@@ -91,7 +91,7 @@ public class Vector extends Point implements Cloneable {
 
     /**
      * Multiplies a point with a scalar.
-     *
+     * 
      * @param scalar
      * @return the resulting point
      */

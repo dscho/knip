@@ -62,7 +62,7 @@ import org.knime.knip.core.algorithm.BresenhamAlgorithm;
 import org.knime.knip.core.data.algebra.RealVector;
 
 /**
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class PolygonTools {
@@ -73,7 +73,7 @@ public class PolygonTools {
 
     /**
      * Retrieves all positions of a line at the given position, specified direction and radius.
-     *
+     * 
      * @param pos the center position (2 dim!)
      * @param dir the direction (2 dim!)
      * @param radius the radius
@@ -121,7 +121,7 @@ public class PolygonTools {
     /**
      * Extracts a polygon of a 2D binary image using the Square Tracing Algorithm (be aware of its drawbacks, e.g. if
      * the pattern is 4-connected!)
-     *
+     * 
      * @param img the image, note that only the first and second dimension are taken into account
      * @param offset an offset for the points to be set in the new polygon
      * @return

@@ -216,7 +216,7 @@ public final class ExternalizerManager {
      * @throws Exception
      */
     public static synchronized <T> void
-    write(final BufferedDataOutputStream out, final T obj, final Externalizer<T> ext) throws Exception {
+            write(final BufferedDataOutputStream out, final T obj, final Externalizer<T> ext) throws Exception {
         writeString(out, ext.getId());
         ext.write(out, obj);
     }

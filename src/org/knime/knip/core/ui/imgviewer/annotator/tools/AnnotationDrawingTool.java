@@ -33,7 +33,7 @@ public abstract class AnnotationDrawingTool<O extends OverlayElement2D<String>> 
                                      final String... labels) {
         for (final OverlayElement2D<String> element : overlay.getElementsByPosition(selection.getPlanePos(e.getPosX(),
                                                                                                           e.getPosY()),
-                                                                                                          selection.getDimIndices())) {
+                                                                                    selection.getDimIndices())) {
             if (overlay.removeElement(element)) {
                 fireStateChanged();
             }

@@ -25,6 +25,6 @@ public class NormalizationUtils {
         final ValuePair<T, T> ValuePair = Operations.compute(minMax, interval);
         return new double[]{
                 (1 / (ValuePair.b.getRealDouble() - ValuePair.a.getRealDouble()))
-                * (type.getMaxValue() - type.getMinValue()), ValuePair.a.getRealDouble()};
+                        * (type.getMaxValue() - type.getMinValue()), ValuePair.a.getRealDouble()};
     }
 }

@@ -29,7 +29,7 @@ import net.imglib2.type.numeric.integer.ByteType;
 
 /**
  * Class responsable for handling the zernike moments calculation.
- *
+ * 
  * @author Stefan, University of Konstanz
  */
 public class ZernikeFeatureComputer<T extends RealType<T>> {
@@ -47,7 +47,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * default constructor. initializes the data structures
-     *
+     * 
      * @param m_img the image
      * @param mask the mask
      */
@@ -60,7 +60,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * compute F(m, n, s). see zernike documentation for more.
-     *
+     * 
      * @param m the "order"
      * @param n the "repetition"
      * @param s the index
@@ -85,7 +85,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * create the polynom R_mn. see zernike documentation for more.
-     *
+     * 
      * @param m the "order"
      * @param n the "repetition"
      * @return the F polynom
@@ -103,7 +103,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * implements the actual algoritm.
-     *
+     * 
      * @param m the "order" of the Zernike moment to be computed
      * @param n the "repetition"
      * @return the complex value of the Zernike moment
@@ -151,7 +151,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * return the number of zernike moment types that exist and have the order smaller than or equal to the parameter.
-     *
+     * 
      * @param orderMax the maximal order
      * @return the number of zernike moments which have the order smaller than or equal to this one
      */
@@ -162,7 +162,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * return the order of the i'th zernike moment from the string of moments which have the order <= the parameter.
      * indexes start with 0.
-     *
+     * 
      * @param orderMax the maximal order
      * @param index the index of the zernike moment in the string of moments with order <= orderMax
      * @return the order of the requested zernike moment
@@ -182,7 +182,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
     /**
      * return the order of the i'th zernike moment from the string of moments which have the order <= the parameter.
      * indexes start with 0.
-     *
+     * 
      * @param orderMax the maximal order
      * @param index the index of the zernike moment in the string of moments with order <= orderMax
      * @return the repetition of the requested zernike moment
@@ -202,7 +202,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * given the first few moments of an image, reconstruct it.
-     *
+     * 
      * @param width the width of the desired image
      * @param height the height of the image
      * @param features the first few zernike features. for any given order the features must for all repetitions
@@ -265,7 +265,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
     /**
      * represent a complex number with double coefficients.
-     *
+     * 
      * @author Stefan, University of Konstanz
      */
     public static class Complex {
@@ -277,7 +277,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * constructor for number with imaginary part = 0.
-         *
+         * 
          * @param real the real part
          */
         public Complex(final double real) {
@@ -287,7 +287,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * constructor.
-         *
+         * 
          * @param real the real part
          * @param imaginary the imaginary part
          */
@@ -312,7 +312,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * immutably multiply this complex number with the parameter.
-         *
+         * 
          * @return the result of the multiplication
          * @param c the thing to multiply this by
          */
@@ -323,7 +323,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * mutably add the parameter to this.
-         *
+         * 
          * @param c the thing to add with.
          */
         public void add(final Complex c) {
@@ -333,7 +333,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * return the conjugate of this number.
-         *
+         * 
          * @return the conjugate
          */
         public Complex conjugate() {
@@ -342,7 +342,7 @@ public class ZernikeFeatureComputer<T extends RealType<T>> {
 
         /**
          * return the absolute value of this complex number.
-         *
+         * 
          * @return the abs value
          */
         public double abs() {

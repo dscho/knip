@@ -60,9 +60,9 @@ import org.knime.knip.core.util.MiscViews;
 
 /**
  * Panel to generate a Rulebased LabelFilter.
- *
+ * 
  * Publishes {@link RulebasedLabelFilter}
- *
+ * 
  * @author hornm, dietzc, schoenenbergerf, ortweinm University of Konstanz
  */
 public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {

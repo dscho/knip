@@ -55,7 +55,6 @@ import java.util.BitSet;
 
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
-import net.imglib2.algorithm.features.seg.CalculatePerimeter;
 import net.imglib2.img.Img;
 import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
@@ -67,6 +66,7 @@ import net.imglib2.ops.operation.subset.views.ImgView;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.real.DoubleType;
 
+import org.knime.knip.core.features.CalculatePerimeter;
 import org.knime.knip.core.features.FeatureSet;
 import org.knime.knip.core.features.FeatureTargetListener;
 import org.knime.knip.core.features.ObjectCalcAndCache;
@@ -74,7 +74,7 @@ import org.knime.knip.core.features.SharesObjects;
 import org.knime.knip.core.util.ImgUtils;
 
 /**
- *
+ * 
  * @author hornm, dietzc, University of Konstanz
  */
 public class SegmentFeatureSet implements FeatureSet, SharesObjects {

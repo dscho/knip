@@ -26,7 +26,7 @@ import net.imglib2.view.Views;
  * @param <T>
  */
 public class ATrousWaveletCreator<T extends RealType<T>> implements
-UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>> {
+        UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>> {
 
     private final Integer[] m_skipLevels;
 
@@ -82,8 +82,8 @@ UnaryOperation<RandomAccessibleInterval<T>, RandomAccessibleInterval<FloatType>>
     }
 
     private RandomAccessibleInterval<FloatType>
-    createCoefficients(final RandomAccessibleInterval<T> input2D,
-                       final RandomAccessibleInterval<FloatType> outputStack) throws IncompatibleTypeException {
+            createCoefficients(final RandomAccessibleInterval<T> input2D,
+                               final RandomAccessibleInterval<FloatType> outputStack) throws IncompatibleTypeException {
 
         final long[] min = new long[]{input2D.min(0), input2D.min(1), -1};
         final long[] max = new long[]{input2D.max(0), input2D.max(1), -1};

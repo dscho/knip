@@ -54,8 +54,8 @@ public class FastNormalizingGreyRendering {
     }
 
     private static <R extends RealType<R>> RenderTripel
-    tryArrayImage(final RandomAccessibleInterval<R> source, final int dimX, final int dimY,
-                  final long[] planePos, final double normalizationFactor, final double min) {
+            tryArrayImage(final RandomAccessibleInterval<R> source, final int dimX, final int dimY,
+                          final long[] planePos, final double normalizationFactor, final double min) {
 
         if ((dimX == 0) && (dimY == 1) && (source instanceof ArrayImg)) {
             Abstract2DProjector<?, ?> projector;

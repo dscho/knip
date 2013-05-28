@@ -12,23 +12,23 @@ import net.imglib2.type.numeric.RealType;
 public class OutOfBoundsStrategyFactory {
 
     public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN>
-    getStrategy(final String strategy, final T val) {
+            getStrategy(final String strategy, final T val) {
         return getStrategy(strategy, val, val);
     }
 
     public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>>
-    OutOfBoundsFactory<T, IN> getStrategy(final String strategy, final T val, final O refType) {
+            OutOfBoundsFactory<T, IN> getStrategy(final String strategy, final T val, final O refType) {
         return getStrategy(Enum.valueOf(OutOfBoundsStrategyEnum.class, strategy), val, val);
     }
 
     public static <T extends RealType<T>, IN extends RandomAccessibleInterval<T>> OutOfBoundsFactory<T, IN>
-    getStrategy(final OutOfBoundsStrategyEnum strategyEnum, final T val) {
+            getStrategy(final OutOfBoundsStrategyEnum strategyEnum, final T val) {
         return getStrategy(strategyEnum, val, val);
     }
 
     public static <T extends RealType<T>, O extends RealType<O>, IN extends RandomAccessibleInterval<T>>
-    OutOfBoundsFactory<T, IN> getStrategy(final OutOfBoundsStrategyEnum strategyEnum, final T val,
-                                          final O refType) {
+            OutOfBoundsFactory<T, IN> getStrategy(final OutOfBoundsStrategyEnum strategyEnum, final T val,
+                                                  final O refType) {
         final T inValue = val.createVariable();
 
         switch (strategyEnum) {

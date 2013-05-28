@@ -229,7 +229,7 @@ public class ImgGenerator {
             // I bet that this will never pass the Checkstyle,
             // Christian :)
             cursor.get().setReal(m_randomFill ? (Math.random() * val.getMaxValue() * (val.getMinValue() < 0 ? ((Math
-                    .random() > 0.5 ? -1 : 1) * Math.signum(val.getMinValue())) : 1)) : m_value);
+                                         .random() > 0.5 ? -1 : 1) * Math.signum(val.getMinValue())) : 1)) : m_value);
         }
 
         final ImgPlus<T> imgPlus = new ImgPlus<T>(img);

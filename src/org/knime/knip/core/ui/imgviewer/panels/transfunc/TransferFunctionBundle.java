@@ -89,8 +89,8 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
      */
     public static TransferFunctionBundle newRGBABundle() {
         final TransferFunctionColor[] keys =
-            {TransferFunctionColor.ALPHA, TransferFunctionColor.RED, TransferFunctionColor.GREEN,
-                TransferFunctionColor.BLUE};
+                {TransferFunctionColor.ALPHA, TransferFunctionColor.RED, TransferFunctionColor.GREEN,
+                        TransferFunctionColor.BLUE};
 
         return moveAlpha(setUpBundle(keys, Type.RGBA), TransferFunctionColor.ALPHA);
     }
@@ -102,7 +102,7 @@ public class TransferFunctionBundle implements Iterable<TransferFunction> {
      */
     public static TransferFunctionBundle newRGBBundle() {
         final TransferFunctionColor[] keys =
-            {TransferFunctionColor.RED, TransferFunctionColor.GREEN, TransferFunctionColor.BLUE};
+                {TransferFunctionColor.RED, TransferFunctionColor.GREEN, TransferFunctionColor.BLUE};
         return setUpBundle(keys, Type.RGB);
     }
 

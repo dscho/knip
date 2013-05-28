@@ -8,7 +8,7 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * TODO: Verify the correctness of this implementation!! (e.g. compared to the ImageJ plugin)
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>> implements
@@ -60,7 +60,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @return
      */
     @Override
@@ -243,7 +243,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
     /**
      * die matrix ist links aufgebaut, die entsprechenen indizes im array rechts m11 m12 m13 0 1 2 a b c m21 m22 m23 3 4
      * 5 d e f m31 m32 m33 6 7 8 g h i
-     *
+     * 
      */
     private double[] inverseOf(final double[] m) {
         final double[] res = new double[9];
@@ -271,7 +271,7 @@ public class ColorDeconv<T extends RealType<T>, K extends RandomAccessibleInterv
     }
 
     /**
-     *
+     * 
      * @param a 3x3 matrix
      * @param b 3x3 matrix
      * @return the multiplied matrices

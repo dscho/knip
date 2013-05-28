@@ -26,7 +26,7 @@ import net.imglib2.view.Views;
 public class MiscViews {
 
     public synchronized static <T extends Type<T>> IterableRandomAccessibleInterval<T>
-    constant(final T constant, final Interval interval) {
+            constant(final T constant, final Interval interval) {
 
         final long[] dimensions = new long[interval.numDimensions()];
         interval.dimensions(dimensions);
@@ -57,7 +57,7 @@ public class MiscViews {
     }
 
     public static <L extends Comparable<L>> LabelingView<L>
-    labelingView(final RandomAccessibleInterval<LabelingType<L>> randAccessible, final LabelingFactory<L> fac) {
+            labelingView(final RandomAccessibleInterval<LabelingType<L>> randAccessible, final LabelingFactory<L> fac) {
         if (randAccessible instanceof LabelingView) {
             return (LabelingView<L>)randAccessible;
         } else {

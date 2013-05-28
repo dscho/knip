@@ -220,8 +220,8 @@ public class EventService {
                 m_method.invoke(m_subscriber, event);
             } catch (final Exception e) {
                 throw new RuntimeException(
-                                           "InvocationTargetException when invoking annotated method from EventService publication. Eata: "
-                                                   + event + ", subscriber:" + m_subscriber, e);
+                        "InvocationTargetException when invoking annotated method from EventService publication. Eata: "
+                                + event + ", subscriber:" + m_subscriber, e);
             }
         }
     }

@@ -20,47 +20,47 @@ import java.util.Random;
  * is the case the number of folds is set equal to the number of instances.
  * <p/>
  * <!-- globalinfo-end -->
- *
+ * 
  * <!-- options-start --> Valid options are:
  * <p/>
- *
+ * 
  * <pre>
  * -N &lt;num&gt;
  *  number of clusters. If omitted or -1 specified, then
  *  cross validation is used to select the number of clusters.
  * </pre>
- *
+ * 
  * <pre>
  * -I &lt;num&gt;
  *  max iterations.
  * (default 100)
  * </pre>
- *
+ * 
  * <pre>
  * -V
  *  verbose.
  * </pre>
- *
+ * 
  * <pre>
  * -M &lt;num&gt;
  *  minimum allowable standard deviation for normal density
  *  computation
  *  (default 1e-6)
  * </pre>
- *
+ * 
  * <pre>
  * -O
  *  Display model in old format (good when there are many clusters)
  * </pre>
- *
+ * 
  * <pre>
  * -S &lt;num&gt;
  *  Random number seed.
  *  (default 100)
  * </pre>
- *
+ * 
  * <!-- options-end -->
- *
+ * 
  * @author Mark Hall (mhall@cs.waikato.ac.nz)
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 6298 $
@@ -139,7 +139,7 @@ public class ExtendedEM {
 
     /**
      * Set the number of clusters (-1 to select by CV).
-     *
+     * 
      * @param n the number of clusters
      * @throws Exception if n is 0
      */
@@ -159,7 +159,7 @@ public class ExtendedEM {
 
     /**
      * Set start centers of the EM Algo
-     *
+     * 
      * @param inst
      */
 
@@ -181,7 +181,7 @@ public class ExtendedEM {
 
     /**
      * Initialise estimators and storage.
-     *
+     * 
      * @param inst the instances
      * @throws Exception if initialization fails
      **/
@@ -227,7 +227,7 @@ public class ExtendedEM {
 
     /**
      * calculate prior probabilites for the clusters
-     *
+     * 
      * @param inst the instances
      * @throws Exception if priors can't be calculated
      **/
@@ -259,7 +259,7 @@ public class ExtendedEM {
 
     /**
      * The M step of the EM algorithm.
-     *
+     * 
      * @param inst the training instances
      * @throws Exception if something goes wrong
      */
@@ -329,7 +329,7 @@ public class ExtendedEM {
 
     /**
      * The E step of the EM algorithm. Estimate cluster membership probabilities.
-     *
+     * 
      * @param inst the training instances
      * @param change_weights whether to change the weights
      * @return the average log likelihood
@@ -356,7 +356,7 @@ public class ExtendedEM {
 
     /**
      * Constructor.
-     *
+     * 
      **/
     public ExtendedEM() {
         m_seedDefault = 100;
@@ -365,7 +365,7 @@ public class ExtendedEM {
 
     /**
      * Return the normal distributions for the cluster models
-     *
+     * 
      * @return a <code>double[][][]</code> value
      */
     public double[][][] getClusterModelsNumericAtts() {
@@ -374,7 +374,7 @@ public class ExtendedEM {
 
     /**
      * Updates the minimum and maximum values for all the attributes based on a new instance.
-     *
+     * 
      * @param instance the new instance
      */
     private void updateMinMax(final InstanceTmp instance) {
@@ -399,7 +399,7 @@ public class ExtendedEM {
 
     /**
      * Generates a clusterer. Has to initialize all fields of the clusterer that are not being set via options.
-     *
+     * 
      * @param data set of instances serving as training data
      * @throws Exception if the clusterer has not been generated successfully
      */
@@ -424,10 +424,10 @@ public class ExtendedEM {
 
     /**
      * Perform the EM algorithm
-     *
+     * 
      * @throws Exception if something goes wrong
      */
-    private void doEM()  {
+    private void doEM() {
 
         m_rr = new Random(getSeed());
 
@@ -447,13 +447,13 @@ public class ExtendedEM {
 
     /**
      * iterates the E and M steps until the log likelihood of the data converges.
-     *
+     * 
      * @param inst the training instances.
      * @param report be verbose.
      * @return the log likelihood of the data
      * @throws Exception if something goes wrong
      */
-    private double iterate(final InstancesTmp inst, final boolean report)  {
+    private double iterate(final InstancesTmp inst, final boolean report) {
 
         int i;
         double llkold = 0.0;
@@ -502,7 +502,7 @@ public class ExtendedEM {
 
     /**
      * Gets the seed for the random number generations
-     *
+     * 
      * @return the seed for the random number generation
      */
     public int getSeed() {
@@ -511,7 +511,7 @@ public class ExtendedEM {
 
     /**
      * Computes the density for a given instance.
-     *
+     * 
      * @param instance the instance to compute the density for
      * @return the density.
      * @exception Exception if the density could not be computed successfully
@@ -531,7 +531,7 @@ public class ExtendedEM {
         return maxIndex;
     }
 
-    public double logDensityForInstance(final InstanceTmp instance)  {
+    public double logDensityForInstance(final InstanceTmp instance) {
 
         final double[] a = logJointDensitiesForInstance(instance);
         final double max = a[maxIndex(a)];
@@ -562,7 +562,7 @@ public class ExtendedEM {
 
     /**
      * Computes the log of the conditional density (per cluster) for a given instance.
-     *
+     * 
      * @param inst the instance to compute the density for
      * @return an array containing the estimated densities
      * @throws Exception if the density could not be computed successfully
@@ -589,7 +589,7 @@ public class ExtendedEM {
 
     /**
      * Returns the cluster priors.
-     *
+     * 
      * @return the cluster priors
      */
     public double[] clusterPriors() {
@@ -605,7 +605,7 @@ public class ExtendedEM {
 
     /**
      * Density function of normal distribution.
-     *
+     * 
      * @param x input value
      * @param mean mean of distribution
      * @param stdDev standard deviation of distribution
@@ -656,7 +656,7 @@ public class ExtendedEM {
 
     /**
      * Returns the logs of the joint densities for a given instance.
-     *
+     * 
      * @param inst the instance
      * @return the array of values
      * @exception Exception if values could not be computed

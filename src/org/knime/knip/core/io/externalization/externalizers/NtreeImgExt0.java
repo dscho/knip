@@ -113,7 +113,7 @@ public class NtreeImgExt0 implements Externalizer<NtreeImg> {
 
         @SuppressWarnings({"rawtypes"})
         final NtreeImg<? extends Type<?>, ? extends NtreeAccess<? extends Comparable<?>, ?>> img =
-        new NtreeImgFactory().create(dims, type);
+                new NtreeImgFactory().create(dims, type);
         final Ntree<? extends Comparable<?>> tree = img.update(new NtreeImg.PositionProvider() {
 
             @Override

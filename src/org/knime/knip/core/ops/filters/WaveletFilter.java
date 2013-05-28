@@ -21,7 +21,7 @@ import net.imglib2.view.Views;
 
 /**
  * Image projection.
- *
+ * 
  * @author jmetzner, University of Konstanz
  */
 public class WaveletFilter<T extends RealType<T>, K extends IterableInterval<T> & RandomAccessibleInterval<T>>

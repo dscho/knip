@@ -16,7 +16,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.OverlayElement2D;
 import org.knime.knip.core.ui.imgviewer.overlay.OverlayElementStatus;
 
 /**
- *
+ * 
  * @author dietzc, fschoenenberger, hornm
  */
 public abstract class AbstractPolygonOverlayElement<L extends Comparable<L>> extends OverlayElement2D<L> implements

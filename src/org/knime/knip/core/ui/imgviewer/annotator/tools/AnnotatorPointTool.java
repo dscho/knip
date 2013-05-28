@@ -29,7 +29,7 @@ public class AnnotatorPointTool extends AnnotationDrawingTool<PointOverlayElemen
         final PointOverlayElement<String> element =
                 new PointOverlayElement<String>(e.getPosX(), e.getPosY(), selection.getPlanePos(e.getPosX(),
                                                                                                 e.getPosY()),
-                                                                                                selection.getDimIndices(), labels);
+                        selection.getDimIndices(), labels);
 
         overlay.addElement(element);
 

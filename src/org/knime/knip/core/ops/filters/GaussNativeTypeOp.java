@@ -18,7 +18,7 @@ import net.imglib2.view.Views;
  * @param <T>
  */
 public class GaussNativeTypeOp<T extends RealType<T> & NativeType<T>, TYPE extends RandomAccessibleInterval<T>>
-implements UnaryOperation<TYPE, TYPE> {
+        implements UnaryOperation<TYPE, TYPE> {
 
     private final double[] m_sigmas;
 

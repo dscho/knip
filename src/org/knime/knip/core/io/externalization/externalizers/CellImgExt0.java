@@ -52,9 +52,9 @@ package org.knime.knip.core.io.externalization.externalizers;
 
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.cell.AbstractCell;
+import net.imglib2.img.cell.AbstractCellImg.CellContainerSampler;
 import net.imglib2.img.cell.CellCursor;
 import net.imglib2.img.cell.CellImg;
-import net.imglib2.img.cell.CellImg.CellContainerSampler;
 import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.type.NativeType;
 
@@ -146,8 +146,8 @@ public class CellImgExt0 implements Externalizer<CellImg> {
 
         final DirectCellCursor<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>> cursorOnCells =
                 new DirectCellCursor(
-                                     ((CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>)obj)
-                                     .cursor());
+                        ((CellImg<? extends NativeType<?>, ? extends ArrayDataAccess<?>, ? extends AbstractCell<?>>)obj)
+                                .cursor());
 
         boolean indicateStop = cursorOnCells.isLastCell();
         while (true) {
@@ -170,7 +170,7 @@ public class CellImgExt0 implements Externalizer<CellImg> {
     }
 
     private class DirectCellCursor<T extends NativeType<T>, A extends ArrayDataAccess<A>, C extends AbstractCell<A>>
-    extends CellCursor<T, A, C> {
+            extends CellCursor<T, A, C> {
 
         protected DirectCellCursor(final CellCursor<T, A, C> cursor) {
             super(cursor);

@@ -16,7 +16,7 @@ import net.imglib2.type.numeric.real.DoubleType;
  * @param <V>
  */
 public class MeanAbsoluteDeviation<T extends RealType<T>, V extends RealType<V>> implements
-UnaryOperation<IterableInterval<T>, V> {
+        UnaryOperation<IterableInterval<T>, V> {
 
     @Override
     public V compute(final IterableInterval<T> input, final V output) {

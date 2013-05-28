@@ -69,7 +69,7 @@ import org.knime.knip.core.ui.event.EventService;
 
 /**
  * A Panel used to control the Transferfunctions and the actually drawn values of the image to be shown.
- *
+ * 
  * @author Clemens M�thing (clemens.muething@uni-konstanz.de)
  */
 public class TransferFunctionControlPanel extends JPanel implements TransferFunctionChgListener {
@@ -172,7 +172,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Sets up a new TransferPanel.
-     *
+     * 
      * @param service The {@link EventService} to be used
      */
     public TransferFunctionControlPanel() {
@@ -298,7 +298,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Used to determine the longest of the ComboBoxes.
-     *
+     * 
      * @return the largest dimension
      */
     private int getLongestComboBox() {
@@ -316,7 +316,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Get the current state of this control.
-     *
+     * 
      * @return the current state
      */
     public final Memento getState() {
@@ -325,9 +325,9 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Set the state of the control back.
-     *
+     * 
      * @param memento the state to set back to
-     *
+     * 
      * @return the current state
      */
     public final Memento setState(final Memento memento) {
@@ -366,7 +366,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Convenience function to call getBundle with current mode.
-     *
+     * 
      * @return the bundle of the current mode
      */
     public final TransferFunctionBundle getBundle() {
@@ -375,11 +375,11 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Create a new memento with new histogram data, but keep the state of the current TransferFunctionBundle.<br>
-     *
+     * 
      * To achieve this a deep copy of all currently set bundles is made and then put into this memento.
-     *
+     * 
      * @param hist the data for the histogram background
-     *
+     * 
      * @return the new memento
      */
     public final Memento createMemento(final Histogram hist) {
@@ -389,9 +389,9 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
     /**
      * Create a new memento using the passed data for the histogram, and copying the transfer functions from the passed
      * memento.<br>
-     *
+     * 
      * This will perform a deep copy of the functions in the passed memento.
-     *
+     * 
      * @param memento the memento used for copying the transfer functions
      * @param hist the new data
      * @return a new memento
@@ -417,12 +417,12 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Create a new memento that can than be used to set the state.<br>
-     *
+     * 
      * I.e. if you want to set different data, first create an memento and then put it in the control.
-     *
+     * 
      * @param bundles a list of the bundles to display, the first element of this list will be active first
      * @param hist the data for the histogram
-     *
+     * 
      * @return the new memento
      */
     public final Memento createMemento(final List<TransferFunctionBundle> bundles, final Histogram hist) {
@@ -431,13 +431,13 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Create a new memento for that can than be used to set the state.<br>
-     *
+     * 
      * I.e. if you want to set different data, first create an memento and then put it in the control.
-     *
+     * 
      * @param bundles a list of the bundles to display, the first element of this list will be active first
      * @param hist the data for the histogram
      * @param current the bundle from the bundles list that should be active when this memento is put to use
-     *
+     * 
      * @return the new memento
      */
     public final Memento createMemento(final List<TransferFunctionBundle> bundles, final Histogram hist,
@@ -459,7 +459,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Sets the mode this panel operates in and that of all its children.
-     *
+     * 
      * @param bundle the new active bundle
      */
     private void setActiveBundle(final TransferFunctionBundle bundle) {
@@ -514,7 +514,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Check wheter the only one function option is selected.
-     *
+     * 
      * @return true if force checkbox is selected.
      */
     public final boolean isOnlyOneFunc() {
@@ -527,7 +527,7 @@ public class TransferFunctionControlPanel extends JPanel implements TransferFunc
 
     /**
      * Check wheter the autoapply option is currently given.
-     *
+     * 
      * @return true if autoapply checkbox is selected.
      */
     public final boolean isAutoApply() {

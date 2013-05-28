@@ -102,7 +102,7 @@ public class ImgNormalize<T extends RealType<T>> implements UnaryOutputOperation
         }
 
         Operations.map(new Normalize<T>(m_minmaxsource.a, m_minmaxsource.b, m_minmaxtarget.a, m_minmaxtarget.b))
-        .compute(input, output);
+                .compute(input, output);
 
         if (!m_isManual) {
             m_minmaxsource = null;

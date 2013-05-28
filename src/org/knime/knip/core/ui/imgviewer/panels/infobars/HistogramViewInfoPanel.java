@@ -81,7 +81,7 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>> extends
         if ((m_binXPosition >= 0) && (m_binXPosition < m_hist.length)) {
             m_infoBuffer.append("value=");
             m_infoBuffer.append(String.format("[from %.2f; to %.2f]", m_factor * m_binXPosition, m_factor
-                                              * (m_binXPosition + 1)));
+                    * (m_binXPosition + 1)));
             m_infoBuffer.append("; count=");
             m_infoBuffer.append(m_hist[m_binXPosition]);
 

@@ -9,7 +9,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 public class ImgBasedRealMatrix<T extends RealType<T>, IN extends RandomAccessibleInterval<T>> extends
-AbstractRealMatrix {
+        AbstractRealMatrix {
 
     private final RandomAccess<T> m_rndAccess;
 

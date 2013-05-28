@@ -77,7 +77,7 @@ import net.imglib2.view.Views;
  * @param <T> The type of the integral image.
  */
 public class IntegralImgND<R extends RealType<R>, T extends RealType<T> & NativeType<T>> implements
-UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
+        UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
     private final ImgFactory<T> m_factory;
 
@@ -155,8 +155,8 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
 
         if ((errorSum > output.randomAccess().get().createVariable().getMaxValue()) || Double.isInfinite(errorSum)) {
             throw new RuntimeException(new IncompatibleTypeException(output,
-                                                                     "Integral image breaks type boundaries of the output image. (max value of " + errorSum
-                                                                     + " is too much)"));
+                    "Integral image breaks type boundaries of the output image. (max value of " + errorSum
+                            + " is too much)"));
         }
 
         return output;
@@ -341,7 +341,7 @@ UnaryOutputOperation<RandomAccessibleInterval<R>, RandomAccessibleInterval<T>> {
      * @return a helper object that efficiently computes sums on the provided integral image.
      */
     public final static <T extends RealType<T>> IntegralImgSumAgent<T>
-    getSumAgent(final RandomAccessibleInterval<T> integralImage) {
+            getSumAgent(final RandomAccessibleInterval<T> integralImage) {
         return new IntegralImgSumAgent<T>(integralImage);
     }
 

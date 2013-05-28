@@ -51,7 +51,7 @@
 package org.knime.knip.core.data;
 
 /**
- *
+ * 
  * @author dietzc, University of Konstanz
  */
 public class IntegerLabelGenerator implements LabelGenerator<Integer> {

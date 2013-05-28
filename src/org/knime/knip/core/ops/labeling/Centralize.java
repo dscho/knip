@@ -19,7 +19,7 @@ import org.knime.knip.core.algorithm.PolarImageFactory;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 
 public class Centralize<T extends RealType<T>, L extends Comparable<L>> implements
-BinaryOutputOperation<Img<T>, Labeling<L>, Labeling<L>> {
+        BinaryOutputOperation<Img<T>, Labeling<L>, Labeling<L>> {
 
     private final int m_radius;
 

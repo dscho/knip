@@ -13,7 +13,7 @@ import net.imglib2.view.Views;
 
 /**
  * Bilateral filtering
- *
+ * 
  * @author tcriess, University of Konstanz
  */
 public class BilateralFilter<T extends RealType<T>, K extends RandomAccessibleInterval<T> & IterableInterval<T>>

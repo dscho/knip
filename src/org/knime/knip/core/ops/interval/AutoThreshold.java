@@ -15,7 +15,7 @@ import org.knime.knip.core.algorithm.types.ThresholdingType;
 import org.knime.knip.core.ops.misc.FindThreshold;
 
 public final class AutoThreshold<T extends RealType<T>, I extends IterableInterval<T>, K extends IterableInterval<BitType>>
-implements UnaryOperation<I, K> {
+        implements UnaryOperation<I, K> {
 
     private final ThresholdingType m_thresholdType;
 

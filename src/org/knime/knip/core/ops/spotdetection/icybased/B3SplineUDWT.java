@@ -29,16 +29,16 @@
 package org.knime.knip.core.ops.spotdetection.icybased;
 
 /**
- *
+ * 
  * @author Nicolas Chenouard, Fabrice de Chaumont
- *
+ * 
  */
 public class B3SplineUDWT {
 
     /**
      * Compute the maximum feasible scale for a given 3D image size for as scale i, the minimum size of the image is 5
      * +4*(2^(i-1)-1) along each direction
-     *
+     * 
      * @param width
      * @param height
      * @param depth
@@ -68,7 +68,7 @@ public class B3SplineUDWT {
     /**
      * Compute the maximum feasible scale for a given 2D image size for as scale i, the minimum size of the image is 5
      * +4*(2^(i-1)-1) along each direction
-     *
+     * 
      * @param width
      * @param height
      * @return
@@ -130,7 +130,7 @@ public class B3SplineUDWT {
 
     /**
      * Check that the 3D image dimensions complies with the number of chosen scales
-     *
+     * 
      * @param width
      * @param height
      * @param depth
@@ -161,7 +161,7 @@ public class B3SplineUDWT {
 
     /**
      * Check that the 2D image dimensions complies with the wavelet scale
-     *
+     * 
      * @param width
      * @param height
      * @param numScales
@@ -188,7 +188,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the wavelet coefficients from wavelet scales
-     *
+     * 
      * @param scaleCoefficients
      * @param originalImage
      * @param numScales
@@ -233,7 +233,7 @@ public class B3SplineUDWT {
 
     /**
      * Reconstruct an image from the wavelet coefficients and a low pass residual image
-     *
+     * 
      * @param inputCoefficients
      * @param lowPassResidual
      * @param output
@@ -259,7 +259,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the wavelet coefficients from wavelet scales
-     *
+     * 
      * @param scaleCoefficients
      * @param originalImage
      * @param numScales
@@ -314,7 +314,7 @@ public class B3SplineUDWT {
     /**
      * filter a 2D image with the B3 spline wavelet scale kernel in the x direction when using the a trous algorithm,
      * and swap dimensions
-     *
+     * 
      * @param arrayIn
      * @param arrayOut
      * @param width
@@ -424,7 +424,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the wavelet scale images for a 2D image
-     *
+     * 
      * @param dataIn
      * @param width
      * @param height
@@ -502,7 +502,7 @@ public class B3SplineUDWT {
     }
 
     /**
-     *
+     * 
      * @param arrayIn
      * @param arrayOut
      * @param width
@@ -622,7 +622,7 @@ public class B3SplineUDWT {
 
     /**
      * Compute the scale images for a 3D image
-     *
+     * 
      * @param dataIn
      * @param width
      * @param height

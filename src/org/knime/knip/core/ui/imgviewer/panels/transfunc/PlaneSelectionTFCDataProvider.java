@@ -11,7 +11,7 @@ import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 
 public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>> extends
-AbstractTFCDataProvider<T, Integer> {
+        AbstractTFCDataProvider<T, Integer> {
 
     /** generated serial id. */
     private static final long serialVersionUID = -3481919617165973916L;
