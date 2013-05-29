@@ -37,7 +37,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-0.6.0-20130322.230610-9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-20111128.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/native-lib-loader-2.0-20130319.202138-7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20130329.190512-117.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20130525.174343-165.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/perf4j-0.9.13.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20130525.174300-167.jar"/>
