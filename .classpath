@@ -27,22 +27,21 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/netcdf-4.0.03.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/junit-3.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.5-20130525.174526-162.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20130525.174200-168.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/kryo-2.21-shaded.jar" sourcepath="/home/dietyc/.m2/repository/com/esotericsoftware/kryo/kryo/2.21/kryo-2.21-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-legacy-4.5-20130525.174243-161.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.5-20130525.174317-166.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.5-20130525.174218-168.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.5-20130525.174510-162.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/bio-formats-4.5-20130530.183520-165.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/jai_imageio-4.5-20130530.183150-171.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/kryo-2.21-shaded.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/loci-legacy-4.5-20130530.183238-164.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/lwf-stubs-4.5-20130530.183312-169.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/mdbtools-java-4.5-20130530.183216-171.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/metakit-4.5-20130530.183507-165.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-0.6.0-20130322.230610-9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-20111128.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/native-lib-loader-2.0-20130319.202138-7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20130525.174343-165.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/native-lib-loader-2.0-20130529.192024-8.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/ome-xml-4.5-20130530.183331-168.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/perf4j-0.9.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20130525.174300-167.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.5-20130525.174447-164.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-devel-4.5-20130525.174231-161.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/turbojpeg-4.5-20130525.174358-43.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/poi-loci-4.5-20130530.183254-170.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-4.5-20130530.183443-167.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/scifio-devel-4.5-20130530.183227-164.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/turbojpeg-4.5-20130530.183349-46.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
