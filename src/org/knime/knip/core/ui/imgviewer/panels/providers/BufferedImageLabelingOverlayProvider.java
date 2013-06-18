@@ -34,8 +34,8 @@ import org.knime.knip.core.ui.imgviewer.events.TransparencyPanelValueChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- * 
- * 
+ *
+ *
  * @author dietzc, hornm, schoenenbergerf, zinsmaierm University of Konstanz
  */
 public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L extends Comparable<L>> extends
@@ -52,7 +52,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
     private Integer m_transparency;
 
-    private NormalizationParametersChgEvent<T> m_normalizationParameters;
+    private NormalizationParametersChgEvent m_normalizationParameters;
 
     private GraphicsConfiguration m_config;
 
@@ -79,7 +79,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         m_greyRenderer = new Real2GreyRenderer<T>();
         m_transparency = 128;
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>(0, false);
+        m_normalizationParameters = new NormalizationParametersChgEvent(0, false);
         m_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
     }
 
@@ -154,12 +154,17 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
     }
 
     private BufferedImage renderImage() {
-        final double[] normParams = m_normalizationParameters.getNormalizationParameters(m_img, m_sel);
+        //converted version is guaranteed to be ? extends RealType => getNormalization and render should work
+        //TODO find a way to relax type constraints from R extends RealType  to RealType
+
+        RandomAccessibleInterval convertedImg = convertIfDouble(m_img);
+
+        final double[] normParams = m_normalizationParameters.getNormalizationParameters(convertedImg, m_sel);
 
         m_greyRenderer.setNormalizationParameters(normParams[0], normParams[1]);
 
         final ScreenImage ret =
-                m_greyRenderer.render(m_img, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
+                m_greyRenderer.render(convertedImg, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
         return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
     }
@@ -231,11 +236,11 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
     /**
      * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
      * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
-     * 
+     *
      * @param normalizationParameters
      */
     @EventListener
-    public void onUpdated(final NormalizationParametersChgEvent<T> normalizationParameters) {
+    public void onUpdated(final NormalizationParametersChgEvent normalizationParameters) {
         m_normalizationParameters = normalizationParameters;
         m_imgChanged = true;
     }
@@ -263,7 +268,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
     public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.loadComponentConfiguration(in);
         m_transparency = in.readInt();
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>();
+        m_normalizationParameters = new NormalizationParametersChgEvent();
         m_normalizationParameters.readExternal(in);
     }
 

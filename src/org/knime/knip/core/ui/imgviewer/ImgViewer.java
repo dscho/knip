@@ -69,21 +69,15 @@ import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.converter.read.ConvertedRandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
-import net.imglib2.ops.operation.real.unary.Convert;
-import net.imglib2.ops.operation.real.unary.Convert.TypeConversionTypes;
 import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
 import net.imglib2.type.Type;
-import net.imglib2.type.numeric.real.DoubleType;
-import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
 import org.apache.commons.codec.binary.Base64;
@@ -96,7 +90,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A TableCellViewPane providing another view on image objects. It allows to browser through the individual
  * planes/dimensions, enhance contrast, etc.
- * 
+ *
  * @author dietzc, hornm, University of Konstanz
  * @param <T>
  */
@@ -171,12 +165,12 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     /**
      * Adds the {@link ViewerComponent} to the {@link ImgViewer}
-     * 
+     *
      * @param panel {@link ViewerComponent} to be set
-     * 
+     *
      * @param setEventService indicates weather the {@link EventService} of the {@link ImgViewer} shall be set to the
      *            {@link ViewerComponent}
-     * 
+     *
      */
     public void addViewerComponent(final ViewerComponent panel, final boolean setEventService) {
 
@@ -217,7 +211,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     /**
      * Set the current {@link Img} of the viewer
-     * 
+     *
      * @param img {@link Img} to be set
      * @param axes {@link CalibratedSpace} of the {@link Img}
      * @param name {@link Named} of the {@link Img}
@@ -237,40 +231,20 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
             axes2d = new CopyCalibratedSpace<CalibratedSpace>(img2d).compute(axes, new CalibratedSpaceImpl(2));
         }
 
-        final IterableInterval<T> iterable = Views.iterable(img2d);
+        if (imageMetaData != null) {
+            m_eventService.publish(new ImgWithMetadataChgEvent<T>(img2d, name, source, axes2d, imageMetaData));
 
-        if (iterable.firstElement() instanceof DoubleType) {
-            final Convert<DoubleType, FloatType> convertOp =
-                    new Convert<DoubleType, FloatType>(new DoubleType(), new FloatType(), TypeConversionTypes.DIRECT);
-
-            if (imageMetaData != null) {
-                m_eventService.publish(new ImgWithMetadataChgEvent<FloatType>(
-                        new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                (RandomAccessibleInterval<DoubleType>)img2d, convertOp, new FloatType()), name, source,
-                        axes2d, imageMetaData));
-            } else {
-                m_eventService.publish(new IntervalWithMetadataChgEvent<FloatType>(
-                        new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
-                                (RandomAccessibleInterval<DoubleType>)img2d, convertOp, new FloatType()), name, source,
-                        axes2d));
-            }
-            m_eventService.publish(new ImgRedrawEvent());
         } else {
-            if (imageMetaData != null) {
-                m_eventService.publish(new ImgWithMetadataChgEvent<T>(img2d, name, source, axes2d, imageMetaData));
+            m_eventService.publish(new IntervalWithMetadataChgEvent<T>(img2d, name, source, axes2d));
 
-            } else {
-                m_eventService.publish(new IntervalWithMetadataChgEvent<T>(img2d, name, source, axes2d));
-
-            }
-            m_eventService.publish(new ImgRedrawEvent());
         }
+        m_eventService.publish(new ImgRedrawEvent());
 
     }
 
     /**
      * Save the current settings/state of an ImgViewer to a base64 coded String
-     * 
+     *
      * @return base64 coded String of the current settings/state of the viewer
      * @throws IOException
      */
@@ -311,7 +285,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
     /**
      * Loading settings of the viewer from a base64Coded String produced by
      * {@link ImgViewer#getComponentConfiguration()}
-     * 
+     *
      * @param base64coded the base64 representation of the viewer state
      * @throws IOException
      * @throws ClassNotFoundException

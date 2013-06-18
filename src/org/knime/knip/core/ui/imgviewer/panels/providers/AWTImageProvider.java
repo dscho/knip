@@ -57,10 +57,18 @@ import java.lang.ref.SoftReference;
 
 import javax.swing.Renderer;
 
+import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.converter.read.ConvertedRandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.ops.operation.real.unary.Convert;
+import net.imglib2.ops.operation.real.unary.Convert.TypeConversionTypes;
 import net.imglib2.type.Type;
+import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.real.DoubleType;
+import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.Views;
 
 import org.knime.knip.core.awt.AWTImageTools;
 import org.knime.knip.core.awt.ImageRenderer;
@@ -81,11 +89,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf (University of Konstanz)
- * 
+ *
  *         Publishes {@link AWTImageChgEvent}.
- * 
+ *
  * @param <T> The Type of the {@link Img} object
  * @param <I> The {@link Img} class which will be converted to a {@link BufferedImage}
  */
@@ -114,7 +122,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     /**
      * {@link Renderer} rendering the {@link Img}
      */
-    protected ImageRenderer m_renderer;
+    protected ImageRenderer<T> m_renderer;
 
     /**
      * {@link EventService}
@@ -139,7 +147,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
 
     /**
      * Constructor
-     * 
+     *
      * @param cacheSize The number of {@link BufferedImage}s beeing cached using the {@link LRUCache}. A cache size < 2
      *            indicates, that caching is inactive
      */
@@ -156,7 +164,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     /**
      * Renders the buffered image according to the parameters of {@link PlaneSelectionEvent},
      * {@link NormalizationParametersChgEvent}, {@link Img} and {@link ImgRenderer}
-     * 
+     *
      * @return the rendererd {@link Image}
      */
     protected abstract Image createImage();
@@ -164,9 +172,9 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     /**
      * {@link EventListener} for {@link PlaneSelectionEvent} events The {@link PlaneSelectionEvent} of the
      * {@link AWTImageTools} will be updated
-     * 
+     *
      * Renders and caches the image
-     * 
+     *
      * @param img {@link Img} to render
      * @param sel {@link PlaneSelectionEvent}
      */
@@ -176,11 +184,11 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     }
 
     /**
-     * 
+     *
      * Renders and caches the image
-     * 
+     *
      * @param renderer {@link ImgRenderer} which will be used to render the {@link BufferedImage}
-     * 
+     *
      */
     @EventListener
     public void onRendererUpdate(final RendererSelectionChgEvent e) {
@@ -190,13 +198,13 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     /**
      * {@link EventListener} for {@link Img} and it's {@link CalibratedSpace} {@link Img} and it's
      * {@link CalibratedSpace} metadata will be updated.
-     * 
+     *
      * Creates a new suiteable {@link ImgRenderer} if the existing one doesn't fit with new {@link Img} Creates a new
      * {@link PlaneSelectionEvent} if numDimensions of the existing {@link PlaneSelectionEvent} doesn't fit with new
      * {@link Img}
-     * 
+     *
      * Renders and caches the image
-     * 
+     *
      * @param img The {@link Img} to render. May also be a Labeling.
      * @param axes The axes of the img, currently not used
      * @param name The name of the img
@@ -232,7 +240,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
 
     /**
      * Resets the image cache.
-     * 
+     *
      * @param e
      */
     @EventListener
@@ -246,7 +254,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     /**
      * Turns of the caching, e.g. the TransferFunctionRenderer creates different images all the time, it is not possible
      * to store all of them.
-     * 
+     *
      * @param e
      */
     @EventListener
@@ -258,7 +266,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
      * triggers an actual redraw of the image. If a parameter changes the providers and additional components can first
      * react to the parameter change event before the image is redrawn after the subsequent ImgRedrawEvent. Therefore
      * chained parameters and parameter changes that trigger further changes are possible.
-     * 
+     *
      * @param e
      */
     @EventListener
@@ -284,9 +292,9 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
      * Generates a hashcode according to the parameters of {@link PlaneSelectionEvent},
      * {@link NormalizationParametersChgEvent}, {@link Img} and {@link ImgRenderer}. Override this method to add
      * provider specific hashcode types.
-     * 
+     *
      * HashCode is generated as hash = hash*31 + object.hashCode().
-     * 
+     *
      * @return HashCode
      */
     protected int generateHashCode() {
@@ -371,5 +379,20 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
         m_src = null;
         m_sel = null;
 
+    }
+
+    @SuppressWarnings("unchecked")
+    public RandomAccessibleInterval<? extends RealType<?>> convertIfDouble(final RandomAccessibleInterval<? extends RealType<?>> src) {
+        final IterableInterval<?> iterable = Views.iterable(src);
+
+        if (iterable.firstElement() instanceof DoubleType) {
+            final Convert<DoubleType, FloatType> convertOp =
+                    new Convert<DoubleType, FloatType>(new DoubleType(), new FloatType(), TypeConversionTypes.DIRECT);
+
+                      return new ConvertedRandomAccessibleInterval<DoubleType, FloatType>(
+                                (RandomAccessibleInterval<DoubleType>)src, convertOp, new FloatType());
+        }
+
+        return src;
     }
 }

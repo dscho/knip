@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ScreenImage;
 import net.imglib2.img.Img;
@@ -27,12 +28,12 @@ import org.knime.knip.core.ui.imgviewer.panels.transfunc.LookupTableChgEvent;
 
 /**
  * Converts an {@link Img} to a {@link BufferedImage}.
- * 
+ *
  * It creates an image from a plane selection, image, image renderer, and normalization parameters. Propagates
  * {@link AWTImageChgEvent}.
- * 
+ *
  * @author dietzc, hornm, schonenbergerf University of Konstanz
- * 
+ *
  * @param <T> the {@link Type} of the {@link Img} converted to a {@link BufferedImage}
  * @param <I> the {@link Img} converted to a {@link BufferedImage}
  */
@@ -54,7 +55,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
      */
     private static final long serialVersionUID = 1L;
 
-    private NormalizationParametersChgEvent<T> m_normalizationParameters;
+    private NormalizationParametersChgEvent m_normalizationParameters;
 
     private LookupTable<T, ARGBType> m_lookupTable = new SimpleTable();
 
@@ -65,18 +66,23 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
      */
     public BufferedImageProvider(final int cacheSize) {
         super(cacheSize);
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>(0, false);
+        m_normalizationParameters = new NormalizationParametersChgEvent(0, false);
     }
 
     /**
      * Render an image of
-     * 
+     *
      * @return
      */
     @SuppressWarnings("unchecked")
     @Override
     protected Image createImage() {
-        final double[] normParams = m_normalizationParameters.getNormalizationParameters(m_src, m_sel);
+        //converted version is guaranteed to be ? extends RealType => getNormalization and render should work
+        //TODO find a way to relax type constraints from R extends RealType  to RealType
+
+        @SuppressWarnings("rawtypes")
+        RandomAccessibleInterval convertedSrc = convertIfDouble(m_src);
+        final double[] normParams = m_normalizationParameters.getNormalizationParameters(convertedSrc, m_sel);
 
         if (m_renderer instanceof RendererWithNormalization) {
             ((RendererWithNormalization)m_renderer).setNormalizationParameters(normParams[0], normParams[1]);
@@ -91,7 +97,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
         }
 
         final ScreenImage ret =
-                m_renderer.render(m_src, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
+                m_renderer.render(convertedSrc, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
         return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
     }
@@ -99,19 +105,19 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
     /**
      * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
      * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
-     * 
+     *
      * @param normalizationParameters
      */
     @EventListener
-    public void onUpdated(final NormalizationParametersChgEvent<T> normalizationParameters) {
+    public void onUpdated(final NormalizationParametersChgEvent normalizationParameters) {
         m_normalizationParameters = normalizationParameters;
     }
 
     /**
-     * 
+     *
      * {@link EventListener} for {@link BundleChgEvent}. A new lookup table will be constructed using the given transfer
      * function bundle.
-     * 
+     *
      * @param event
      */
     @EventListener
@@ -147,7 +153,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
     @Override
     public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.loadComponentConfiguration(in);
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>();
+        m_normalizationParameters = new NormalizationParametersChgEvent();
         m_normalizationParameters.readExternal(in);
     }
 }

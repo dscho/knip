@@ -76,9 +76,9 @@ import org.knime.knip.core.ui.imgviewer.events.NormalizationParametersChgEvent;
 
 /**
  * Settings to enhance the contrast of an image.
- * 
+ *
  * Publishes {@link NormalizationParametersChgEvent}.
- * 
+ *
  * @author dietzc, hornm, fschoenenberger, University of Konstanz
  * @param <T>
  * @param <I>
@@ -115,10 +115,10 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>> exte
 
     /**
      * Creates {@link ImgNormalizationPanel} with the given default value for normalization.
-     * 
+     *
      * @param saturation the default saturation
-     * 
-     * 
+     *
+     *
      * @param normalize whether normalization should be enabled
      */
     public ImgNormalizationPanel(final double sat, final boolean normalize) {
@@ -136,7 +136,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>> exte
             public void actionPerformed(final ActionEvent e) {
                 m_saturationSlider.setEnabled(m_normalize.isSelected());
                 m_sat.setEnabled(m_normalize.isSelected());
-                m_eventService.publish(new NormalizationParametersChgEvent<T>(
+                m_eventService.publish(new NormalizationParametersChgEvent(
                         (m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR), m_normalize.isSelected()));
                 m_eventService.publish(new ImgRedrawEvent());
             }
@@ -153,7 +153,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>> exte
         m_saturationSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(final ChangeEvent e) {
-                m_eventService.publish(new NormalizationParametersChgEvent<T>(m_saturationSlider.getValue()
+                m_eventService.publish(new NormalizationParametersChgEvent(m_saturationSlider.getValue()
                         / SATURATION_SLIDER_FACTOR, m_normalize.isSelected()));
                 m_eventService.publish(new ImgRedrawEvent());
                 final float percent = m_saturationSlider.getValue() / SATURATION_SLIDER_FACTOR;
@@ -182,7 +182,7 @@ public class ImgNormalizationPanel<T extends RealType<T>, I extends Img<T>> exte
         m_eventService = eventService;
         eventService.subscribe(this);
         // inform everybody about our settings.
-        eventService.publish(new NormalizationParametersChgEvent<T>(m_saturationSlider.getValue(), m_normalize
+        eventService.publish(new NormalizationParametersChgEvent(m_saturationSlider.getValue(), m_normalize
                 .isSelected()));
     }
 

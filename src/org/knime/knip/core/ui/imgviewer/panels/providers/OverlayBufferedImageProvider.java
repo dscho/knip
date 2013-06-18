@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ColorTable;
 import net.imglib2.display.ScreenImage;
 import net.imglib2.type.numeric.RealType;
@@ -35,7 +36,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 /**
  * Creates a awt image from an image, plane selection, normalization parameters, ..., and an overlay. Propagates
  * {@link AWTImageChgEvent}.
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Comparable<L>> extends AWTImageProvider<T> {
@@ -55,7 +56,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
     private Graphics2D m_tmpCanvasGraphics;
 
-    private NormalizationParametersChgEvent<T> m_normalizationParameters;
+    private NormalizationParametersChgEvent m_normalizationParameters;
 
     private final GraphicsConfiguration m_config;
 
@@ -64,7 +65,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
     public OverlayBufferedImageProvider() {
         super(0);
         m_renderer = new Real2GreyRenderer<T>();
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>(-1, false);
+        m_normalizationParameters = new NormalizationParametersChgEvent(-1, false);
         m_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
     }
 
@@ -81,7 +82,11 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
     @Override
     protected Image createImage() {
-        final double[] normParams = m_normalizationParameters.getNormalizationParameters(m_src, m_sel);
+        //converted version is guaranteed to be ? extends RealType => getNormalization and render should work
+        //TODO find a way to relax type constraints from R extends RealType  to RealType
+        RandomAccessibleInterval convertedSrc = convertIfDouble(m_src);
+
+        final double[] normParams = m_normalizationParameters.getNormalizationParameters(convertedSrc, m_sel);
 
         if (m_renderer instanceof RendererWithNormalization) {
             ((RendererWithNormalization)m_renderer).setNormalizationParameters(normParams[0], normParams[1]);
@@ -92,7 +97,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
         }
 
         final ScreenImage res =
-                ((ImageRenderer<T>)m_renderer).render(m_src, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(),
+                m_renderer.render(convertedSrc, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(),
                                                       m_sel.getPlanePos());
 
         m_tmpRes = loci.formats.gui.AWTImageTools.makeBuffered(res.image());
@@ -178,11 +183,11 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
     /**
      * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
      * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
-     * 
+     *
      * @param normalizationParameters
      */
     @EventListener
-    public void onUpdated(final NormalizationParametersChgEvent<T> normalizationParameters) {
+    public void onUpdated(final NormalizationParametersChgEvent normalizationParameters) {
         if (m_src != null) {
             m_normalizationParameters = normalizationParameters;
         }
@@ -212,7 +217,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
         m_overlay = new Overlay<L>();
         m_overlay.readExternal(in);
-        m_normalizationParameters = new NormalizationParametersChgEvent<T>();
+        m_normalizationParameters = new NormalizationParametersChgEvent();
         m_normalizationParameters.readExternal(in);
         m_transparency = in.readInt();
 

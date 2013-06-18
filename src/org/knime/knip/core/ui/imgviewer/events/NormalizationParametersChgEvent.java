@@ -19,14 +19,13 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  * @author dietzc, hornm, schoenenbergerf (University of Konstanz)
- * 
+ *
  *         Event message object providing the information weather an {@link Img} of {@link RealType} should be
  *         normalized and if the number of the saturation in %
- * 
- * @param <T> The {@link RealType} of the {@link Img} which shall be normalized
- * 
+ *
+ *
  */
-public class NormalizationParametersChgEvent<T extends RealType<T>> implements Externalizable, KNIPEvent {
+public class NormalizationParametersChgEvent implements Externalizable, KNIPEvent {
 
     /* Value of the saturation in % */
     private double m_saturation;
@@ -56,9 +55,9 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements E
 
     /**
      * Constructor for the message object NormalizationParameters
-     * 
+     *
      * @param saturation Saturation value for the normalization
-     * 
+     *
      * @param isNormalized Weather the image shall be normalized or not
      */
     public NormalizationParametersChgEvent(final double saturation, final boolean isNormalized) {
@@ -93,16 +92,16 @@ public class NormalizationParametersChgEvent<T extends RealType<T>> implements E
     }
 
     /**
-     * Helper method to get the actual normalization factor and the boolean variable to check weather the {@link Img} of
+     * Helper method to get the actual normalization factor and the boolean variable to check wether the {@link Img} of
      * type {@link RealType} shall be normalized or not. If image should not be normalized the normalization parameters
      * will be set to 1 respecticly 2
-     * 
+     *
      * @param src {@link Img} of {@link RealType} which shall be normalized
      * @param sel {@link PlaneSelectionEvent} the selected plane in the source {@link Img}
-     * 
+     *
      * @return [0]: the normalization factor, [1]: the local minimum
      */
-    public double[] getNormalizationParameters(final RandomAccessibleInterval<T> src, final PlaneSelectionEvent sel) {
+    public <T extends RealType<T>> double[] getNormalizationParameters(final RandomAccessibleInterval<T> src, final PlaneSelectionEvent sel) {
         if (!m_isNormalized) {
             return new double[]{1.0, Views.iterable(src).firstElement().getMinValue()};
         } else {
