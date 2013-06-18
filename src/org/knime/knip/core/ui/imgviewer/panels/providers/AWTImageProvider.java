@@ -122,7 +122,7 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
     /**
      * {@link Renderer} rendering the {@link Img}
      */
-    protected ImageRenderer<T> m_renderer;
+    protected ImageRenderer m_renderer;
 
     /**
      * {@link EventService}
