@@ -303,6 +303,9 @@ public abstract class AWTImageProvider<T extends Type<T>> extends HiddenViewerCo
         hash += m_sel.hashCode();
         hash *= 31;
         hash += m_renderer.getClass().hashCode();
+        hash *= 31;
+        hash += m_renderer.toString().hashCode(); //if the user information differs
+                                                  //re-rendering is most likely necessary
         return hash;
     }
 
