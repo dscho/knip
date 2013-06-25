@@ -86,17 +86,25 @@ public class ImgGenerator {
 
     private double m_value = 0.0;
 
-    private int m_sizeX = 1;
+    private int m_sizeX;
 
-    private int m_sizeY = 1;
+    private int m_sizeY;
 
-    private int m_sizeZ = 0;
+    private int m_sizeZ;
 
-    private int m_sizeChannel = 0;
+    private int m_sizeChannel;
 
-    private int m_sizeT = 0;
+    private int m_sizeT;
 
-    private int m_axesAdded = 0;
+    private int m_minSizeX;
+
+    private int m_minSizeY;
+
+    private int m_minSizeZ;
+
+    private int m_minSizeChannel;
+
+    private int m_minSizeT;
 
     private List<Long> m_dimList;
 
@@ -114,16 +122,22 @@ public class ImgGenerator {
      * @param factory the factory to use for the image, null means choose randomly the first time, regardless of the
      *            setting of random factory, after that always use the created factory if random factory is false
      * @param value the value to use for filling the image
-     * @param sizeX the size of the x dimensions, min 1
-     * @param sizeY the size of the y dimensions, min 1
+     * @param minSizeX the minimum size of the x dimensions, a value of 0 means ignore this dimensions
+     * @param minSizeY the minimum size of the y dimensions, a value of 0 means ignore this dimensions
+     * @param minSizeZ the minimum size of the z dimensions, a value of 0 means ignore this dimensions
+     * @param minSizeC the minimum size of the c dimensions, a value of 0 means ignore this dimensions
+     * @param minSizeT the minimum size of the t dimensions, a value of 0 means ignore this dimensions
+     * @param sizeX the size of the x dimensions, a value of 0 means ignore this dimensions
+     * @param sizeY the size of the y dimensions, a value of 0 means ignore this dimensions
      * @param sizeZ the size of the z dimensions, a value of 0 means ignore this dimensions
      * @param sizeC the size of the c dimensions, a value of 0 means ignore this dimensions
      * @param sizeT the size of the t dimensions, a value of 0 means ignore this dimensions
      */
     public ImgGenerator(final boolean randomSize, final boolean randomFill, final boolean randomType,
                         final boolean randomFactory, final NativeTypes type, final ImgFactoryTypes factory,
-                        final double value, final int sizeX, final int sizeY, final int sizeZ, final int sizeC,
-                        final int sizeT) {
+                        final double value, final int minSizeX, final int minSizeY, final int minSizeZ,
+                        final int minSizeC, final int minSizeT, final int sizeX, final int sizeY, final int sizeZ,
+                        final int sizeC, final int sizeT) {
         // use setters to ensure bounds
         setRandomSize(randomSize);
         setRandomFill(randomFill);
@@ -132,11 +146,11 @@ public class ImgGenerator {
         setType(type);
         setFactory(factory);
         setValue(value);
-        setSizeX(sizeX);
-        setSizeY(sizeY);
-        setSizeZ(sizeZ);
-        setSizeChannel(sizeC);
-        setSizeT(sizeT);
+        setSizeX(minSizeX, sizeX);
+        setSizeY(minSizeY, sizeY);
+        setSizeZ(minSizeZ, sizeZ);
+        setSizeChannel(minSizeC, sizeC);
+        setSizeT(minSizeT, sizeT);
     }
 
     /**
@@ -149,18 +163,18 @@ public class ImgGenerator {
      * type = null<br>
      * factory = null<br>
      * value = 0.0<br>
-     * sizeX = 1<br>
-     * sizeY = 1<br>
-     * sizeZ = 0<br>
-     * sizeC = 0<br>
-     * sizeT = 0<br>
+     * sizeX = 1,1<br>
+     * sizeY = 1,1<br>
+     * sizeZ = 0,0<br>
+     * sizeC = 0,0<br>
+     * sizeT = 0,0<br>
      *
      * {@inheritDoc}
      *
      * @see Object#ImageGeneratorNodeGenerator()
      */
     public ImgGenerator() {
-        this(false, false, true, true, null, null, 0.0, 1, 1, 0, 0, 0);
+        this(false, false, true, true, null, null, 0.0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0);
     }
 
     /**
@@ -174,7 +188,6 @@ public class ImgGenerator {
         // Set up new utils
         m_dimList = new ArrayList<Long>();
         m_axisList = new ArrayList<AxisType>();
-        m_axesAdded = 0;
 
         ImgFactoryTypes facType;
 
@@ -192,11 +205,11 @@ public class ImgGenerator {
         final ImgFactory<T> imgFac = ImgFactoryTypes.getImgFactory(facType);
 
         // process all dimensions
-        processDimension(m_sizeX, "X");
-        processDimension(m_sizeY, "Y");
-        processDimension(m_sizeZ, "Z");
-        processDimension(m_sizeChannel, "Channel");
-        processDimension(m_sizeT, "Time");
+        processDimension(m_minSizeX, m_sizeX, "X");
+        processDimension(m_minSizeY, m_sizeY, "Y");
+        processDimension(m_minSizeZ, m_sizeZ, "Z");
+        processDimension(m_minSizeChannel, m_sizeChannel, "Channel");
+        processDimension(m_minSizeT, m_sizeT, "Time");
 
         final long[] dims = new long[m_dimList.size()];
 
@@ -264,31 +277,25 @@ public class ImgGenerator {
     /**
      * Add this dimensions to the list of axes and dims.
      *
+     * @param minVal minimum size of the dimension allways smaller or equal val
      * @param val the value, 0 means ignore
      * @param label the label to use for the axis
      */
-    private void processDimension(final int val, final String label) {
+    private void processDimension(final int minVal, final int val, final String label) {
 
-        double dimVal = val;
+        double dimVal = (val - minVal);
         if (m_randomSize) {
             dimVal *= Math.random();
         }
+        dimVal += minVal;
 
-        // Always use two dimensions minimum
-        if (m_axesAdded < 2) {
-            m_dimList.add(Math.max(Math.round(dimVal), 1));
+        dimVal = Math.round(dimVal);
+
+        // ignore empty dimensions
+        if (dimVal != 0) {
+            m_dimList.add((long)dimVal);
             m_axisList.add(Axes.get(label));
-        } else {
-            dimVal = Math.round(dimVal);
-
-            // ignore empty dimensions
-            if (dimVal != 0) {
-                m_dimList.add((long)dimVal);
-                m_axisList.add(Axes.get(label));
-            }
         }
-
-        m_axesAdded++;
     }
 
     private int randomBoundedInt(final int bound) {
@@ -298,71 +305,56 @@ public class ImgGenerator {
     /**
      * Sets the sizeX for this instance.
      *
-     * All values below 1 will be set to 1.
-     *
+     * @param minSizeX the required minimum size for X
      * @param sizeX The sizeX.
      */
-    public final void setSizeX(final int sizeX) {
+    public final void setSizeX(final int minSizeX, final int sizeX) {
         m_sizeX = sizeX;
-
-        // assert bounds
-        m_sizeX = m_sizeX < 1 ? 1 : m_sizeX;
+        m_minSizeX = minSizeX;
     }
 
     /**
      * Sets the sizeY for this instance.
      *
-     * All values below 1 will be set to 1.
-     *
+     * @param minSizeY the required minimum size for Y
      * @param sizeY The sizeY.
      */
-    public final void setSizeY(final int sizeY) {
+    public final void setSizeY(final int minSizeY, final int sizeY) {
         m_sizeY = sizeY;
-
-        // assert bounds
-        m_sizeY = m_sizeY < 1 ? 1 : m_sizeY;
+        m_minSizeY = minSizeY;
     }
 
     /**
      * Sets the sizeZ for this instance.
      *
-     * A value of 0 will mean do not create this dimension.
-     *
+     * @param minSizeZ the required minimum size for Z
      * @param sizeZ The sizeZ.
      */
-    public final void setSizeZ(final int sizeZ) {
+    public final void setSizeZ(final int minSizeZ, final int sizeZ) {
         m_sizeZ = sizeZ;
-
-        // assert bounds
-        m_sizeZ = m_sizeZ < 0 ? 0 : m_sizeZ;
+        m_minSizeZ = minSizeZ;
     }
 
     /**
-     * Sets the sizeC for this instance.
+     * Sets the sizeChannel for this instance.
      *
-     * A value of 0 will mean do not create this dimension.
-     *
-     * @param sizeChannel The sizeC.
+     * @param minSizeChannel the required minimum size for Channel
+     * @param sizeChannel The sizeChannel.
      */
-    public final void setSizeChannel(final int sizeChannel) {
+    public final void setSizeChannel(final int minSizeChannel, final int sizeChannel) {
         m_sizeChannel = sizeChannel;
-
-        // assert bounds
-        m_sizeChannel = m_sizeChannel < 0 ? 0 : m_sizeChannel;
+        m_minSizeChannel = minSizeChannel;
     }
 
     /**
      * Sets the sizeT for this instance.
      *
-     * A value of 0 will mean do not create this dimension.
-     *
+     * @param minSizeT the required minimum size for T
      * @param sizeT The sizeT.
      */
-    public final void setSizeT(final int sizeT) {
+    public final void setSizeT(final int minSizeT, final int sizeT) {
         m_sizeT = sizeT;
-
-        // assert bounds
-        m_sizeT = m_sizeT < 0 ? 0 : m_sizeT;
+        m_minSizeT = minSizeT;
     }
 
     /**
