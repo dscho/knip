@@ -89,9 +89,9 @@ import net.imglib2.view.Views;
 import org.knime.knip.core.util.MiscViews;
 
 /**
- * 
+ *
  * Methods to convert data (e.g. an imglib image or a histogram) to a java.awt.BufferedImage
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public final class AWTImageTools {
@@ -156,15 +156,15 @@ public final class AWTImageTools {
 
     /**
      * Draws the histogram of the {@link ImagePlane} onto a {@link BufferedImage}.
-     * 
+     *
      * @param ip
      * @param width the width of the image containing the histogram
      * @param height the height of the image containing the histogram
      * @return a java-image with the histogram painted on it
      */
-    public static BufferedImage drawHistogram(final int[] hist, final int height) {
+    public static BufferedImage drawHistogram(final long[] hist, final int height) {
 
-        int max = 0;
+        long max = 0;
         for (int i = 0; i < hist.length; i++) {
             max = Math.max(max, hist[i]);
         }
@@ -173,13 +173,13 @@ public final class AWTImageTools {
 
     /**
      * Draws the histogram of the {@link ImagePlane} onto a {@link BufferedImage}.
-     * 
+     *
      * @param ip
      * @param width the width of the image containing the histogram
      * @param height the height of the image containing the histogram
      * @return a java-image with the histogram painted on it
      */
-    public static BufferedImage drawHistogram(final int[] hist, final int width, final int height, final int max,
+    public static BufferedImage drawHistogram(final long[] hist, final int width, final int height, final long max,
                                               final boolean log) {
         final int margin = 20;
 
@@ -238,7 +238,7 @@ public final class AWTImageTools {
 
     /**
      * Adds a subtitle to the given image.
-     * 
+     *
      * @param source
      * @param txt
      * @return
@@ -258,7 +258,7 @@ public final class AWTImageTools {
 
     /**
      * Shows the first image plane in the dimension 0,1 in a JFrame.
-     * 
+     *
      * @param ip the image plane
      * @param title a title for the frame
      */
@@ -268,7 +268,7 @@ public final class AWTImageTools {
 
     /**
      * Shows first image plane in the dimension 0,1, scaled with the specified factor in a JFrame.
-     * 
+     *
      * @param ip the image plane
      * @param factor the scaling factor
      */
@@ -278,7 +278,7 @@ public final class AWTImageTools {
 
     /**
      * Shows the selected ImagePlane in a JFrame.
-     * 
+     *
      * @param img the image plane
      * @param factor the scaling factor
      */
@@ -311,7 +311,7 @@ public final class AWTImageTools {
 
     /**
      * Shows an AWT-image in a JFrame.
-     * 
+     *
      * @param img the image to show.
      */
 

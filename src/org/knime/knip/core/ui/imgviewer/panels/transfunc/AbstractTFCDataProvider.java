@@ -17,8 +17,9 @@ import javax.swing.SwingUtilities;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.histogram.Histogram1d;
+import net.imglib2.histogram.Real1dBinMapper;
 import net.imglib2.ops.operation.SubsetOperations;
-import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
@@ -83,11 +84,11 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extend
 
     private TransferFunctionControlPanel.Memento m_currentMemento;
 
-    private HistogramWithNormalization m_currentHistogram = new HistogramWithNormalization(new int[]{0, 1}, 0, 1);
+    private HistogramWithNormalization m_currentHistogram = new HistogramWithNormalization(new long[]{0, 1}, 0, 1);
 
     /**
      * Set up a new instance and wrap the passed panel.
-     * 
+     *
      * @param panel the panel that should be wrapped
      */
     AbstractTFCDataProvider(final TransferFunctionControlPanel panel) {
@@ -123,20 +124,18 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extend
         cur.reset();
 
         // create the histogram
-        final OpsHistogram hist = new OpsHistogram(m_numBins, sample);
+        final Histogram1d<T> hist = new Histogram1d<T>(new Real1dBinMapper<T>(sample.getMinValue(), sample.getMaxValue(), m_numBins, false));
         while (cur.hasNext()) {
             cur.fwd();
-
-            final double val = cur.get().getRealDouble();
-            hist.incByValue(val);
+            hist.increment(cur.get());
         }
 
-        return new HistogramWithNormalization(hist.hist(), sample.getMinValue(), sample.getMaxValue());
+        return new HistogramWithNormalization(hist.toLongArray(), sample.getMinValue(), sample.getMaxValue());
     }
 
     /**
      * This method is called everytime the src changes and must return the key that corresponds to the current settings.<br>
-     * 
+     *
      * @return the key to store the first memento.
      */
     protected abstract KEY updateKey(final Interval src);
@@ -145,7 +144,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extend
 
     /**
      * Use this if the concrete base class has intercepted an event that needs to set a new Memento.<br>
-     * 
+     *
      * @param key the key to look up or to save the new memento under
      * @param interval the interval to use for calculating the histogram if the key is not yet saved in the map of
      *            mementos

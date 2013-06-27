@@ -19,8 +19,8 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramFactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
 
 /**
- * 
- * 
+ *
+ *
  * @author dietzc
  */
 public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>> extends ViewerComponent {
@@ -31,7 +31,7 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>> extends
 
     private final StringBuffer m_infoBuffer;
 
-    private int[] m_hist;
+    private long[] m_hist;
 
     private double m_factor = 1;
 

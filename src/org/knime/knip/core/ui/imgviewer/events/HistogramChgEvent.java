@@ -50,22 +50,22 @@
  */
 package org.knime.knip.core.ui.imgviewer.events;
 
-import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
+import net.imglib2.histogram.Histogram1d;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- * 
+ *
  * @author hornm, dietzc, zinsmaierm University of Konstanz
  */
 public class HistogramChgEvent implements KNIPEvent {
 
-    private final OpsHistogram m_histogram;
+    private final Histogram1d m_histogram;
 
     /**
      * @param histogram
      */
-    public HistogramChgEvent(final OpsHistogram histogram) {
+    public HistogramChgEvent(final Histogram1d histogram) {
         m_histogram = histogram;
 
     }
@@ -73,8 +73,8 @@ public class HistogramChgEvent implements KNIPEvent {
     /**
      * @return the histogram
      */
-    public int[] getHistogram() {
-        return m_histogram.hist();
+    public long[] getHistogram() {
+        return m_histogram.toLongArray();
     }
 
     @Override

@@ -1,11 +1,11 @@
 package org.knime.knip.core.ops.interval;
 
 import net.imglib2.IterableInterval;
+import net.imglib2.histogram.Histogram1d;
 import net.imglib2.ops.img.UnaryRelationAssigment;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOperation;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
-import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.ops.relation.real.unary.RealGreaterThanConstant;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
@@ -26,9 +26,9 @@ public final class AutoThreshold<T extends RealType<T>, I extends IterableInterv
     @Override
     public K compute(final I op, final K r) {
 
-        final OpsHistogram hist = Operations.compute(new MakeHistogram<T>(), op);
+        final Histogram1d<T> hist = Operations.compute(new MakeHistogram<T>(), op);
         final T thresh = op.firstElement().createVariable();
-        thresh.setReal(new FindThreshold<T>(m_thresholdType).compute(hist, new DoubleType()).getRealDouble());
+        thresh.setReal(new FindThreshold<T>(m_thresholdType, thresh.createVariable()).compute(hist, new DoubleType()).getRealDouble());
         new UnaryRelationAssigment<T>(new RealGreaterThanConstant<T>(thresh)).compute(op, r);
         return r;
     }

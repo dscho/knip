@@ -93,13 +93,13 @@ public class HistogramPainter implements MouseMotionListener {
 
         private final Rectangle m_rectangleSelection;
 
-        private final int m_count;
+        private final long m_count;
 
         private final double[] m_values;
 
         private Color m_color;
 
-        public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final int c,
+        public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final long c,
                    final double[] val, final Color col) {
             m_values = val.clone();
             m_rectangleLog = recLog;
@@ -110,7 +110,7 @@ public class HistogramPainter implements MouseMotionListener {
             m_colorDefault = col;
         }
 
-        public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final int c,
+        public Bin(final Rectangle recLog, final Rectangle recLin, final Rectangle recSelection, final long c,
                    final double[] val) {
             this(recLog, recLin, recSelection, c, val, DEFAULT);
         }
@@ -145,10 +145,10 @@ public class HistogramPainter implements MouseMotionListener {
     }
 
     // used for determining how to draw the data
-    private int m_max = Integer.MIN_VALUE;
+    private long m_max = Integer.MIN_VALUE;
 
     //
-    private int m_min = Integer.MAX_VALUE;
+    private long m_min = Integer.MAX_VALUE;
 
     //
     private double m_maxLog;
@@ -179,7 +179,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Set up a new histogram that will be painted using log scale.
-     * 
+     *
      * @param hist the hist to draw
      */
     public HistogramPainter(final Histogram hist) {
@@ -195,7 +195,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Set up a new histogram that will be drawn into with the given scale.
-     * 
+     *
      * @param hist the hist to draw
      * @param scale the scale to use
      */
@@ -206,7 +206,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Set the histogram to display a new data set.
-     * 
+     *
      * @param hist
      */
     public final void setHistogram(final Histogram hist) {
@@ -255,10 +255,10 @@ public class HistogramPainter implements MouseMotionListener {
     private final void findMinMax() {
         assert m_histogram != null;
 
-        m_max = Integer.MIN_VALUE;
-        m_min = Integer.MAX_VALUE;
+        m_max = Long.MIN_VALUE;
+        m_min = Long.MAX_VALUE;
 
-        for (final Integer v : m_histogram) {
+        for (final Long v : m_histogram) {
             m_max = v > m_max ? v : m_max;
             m_min = v < m_min ? v : m_min;
         }
@@ -277,7 +277,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Paint this histogram using the given Graphics2D object.
-     * 
+     *
      * @see javax.swing.JComponent#paintComponent(Graphics)
      * @param g2 the Graphics2D object to use for drawing
      */
@@ -345,7 +345,7 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Calculate the height to which the bar with the given value should be drawn.
-     * 
+     *
      * @param val the value
      * @return the height to draw to in int
      */
@@ -372,9 +372,9 @@ public class HistogramPainter implements MouseMotionListener {
 
     /**
      * Sets the scale used to display the histogram.
-     * 
+     *
      * Note: To acutally see the changes, the calling class has to issue a repaint() itself.
-     * 
+     *
      * @param scale the scale
      */
     public final void setScale(final Scale scale) {

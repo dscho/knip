@@ -50,68 +50,77 @@
  */
 package org.knime.knip.core.ops.misc;
 
+import net.imglib2.histogram.Histogram1d;
 import net.imglib2.ops.operation.UnaryOperation;
-import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.real.DoubleType;
 
 import org.knime.knip.core.algorithm.types.ThresholdingType;
 
 /**
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  */
-public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsHistogram, DoubleType> {
+public class FindThreshold<T extends RealType<T>> implements UnaryOperation<Histogram1d<T>, DoubleType> {
 
     private int m_maxValue;
 
     private final ThresholdingType m_ttype;
 
-    public FindThreshold(final ThresholdingType ttype) {
+    private final T m_type;
+
+    public FindThreshold(final ThresholdingType ttype, final T type) {
         m_ttype = ttype;
+        m_type = type;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DoubleType compute(final OpsHistogram hist, final DoubleType r) {
-        m_maxValue = hist.numBins() - 1;
+    public DoubleType compute(final Histogram1d<T> hist, final DoubleType r) {
+        if (hist.getBinCount()  > Integer.MAX_VALUE) {
+            throw new RuntimeException("to many histogram bins can't allocate a big enought array.");
+        }
+        m_maxValue = (int)hist.getBinCount() - 1;
         int bin = 0;
         if (m_ttype == ThresholdingType.HUANG) {
-            bin = Huang(hist.hist());
+            bin = Huang(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.INTERMODES) {
-            bin = Intermodes(hist.hist());
+            bin = Intermodes(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.ISODATA) {
-            bin = IsoData(hist.hist());
+            bin = IsoData(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.LI) {
-            bin = Li(hist.hist());
+            bin = Li(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.MAXENTROPY) {
-            bin = MaxEntropy(hist.hist());
+            bin = MaxEntropy(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.MEAN) {
-            bin = Mean(hist.hist());
+            bin = Mean(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.MINERROR) {
-            bin = MinErrorI(hist.hist());
+            bin = MinErrorI(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.MINIMUM) {
-            bin = Minimum(hist.hist());
+            bin = Minimum(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.MOMENTS) {
-            bin = Moments(hist.hist());
+            bin = Moments(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.OTSU) {
-            bin = Otsu(hist.hist());
+            bin = Otsu(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.PERCENTILE) {
-            bin = Percentile(hist.hist());
+            bin = Percentile(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.RENYIENTROPY) {
-            bin = RenyiEntropy(hist.hist());
+            bin = RenyiEntropy(hist.toLongArray());
         } else if ((m_ttype == ThresholdingType.SHANBAG)) {
-            bin = Shanbhag(hist.hist());
+            bin = Shanbhag(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.TRIANGLE) {
-            bin = Triangle(hist.hist());
+            bin = Triangle(hist.toLongArray());
         } else if (m_ttype == ThresholdingType.YEN) {
-            bin = Yen(hist.hist());
+            bin = Yen(hist.toLongArray());
         } else {
             bin = -Integer.MAX_VALUE;
         }
-        r.setReal(hist.binToValue(bin));
+
+        hist.getCenterValue(bin, m_type);
+        r.setReal(m_type.getRealDouble());
+
         return r;
     }
 
@@ -119,7 +128,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
      * @param data histogramm
      * @return
      */
-    private int Huang(final int[] data) {
+    private int Huang(final long[] data) {
         // Implements Huang's fuzzy thresholding method
         // Uses Shannon's entropy function (one can also use Yager's
         // entropy
@@ -228,7 +237,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return b;
     }
 
-    private int Intermodes(final int[] data) {
+    private int Intermodes(final long[] data) {
         // J. M. S. Prewitt and M. L. Mendelsohn,
         // "The analysis of cell images,"
         // in
@@ -290,7 +299,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    private int IsoData(final int[] data) {
+    private int IsoData(final long[] data) {
         // Also called intermeans
         // Iterative procedure based on the isodata algorithm [T.W.
         // Ridler, S.
@@ -337,7 +346,8 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         // There is a discrepancy with IJ because they are slightly
         // different
         // methods
-        int i, l, toth, totl, h, g = 0;
+        int i, h, g = 0;
+        long totl, l, toth;
         for (i = 1; i < (m_maxValue + 1); i++) {
             if (data[i] > 0) {
                 g = i + 1;
@@ -372,7 +382,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return g;
     }
 
-    private int Li(final int[] data) {
+    private int Li(final long[] data) {
         // Implements Li's Minimum Cross Entropy thresholding method
         // This implementation is based on the iterative version (Ref.
         // 2) of the
@@ -472,7 +482,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    private int MaxEntropy(final int[] data) {
+    private int MaxEntropy(final long[] data) {
         // Implements Kapur-Sahoo-Wong (Maximum Entropy) thresholding
         // method
         // Kapur J.N., Sahoo P.K., and Wong A.K.C. (1985) "A New Method
@@ -575,7 +585,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    private int Mean(final int[] data) {
+    private int Mean(final long[] data) {
         // C. A. Glasbey,
         // "An analysis of histogram-based thresholding algorithms,"
         // CVGIP: Graphical Models and Image Processing, vol. 55, pp.
@@ -593,7 +603,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    int MinErrorI(final int[] data) {
+    int MinErrorI(final long[] data) {
         // Kittler and J. Illingworth, "Minimum error thresholding,"
         // Pattern
         // Recognition, vol. 19, pp. 41-47, 1986.
@@ -655,7 +665,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    static double A(final int[] y, final int j) {
+    static double A(final long[] y, final int j) {
         double x = 0;
         for (int i = 0; i <= j; i++) {
             x += y[i];
@@ -663,7 +673,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return x;
     }
 
-    static double B(final int[] y, final int j) {
+    static double B(final long[] y, final int j) {
         double x = 0;
         for (int i = 0; i <= j; i++) {
             x += i * y[i];
@@ -671,7 +681,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return x;
     }
 
-    static double C(final int[] y, final int j) {
+    static double C(final long[] y, final int j) {
         double x = 0;
         for (int i = 0; i <= j; i++) {
             x += i * i * y[i];
@@ -679,7 +689,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return x;
     }
 
-    int Minimum(final int[] data) {
+    int Minimum(final long[] data) {
         // J. M. S. Prewitt and M. L. Mendelsohn,
         // "The analysis of cell images,"
         // in
@@ -738,7 +748,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    int Moments(final int[] data) {
+    int Moments(final long[] data) {
         // W. Tsai, "Moment-preserving thresholding: a new approach,"
         // Computer
         // Vision,
@@ -803,13 +813,13 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    int Otsu(final int[] data) {
+    int Otsu(final long[] data) {
         // Otsu's threshold algorithm
         // C++ code by Jordan Bevik <Jordan.Bevic@qtiworld.com>
         // ported to ImageJ plugin by G.Landini
         int k, kStar; // k = the current threshold; kStar = optimal
         // threshold
-        int n1, n; // N1 = # points with intensity <=k; N = total number
+        long n1, n; // N1 = # points with intensity <=k; N = total number
         // of
         // points
         double BCV, BCVmax; // The current Between Class Variance and
@@ -877,7 +887,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return kStar;
     }
 
-    int Percentile(final int[] data) {
+    int Percentile(final long[] data) {
         // W. Doyle,
         // "Operation useful for similarity-invariant pattern recognition,"
         // Journal of the Association for Computing Machinery, vol.
@@ -912,7 +922,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    static double partialSum(final int[] y, final int j) {
+    static double partialSum(final long[] y, final int j) {
         double x = 0;
         for (int i = 0; i <= j; i++) {
             x += y[i];
@@ -920,7 +930,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return x;
     }
 
-    int RenyiEntropy(final int[] data) {
+    int RenyiEntropy(final long[] data) {
         // Kapur J.N., Sahoo P.K., and Wong A.K.C. (1985) "A New Method
         // for
         // Gray-Level Picture Thresholding Using the Entropy of the
@@ -1144,7 +1154,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return optThreshold;
     }
 
-    int Shanbhag(final int[] data) {
+    int Shanbhag(final long[] data) {
         // Shanhbag A.G. (1994) "Utilization of Information Measure as a
         // Means
         // of
@@ -1246,7 +1256,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return threshold;
     }
 
-    int Triangle(final int[] data) {
+    int Triangle(final long[] data) {
         // Zack, G. W., Rogers, W. E. and Latt, S. A., 1977,
         // Automatic Measurement of Sister Chromatid Exchange Frequency,
         // Journal of Histochemistry and Cytochemistry 25 (7), pp.
@@ -1255,7 +1265,8 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         // modified from Johannes Schindelin plugin
         //
         // find min and max
-        int min = 0, dmax = 0, max = 0, min2 = 0;
+        long dmax = 0;
+        int min = 0, max = 0, min2 = 0;
         for (int i = 0; i < data.length; i++) {
             if (data[i] > 0) {
                 min = i;
@@ -1302,7 +1313,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
             int right = m_maxValue; // index of rightmost element
             while (left < right) {
                 // exchange the left and right elements
-                final int temp = data[left];
+                final long temp = data[left];
                 data[left] = data[right];
                 data[right] = temp;
                 // move the bounds toward the center
@@ -1349,7 +1360,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
             int left = 0;
             int right = m_maxValue;
             while (left < right) {
-                final int temp = data[left];
+                final long temp = data[left];
                 data[left] = data[right];
                 data[right] = temp;
                 left++;
@@ -1360,7 +1371,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
         return split;
     }
 
-    int Yen(final int[] data) {
+    int Yen(final long[] data) {
         // Implements Yen thresholding method
         // 1) Yen J.C., Chang F.J., and Chang S. (1995) "A New Criterion
         // for Automatic Multilevel Thresholding" IEEE Trans. on Image
@@ -1432,7 +1443,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<OpsH
     }
 
     @Override
-    public UnaryOperation<OpsHistogram, DoubleType> copy() {
-        return new FindThreshold<T>(m_ttype);
+    public UnaryOperation<Histogram1d<T>, DoubleType> copy() {
+        return new FindThreshold<T>(m_ttype, m_type);
     }
 }

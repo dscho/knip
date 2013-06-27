@@ -53,13 +53,13 @@ import java.util.NoSuchElementException;
 
 /**
  * A Histogram that knows what values to cut off for normalizing.<br>
- * 
+ *
  * @author muethingc
- * 
+ *
  */
 public class HistogramWithNormalization implements Histogram {
 
-    private class Iter implements Iterator<Integer> {
+    private class Iter implements Iterator<Long> {
 
         private final int m_end;
 
@@ -76,7 +76,7 @@ public class HistogramWithNormalization implements Histogram {
         }
 
         @Override
-        public Integer next() {
+        public Long next() {
             if (m_pos < m_end) {
                 return m_data[m_pos++];
             } else {
@@ -90,7 +90,7 @@ public class HistogramWithNormalization implements Histogram {
         }
     }
 
-    private final int[] m_data;
+    private final long[] m_data;
 
     /* The first and last occurence in m_data that is not null */
     /* with [0] = fist and [1] = last */
@@ -106,13 +106,13 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Set up a new instance with the passed data.<br>
-     * 
+     *
      * @param data the data to use for this histogram, a deep copy will be made
-     * 
+     *
      * @param min the minimum value this histogram starts at
      * @param max the maximum value this histogram ends at
      */
-    public HistogramWithNormalization(final int[] data, final double min, final double max) {
+    public HistogramWithNormalization(final long[] data, final double min, final double max) {
         if (data == null) {
             throw new NullPointerException();
         }
@@ -126,7 +126,7 @@ public class HistogramWithNormalization implements Histogram {
         m_frac = calcFractions(m_data, m_pos);
     }
 
-    private double[] calcFractions(final int[] data, final int[] pos) {
+    private double[] calcFractions(final long[] data, final int[] pos) {
         assert data != null;
         assert pos != null;
 
@@ -140,7 +140,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Make a deep copy of the histogram.
-     * 
+     *
      * @param the histogram to copy
      */
     public HistogramWithNormalization(final Histogram hist) {
@@ -149,7 +149,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Make a deep copy of this histogram.
-     * 
+     *
      * @return a copy of the histogram
      */
     public HistogramWithNormalization copy() {
@@ -167,7 +167,7 @@ public class HistogramWithNormalization implements Histogram {
         return new HistogramWithNormalization(getNormalizedData(), min, max);
     }
 
-    private int[] findFirstLast(final int[] data) {
+    private int[] findFirstLast(final long[] data) {
 
         assert (data != null);
 
@@ -194,7 +194,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Get the first and last index where data[index] is not zero.
-     * 
+     *
      * @return positions
      */
     public int[] getPos() {
@@ -203,7 +203,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Same as {@link getPos()}, but returning the positions as a fraction of the lenght of the data array.<br>
-     * 
+     *
      * @return fractions
      */
     public double[] getFractions() {
@@ -211,50 +211,50 @@ public class HistogramWithNormalization implements Histogram {
     }
 
     @Override
-    public int[] getData() {
+    public long[] getData() {
         return Arrays.copyOf(m_data, m_data.length);
     }
 
     /**
      * Get a copy of the part of the array that correspondes to the normalized part of the histogram.<br>
-     * 
+     *
      * @return the normalized part of the data
      */
-    public int[] getNormalizedData() {
+    public long[] getNormalizedData() {
         return Arrays.copyOfRange(m_data, m_pos[0], m_pos[1]);
     }
 
     /**
      * Get the value of the histogram at the given index.<br>
-     * 
+     *
      * @param index
-     * 
+     *
      * @return value
      */
-    public int get(final int index) {
+    public long get(final int index) {
         return m_data[index];
     }
 
     /**
      * Get an iterator over the complete data set.<br>
-     * 
+     *
      * @return iterator
      */
-    public Iterator<Integer> iteratorFull() {
+    public Iterator<Long> iteratorFull() {
         return new Iter(0, m_data.length);
     }
 
     /**
      * Get an iterator that only iterates over the values that are within the normalization range.<br>
-     * 
+     *
      * @return iterator
      */
-    public Iterator<Integer> iteratorNormalized() {
+    public Iterator<Long> iteratorNormalized() {
         return new Iter(m_pos[0], m_pos[1] + 1);
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public Iterator<Long> iterator() {
         return iteratorFull();
     }
 
@@ -291,7 +291,7 @@ public class HistogramWithNormalization implements Histogram {
     }
 
     @Override
-    public int count(final int bin) {
+    public long count(final int bin) {
         return m_data[checkBinIndex(bin)];
     }
 

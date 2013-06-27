@@ -71,7 +71,7 @@ import net.imglib2.view.Views;
 
 /**
  * GraphCut. The values of sink and source are specified directly.
- * 
+ *
  * @author hornm, dietzc, University of Konstanz
  */
 
@@ -133,7 +133,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return
      */
     @Override
@@ -162,7 +162,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
 
         for (int i = 0; i < numFeat; i++) {
 
-            int[] bins;
+            long[] bins;
             if (m_dimFeat != -1) {
                 min[m_dimFeat] = i;
                 max[m_dimFeat] = i;
@@ -171,10 +171,10 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
                         Operations
                                 .compute(hist,
                                          Views.iterable(SubsetOperations.subsetview(src, new FinalInterval(min, max))))
-                                .hist();
+                                .toLongArray();
             } else {
 
-                bins = hist.compute(Views.iterable(src), hist.bufferFactory().instantiate(Views.iterable(src))).hist();
+                bins = hist.compute(Views.iterable(src), hist.bufferFactory().instantiate(Views.iterable(src))).toLongArray();
             }
 
             long noPixels = 0;
@@ -294,7 +294,7 @@ public class GraphCut2D<T extends RealType<T>, I extends RandomAccessibleInterva
 
     /**
      * Gives the position of the node in the list from the pixel position in the image.
-     * 
+     *
      * @param imagePosition Coordinates of the pixel in x,y,z,... direction
      * @param dimensions overall image dimensions (width, height, depth,...)
      * @return the position of the node in the list

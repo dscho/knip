@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import net.imglib2.histogram.Histogram1d;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.MakeHistogram;
-import net.imglib2.ops.operation.iterableinterval.unary.OpsHistogram;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
@@ -17,7 +17,7 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramChgEvent;
 
 /**
  * Creates an histogram AWTImage. Publishes a {@link HistogramChgEvent}.
- * 
+ *
  * @author dietzc, hornm, University of Konstanz
  */
 public class HistogramBufferedImageProvider<T extends RealType<T>> extends AWTImageProvider<T> {
@@ -37,11 +37,11 @@ public class HistogramBufferedImageProvider<T extends RealType<T>> extends AWTIm
 
     @Override
     protected Image createImage() {
-        final OpsHistogram hist =
+        final Histogram1d<T> hist =
                 Operations.compute(new MakeHistogram<T>(),
                                    Views.iterable(SubsetOperations.subsetview(m_src, m_sel.getInterval(m_src))));
         m_eventService.publish(new HistogramChgEvent(hist));
-        return AWTImageTools.drawHistogram(hist.hist(), m_histHeight);
+        return AWTImageTools.drawHistogram(hist.toLongArray(), m_histHeight);
 
     }
 
