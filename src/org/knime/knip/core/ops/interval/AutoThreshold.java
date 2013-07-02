@@ -23,6 +23,7 @@ public final class AutoThreshold<T extends RealType<T>, I extends IterableInterv
         m_thresholdType = thresholdType;
     }
 
+    //might throw a runtime exception (see FindThreshold)
     @Override
     public K compute(final I op, final K r) {
 

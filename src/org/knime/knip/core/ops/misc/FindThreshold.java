@@ -118,6 +118,11 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<Hist
             bin = -Integer.MAX_VALUE;
         }
 
+        if (bin < 0) {
+            //an error occurred e.g. signaled by returning -1
+            throw new RuntimeException("thresholding method " + m_ttype + " failed.");
+        }
+
         hist.getCenterValue(bin, m_type);
         r.setReal(m_type.getRealDouble());
 
