@@ -69,15 +69,15 @@ public class FastNormalizingGreyRendering {
                 target = new ByteScreenImage(new ByteArray(new byte[(int)(w * h)]), new long[]{w, h});
 
                 projector =
-                        new ArrayImgXYByteProjector<ByteType, ByteType>((ArrayImg<ByteType, ByteArray>)source,
-                                ((ByteScreenImage)target), normalizationFactor, min, type.isSigned());
+                        new ArrayImgXYByteProjector<ByteType>((ArrayImg<ByteType, ByteArray>)source,
+                                ((ByteScreenImage)target), normalizationFactor, min);
                 return new RenderTripel(projector, target);
             } else if ((type == NativeTypes.SHORTTYPE) || (type == NativeTypes.UNSIGNEDSHORTTYPE)) {
                 target = new ShortScreenImage(new ShortArray(new short[(int)(w * h)]), new long[]{w, h});
 
                 projector =
-                        new ArrayImgXYShortProjector<ShortType, ShortType>((ArrayImg<ShortType, ShortArray>)source,
-                                ((ShortScreenImage)target), normalizationFactor, min, type.isSigned());
+                        new ArrayImgXYShortProjector<ShortType>((ArrayImg<ShortType, ShortArray>)source,
+                                ((ShortScreenImage)target), normalizationFactor, min);
                 return new RenderTripel(projector, target);
             }
         }
@@ -103,15 +103,15 @@ public class FastNormalizingGreyRendering {
                 target = new ByteScreenImage(new ByteArray(new byte[(int)(w * h)]), new long[]{w, h});
 
                 projector =
-                        new PlanarImgXYByteProjector<ByteType, ByteType>((PlanarImg<ByteType, ByteArray>)source,
-                                ((ByteScreenImage)target), normalizationFactor, min, type.isSigned());
+                        new PlanarImgXYByteProjector<ByteType>((PlanarImg<ByteType, ByteArray>)source,
+                                ((ByteScreenImage)target), normalizationFactor, min);
                 return new RenderTripel(projector, target);
             } else if ((type == NativeTypes.SHORTTYPE) || (type == NativeTypes.UNSIGNEDSHORTTYPE)) {
                 target = new ShortScreenImage(new ShortArray(new short[(int)(w * h)]), new long[]{w, h});
 
                 projector =
-                        new PlanarImgXYShortProjector<ShortType, ShortType>((PlanarImg<ShortType, ShortArray>)source,
-                                ((ShortScreenImage)target), normalizationFactor, min, type.isSigned());
+                        new PlanarImgXYShortProjector<ShortType>((PlanarImg<ShortType, ShortArray>)source,
+                                ((ShortScreenImage)target), normalizationFactor, min);
                 return new RenderTripel(projector, target);
             }
         }
