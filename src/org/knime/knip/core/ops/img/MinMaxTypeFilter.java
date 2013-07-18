@@ -56,7 +56,7 @@ import net.imglib2.util.ValuePair;
 
 /**
  * Needed, e.g. for ImgNormalize
- *
+ * 
  * @author dietyc
  */
 public class MinMaxTypeFilter<T extends RealType<T>> implements UnaryOutputOperation<T, T> {

@@ -88,7 +88,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extend
 
     /**
      * Set up a new instance and wrap the passed panel.
-     *
+     * 
      * @param panel the panel that should be wrapped
      */
     AbstractTFCDataProvider(final TransferFunctionControlPanel panel) {
@@ -124,7 +124,8 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extend
         cur.reset();
 
         // create the histogram
-        final Histogram1d<T> hist = new Histogram1d<T>(new Real1dBinMapper<T>(sample.getMinValue(), sample.getMaxValue(), m_numBins, false));
+        final Histogram1d<T> hist =
+                new Histogram1d<T>(new Real1dBinMapper<T>(sample.getMinValue(), sample.getMaxValue(), m_numBins, false));
         while (cur.hasNext()) {
             cur.fwd();
             hist.increment(cur.get());
@@ -135,7 +136,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extend
 
     /**
      * This method is called everytime the src changes and must return the key that corresponds to the current settings.<br>
-     *
+     * 
      * @return the key to store the first memento.
      */
     protected abstract KEY updateKey(final Interval src);
@@ -144,7 +145,7 @@ public abstract class AbstractTFCDataProvider<T extends RealType<T>, KEY> extend
 
     /**
      * Use this if the concrete base class has intercepted an event that needs to set a new Memento.<br>
-     *
+     * 
      * @param key the key to look up or to save the new memento under
      * @param interval the interval to use for calculating the histogram if the key is not yet saved in the map of
      *            mementos

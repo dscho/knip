@@ -53,9 +53,9 @@ import java.util.NoSuchElementException;
 
 /**
  * A Histogram that knows what values to cut off for normalizing.<br>
- *
+ * 
  * @author muethingc
- *
+ * 
  */
 public class HistogramWithNormalization implements Histogram {
 
@@ -106,9 +106,9 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Set up a new instance with the passed data.<br>
-     *
+     * 
      * @param data the data to use for this histogram, a deep copy will be made
-     *
+     * 
      * @param min the minimum value this histogram starts at
      * @param max the maximum value this histogram ends at
      */
@@ -140,7 +140,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Make a deep copy of the histogram.
-     *
+     * 
      * @param the histogram to copy
      */
     public HistogramWithNormalization(final Histogram hist) {
@@ -149,7 +149,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Make a deep copy of this histogram.
-     *
+     * 
      * @return a copy of the histogram
      */
     public HistogramWithNormalization copy() {
@@ -194,7 +194,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Get the first and last index where data[index] is not zero.
-     *
+     * 
      * @return positions
      */
     public int[] getPos() {
@@ -203,7 +203,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Same as {@link getPos()}, but returning the positions as a fraction of the lenght of the data array.<br>
-     *
+     * 
      * @return fractions
      */
     public double[] getFractions() {
@@ -217,7 +217,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Get a copy of the part of the array that correspondes to the normalized part of the histogram.<br>
-     *
+     * 
      * @return the normalized part of the data
      */
     public long[] getNormalizedData() {
@@ -226,9 +226,9 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Get the value of the histogram at the given index.<br>
-     *
+     * 
      * @param index
-     *
+     * 
      * @return value
      */
     public long get(final int index) {
@@ -237,7 +237,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Get an iterator over the complete data set.<br>
-     *
+     * 
      * @return iterator
      */
     public Iterator<Long> iteratorFull() {
@@ -246,7 +246,7 @@ public class HistogramWithNormalization implements Histogram {
 
     /**
      * Get an iterator that only iterates over the values that are within the normalization range.<br>
-     *
+     * 
      * @return iterator
      */
     public Iterator<Long> iteratorNormalized() {

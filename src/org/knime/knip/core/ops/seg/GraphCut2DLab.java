@@ -76,7 +76,7 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter;
 
 /**
  * GraphCut where the averge value for the sink and source are retrieved from a labeling.
- *
+ * 
  * @author dietzc, University of Konstanz
  */
 public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>> implements
@@ -135,7 +135,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>> imple
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @return
      */
     @Override
@@ -216,7 +216,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>> imple
 
     /**
      * calculates the GraphCut on the Image Img
-     *
+     * 
      * @param img The Image
      * @return the processed Image with black and white values for sink and Source
      */
@@ -402,7 +402,7 @@ public class GraphCut2DLab<T extends RealType<T>, L extends Comparable<L>> imple
 
     /**
      * Gives the position of the node in the list from the pixel position in the image.
-     *
+     * 
      * @param imagePosition Coordinates of the pixel in x,y,z,... direction
      * @param dimensions overall image dimensions (width, height, depth,...)
      * @return the position of the node in the list

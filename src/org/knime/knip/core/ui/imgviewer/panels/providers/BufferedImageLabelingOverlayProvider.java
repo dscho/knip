@@ -34,8 +34,8 @@ import org.knime.knip.core.ui.imgviewer.events.TransparencyPanelValueChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- *
- *
+ * 
+ * 
  * @author dietzc, hornm, schoenenbergerf, zinsmaierm University of Konstanz
  */
 public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L extends Comparable<L>> extends
@@ -164,7 +164,8 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
         m_greyRenderer.setNormalizationParameters(normParams[0], normParams[1]);
 
         final ScreenImage ret =
-                m_greyRenderer.render(convertedImg, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
+                m_greyRenderer.render(convertedImg, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(),
+                                      m_sel.getPlanePos());
 
         return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
     }
@@ -236,7 +237,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
     /**
      * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
      * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
-     *
+     * 
      * @param normalizationParameters
      */
     @EventListener

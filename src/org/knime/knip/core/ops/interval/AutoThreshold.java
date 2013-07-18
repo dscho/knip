@@ -29,7 +29,8 @@ public final class AutoThreshold<T extends RealType<T>, I extends IterableInterv
 
         final Histogram1d<T> hist = Operations.compute(new MakeHistogram<T>(), op);
         final T thresh = op.firstElement().createVariable();
-        thresh.setReal(new FindThreshold<T>(m_thresholdType, thresh.createVariable()).compute(hist, new DoubleType()).getRealDouble());
+        thresh.setReal(new FindThreshold<T>(m_thresholdType, thresh.createVariable()).compute(hist, new DoubleType())
+                .getRealDouble());
         new UnaryRelationAssigment<T>(new RealGreaterThanConstant<T>(thresh)).compute(op, r);
         return r;
     }

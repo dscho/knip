@@ -55,7 +55,7 @@ import net.imglib2.histogram.Histogram1d;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author hornm, dietzc, zinsmaierm University of Konstanz
  */
 public class HistogramChgEvent implements KNIPEvent {

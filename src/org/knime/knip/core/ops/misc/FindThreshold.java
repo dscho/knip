@@ -58,7 +58,7 @@ import net.imglib2.type.numeric.real.DoubleType;
 import org.knime.knip.core.algorithm.types.ThresholdingType;
 
 /**
- *
+ * 
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  */
 public class FindThreshold<T extends RealType<T>> implements UnaryOperation<Histogram1d<T>, DoubleType> {
@@ -79,7 +79,7 @@ public class FindThreshold<T extends RealType<T>> implements UnaryOperation<Hist
      */
     @Override
     public DoubleType compute(final Histogram1d<T> hist, final DoubleType r) {
-        if (hist.getBinCount()  > Integer.MAX_VALUE) {
+        if (hist.getBinCount() > Integer.MAX_VALUE) {
             throw new RuntimeException("to many histogram bins can't allocate a big enought array.");
         }
         m_maxValue = (int)hist.getBinCount() - 1;

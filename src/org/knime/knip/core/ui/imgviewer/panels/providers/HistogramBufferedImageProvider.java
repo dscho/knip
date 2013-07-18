@@ -17,7 +17,7 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramChgEvent;
 
 /**
  * Creates an histogram AWTImage. Publishes a {@link HistogramChgEvent}.
- *
+ * 
  * @author dietzc, hornm, University of Konstanz
  */
 public class HistogramBufferedImageProvider<T extends RealType<T>> extends AWTImageProvider<T> {
