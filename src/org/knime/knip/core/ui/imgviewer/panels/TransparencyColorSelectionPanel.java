@@ -12,9 +12,9 @@ import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 
 /**
  * composite of a {@link TransparencyPanel} and a {@link LabelOptionPanel}.
- *
+ * 
  * @author zinsmaie
- *
+ * 
  */
 public class TransparencyColorSelectionPanel extends ViewerComponent {
 

@@ -89,7 +89,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A TableCellViewPane providing another view on image objects. It allows to browser through the individual
  * planes/dimensions, enhance contrast, etc.
- *
+ * 
  * @author dietzc, hornm, University of Konstanz
  * @param <T>
  */
@@ -164,12 +164,12 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     /**
      * Adds the {@link ViewerComponent} to the {@link ImgViewer}
-     *
+     * 
      * @param panel {@link ViewerComponent} to be set
-     *
+     * 
      * @param setEventService indicates weather the {@link EventService} of the {@link ImgViewer} shall be set to the
      *            {@link ViewerComponent}
-     *
+     * 
      */
     public void addViewerComponent(final ViewerComponent panel, final boolean setEventService) {
 
@@ -210,7 +210,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     /**
      * Set the current {@link Img} of the viewer
-     *
+     * 
      * @param img {@link Img} to be set
      * @param axes {@link CalibratedSpace} of the {@link Img}
      * @param name {@link Named} of the {@link Img}
@@ -243,7 +243,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     /**
      * Save the current settings/state of an ImgViewer to a base64 coded String
-     *
+     * 
      * @return base64 coded String of the current settings/state of the viewer
      * @throws IOException
      */
@@ -284,7 +284,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
     /**
      * Loading settings of the viewer from a base64Coded String produced by
      * {@link ImgViewer#getComponentConfiguration()}
-     *
+     * 
      * @param base64coded the base64 representation of the viewer state
      * @throws IOException
      * @throws ClassNotFoundException

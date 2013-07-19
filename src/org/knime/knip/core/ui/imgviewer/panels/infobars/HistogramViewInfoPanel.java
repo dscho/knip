@@ -18,8 +18,8 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramFactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
 
 /**
- *
- *
+ * 
+ * 
  * @author dietzc
  */
 public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>> extends ViewerComponent {

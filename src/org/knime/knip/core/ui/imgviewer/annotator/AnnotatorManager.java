@@ -36,9 +36,9 @@ import org.knime.knip.core.ui.imgviewer.panels.HiddenViewerComponent;
 
 /**
  * Manages overlays and overlay elements ...
- *
+ * 
  * @author Christian
- *
+ * 
  */
 public class AnnotatorManager<T extends RealType<T>> extends HiddenViewerComponent {
 

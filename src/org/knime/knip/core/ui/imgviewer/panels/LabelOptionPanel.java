@@ -30,7 +30,7 @@ import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- *
+ * 
  * @author dietyc, zinsmaierm, hornm
  */
 public class LabelOptionPanel extends ViewerComponent {

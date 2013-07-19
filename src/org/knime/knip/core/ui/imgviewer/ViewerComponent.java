@@ -12,9 +12,9 @@ import org.knime.knip.core.ui.event.EventServiceClient;
 
 /**
  * Generic component class of a viewer.
- *
+ * 
  * @author dietzc, University of Konstanz
- *
+ * 
  * @param <T>
  */
 public abstract class ViewerComponent extends JPanel implements EventServiceClient {
@@ -40,7 +40,7 @@ public abstract class ViewerComponent extends JPanel implements EventServiceClie
 
     /**
      * Set the title for the border of this component.
-     *
+     * 
      * @param title the title
      */
     public void setTitle(final String title) {
@@ -51,16 +51,16 @@ public abstract class ViewerComponent extends JPanel implements EventServiceClie
      * Returns the position in the BorderLayout. Possible values are {@link BorderLayout#NORTH},
      * {@link BorderLayout#SOUTH}, {@link BorderLayout#WEST},{@link BorderLayout#EAST}, {@link BorderLayout#CENTER}
      * ,HIDDEN
-     *
+     * 
      * A component with hidden position will not be rendered
-     *
+     * 
      * @return position in {@link BorderLayout} as string
      */
     public abstract Position getPosition();
 
     /**
      * Serialization
-     *
+     * 
      * @param out
      * @throws IOException
      */

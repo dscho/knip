@@ -71,7 +71,7 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 
 /**
  * Panel containing image properties.
- *
+ * 
  * @author hornm, University of Konstanz
  */
 public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<T>> extends ViewerComponent {

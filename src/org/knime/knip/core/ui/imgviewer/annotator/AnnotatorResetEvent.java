@@ -52,7 +52,7 @@ package org.knime.knip.core.ui.imgviewer.annotator;
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- *
+ * 
  * @author dietyc
  */
 public class AnnotatorResetEvent implements KNIPEvent {

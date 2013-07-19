@@ -26,9 +26,9 @@ import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
 
 /**
  * Allows the user to select a certain renderer.
- *
+ * 
  * Publishes {@link RendererSelectionChgEvent}
- *
+ * 
  * @author dietzc, hornm, fschoenenberger
  */
 public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {

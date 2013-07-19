@@ -72,7 +72,7 @@ import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 
 /**
  * @author muethingc
- *
+ * 
  */
 public class CaptureScreenshot extends ViewerComponent {
 
