@@ -734,4 +734,5 @@ Export-Package: .,
  ucar.unidata.io.http,
  ucar.unidata.util,
  ucar.units
+Import-Package: net.imglib2.ops.operation
 
