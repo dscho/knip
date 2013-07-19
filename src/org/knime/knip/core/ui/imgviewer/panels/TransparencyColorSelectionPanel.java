@@ -1,6 +1,5 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,9 +12,9 @@ import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 
 /**
  * composite of a {@link TransparencyPanel} and a {@link LabelOptionPanel}.
- * 
+ *
  * @author zinsmaie
- * 
+ *
  */
 public class TransparencyColorSelectionPanel extends ViewerComponent {
 
@@ -55,19 +54,8 @@ public class TransparencyColorSelectionPanel extends ViewerComponent {
     }
 
     @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
-
-    }
-
-    @Override
     public Position getPosition() {
         return Position.SOUTH;
-    }
-
-    @Override
-    public void reset() {
-        // Nothing to do here
     }
 
     @Override

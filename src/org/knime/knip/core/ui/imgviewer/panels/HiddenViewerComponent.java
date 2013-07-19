@@ -1,7 +1,5 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
-import java.awt.Component;
-
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 
 public abstract class HiddenViewerComponent extends ViewerComponent {
@@ -20,8 +18,4 @@ public abstract class HiddenViewerComponent extends ViewerComponent {
         return Position.HIDDEN;
     }
 
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
-    }
 }

@@ -51,7 +51,6 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
 import java.awt.Adjustable;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -99,10 +98,10 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  * Allows the user to select a plane in a multdimensional space.
- * 
+ *
  * Publishes {@link PlaneSelectionEvent}
- * 
- * 
+ *
+ *
  * @author dietzc, hornm
  * @param <T> image type
  */
@@ -284,7 +283,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     }
 
     /**
-     * 
+     *
      * @param e
      * @param id
      */
@@ -403,7 +402,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     }
 
     /**
-     * 
+     *
      * @return the coordinates of the currently selected image (a newly generated array)
      */
     protected long[] getImageCoordinate() {
@@ -638,19 +637,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
         // Nothing to do here
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        // Nothing to do here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
-    }
-
     private class ItemListenerWithId implements ItemListener {
 
         private final int m_id;
@@ -664,7 +650,6 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
             onCheckBoxChange(e, m_id);
 
         }
-
     }
 
     private class ChangeListenerWithId implements AdjustmentListener {

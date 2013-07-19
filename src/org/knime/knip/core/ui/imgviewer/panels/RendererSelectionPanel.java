@@ -1,7 +1,6 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -27,9 +26,9 @@ import org.knime.knip.core.ui.imgviewer.events.RendererSelectionChgEvent;
 
 /**
  * Allows the user to select a certain renderer.
- * 
+ *
  * Publishes {@link RendererSelectionChgEvent}
- * 
+ *
  * @author dietzc, hornm, fschoenenberger
  */
 public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
@@ -130,17 +129,4 @@ public class RendererSelectionPanel<T extends Type<T>> extends ViewerComponent {
     public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_rendList.setSelectedIndex(in.readInt());
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
-    }
-
 }

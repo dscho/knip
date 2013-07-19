@@ -47,7 +47,6 @@
  */
 package org.knime.knip.core.ui.imgviewer.panels;
 
-import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,7 +72,7 @@ import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
 
 /**
  * @author muethingc
- * 
+ *
  */
 public class CaptureScreenshot extends ViewerComponent {
 
@@ -189,18 +188,8 @@ public class CaptureScreenshot extends ViewerComponent {
     }
 
     @Override
-    public void setParent(final Component parent) {
-        // not used
-    }
-
-    @Override
     public Position getPosition() {
         return Position.SOUTH;
-    }
-
-    @Override
-    public void reset() {
-        // not used
     }
 
     @Override

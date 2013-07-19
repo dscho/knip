@@ -1,6 +1,5 @@
 package org.knime.knip.core.ui.imgviewer.panels.infobars;
 
-import java.awt.Component;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -19,8 +18,8 @@ import org.knime.knip.core.ui.imgviewer.events.HistogramFactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseMovedEvent;
 
 /**
- * 
- * 
+ *
+ *
  * @author dietzc
  */
 public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>> extends ViewerComponent {
@@ -118,19 +117,6 @@ public class HistogramViewInfoPanel<T extends Type<T>, I extends Img<T>> extends
 
     @Override
     public void loadComponentConfiguration(final ObjectInput in) throws IOException {
-        // Nothing to do here
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        // Nothing to do here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
         // Nothing to do here
     }
 

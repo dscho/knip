@@ -1,6 +1,5 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -130,18 +129,5 @@ public class TransparencyPanel extends ViewerComponent {
     @Override
     public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_slider.setValue(in.readInt());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        // Nothing to do here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
     }
 }

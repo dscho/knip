@@ -60,9 +60,9 @@ import org.knime.knip.core.util.MiscViews;
 
 /**
  * Panel to generate a Rulebased LabelFilter.
- * 
+ *
  * Publishes {@link RulebasedLabelFilter}
- * 
+ *
  * @author hornm, dietzc, schoenenbergerf, ortweinm University of Konstanz
  */
 public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
@@ -391,16 +391,6 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
         for (int s = 0; s < m_ruleFilter.getRules().size(); s++) {
             addTextField(m_ruleFilter.getRules().get(s));
         }
-    }
-
-    @Override
-    public void reset() {
-        // Nothing to reset here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
     }
 
     /*

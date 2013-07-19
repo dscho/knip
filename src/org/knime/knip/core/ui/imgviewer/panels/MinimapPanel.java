@@ -2,7 +2,6 @@ package org.knime.knip.core.ui.imgviewer.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -37,9 +36,9 @@ import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 
 /**
  * A panel showing the minimap of a buffered image and enables the user to zoom and change the focus.
- * 
+ *
  * Publishes {@link MinimapOffsetChgEvent} and {@link MinimapZoomfactorChgEvent} .
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public class MinimapPanel extends ViewerComponent {
@@ -307,15 +306,4 @@ public class MinimapPanel extends ViewerComponent {
     public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         m_zoomSlider.setValue(in.readInt());
     }
-
-    @Override
-    public void reset() {
-        m_img = null;
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
-    }
-
 }

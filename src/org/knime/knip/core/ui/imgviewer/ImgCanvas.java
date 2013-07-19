@@ -1,7 +1,6 @@
 package org.knime.knip.core.ui.imgviewer;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -41,15 +40,16 @@ import org.knime.knip.core.ui.imgviewer.events.ImgViewerMouseReleasedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerRectChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgViewerTextMessageChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.MinimapOffsetChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
 
 /**
- * 
+ *
  * Panel to draw a BufferedImage.
- * 
+ *
  * Propagates {@link ImgViewerRectChgEvent}.
- * 
+ *
  * @author dietzc, hornm, fschoenenberer
  * @param <T>
  * @param <I>
@@ -254,7 +254,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * Returns the visible bounding box in the image coordinate space.
-     * 
+     *
      * @return the visible bounding box.
      */
     public Rectangle getVisibleImageRect() {
@@ -315,7 +315,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * Scrolls the image so the rectangle gets visible.
-     * 
+     *
      * @param rect
      */
     @EventListener
@@ -375,7 +375,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * An image with the message.
-     * 
+     *
      * @param message
      */
     @EventListener
@@ -426,21 +426,11 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
     }
 
     /**
-     * {@inheritDoc}
+     * @param event
      */
-    @Override
-    public void reset() {
-        m_currentRectangle = new Rectangle();
-        m_factors = new double[]{1.0d, 1.0d};
-        m_oldFactors = new double[]{1.0d, 1.0d};
-        m_scaleFactors = new double[]{1.0d, 1.0d};
-        m_zoomFactor = 1.0d;
+    @EventListener
+    public void reset(final ViewClosedEvent event) {
         m_image = null;
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
     }
 
 }

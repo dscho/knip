@@ -36,7 +36,7 @@ import org.knime.knip.core.ui.imgviewer.overlay.Overlay;
 /**
  * Creates a awt image from an image, plane selection, normalization parameters, ..., and an overlay. Propagates
  * {@link AWTImageChgEvent}.
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Comparable<L>> extends AWTImageProvider<T> {
@@ -183,7 +183,7 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
     /**
      * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
      * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
-     * 
+     *
      * @param normalizationParameters
      */
     @EventListener
@@ -223,9 +223,8 @@ public class OverlayBufferedImageProvider<T extends RealType<T>, L extends Compa
 
     }
 
-    @Override
-    public void reset() {
-        super.reset();
+    @EventListener
+    public void resetChildClass(final ViewClosedEvent e) {
         m_overlay = null;
         m_src = null;
     }

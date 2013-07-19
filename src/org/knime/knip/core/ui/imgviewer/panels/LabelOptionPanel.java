@@ -1,7 +1,6 @@
 package org.knime.knip.core.ui.imgviewer.panels;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,7 +30,7 @@ import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- * 
+ *
  * @author dietyc, zinsmaierm, hornm
  */
 public class LabelOptionPanel extends ViewerComponent {
@@ -203,19 +202,6 @@ public class LabelOptionPanel extends ViewerComponent {
     @Override
     public void loadComponentConfiguration(final ObjectInput in) throws IOException, ClassNotFoundException {
         // color codings cannot be saved
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        // Nothing to do here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
     }
 
     @EventListener

@@ -50,7 +50,6 @@
  */
 package org.knime.knip.core.ui.imgviewer.panels;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -72,7 +71,7 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 
 /**
  * Panel containing image properties.
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<T>> extends ViewerComponent {
@@ -172,16 +171,6 @@ public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<
 
     @Override
     public void loadComponentConfiguration(final ObjectInput in) throws IOException {
-        // Nothing to do here
-    }
-
-    @Override
-    public void reset() {
-        // Nothing to do here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
         // Nothing to do here
     }
 

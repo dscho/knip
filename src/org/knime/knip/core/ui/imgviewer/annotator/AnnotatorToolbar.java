@@ -103,14 +103,4 @@ public class AnnotatorToolbar extends ViewerComponent {
                 new AnnotatorRectangleTool(), new AnnotatorPolygonTool(), new AnnotatorSplineTool(),
                 new AnnotatorFreeFormTool(), new AnnotatorFreeLineTool());
     }
-
-    @Override
-    public void reset() {
-        // Nothing to reset here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        //
-    }
 }

@@ -294,16 +294,4 @@ public class AnnotatorLabelPanel extends ViewerComponent {
         m_isAdjusting = false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-        // Nothing to do here
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        m_parent = parent;
-    }
 }

@@ -9,6 +9,7 @@ import net.imglib2.type.numeric.RealType;
 
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
+import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends RandomAccessibleInterval<T>> extends
         AbstractTFCDataProvider<T, Integer> {
@@ -72,6 +73,12 @@ public class PlaneSelectionTFCDataProvider<T extends RealType<T>, I extends Rand
         }
 
         return hash(m_pos, m_indices, src);
+    }
+
+    @EventListener
+    public void resetChild(final ViewClosedEvent e) {
+        m_histogramInterval = null;
+        m_src = null;
     }
 
     private int hash(final long[] pos, final int[] indices, final Interval src) {

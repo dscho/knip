@@ -1,7 +1,6 @@
 package org.knime.knip.core.ui.imgviewer.panels.infobars;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
@@ -25,9 +24,9 @@ import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
@@ -180,22 +179,15 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void reset() {
-        m_mouseInfoLabel.setText("");
-        m_imageInfoLabel.setText("");
-        m_infoBuffer.setLength(0);
-    }
-
-    @Override
-    public void setParent(final Component parent) {
-        // Nothing to do here
+    @EventListener
+    public void reset(final ViewClosedEvent e) {
+        m_iterable = null;
     }
 
     /**
      * sets the mouse and image info labels. This method is intended to be used if a subclass reacts to additional
      * events ... that should change the labels.
-     * 
+     *
      * @param mouseInfoText
      * @param imageInfoText
      */
