@@ -26,9 +26,16 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>> impleme
 
     private final Color HILITED_RGB_COLOR = new Color(SegmentColorTable.HILITED_RGB);
 
+    //allows to bypass the segment color table
+    private Color m_boxColor = null;
+
     private Color getBOX_RGB_COLOR() {
-        return SegmentColorTable.getBoundingBoxColor();
-    };
+        if (m_boxColor != null) {
+            return m_boxColor;
+        } else {
+            return SegmentColorTable.getBoundingBoxColor();
+        }
+    }
 
     private Set<String> m_hilitedLabels;
 
@@ -145,6 +152,18 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>> impleme
     @Override
     public void setActiveLabels(final Set<String> activeLabels) {
         m_activeLabels = activeLabels;
+    }
+
+    /**
+     * explicitly defines a color for labelings and bounding boxes instead of using the color defined in the
+     * SegmentColorTable. This is useful if e.g. the color has been defined during config time and should not
+     * depend the SegmentColorTable.
+     *
+     *
+     * @param bbColor a color for bounding boxes and labels or <code>null</code> to restore the default behavior (<code>SegmentColorTable.getBoundingBoxColor()</code>)
+     */
+    public void setBoxColor(final Color bbColor) {
+        m_boxColor = bbColor;
     }
 
     @Override
