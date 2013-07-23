@@ -9,7 +9,7 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.SubsetOperations;
-import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
+import net.imglib2.ops.operation.iterableinterval.unary.MinMaxWithSaturation;
 import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.ValuePair;
@@ -19,11 +19,11 @@ import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
  * @author dietzc, hornm, schoenenbergerf (University of Konstanz)
- * 
+ *
  *         Event message object providing the information weather an {@link Img} of {@link RealType} should be
  *         normalized and if the number of the saturation in %
- * 
- * 
+ *
+ *
  */
 public class NormalizationParametersChgEvent implements Externalizable, KNIPEvent {
 
@@ -55,9 +55,9 @@ public class NormalizationParametersChgEvent implements Externalizable, KNIPEven
 
     /**
      * Constructor for the message object NormalizationParameters
-     * 
+     *
      * @param saturation Saturation value for the normalization
-     * 
+     *
      * @param isNormalized Weather the image shall be normalized or not
      */
     public NormalizationParametersChgEvent(final double saturation, final boolean isNormalized) {
@@ -95,10 +95,10 @@ public class NormalizationParametersChgEvent implements Externalizable, KNIPEven
      * Helper method to get the actual normalization factor and the boolean variable to check wether the {@link Img} of
      * type {@link RealType} shall be normalized or not. If image should not be normalized the normalization parameters
      * will be set to 1 respecticly 2
-     * 
+     *
      * @param src {@link Img} of {@link RealType} which shall be normalized
      * @param sel {@link PlaneSelectionEvent} the selected plane in the source {@link Img}
-     * 
+     *
      * @return [0]: the normalization factor, [1]: the local minimum
      */
     public <T extends RealType<T>> double[] getNormalizationParameters(final RandomAccessibleInterval<T> src,
@@ -108,7 +108,7 @@ public class NormalizationParametersChgEvent implements Externalizable, KNIPEven
         } else {
             final T element = src.randomAccess().get().createVariable();
             final ValuePair<T, T> oldMinMax =
-                    Operations.compute(new MinMax<T>(m_saturation, element),
+                    Operations.compute(new MinMaxWithSaturation<T>(m_saturation, element),
                                        Views.iterable(SubsetOperations.subsetview(src, sel.getInterval(src))));
             return new double[]{
                     Normalize.normalizationFactor(oldMinMax.a.getRealDouble(), oldMinMax.b.getRealDouble(),

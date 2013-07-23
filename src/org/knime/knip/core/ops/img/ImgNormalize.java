@@ -54,7 +54,7 @@ import net.imglib2.img.Img;
 import net.imglib2.ops.img.UnaryObjectFactory;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.UnaryOutputOperation;
-import net.imglib2.ops.operation.iterableinterval.unary.MinMax;
+import net.imglib2.ops.operation.iterableinterval.unary.MinMaxWithSaturation;
 import net.imglib2.ops.operation.real.unary.Normalize;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.util.ValuePair;
@@ -98,7 +98,7 @@ public class ImgNormalize<T extends RealType<T>> implements UnaryOutputOperation
         }
 
         if (m_minmaxsource == null) {
-            m_minmaxsource = Operations.compute(new MinMax<T>(m_saturation, m_val), input);
+            m_minmaxsource = Operations.compute(new MinMaxWithSaturation<T>(m_saturation, m_val), input);
         }
 
         Operations.map(new Normalize<T>(m_minmaxsource.a, m_minmaxsource.b, m_minmaxtarget.a, m_minmaxtarget.b))
