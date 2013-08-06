@@ -54,8 +54,6 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.mahout.math.map.OpenIntIntHashMap;
-
 /**
  * 
  * @author hornm, University of Konstanz

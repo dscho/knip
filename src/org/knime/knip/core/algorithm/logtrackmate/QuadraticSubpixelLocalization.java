@@ -3,7 +3,6 @@ package org.knime.knip.core.algorithm.logtrackmate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.Algorithm;
