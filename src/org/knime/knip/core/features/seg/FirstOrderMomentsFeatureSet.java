@@ -61,7 +61,7 @@ import org.knime.knip.core.features.ObjectCalcAndCache;
 import org.knime.knip.core.features.SharesObjects;
 
 /**
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf University of Konstanz
  * @param <T> image type
  */
@@ -214,8 +214,14 @@ public class FirstOrderMomentsFeatureSet<T extends RealType<T>> implements Featu
 
     }
 
-    public ObjectCalcAndCache getCache() {
-        return m_ocac;
-    }
+    /**
+     *
+     * @param ii
+     * @param percentile
+     * @return
+     */
+   public double getPercentile(final IterableInterval<T> ii, final double percentile){
+       return m_ocac.descriptiveStatistics(ii).getPercentile(percentile);
+   }
 
 }

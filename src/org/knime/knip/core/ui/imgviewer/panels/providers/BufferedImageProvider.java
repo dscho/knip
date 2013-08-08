@@ -28,12 +28,12 @@ import org.knime.knip.core.ui.imgviewer.panels.transfunc.LookupTableChgEvent;
 
 /**
  * Converts an {@link Img} to a {@link BufferedImage}.
- * 
+ *
  * It creates an image from a plane selection, image, image renderer, and normalization parameters. Propagates
  * {@link AWTImageChgEvent}.
- * 
+ *
  * @author dietzc, hornm, schonenbergerf University of Konstanz
- * 
+ *
  * @param <T> the {@link Type} of the {@link Img} converted to a {@link BufferedImage}
  * @param <I> the {@link Img} converted to a {@link BufferedImage}
  */
@@ -71,7 +71,7 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
 
     /**
      * Render an image of
-     * 
+     *
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -100,13 +100,13 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
                 m_renderer.render(convertedSrc, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(),
                                   m_sel.getPlanePos());
 
-        return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
+        return AWTImageTools.makeBuffered(ret.image());
     }
 
     /**
      * {@link EventListener} for {@link NormalizationParametersChgEvent} events The
      * {@link NormalizationParametersChgEvent} of the {@link AWTImageTools} will be updated
-     * 
+     *
      * @param normalizationParameters
      */
     @EventListener
@@ -115,10 +115,10 @@ public class BufferedImageProvider<T extends RealType<T>> extends AWTImageProvid
     }
 
     /**
-     * 
+     *
      * {@link EventListener} for {@link BundleChgEvent}. A new lookup table will be constructed using the given transfer
      * function bundle.
-     * 
+     *
      * @param event
      */
     @EventListener

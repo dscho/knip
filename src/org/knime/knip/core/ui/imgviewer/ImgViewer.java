@@ -53,17 +53,8 @@ package org.knime.knip.core.ui.imgviewer;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -79,17 +70,15 @@ import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
-import org.apache.commons.codec.binary.Base64;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
-import org.slf4j.LoggerFactory;
 
 /**
  * A TableCellViewPane providing another view on image objects. It allows to browser through the individual
  * planes/dimensions, enhance contrast, etc.
- * 
+ *
  * @author dietzc, hornm, University of Konstanz
  * @param <T>
  */
@@ -111,7 +100,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
     private JPanel m_centerPanels;
 
     /* keep the option panel-references to load and save configurations */
-    private List<ViewerComponent> m_viewerComponents;
+    protected List<ViewerComponent> m_viewerComponents;
 
     /* EventService of the viewer, unique for each viewer. */
     protected EventService m_eventService;
@@ -164,12 +153,12 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     /**
      * Adds the {@link ViewerComponent} to the {@link ImgViewer}
-     * 
+     *
      * @param panel {@link ViewerComponent} to be set
-     * 
+     *
      * @param setEventService indicates weather the {@link EventService} of the {@link ImgViewer} shall be set to the
      *            {@link ViewerComponent}
-     * 
+     *
      */
     public void addViewerComponent(final ViewerComponent panel, final boolean setEventService) {
 
@@ -210,7 +199,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     /**
      * Set the current {@link Img} of the viewer
-     * 
+     *
      * @param img {@link Img} to be set
      * @param axes {@link CalibratedSpace} of the {@link Img}
      * @param name {@link Named} of the {@link Img}
@@ -241,91 +230,5 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     }
 
-    /**
-     * Save the current settings/state of an ImgViewer to a base64 coded String
-     * 
-     * @return base64 coded String of the current settings/state of the viewer
-     * @throws IOException
-     */
-    public String getComponentConfiguration() throws IOException {
-        String res = "";
-        try {
-            final ByteArrayOutputStream totalBytes = new ByteArrayOutputStream();
-            final ObjectOutputStream totalOut = new ObjectOutputStream(totalBytes);
 
-            totalOut.writeInt(m_viewerComponents.size());
-
-            ByteArrayOutputStream componentBytes;
-            ObjectOutput componentOutput;
-            for (final ViewerComponent c : m_viewerComponents) {
-
-                componentBytes = new ByteArrayOutputStream();
-                componentOutput = new ObjectOutputStream(componentBytes);
-                c.saveComponentConfiguration(componentOutput);
-                componentOutput.close();
-                totalOut.writeUTF(c.getClass().getSimpleName());
-
-                totalOut.writeInt(componentBytes.size());
-                totalOut.write(componentBytes.toByteArray());
-                totalOut.flush();
-
-            }
-            totalOut.close();
-            res = new String(Base64.encodeBase64(totalBytes.toByteArray()));
-
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-
-        return res;
-
-    }
-
-    /**
-     * Loading settings of the viewer from a base64Coded String produced by
-     * {@link ImgViewer#getComponentConfiguration()}
-     * 
-     * @param base64coded the base64 representation of the viewer state
-     * @throws IOException
-     * @throws ClassNotFoundException
-     */
-    public void setComponentConfiguration(final String base64coded) throws IOException, ClassNotFoundException {
-        final Map<String, ObjectInput> configMap = new HashMap<String, ObjectInput>();
-
-        if (base64coded.equals("")) {
-            return;
-        }
-
-        try {
-            final byte[] bytes = Base64.decodeBase64(base64coded.getBytes());
-            final ObjectInputStream totalIn = new ObjectInputStream(new ByteArrayInputStream(bytes));
-
-            final int num = totalIn.readInt();
-
-            String title = null;
-            byte[] buf;
-            for (int i = 0; i < num; i++) {
-                title = totalIn.readUTF();
-                final int len = totalIn.readInt();
-                buf = new byte[len];
-
-                for (int b = 0; b < len; b++) {
-                    buf[b] = totalIn.readByte();
-                }
-                configMap.put(title, new ObjectInputStream(new ByteArrayInputStream(buf)));
-            }
-
-            totalIn.close();
-        } catch (final IOException e) {
-            LoggerFactory.getLogger(ImgViewer.class).error("error", e);
-            return;
-        }
-
-        for (final ViewerComponent c : m_viewerComponents) {
-            final ObjectInput oi = configMap.get(c.getClass().getSimpleName());
-            if (oi != null) {
-                c.loadComponentConfiguration(oi);
-            }
-        }
-    }
 }

@@ -11,6 +11,7 @@ import net.imglib2.display.ScreenImage;
 import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 
+import org.knime.knip.core.awt.AWTImageTools;
 import org.knime.knip.core.awt.SegmentColorTable;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.ui.event.EventListener;
@@ -23,7 +24,7 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 /**
  * Creates an awt image from a plane selection, labeling and labeling renderer. Propagates {@link AWTImageChgEvent}.
- * 
+ *
  * @author hornm, dietzc University of Konstanz
  */
 public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTImageProvider<LabelingType<L>> {
@@ -106,7 +107,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
         final ScreenImage ret =
                 m_renderer.render(m_src, m_sel.getPlaneDimIndex1(), m_sel.getPlaneDimIndex2(), m_sel.getPlanePos());
 
-        return loci.formats.gui.AWTImageTools.makeBuffered(ret.image());
+        return AWTImageTools.makeBuffered(ret.image());
     }
 
     @EventListener

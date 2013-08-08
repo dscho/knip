@@ -51,14 +51,19 @@
 package org.knime.knip.core.awt;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.PixelInterleavedSampleModel;
@@ -89,9 +94,9 @@ import net.imglib2.view.Views;
 import org.knime.knip.core.util.MiscViews;
 
 /**
- * 
+ *
  * Methods to convert data (e.g. an imglib image or a histogram) to a java.awt.BufferedImage
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public final class AWTImageTools {
@@ -156,7 +161,7 @@ public final class AWTImageTools {
 
     /**
      * Draws the histogram of the {@link ImagePlane} onto a {@link BufferedImage}.
-     * 
+     *
      * @param ip
      * @param width the width of the image containing the histogram
      * @param height the height of the image containing the histogram
@@ -173,7 +178,7 @@ public final class AWTImageTools {
 
     /**
      * Draws the histogram of the {@link ImagePlane} onto a {@link BufferedImage}.
-     * 
+     *
      * @param ip
      * @param width the width of the image containing the histogram
      * @param height the height of the image containing the histogram
@@ -238,7 +243,7 @@ public final class AWTImageTools {
 
     /**
      * Adds a subtitle to the given image.
-     * 
+     *
      * @param source
      * @param txt
      * @return
@@ -258,7 +263,7 @@ public final class AWTImageTools {
 
     /**
      * Shows the first image plane in the dimension 0,1 in a JFrame.
-     * 
+     *
      * @param ip the image plane
      * @param title a title for the frame
      */
@@ -268,7 +273,7 @@ public final class AWTImageTools {
 
     /**
      * Shows first image plane in the dimension 0,1, scaled with the specified factor in a JFrame.
-     * 
+     *
      * @param ip the image plane
      * @param factor the scaling factor
      */
@@ -278,7 +283,7 @@ public final class AWTImageTools {
 
     /**
      * Shows the selected ImagePlane in a JFrame.
-     * 
+     *
      * @param img the image plane
      * @param factor the scaling factor
      */
@@ -311,7 +316,7 @@ public final class AWTImageTools {
 
     /**
      * Shows an AWT-image in a JFrame.
-     * 
+     *
      * @param img the image to show.
      */
 
@@ -376,7 +381,7 @@ public final class AWTImageTools {
             throw new IllegalArgumentException("Images with more than 3 dimensions are not supported!");
         }
 
-        return loci.formats.gui.AWTImageTools
+        return AWTImageTools
                 .makeBuffered(renderer
                         .render(Views.interval(RealViews.constantAffine(Views.interpolate(Views.extend(img,
                                                                                                        new OutOfBoundsBorderFactory<T, RandomAccessibleInterval<T>>()),
@@ -385,4 +390,81 @@ public final class AWTImageTools {
 
     }
 
+    //    code inside the block is from loci.formats.gui.AWTImageTools
+    //    code is copied to avoid a dependency on the bioformats jars
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** ImageObserver for working with AWT images. */
+    protected static final Component OBS = new Container();
+
+    //    code copied from loci.formats.gui.AWTImageTools
+    /**
+     * Creates a buffered image from the given AWT image object. If the AWT image is already a buffered image, no new
+     * object is created.
+     */
+    public static BufferedImage makeBuffered(final Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage)image;
+        }
+
+        // TODO: better way to handle color model (don't just assume RGB)
+        loadImage(image);
+        BufferedImage img = new BufferedImage(image.getWidth(OBS), image.getHeight(OBS), BufferedImage.TYPE_INT_RGB);
+        Graphics g = img.getGraphics();
+        g.drawImage(image, 0, 0, OBS);
+        g.dispose();
+        return img;
+    }
+
+    //    code copied from loci.formats.gui.AWTImageTools
+    /**
+     * Creates a buffered image possessing the given color model, from the specified AWT image object. If the AWT image
+     * is already a buffered image with the given color model, no new object is created.
+     */
+    public static BufferedImage makeBuffered(final Image image, final ColorModel cm) {
+        if (cm == null) {
+            return makeBuffered(image);
+        }
+
+        if (image instanceof BufferedImage) {
+            BufferedImage bi = (BufferedImage)image;
+            if (cm.equals(bi.getColorModel())) {
+                return bi;
+            }
+        }
+        loadImage(image);
+        int w = image.getWidth(OBS), h = image.getHeight(OBS);
+        boolean alphaPremultiplied = cm.isAlphaPremultiplied();
+        WritableRaster raster = cm.createCompatibleWritableRaster(w, h);
+        BufferedImage result = new BufferedImage(cm, raster, alphaPremultiplied, null);
+        Graphics2D g = result.createGraphics();
+        g.drawImage(image, 0, 0, OBS);
+        g.dispose();
+        return result;
+    }
+
+    //    code copied from loci.formats.gui.AWTImageTools
+    /** Ensures the given AWT image is fully loaded. */
+    public static boolean loadImage(final Image image) {
+        if (image instanceof BufferedImage) {
+            return true;
+        }
+        MediaTracker tracker = new MediaTracker(OBS);
+        tracker.addImage(image, 0);
+        try {
+            tracker.waitForID(0);
+        } catch (InterruptedException exc) {
+            return false;
+        }
+        if (MediaTracker.COMPLETE != tracker.statusID(0, false)) {
+            return false;
+        }
+        return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 }
