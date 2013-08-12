@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
@@ -18,11 +17,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mahout-collections-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mines-jtk-20100113.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-20111128.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/scijava-common-1.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/sezpoz-1.9-imagej.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/eventbus-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-api-1.6.4.jar" sourcepath="C:/Users/zinsmaie/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-log4j12-1.6.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
