@@ -10,7 +10,8 @@ import net.imglib2.Interval;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
@@ -24,9 +25,9 @@ import org.knime.knip.core.ui.imgviewer.events.PlaneSelectionEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
@@ -39,7 +40,7 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
 
     private JLabel m_imageInfoLabel;
 
-    private CalibratedSpace m_imgAxes;
+    private TypedSpace<? extends TypedAxis> m_imgAxes;
 
     private long[] m_pos;
 
@@ -84,7 +85,7 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
      * @param coords
      * @return
      */
-    protected abstract String updateMouseLabel(StringBuffer buffer, Interval img, CalibratedSpace axes,
+    protected abstract String updateMouseLabel(StringBuffer buffer, Interval img, TypedSpace<? extends TypedAxis> axes,
                                                RandomAccess<T> rndAccess, long[] coords);
 
     /**
@@ -122,7 +123,7 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
         m_dims = new long[e.getRandomAccessibleInterval().numDimensions()];
 
         m_randomAccessible.dimensions(m_dims);
-        m_imgAxes = e.getCalibratedSpace();
+        m_imgAxes = e.getTypedSpace();
 
         final T val = m_iterable.firstElement().createVariable();
         m_rndAccess = Views.extendValue(m_randomAccessible, val).randomAccess();
@@ -187,7 +188,7 @@ public abstract class ViewInfoPanel<T extends Type<T>> extends ViewerComponent {
     /**
      * sets the mouse and image info labels. This method is intended to be used if a subclass reacts to additional
      * events ... that should change the labels.
-     * 
+     *
      * @param mouseInfoText
      * @param imageInfoText
      */

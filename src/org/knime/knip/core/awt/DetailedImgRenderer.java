@@ -57,16 +57,17 @@ import java.awt.Graphics;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ARGBScreenImage;
 import net.imglib2.display.ScreenImage;
-import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.Metadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.Type;
 
 import org.knime.knip.core.data.img.GeneralMetadataImpl;
 
 /**
- * 
+ *
  * @author dietzc, hornm, schonenbergerf University of Konstanz
  * @param <T>
  */
@@ -81,7 +82,7 @@ public class DetailedImgRenderer<T extends Type<T>> implements ImageRenderer<T> 
 
     private Named m_imgName;
 
-    private CalibratedSpace m_axes;
+    private TypedSpace<? extends TypedAxis> m_axes;
 
     private int m_height;
 
@@ -121,7 +122,7 @@ public class DetailedImgRenderer<T extends Type<T>> implements ImageRenderer<T> 
 
         for (int i = 0; i < planePos.length; i++) {
             if (m_axes != null) {
-                sb.append("Size " + m_axes.axis(i).getLabel() + "=" + orgDims[i] + "\n");
+                sb.append("Size " + m_axes.axis(i).type().getLabel() + "=" + orgDims[i] + "\n");
             } else {
                 sb.append("Size " + i + "=" + orgDims[i] + "\n");
             }

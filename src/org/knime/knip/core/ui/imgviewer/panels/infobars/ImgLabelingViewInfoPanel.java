@@ -7,7 +7,8 @@ import java.io.ObjectOutput;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
@@ -16,9 +17,9 @@ import org.knime.knip.core.ui.imgviewer.events.ImgAndLabelingChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author dietzc
  */
 public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparable<L>> extends
@@ -37,7 +38,7 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
     }
 
     @Override
-    protected String updateMouseLabel(final StringBuffer buffer, final Interval interval, final CalibratedSpace axes,
+    protected String updateMouseLabel(final StringBuffer buffer, final Interval interval, final TypedSpace<? extends TypedAxis> axes,
                                       final RandomAccess<LabelingType<L>> rndAccess, final long[] coords) {
 
         if ((interval == null) || (m_imgRA == null)) {
@@ -49,7 +50,7 @@ public class ImgLabelingViewInfoPanel<T extends RealType<T>, L extends Comparabl
         for (int i = 0; i < coords.length; i++) {
             buffer.append(" ");
             if (i < interval.numDimensions()) {
-                buffer.append(axes != null ? axes.axis(i).getLabel() : i);
+                buffer.append(axes != null ? axes.axis(i).type().getLabel() : i);
             }
             if (coords[i] == -1) {
                 buffer.append("[ Not set ];");

@@ -55,13 +55,15 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
 import org.knime.knip.core.ui.event.KNIPEvent;
 
 /**
- * 
+ *
  * @author hornm, dietzc, zinsmaierm University of Konstanz
  */
 public class IntervalWithMetadataChgEvent<T extends Type<T>> implements KNIPEvent {
@@ -70,12 +72,12 @@ public class IntervalWithMetadataChgEvent<T extends Type<T>> implements KNIPEven
 
     private final Named m_name;
 
-    private final CalibratedSpace m_cspace;
+    private final TypedSpace<? extends TypedAxis> m_cspace;
 
     private final Sourced m_source;
 
     public IntervalWithMetadataChgEvent(final RandomAccessibleInterval<T> interval, final Named name,
-                                        final Sourced source, final CalibratedSpace cspace) {
+                                        final Sourced source, final TypedSpace<? extends TypedAxis> cspace) {
         m_interval = interval;
         m_name = name;
         m_source = source;
@@ -124,8 +126,12 @@ public class IntervalWithMetadataChgEvent<T extends Type<T>> implements KNIPEven
     /**
      * @return the axes
      */
-    public CalibratedSpace getCalibratedSpace() {
+    public TypedSpace<? extends TypedAxis> getTypedSpace() {
         return m_cspace;
+    }
+
+    public boolean isCalibratedSpaceAvailable() {
+        return m_cspace instanceof CalibratedSpace;
     }
 
 }

@@ -61,7 +61,9 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import net.imglib2.IterableInterval;
-import net.imglib2.img.ImgPlus;
+import net.imglib2.meta.ImgPlus;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.Type;
 
 import org.knime.knip.core.ui.event.EventListener;
@@ -71,7 +73,7 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 
 /**
  * Panel containing image properties.
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<T>> extends ViewerComponent {
@@ -110,14 +112,15 @@ public class ImagePropertiesPanel<T extends Type<T>, I extends IterableInterval<
             properties[1][1] = e.getRandomAccessibleInterval().getClass().getCanonicalName();
         }
 
-        if (e.getRandomAccessibleInterval() instanceof ImgPlus) {
+        if (e.getRandomAccessibleInterval() instanceof TypedSpace) {
             for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
-                properties[2 + i][0] = "Size " + ((ImgPlus<T>)e.getRandomAccessibleInterval()).axis(i).getLabel();
+                properties[2 + i][0] =
+                        "Size " + ((TypedSpace<? extends TypedAxis>)e.getRandomAccessibleInterval()).axis(i).type().getLabel();
                 properties[2 + i][1] = "" + e.getRandomAccessibleInterval().dimension(i);
             }
         } else {
             for (int i = 0; i < e.getRandomAccessibleInterval().numDimensions(); i++) {
-                properties[2 + i][0] = "Size " + e.getCalibratedSpace().axis(i).getLabel();
+                properties[2 + i][0] = "Size " + e.getTypedSpace().axis(i).type().getLabel();
                 properties[2 + i][1] = "" + e.getRandomAccessibleInterval().dimension(i);
             }
         }

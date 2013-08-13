@@ -61,12 +61,16 @@ import javax.swing.JPanel;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
+import net.imglib2.meta.CalibratedAxis;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.DefaultCalibratedAxis;
+import net.imglib2.meta.DefaultCalibratedSpace;
 import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
-import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
@@ -99,10 +103,10 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
 
     private JPanel m_centerPanels;
 
-    /* keep the option panel-references to load and save configurations */
+    /** keep the option panel-references to load and save configurations */
     protected List<ViewerComponent> m_viewerComponents;
 
-    /* EventService of the viewer, unique for each viewer. */
+    /** EventService of the viewer, unique for each viewer. */
     protected EventService m_eventService;
 
     public ImgViewer() {
@@ -205,18 +209,20 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
      * @param name {@link Named} of the {@link Img}
      * @param imageMetaData {@link ImageMetadata} might be null if no metadata exists
      */
-    public void setImg(final I img, final CalibratedSpace axes, final Named name, final Sourced source,
+    public void setImg(final I img, final TypedSpace<? extends TypedAxis> axes, final Named name, final Sourced source,
                        final ImageMetadata imageMetaData) {
 
         // make sure that at least two dimensions exist
-        CalibratedSpace axes2d;
+        TypedSpace<? extends TypedAxis> axes2d;
         RandomAccessibleInterval<T> img2d;
         if (img.numDimensions() > 1) {
             axes2d = axes;
             img2d = img;
         } else {
             img2d = Views.addDimension(img, 0, 0);
-            axes2d = new CopyCalibratedSpace<CalibratedSpace>(img2d).compute(axes, new CalibratedSpaceImpl(2));
+            axes2d =
+                    new CopyCalibratedSpace<CalibratedSpace<CalibratedAxis>>(img2d).compute(new DefaultCalibratedSpace(
+                            new DefaultCalibratedAxis(axes.axis(0).type())), new DefaultCalibratedSpace(2));
         }
 
         if (imageMetaData != null) {
@@ -229,6 +235,5 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
         m_eventService.publish(new ImgRedrawEvent());
 
     }
-
 
 }

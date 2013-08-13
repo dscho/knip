@@ -50,15 +50,15 @@
  */
 package org.knime.knip.core.io.externalization.externalizers;
 
+import net.imglib2.meta.DefaultNamed;
 import net.imglib2.meta.Named;
-import net.imglib2.ops.util.metadata.NamedImpl;
 
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;
 
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class NamedExt0 implements Externalizer<Named> {
@@ -94,7 +94,7 @@ public class NamedExt0 implements Externalizer<Named> {
     public Named read(final BufferedDataInputStream in) throws Exception {
         final char[] name = new char[in.readInt()];
         in.read(name);
-        return new NamedImpl(new String(name));
+        return new DefaultNamed(new String(name));
     }
 
     /**

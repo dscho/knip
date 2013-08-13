@@ -53,9 +53,10 @@ import java.util.List;
 import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
-import net.imglib2.img.ImgPlus;
 import net.imglib2.meta.Axes;
 import net.imglib2.meta.AxisType;
+import net.imglib2.meta.DefaultCalibratedAxis;
+import net.imglib2.meta.ImgPlus;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
@@ -64,10 +65,10 @@ import org.knime.knip.core.types.NativeTypes;
 
 /**
  * This class generates random Images.
- * 
+ *
  * @author Clemens Müthing (clemens.muething@uni-konstanz.de)
  * @author DietzC
- * 
+ *
  * @param <T> the type of the image to create
  */
 public class ImgGenerator {
@@ -112,7 +113,7 @@ public class ImgGenerator {
 
     /**
      * Set up a new generator with a lot of values.
-     * 
+     *
      * @param randomSize if the size of ALL dimensions should be randomized
      * @param randomFill if the image should be filled with random values, inside the bounds of the image type
      * @param randomType if a random type should be used
@@ -155,7 +156,7 @@ public class ImgGenerator {
 
     /**
      * A convenience constructor to set up an image with the following values.<br>
-     * 
+     *
      * randomSize = false<br>
      * randomFill = false<br>
      * randomType = true<br>
@@ -168,9 +169,9 @@ public class ImgGenerator {
      * sizeZ = 0,0<br>
      * sizeC = 0,0<br>
      * sizeT = 0,0<br>
-     * 
+     *
      * {@inheritDoc}
-     * 
+     *
      * @see Object#ImageGeneratorNodeGenerator()
      */
     public ImgGenerator() {
@@ -179,7 +180,7 @@ public class ImgGenerator {
 
     /**
      * Create a new imgage with using the current settings.
-     * 
+     *
      * @return the new image
      */
     @SuppressWarnings("unchecked")
@@ -268,7 +269,7 @@ public class ImgGenerator {
 
         int d = 0;
         for (final AxisType a : m_axisList) {
-            imgPlus.setAxis(a, d++);
+            imgPlus.setAxis(new DefaultCalibratedAxis(a), d++);
         }
 
         return imgPlus;
@@ -276,7 +277,7 @@ public class ImgGenerator {
 
     /**
      * Add this dimensions to the list of axes and dims.
-     * 
+     *
      * @param minVal minimum size of the dimension allways smaller or equal val
      * @param val the value, 0 means ignore
      * @param label the label to use for the axis
@@ -304,7 +305,7 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeX for this instance.
-     * 
+     *
      * @param minSizeX the required minimum size for X
      * @param sizeX The sizeX.
      */
@@ -315,7 +316,7 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeY for this instance.
-     * 
+     *
      * @param minSizeY the required minimum size for Y
      * @param sizeY The sizeY.
      */
@@ -326,7 +327,7 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeZ for this instance.
-     * 
+     *
      * @param minSizeZ the required minimum size for Z
      * @param sizeZ The sizeZ.
      */
@@ -337,7 +338,7 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeChannel for this instance.
-     * 
+     *
      * @param minSizeChannel the required minimum size for Channel
      * @param sizeChannel The sizeChannel.
      */
@@ -348,7 +349,7 @@ public class ImgGenerator {
 
     /**
      * Sets the sizeT for this instance.
-     * 
+     *
      * @param minSizeT the required minimum size for T
      * @param sizeT The sizeT.
      */
@@ -359,7 +360,7 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomSize.
-     * 
+     *
      * @param randomSize The randomSize.
      */
     public final void setRandomSize(final boolean randomSize) {
@@ -368,7 +369,7 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomFill.
-     * 
+     *
      * @param randomFill The randomFill.
      */
     public final void setRandomFill(final boolean randomFill) {
@@ -377,9 +378,9 @@ public class ImgGenerator {
 
     /**
      * Sets the type for this instance.
-     * 
+     *
      * A value of null means choose a random type, regardless of the randomType setting.
-     * 
+     *
      * @param type The type.
      */
     public final void setType(final NativeTypes type) {
@@ -388,9 +389,9 @@ public class ImgGenerator {
 
     /**
      * Sets the factory for this instance.
-     * 
+     *
      * A value of null means choose a random factory, regardless of the randomFactory setting.
-     * 
+     *
      * @param factory The factory.
      */
     public final void setFactory(final ImgFactoryTypes factory) {
@@ -399,7 +400,7 @@ public class ImgGenerator {
 
     /**
      * Sets the value for this instance.
-     * 
+     *
      * @param value The value.
      */
     public final void setValue(final double value) {
@@ -408,7 +409,7 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomType.
-     * 
+     *
      * @param randomType The randomType.
      */
     public final void setRandomType(final boolean randomType) {
@@ -417,7 +418,7 @@ public class ImgGenerator {
 
     /**
      * Sets whether or not this instance is randomFactory.
-     * 
+     *
      * @param randomFactory The randomFactory.
      */
     public final void setRandomFactory(final boolean randomFactory) {

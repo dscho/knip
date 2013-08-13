@@ -82,8 +82,9 @@ import javax.swing.JScrollBar;
 import javax.swing.KeyStroke;
 
 import net.imglib2.Interval;
-import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.Type;
 
 import org.knime.knip.core.ui.event.EventListener;
@@ -98,10 +99,10 @@ import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
  * Allows the user to select a plane in a multdimensional space.
- * 
+ *
  * Publishes {@link PlaneSelectionEvent}
- * 
- * 
+ *
+ *
  * @author dietzc, hornm
  * @param <T> image type
  */
@@ -134,7 +135,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     /* recognizes which dimension to alter next */
     private int m_alterDim;
 
-    private AxisType[] m_axesLabels;
+    private TypedAxis[] m_axes;
 
     private EventService m_eventService;
 
@@ -146,7 +147,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
 
     private JCheckBox m_calibrationCheckbox;
 
-    private CalibratedSpace m_calibratedSpace;
+    private TypedSpace<? extends TypedAxis> m_calibratedSpace;
 
     public PlaneSelectionPanel() {
         super("Plane selection", false);
@@ -167,7 +168,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
 
     @EventListener
     public void onClose(final ViewClosedEvent e) {
-        m_axesLabels = null;
+        m_axes = null;
         m_dims = null;
         m_oldCoordinates = null;
         m_steps = null;
@@ -283,7 +284,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     }
 
     /**
-     * 
+     *
      * @param e
      * @param id
      */
@@ -357,6 +358,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private void fireCalibrationEvent() {
         // calculate calibration values
         final double[] scaleFactors = new double[m_dims.length];
@@ -365,9 +367,9 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
             scaleFactors[i] = 1.0d;
         }
 
-        if (m_useCalibration && (m_calibratedSpace != null)) {
+        if (m_useCalibration && (m_calibratedSpace != null) && m_calibratedSpace instanceof CalibratedSpace) {
             final double[] tmpFactors = new double[scaleFactors.length];
-            m_calibratedSpace.calibration(tmpFactors);
+            ((CalibratedSpace)m_calibratedSpace).calibration(tmpFactors);
 
             double min = Double.MAX_VALUE;
             boolean foundAFactor = false;
@@ -402,7 +404,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     }
 
     /**
-     * 
+     *
      * @return the coordinates of the currently selected image (a newly generated array)
      */
     protected long[] getImageCoordinate() {
@@ -423,31 +425,34 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
     public void onImgUpdated(final IntervalWithMetadataChgEvent<T> e) {
 
         if (m_dims == null) {
-            m_dims = new long[e.getCalibratedSpace().numDimensions()];
+            m_dims = new long[e.getTypedSpace().numDimensions()];
         }
 
-        if ((m_axesLabels == null) || (m_axesLabels.length != e.getCalibratedSpace().numDimensions())) {
-            m_axesLabels = new AxisType[e.getCalibratedSpace().numDimensions()];
+        if ((m_axes == null) || (m_axes.length != e.getTypedSpace().numDimensions())) {
+            m_axes = new TypedAxis[e.getTypedSpace().numDimensions()];
         }
 
         final long[] oldDims = m_dims.clone();
-        final AxisType[] oldAxes = m_axesLabels.clone();
+        final TypedAxis[] oldAxes = m_axes.clone();
 
         // local dims //axes labels
-        e.getCalibratedSpace().axes(m_axesLabels);
+        for(int d = 0; d <  e.getTypedSpace().numDimensions(); d++){
+            m_axes[d] =   e.getTypedSpace().axis(d);
+        }
+
         m_dims = new long[e.getRandomAccessibleInterval().numDimensions()];
         e.getRandomAccessibleInterval().dimensions(m_dims);
 
-        if (!Arrays.equals(m_axesLabels, oldAxes)) {
+        if (!Arrays.equals(m_axes, oldAxes)) {
             // reset m_dim1, m_dim2 before calibration
             m_dim1 = DEFAULT_X;
             m_dim2 = DEFAULT_Y;
         }
 
-        m_calibratedSpace = e.getCalibratedSpace();
+        m_calibratedSpace = e.getTypedSpace();
         fireCalibrationEvent(); // update to new calibration values
 
-        if (!Arrays.equals(oldDims, m_dims) || !Arrays.equals(m_axesLabels, oldAxes)) {
+        if (!Arrays.equals(oldDims, m_dims) || !Arrays.equals(m_axes, oldAxes)) {
             draw();
 
             for (int i = 0; i < m_dims.length; i++) {
@@ -474,7 +479,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
 
     private void draw() {
 
-        if ((m_dims != null) && (m_axesLabels != null)) {
+        if ((m_dims != null) && (m_axes != null)) {
 
             m_steps = new int[m_dims.length];
 
@@ -530,7 +535,7 @@ public class PlaneSelectionPanel<T extends Type<T>, I extends Interval> extends 
                 m_scrollBars[i].setVisibleAmount(1);
                 m_scrollBars[i].addAdjustmentListener(new ChangeListenerWithId(i));
 
-                sliderPanel.add(m_axesLabels != null ? (new JLabel(m_axesLabels[i].getLabel())) : (new JLabel("" + i)));
+                sliderPanel.add(m_axes != null ? (new JLabel(m_axes[i].type().getLabel())) : (new JLabel("" + i)));
 
                 sliderPanel.add(Box.createHorizontalStrut(3));
                 sliderPanel.add(m_scrollBars[i]);

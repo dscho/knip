@@ -6,7 +6,8 @@ import java.io.ObjectOutput;
 
 import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
-import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.Type;
 
 /**
@@ -21,7 +22,8 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
 
     /** Updates cursor probe label. */
     @Override
-    protected String updateMouseLabel(final StringBuffer buffer, final Interval interval, final CalibratedSpace axes,
+    protected String updateMouseLabel(final StringBuffer buffer, final Interval interval,
+                                      final TypedSpace<? extends TypedAxis> typedSpace,
                                       final RandomAccess<T> rndAccess, final long[] coords) {
 
         if (interval == null) {
@@ -36,7 +38,7 @@ public class ImgViewInfoPanel<T extends Type<T>> extends ViewInfoPanel<T> {
         for (int i = 0; i < coords.length; i++) {
             buffer.append(" ");
             if (i < interval.numDimensions()) {
-                buffer.append(axes != null ? axes.axis(i).getLabel() : i);
+                buffer.append(typedSpace != null ? typedSpace.axis(i).type().getLabel() : i);
             }
             if (coords[i] == -1) {
                 buffer.append("[ Not set ];");

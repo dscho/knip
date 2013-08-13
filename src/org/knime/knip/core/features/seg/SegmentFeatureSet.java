@@ -56,8 +56,9 @@ import java.util.BitSet;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.img.Img;
-import net.imglib2.meta.AxisType;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.ops.operation.Operations;
 import net.imglib2.ops.operation.SubsetOperations;
 import net.imglib2.ops.operation.iterableinterval.unary.CalculateDiameter;
@@ -74,7 +75,7 @@ import org.knime.knip.core.features.SharesObjects;
 import org.knime.knip.core.util.ImgUtils;
 
 /**
- * 
+ *
  * @author hornm, dietzc, University of Konstanz
  */
 public class SegmentFeatureSet implements FeatureSet, SharesObjects {
@@ -107,14 +108,14 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
 
     private ObjectCalcAndCache m_ocac;
 
-    private CalibratedSpace m_cs;
+    private TypedSpace<TypedAxis> m_cs;
 
-    private final AxisType[] m_defaultAxis;
+    private final TypedAxis[] m_defaultAxis;
 
     /**
      * @param target
      */
-    public SegmentFeatureSet(final AxisType[] defaultAxes) {
+    public SegmentFeatureSet(final TypedAxis[] defaultAxes) {
         super();
         m_calculatePerimeter = new CalculatePerimeter();
         m_outlineOp = new ExtractOutlineImg(false);
@@ -124,12 +125,12 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         m_features = getFeatures(defaultAxes);
     }
 
-    public static String[] getFeatures(final AxisType[] defaultAxes) {
+    public static String[] getFeatures(final TypedAxis[] defaultAxes) {
 
         final ArrayList<String> features = new ArrayList<String>();
 
-        for (final AxisType type : defaultAxes) {
-            features.add("Centroid " + type.getLabel());
+        for (final TypedAxis type : defaultAxes) {
+            features.add("Centroid " + type.type().getLabel());
         }
 
         features.add("Num Pix");
@@ -139,8 +140,8 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         features.add("Extend");
         features.add("Diameter");
 
-        for (final AxisType type : defaultAxes) {
-            features.add("Dimension " + type.getLabel());
+        for (final TypedAxis type : defaultAxes) {
+            features.add("Dimension " + type.type().getLabel());
         }
 
         return features.toArray(new String[features.size()]);
@@ -228,7 +229,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
     public double value(int id) {
 
         if (id < m_defaultAxis.length) {
-            final int idx = m_cs.getAxisIndex(m_defaultAxis[id]);
+            final int idx = m_cs.dimensionIndex(m_defaultAxis[id].type());
             if (idx != -1) {
                 m_centroid = m_ocac.centroid(m_interval);
                 return m_centroid[idx];
@@ -238,7 +239,7 @@ public class SegmentFeatureSet implements FeatureSet, SharesObjects {
         }
 
         if (id > (m_defaultAxis.length + 5)) {
-            final int idx = m_cs.getAxisIndex(m_defaultAxis[id - m_defaultAxis.length - 6]);
+            final int idx = m_cs.dimensionIndex(m_defaultAxis[id - m_defaultAxis.length - 6].type());
             if (idx != -1) {
                 return m_interval.dimension(idx);
             } else {

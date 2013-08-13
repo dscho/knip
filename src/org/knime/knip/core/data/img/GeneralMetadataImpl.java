@@ -1,49 +1,50 @@
 package org.knime.knip.core.data.img;
 
 import net.imglib2.meta.AxisType;
+import net.imglib2.meta.CalibratedAxis;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.DefaultCalibratedSpace;
+import net.imglib2.meta.DefaultNamed;
+import net.imglib2.meta.DefaultSourced;
 import net.imglib2.meta.Metadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
 import net.imglib2.ops.operation.metadata.unary.CopyNamed;
 import net.imglib2.ops.operation.metadata.unary.CopySourced;
-import net.imglib2.ops.util.metadata.CalibratedSpaceImpl;
-import net.imglib2.ops.util.metadata.NamedImpl;
-import net.imglib2.ops.util.metadata.SourcedImpl;
 
 /**
  * Implementation of GeneralMetadata
- * 
+ *
  * @author dietzc
  */
 public class GeneralMetadataImpl implements GeneralMetadata {
 
-    private final CalibratedSpace m_cs;
+    private final CalibratedSpace<CalibratedAxis> m_cs;
 
     private final Named m_named;
 
     private final Sourced m_sourced;
 
     public GeneralMetadataImpl(final int numDimensions) {
-        this.m_cs = new CalibratedSpaceImpl(numDimensions);
-        this.m_named = new NamedImpl();
-        this.m_sourced = new SourcedImpl();
+        this.m_cs = new DefaultCalibratedSpace(numDimensions);
+        this.m_named = new DefaultNamed();
+        this.m_sourced = new DefaultSourced();
     }
 
-    public GeneralMetadataImpl(final CalibratedSpace cs, final Named named, final Sourced sourced) {
+    public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Named named, final Sourced sourced) {
         this(cs.numDimensions());
 
         new CopyNamed<Named>().compute(named, m_named);
         new CopySourced<Sourced>().compute(sourced, m_sourced);
-        new CopyCalibratedSpace<CalibratedSpace>().compute(cs, m_cs);
+        new CopyCalibratedSpace<CalibratedSpace<CalibratedAxis>>().compute(cs, m_cs);
     }
 
-    public GeneralMetadataImpl(final CalibratedSpace cs, final Metadata metadata) {
+    public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Metadata metadata) {
         this(cs, metadata, metadata);
     }
 
-    public GeneralMetadataImpl(final CalibratedSpace space, final GeneralMetadata metadata) {
+    public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> space, final GeneralMetadata metadata) {
         this(space, metadata, metadata);
     }
 
@@ -56,22 +57,22 @@ public class GeneralMetadataImpl implements GeneralMetadata {
     }
 
     @Override
-    public int getAxisIndex(final AxisType axis) {
-        return m_cs.getAxisIndex(axis);
+    public int dimensionIndex(final AxisType type) {
+        return m_cs.dimensionIndex(type);
     }
 
     @Override
-    public AxisType axis(final int d) {
+    public CalibratedAxis axis(final int d) {
         return m_cs.axis(d);
     }
 
     @Override
-    public void axes(final AxisType[] target) {
+    public void axes(final CalibratedAxis[] target) {
         m_cs.axes(target);
     }
 
     @Override
-    public void setAxis(final AxisType axis, final int d) {
+    public void setAxis(final CalibratedAxis axis, final int d) {
         m_cs.setAxis(axis, d);
     }
 
@@ -128,6 +129,22 @@ public class GeneralMetadataImpl implements GeneralMetadata {
     @Override
     public int numDimensions() {
         return m_cs.numDimensions();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String unit(final int d) {
+        return m_cs.unit(d);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUnit(final String unit, final int d) {
+        m_cs.setUnit(unit, d);
     }
 
 }

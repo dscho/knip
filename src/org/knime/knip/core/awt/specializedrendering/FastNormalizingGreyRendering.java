@@ -9,11 +9,11 @@ import net.imglib2.display.projectors.specializedprojectors.ArrayImgXYByteProjec
 import net.imglib2.display.projectors.specializedprojectors.ArrayImgXYShortProjector;
 import net.imglib2.display.projectors.specializedprojectors.PlanarImgXYByteProjector;
 import net.imglib2.display.projectors.specializedprojectors.PlanarImgXYShortProjector;
-import net.imglib2.img.ImgPlus;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.basictypeaccess.array.ByteArray;
 import net.imglib2.img.basictypeaccess.array.ShortArray;
 import net.imglib2.img.planar.PlanarImg;
+import net.imglib2.meta.ImgPlus;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.ShortType;

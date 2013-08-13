@@ -50,15 +50,15 @@
  */
 package org.knime.knip.core.io.externalization.externalizers;
 
+import net.imglib2.meta.DefaultSourced;
 import net.imglib2.meta.Sourced;
-import net.imglib2.ops.util.metadata.SourcedImpl;
 
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;
 
 /**
- * 
+ *
  * @author hornm, University of Konstanz
  */
 public class SourcedExt0 implements Externalizer<Sourced> {
@@ -94,7 +94,7 @@ public class SourcedExt0 implements Externalizer<Sourced> {
     public Sourced read(final BufferedDataInputStream in) throws Exception {
         final char[] source = new char[in.readInt()];
         in.read(source);
-        return new SourcedImpl(new String(source));
+        return new DefaultSourced(new String(source));
 
     }
 

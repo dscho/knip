@@ -7,12 +7,13 @@ import java.io.ObjectOutput;
 import net.imglib2.Interval;
 import net.imglib2.RandomAccess;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPanel<LabelingType<L>> {
@@ -24,7 +25,8 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPane
 
     /** Updates cursor probe label. */
     @Override
-    protected String updateMouseLabel(final StringBuffer buffer, final Interval interval, final CalibratedSpace axes,
+    protected String updateMouseLabel(final StringBuffer buffer, final Interval interval,
+                                      final TypedSpace<? extends TypedAxis> axes,
                                       final RandomAccess<LabelingType<L>> rndAccess, final long[] coords) {
 
         if (interval == null) {
@@ -39,7 +41,7 @@ public class LabelingViewInfoPanel<L extends Comparable<L>> extends ViewInfoPane
         for (int i = 0; i < coords.length; i++) {
             buffer.append(" ");
             if (i < interval.numDimensions()) {
-                buffer.append(axes != null ? axes.axis(i).getLabel() : i);
+                buffer.append(axes != null ? axes.axis(i).type().getLabel() : i);
             }
             if (coords[i] == -1) {
                 buffer.append("[ Not set ];");
