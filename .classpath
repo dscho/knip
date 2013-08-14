@@ -4,23 +4,18 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-math3-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-2.0.0-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-meta-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-realtransform-2.0.0-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-realtransform-2.0.0-SNAPSHOT.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/jama-1.0.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/junit-3.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/log4j-1.2.16.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mahout-collections-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mines-jtk-20100113.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/mpicbg-20111128.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-api-1.6.4.jar" sourcepath="C:/Users/zinsmaie/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/slf4j-log4j12-1.6.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/commons-logging-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-legacy-2.0.0-20130814.051510-1218.jar"/>
+		<classpathentry exported="true" kind="lib" path="lib/mvn/imglib2-algorithms-legacy-2.0.0-20130814.051510-1218.jar" sourcepath="lib/mvn-imglib2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120716.163319-98.jar" sourcepath="/scifio"/>
 	<referencedentry exported="true" kind="lib" path="lib/mvn/scifio-4.4-20120718.194319-99.jar" sourcepath="/scifio"/>
