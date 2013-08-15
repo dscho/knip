@@ -10,7 +10,6 @@ Bundle-ClassPath: knip-core.jar,
  lib/mvn/imglib2-2.0.0-SNAPSHOT.jar,
  lib/mvn/imglib2-algorithms-2.0.0-SNAPSHOT.jar,
  lib/mvn/imglib2-algorithms-gpl-2.0.0-SNAPSHOT.jar,
- lib/mvn/imglib2-algorithms-legacy-2.0.0-20130814.090939-1219.jar,
  lib/mvn/imglib2-meta-2.0.0-SNAPSHOT.jar,
  lib/mvn/imglib2-ops-2.0.0-SNAPSHOT.jar,
  lib/mvn/imglib2-realtransform-2.0.0-SNAPSHOT.jar,
@@ -20,7 +19,8 @@ Bundle-ClassPath: knip-core.jar,
  lib/mvn/mines-jtk-20100113.jar,
  lib/mvn/mpicbg-20111128.jar,
  lib/mvn/slf4j-api-1.6.4.jar,
- lib/mvn/slf4j-log4j12-1.6.4.jar
+ lib/mvn/slf4j-log4j12-1.6.4.jar,
+ lib/mvn/imglib2-algorithms-legacy-2.0.0-20130815.051456-1222.jar
 Require-Bundle: org.apache.log4j;bundle-version="1.2.15",
  org.eclipse.core.runtime;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy

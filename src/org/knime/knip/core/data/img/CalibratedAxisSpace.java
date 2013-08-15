@@ -1,7 +1,7 @@
 /*
  * ------------------------------------------------------------------------
  *
- *  Copyright (C) 2003 - 2011
+ *  Copyright (C) 2003 - 2013
  *  University of Konstanz, Germany and
  *  KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
@@ -40,79 +40,22 @@
  *  License, the License does not apply to Nodes, you are not required to
  *  license Nodes under the License, and you are granted a license to
  *  prepare and propagate Nodes, in each case even if such Nodes are
- *  propagated with or for interoperation with KNIME. The owner of a Node
+ *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * ------------------------------------------------------------------------
+ * ---------------------------------------------------------------------
  *
- * History
- *   Jun 28, 2012 (hornm): created
+ * Created on 15.08.2013 by zinsmaie
  */
-package org.knime.knip.core.io.externalization.externalizers;
+package org.knime.knip.core.data.img;
 
+import net.imglib2.meta.CalibratedAxis;
 import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.meta.Named;
-import net.imglib2.meta.Sourced;
-
-import org.knime.knip.core.data.img.CalibratedAxisSpace;
-import org.knime.knip.core.data.img.GeneralMetadata;
-import org.knime.knip.core.data.img.GeneralMetadataImpl;
-import org.knime.knip.core.io.externalization.BufferedDataInputStream;
-import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
-import org.knime.knip.core.io.externalization.Externalizer;
-import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
  *
- * @author dietzc, University of Konstanz
+ * @author zinsmaie
  */
-public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getId() {
-        return this.getClass().getSimpleName();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<GeneralMetadata> getType() {
-        return GeneralMetadata.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getPriority() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GeneralMetadata read(final BufferedDataInputStream in) throws Exception {
-        final CalibratedSpace cs = ExternalizerManager.<CalibratedSpace> read(in);
-        final Named name = ExternalizerManager.<Named> read(in);
-        final Sourced source = ExternalizerManager.<Sourced> read(in);
-
-        return new GeneralMetadataImpl(cs, name, source);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(final BufferedDataOutputStream out, final GeneralMetadata obj) throws Exception {
-        ExternalizerManager.write(out, obj, CalibratedAxisSpace.class);
-        ExternalizerManager.write(out, obj, Named.class);
-        ExternalizerManager.write(out, obj, Sourced.class);
-
-    }
-
+public interface CalibratedAxisSpace extends CalibratedSpace<CalibratedAxis> {
+    // Marker interface
 }
