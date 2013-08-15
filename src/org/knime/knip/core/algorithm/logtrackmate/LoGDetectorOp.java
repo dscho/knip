@@ -34,7 +34,7 @@ public class LoGDetectorOp<T extends RealType<T> & NativeType<T>> implements
 
     protected List<Spot> spots = new ArrayList<Spot>();
 
-    private int dimension;
+    private int numDimensions;
 
     public LoGDetectorOp(final double radius, final double threshold, final boolean doSubPixelLocalization) {
         this.radius = radius;
@@ -45,16 +45,16 @@ public class LoGDetectorOp<T extends RealType<T> & NativeType<T>> implements
     @Override
     public ImgPlus<BitType> compute(final ImgPlus<T> input, final ImgPlus<BitType> output) {
 
-        dimension = input.numDimensions();
+        numDimensions = input.numDimensions();
 
         Img<T> temp = input;
 
-        double sigma = radius / Math.sqrt(dimension);
+        double sigma = radius / Math.sqrt(numDimensions);
         // Turn it in pixel coordinates
         final double[] calibration = new double[input.numDimensions()];
         input.calibration(calibration);
 
-        double[] sigmas = new double[dimension];
+        double[] sigmas = new double[numDimensions];
         for (int i = 0; i < sigmas.length; i++) {
             sigmas[i] = sigma / calibration[i];
         }
@@ -81,7 +81,7 @@ public class LoGDetectorOp<T extends RealType<T> & NativeType<T>> implements
 
         PickImagePeaks<T> peakPicker = new PickImagePeaks<T>(temp);
         double[] suppressionRadiuses = new double[input.numDimensions()];
-        for (int i = 0; i < dimension; i++) {
+        for (int i = 0; i < numDimensions; i++) {
             suppressionRadiuses[i] = radius / calibration[i];
         }
         peakPicker.setSuppression(suppressionRadiuses); // in pixels
@@ -131,8 +131,8 @@ public class LoGDetectorOp<T extends RealType<T> & NativeType<T>> implements
         for (int j = 0; j < peaks.size(); j++) {
 
             SubPixelLocalization<T> peak = peaks.get(j);
-            double[] coords = new double[3];
-            for (int i = 0; i < dimension; i++) {
+            double[] coords = new double[numDimensions];
+            for (int i = 0; i < numDimensions; i++) {
                 coords[i] = peak.getDoublePosition(i) * calibration[i];
                 randomAccess.setPosition((long)coords[i], i);
             }
@@ -166,7 +166,7 @@ public class LoGDetectorOp<T extends RealType<T> & NativeType<T>> implements
      */
     private Img<FloatType> createLaplacianKernel() {
         final ImgFactory<FloatType> factory = new ArrayImgFactory<FloatType>();
-        int numDim = dimension;
+        int numDim = numDimensions;
         Img<FloatType> laplacianKernel = null;
         if (numDim == 3) {
             final float laplacianArray[][][] =
