@@ -11,11 +11,10 @@ import net.imglib2.img.ImgFactory;
 import net.imglib2.img.constant.ConstantCursor;
 import net.imglib2.labeling.LabelingFactory;
 import net.imglib2.labeling.LabelingType;
-import net.imglib2.meta.AxisType;
-import net.imglib2.meta.CalibratedAxis;
-import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.meta.DefaultCalibratedAxis;
-import net.imglib2.meta.DefaultCalibratedSpace;
+import net.imglib2.meta.DefaultTypedAxis;
+import net.imglib2.meta.DefaultTypedSpace;
+import net.imglib2.meta.TypedAxis;
+import net.imglib2.meta.TypedSpace;
 import net.imglib2.ops.operation.subset.views.ImgView;
 import net.imglib2.ops.operation.subset.views.LabelingView;
 import net.imglib2.sampler.special.ConstantRandomAccessible;
@@ -75,8 +74,8 @@ public class MiscViews {
      * @return Adjusted {@link RandomAccessibleInterval}
      */
     public static <T> RandomAccessibleInterval<T>
-            synchronizeDimensionality(RandomAccessibleInterval<T> src, final CalibratedSpace<CalibratedAxis> srcSpace,
-                                      final Interval target, final CalibratedSpace<CalibratedAxis> targetSpace) {
+            synchronizeDimensionality(RandomAccessibleInterval<T> src, final TypedSpace<? extends TypedAxis> srcSpace,
+                                      final Interval target, final TypedSpace<? extends TypedAxis> targetSpace) {
 
         // must hold, if not: most likely an implementation error
         assert ((srcSpace.numDimensions() == src.numDimensions()) && (target.numDimensions() == targetSpace
@@ -92,20 +91,20 @@ public class MiscViews {
 
         // Init result vars
         RandomAccessibleInterval<T> res = src;
-        final CalibratedSpace<CalibratedAxis> resSpace = new DefaultCalibratedSpace(target.numDimensions());
+        final TypedSpace<TypedAxis> resSpace = new DefaultTypedSpace(target.numDimensions());
 
         // 1. Step remove axis from source which can't be found in
         // target
-        final AxisType[] dispensable = getDeltaAxisTypes(targetSpace, srcSpace);
+        final TypedAxis[] dispensable = getDeltaAxisTypes(targetSpace, srcSpace);
         for (int d = dispensable.length - 1; d >= 0; --d) {
-            final int idx = srcSpace.dimensionIndex(dispensable[d]);
+            final int idx = srcSpace.dimensionIndex(dispensable[d].type());
             res = Views.hyperSlice(res, idx, 0);
         }
 
         int i = 0;
         outer: for (int d = 0; d < srcSpace.numDimensions(); d++) {
-            for (final AxisType type : dispensable) {
-                if (d == srcSpace.dimensionIndex(type)) {
+            for (final TypedAxis typedAxis : dispensable) {
+                if (d == srcSpace.dimensionIndex(typedAxis.type())) {
                     continue outer;
                 }
             }
@@ -114,14 +113,14 @@ public class MiscViews {
         }
 
         // 2. Add Axis which are available in target but not in source
-        final AxisType[] missing = getDeltaAxisTypes(srcSpace, targetSpace);
+        final TypedAxis[] missing = getDeltaAxisTypes(srcSpace, targetSpace);
 
         // Dimensions are added and resSpace is synchronized with res
         i = srcSpace.numDimensions() - dispensable.length;
-        for (final AxisType type : missing) {
-            final int idx = targetSpace.dimensionIndex(type);
+        for (final TypedAxis typedAxis : missing) {
+            final int idx = targetSpace.dimensionIndex(typedAxis.type());
             res = Views.addDimension(res, target.min(idx), target.max(idx));
-            resSpace.setAxis(new DefaultCalibratedAxis(type), i++);
+            resSpace.setAxis(new DefaultTypedAxis(typedAxis.type()), i++);
         }
 
         // res should have the same size, but with different metadata
@@ -136,7 +135,7 @@ public class MiscViews {
                 resRndAccessible = Views.permute(resRndAccessible, srcIdx, d);
 
                 // also permutate calibrated space
-                final CalibratedAxis tmp = resSpace.axis(d);
+                final TypedAxis tmp = resSpace.axis(d);
                 resSpace.setAxis(targetSpace.axis(d), d);
                 resSpace.setAxis(tmp, srcIdx);
             }
@@ -179,8 +178,8 @@ public class MiscViews {
 
     }
 
-    private static boolean spaceEquals(final CalibratedSpace<CalibratedAxis> srcSpace,
-                                       final CalibratedSpace<CalibratedAxis> targetSpace) {
+    private static boolean spaceEquals(final TypedSpace<? extends TypedAxis> srcSpace,
+                                       final TypedSpace<? extends TypedAxis> targetSpace) {
 
         if (srcSpace.numDimensions() != targetSpace.numDimensions()) {
             return false;
@@ -198,16 +197,16 @@ public class MiscViews {
      * Calculate the delta axis which are missing in the smaller space. >
      * From the smallest index of axistype to the biggest
      */
-    private synchronized static AxisType[] getDeltaAxisTypes(final CalibratedSpace<CalibratedAxis> sourceSpace,
-                                                             final CalibratedSpace<CalibratedAxis> targetSpace) {
+    private synchronized static TypedAxis[] getDeltaAxisTypes(final TypedSpace<? extends TypedAxis> sourceSpace,
+                                                              final TypedSpace<? extends TypedAxis> targetSpace) {
 
-        final List<CalibratedAxis> delta = new ArrayList<CalibratedAxis>();
+        final List<TypedAxis> delta = new ArrayList<TypedAxis>();
         for (int d = 0; d < targetSpace.numDimensions(); d++) {
-            final CalibratedAxis axis = targetSpace.axis(d);
+            final TypedAxis axis = targetSpace.axis(d);
             if (sourceSpace.dimensionIndex(axis.type()) == -1) {
                 delta.add(axis);
             }
         }
-        return delta.toArray(new AxisType[delta.size()]);
+        return delta.toArray(new TypedAxis[delta.size()]);
     }
 }
