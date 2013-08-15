@@ -16,6 +16,7 @@ import net.imglib2.ops.operation.UnaryOutputOperation;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.complex.ComplexFloatType;
 import net.imglib2.type.numeric.real.FloatType;
 
 import org.knime.knip.core.algorithm.logtrackmate.SubPixelLocalization.LocationType;
@@ -61,12 +62,8 @@ public class LoGDetectorOp<T extends RealType<T> & NativeType<T>> implements
         ImgFactory<FloatType> factory = new ArrayImgFactory<FloatType>();
         Img<FloatType> gaussianKernel = FourierConvolution.createGaussianKernel(factory, sigmas);
         FourierConvolution<T, FloatType> fConvGauss;
-        try {
-            fConvGauss = new FourierConvolution<T, FloatType>(temp, gaussianKernel);
-        } catch (IncompatibleTypeException e) {
-            baseErrorMessage += "Fourier convolution failed: " + e.getMessage();
-            return null;
-        }
+        fConvGauss =
+                new FourierConvolution<T, FloatType>(temp, gaussianKernel, new ArrayImgFactory<ComplexFloatType>());
         if (!fConvGauss.checkInput() || !fConvGauss.process()) {
             baseErrorMessage += "Fourier convolution with Gaussian failed:\n" + fConvGauss.getErrorMessage();
         }
@@ -74,12 +71,8 @@ public class LoGDetectorOp<T extends RealType<T> & NativeType<T>> implements
 
         Img<FloatType> laplacianKernel = createLaplacianKernel();
         FourierConvolution<T, FloatType> fConvLaplacian;
-        try {
-            fConvLaplacian = new FourierConvolution<T, FloatType>(temp, laplacianKernel);
-        } catch (IncompatibleTypeException e) {
-            baseErrorMessage += "Fourier convolution failed: " + e.getMessage();
-            return null;
-        }
+        fConvLaplacian =
+                new FourierConvolution<T, FloatType>(temp, laplacianKernel, new ArrayImgFactory<ComplexFloatType>());
         if (!fConvLaplacian.checkInput() || !fConvLaplacian.process()) {
             baseErrorMessage += "Fourier Convolution with Laplacian failed:\n" + fConvLaplacian.getErrorMessage();
             return null;
