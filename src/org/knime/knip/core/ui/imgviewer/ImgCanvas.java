@@ -45,11 +45,11 @@ import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 import org.knime.knip.core.ui.imgviewer.panels.MinimapPanel;
 
 /**
- * 
+ *
  * Panel to draw a BufferedImage.
- * 
+ *
  * Propagates {@link ImgViewerRectChgEvent}.
- * 
+ *
  * @author dietzc, hornm, fschoenenberer
  * @param <T>
  * @param <I>
@@ -64,7 +64,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     private final JScrollPane m_imageScrollPane;
 
-    private BufferedImage m_image;
+    protected BufferedImage m_image;
 
     /** the current zoom factor */
     private double m_zoomFactor;
@@ -254,7 +254,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * Returns the visible bounding box in the image coordinate space.
-     * 
+     *
      * @return the visible bounding box.
      */
     public Rectangle getVisibleImageRect() {
@@ -315,7 +315,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * Scrolls the image so the rectangle gets visible.
-     * 
+     *
      * @param rect
      */
     @EventListener
@@ -375,7 +375,7 @@ public class ImgCanvas<T extends Type<T>, I extends IterableInterval<T> & Random
 
     /**
      * An image with the message.
-     * 
+     *
      * @param message
      */
     @EventListener

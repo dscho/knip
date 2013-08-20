@@ -36,9 +36,9 @@ import org.knime.knip.core.ui.imgviewer.events.ViewZoomfactorChgEvent;
 
 /**
  * A panel showing the minimap of a buffered image and enables the user to zoom and change the focus.
- * 
+ *
  * Publishes {@link MinimapOffsetChgEvent} and {@link MinimapZoomfactorChgEvent} .
- * 
+ *
  * @author dietzc, hornm, schoenenbergerf
  */
 public class MinimapPanel extends ViewerComponent {
@@ -70,7 +70,7 @@ public class MinimapPanel extends ViewerComponent {
 
     private Rectangle m_imgCanvasRectangle;
 
-    private BufferedImage m_img;
+    protected BufferedImage m_img;
 
     private int[] m_offset;
 
