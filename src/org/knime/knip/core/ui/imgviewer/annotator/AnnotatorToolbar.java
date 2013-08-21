@@ -99,7 +99,7 @@ public class AnnotatorToolbar extends ViewerComponent {
     }
 
     public static ViewerComponent createStandardToolbar() {
-        return new AnnotatorToolbar(new AnnotatorNoTool("pan"), new AnnotatorSelectionTool(), new AnnotatorPointTool(),
+        return new AnnotatorToolbar(new AnnotatorNoTool("Pan"), new AnnotatorSelectionTool(), new AnnotatorPointTool(),
                 new AnnotatorRectangleTool(), new AnnotatorPolygonTool(), new AnnotatorSplineTool(),
                 new AnnotatorFreeFormTool(), new AnnotatorFreeLineTool());
     }
