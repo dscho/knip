@@ -103,9 +103,8 @@ public class AnnotatorManager<T extends RealType<T>> extends AbstractAnnotatorMa
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void reset(final AnnotatorResetEvent e) {
-        super.reset(e);
+    @EventListener
+    public void reset2(final AnnotatorResetEvent e) {
         m_overlayMap = new HashMap<String, Overlay<String>>();
     }
 }
