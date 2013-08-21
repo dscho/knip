@@ -357,21 +357,22 @@ public final class AWTImageTools {
         FinalInterval interval;
         AffineGet transform;
         if (img.numDimensions() == 1) {
-            width = (int)(img.dimension(0) * factor);
+            width = Math.max(1, (int)(img.dimension(0) * factor));
             height = 1;
+
             transform = new AffineTransform2D();
             ((AffineTransform2D)transform).scale(factor);
             interval = new FinalInterval(new long[]{width, height});
             img = MiscViews.synchronizeDimensionality(img, interval);
         } else if (img.numDimensions() == 2) {
-            width = (int)(img.dimension(0) * factor);
-            height = (int)(img.dimension(1) * factor);
+            width = Math.max(1, (int)(img.dimension(0) * factor));
+            height = Math.max(1, (int)(img.dimension(1) * factor));
             transform = new AffineTransform2D();
             ((AffineTransform2D)transform).scale(factor);
             interval = new FinalInterval(new long[]{width, height});
         } else if (img.numDimensions() == 3) {
-            width = (int)(img.dimension(0) * factor);
-            height = (int)(img.dimension(1) * factor);
+            width = Math.max(1, (int)(img.dimension(0) * factor));
+            height = Math.max(1, (int)(img.dimension(1) * factor));
             transform = new AffineTransform3D();
             ((AffineTransform3D)transform).set(factor, 0.0, 0.0, 0.0, 0.0, factor, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
