@@ -219,7 +219,7 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
             img2d = img;
         } else {
             img2d = Views.addDimension(img, 0, 0);
-            DefaultCalibratedSpace out = MetadataUtil.copyAndCleanTypedSpace(img2d, new DefaultCalibratedSpace(new DefaultCalibratedAxis(axes.axis(0).type())), new DefaultCalibratedSpace(2));
+            DefaultCalibratedSpace out = (DefaultCalibratedSpace)MetadataUtil.copyAndCleanTypedSpace(img2d, new DefaultCalibratedSpace(new DefaultCalibratedAxis(axes.axis(0).type())), new DefaultCalibratedSpace(2));
             axes2d = out;
         }
 
