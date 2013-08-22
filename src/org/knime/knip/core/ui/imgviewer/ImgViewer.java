@@ -61,16 +61,15 @@ import javax.swing.JPanel;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
-import net.imglib2.meta.CalibratedAxis;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.DefaultCalibratedAxis;
 import net.imglib2.meta.DefaultCalibratedSpace;
 import net.imglib2.meta.ImageMetadata;
+import net.imglib2.meta.MetadataUtil;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 import net.imglib2.meta.TypedAxis;
 import net.imglib2.meta.TypedSpace;
-import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
 import net.imglib2.type.Type;
 import net.imglib2.view.Views;
 
@@ -220,9 +219,8 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
             img2d = img;
         } else {
             img2d = Views.addDimension(img, 0, 0);
-            axes2d =
-                    new CopyCalibratedSpace<CalibratedSpace<CalibratedAxis>>(img2d).compute(new DefaultCalibratedSpace(
-                            new DefaultCalibratedAxis(axes.axis(0).type())), new DefaultCalibratedSpace(2));
+            DefaultCalibratedSpace out = MetadataUtil.copyAndCleanTypedSpace(img2d, new DefaultCalibratedSpace(new DefaultCalibratedAxis(axes.axis(0).type())), new DefaultCalibratedSpace(2));
+            axes2d = out;
         }
 
         if (imageMetaData != null) {

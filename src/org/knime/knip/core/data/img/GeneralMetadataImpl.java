@@ -6,11 +6,9 @@ import net.imglib2.meta.DefaultCalibratedSpace;
 import net.imglib2.meta.DefaultNamed;
 import net.imglib2.meta.DefaultSourced;
 import net.imglib2.meta.Metadata;
+import net.imglib2.meta.MetadataUtil;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-import net.imglib2.ops.operation.metadata.unary.CopyCalibratedSpace;
-import net.imglib2.ops.operation.metadata.unary.CopyNamed;
-import net.imglib2.ops.operation.metadata.unary.CopySourced;
 
 /**
  * Implementation of GeneralMetadata
@@ -31,9 +29,9 @@ public class GeneralMetadataImpl extends DefaultCalibratedSpace implements Gener
     public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Named named, final Sourced sourced) {
         this(cs.numDimensions());
 
-        new CopyNamed<Named>().compute(named, m_named);
-        new CopySourced<Sourced>().compute(sourced, m_sourced);
-        new CopyCalibratedSpace<CalibratedSpace<CalibratedAxis>>().compute(cs, this);
+        MetadataUtil.copyName(named, m_named);
+        MetadataUtil.copySource(sourced, m_sourced);
+        MetadataUtil.copyTypedSpace(cs, this);
     }
 
     public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Metadata metadata) {

@@ -13,9 +13,9 @@ import net.imglib2.meta.DefaultNamed;
 import net.imglib2.meta.DefaultSourced;
 import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Metadata;
+import net.imglib2.meta.MetadataUtil;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-import net.imglib2.ops.operation.metadata.unary.CopyImageMetadata;
 
 /**
  *
@@ -34,7 +34,7 @@ public final class ImgMetadataImpl extends GeneralMetadataImpl implements ImgMet
     public ImgMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Named named, final Sourced source,
                            final ImageMetadata imageMetadata) {
         super(cs, named, source);
-        m_imgMetadata = new CopyImageMetadata<ImageMetadata>().compute(imageMetadata, new ImageMetadataImpl());
+        m_imgMetadata = MetadataUtil.copyImageMetadata(imageMetadata, new ImageMetadataImpl());
 
     }
 

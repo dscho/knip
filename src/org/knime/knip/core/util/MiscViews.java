@@ -13,8 +13,12 @@ import net.imglib2.labeling.LabelingFactory;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.meta.DefaultTypedAxis;
 import net.imglib2.meta.DefaultTypedSpace;
+import net.imglib2.meta.ImgPlus;
+import net.imglib2.meta.MetadataUtil;
 import net.imglib2.meta.TypedAxis;
 import net.imglib2.meta.TypedSpace;
+import net.imglib2.ops.operation.SubsetOperations;
+import net.imglib2.ops.operation.subset.views.ImgPlusView;
 import net.imglib2.ops.operation.subset.views.ImgView;
 import net.imglib2.ops.operation.subset.views.LabelingView;
 import net.imglib2.sampler.special.ConstantRandomAccessible;
@@ -46,6 +50,18 @@ public class MiscViews {
             }
         };
 
+    }
+
+
+    /**
+     * removes dimensions of size 1 if any.
+     * @param ret
+     * @return
+     */
+    public static <T extends Type<T>> ImgPlusView<T> cleanImgPlus(final ImgPlus<T> ret) {
+        ImgPlusView<T> imgPlusView = new ImgPlusView<T>(SubsetOperations.subsetview(ret.getImg(), ret.getImg()),  ret.factory());
+        MetadataUtil.copyAndCleanTypedSpace(ret, ret, imgPlusView);
+        return imgPlusView;
     }
 
     public static <T extends Type<T>> ImgView<T> imgView(final RandomAccessibleInterval<T> randAccessible,
