@@ -22,6 +22,7 @@ public class GeneralMetadataImpl extends DefaultCalibratedSpace implements Gener
     private final Sourced m_sourced;
 
     public GeneralMetadataImpl(final int numDimensions) {
+        super(numDimensions);
         this.m_named = new DefaultNamed();
         this.m_sourced = new DefaultSourced();
     }
