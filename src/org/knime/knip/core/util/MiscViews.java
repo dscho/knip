@@ -60,7 +60,7 @@ public class MiscViews {
      */
     public static <T extends Type<T>> ImgPlusView<T> cleanImgPlus(final ImgPlus<T> ret) {
         ImgPlusView<T> imgPlusView = new ImgPlusView<T>(SubsetOperations.subsetview(ret.getImg(), ret.getImg()),  ret.factory());
-        MetadataUtil.copyAndCleanTypedSpace(ret, ret, imgPlusView);
+        MetadataUtil.copyAndCleanImgPlusMetadata(ret, ret, imgPlusView);
         return imgPlusView;
     }
 
