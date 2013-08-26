@@ -43,9 +43,8 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * ---------------------------------------------------------------------
+ * --------------------------------------------------------------------- *
  *
- * Created on 15.08.2013 by zinsmaie
  */
 package org.knime.knip.core.data.img;
 
@@ -54,7 +53,9 @@ import net.imglib2.meta.CalibratedSpace;
 
 /**
  *
- * @author zinsmaie
+ * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
+ * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
+ * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
 public interface CalibratedAxisSpace extends CalibratedSpace<CalibratedAxis> {
     // Marker interface

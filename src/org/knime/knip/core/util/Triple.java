@@ -1,7 +1,7 @@
-/* Created on Jun 27, 2006 3:54:35 PM by thor
+/*
  * ------------------------------------------------------------------------
  *
- *  Copyright (C) 2003 - 2011
+ *  Copyright (C) 2003 - 2013
  *  University of Konstanz, Germany and
  *  KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
@@ -43,7 +43,7 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * -------------------------------------------------------------------
+ * --------------------------------------------------------------------- *
  *
  */
 package org.knime.knip.core.util;
@@ -53,6 +53,9 @@ package org.knime.knip.core.util;
  * 
  * @param <T> class of the first object
  * @param <M> class of the second object
+ * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
+ * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
+ * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  * @author Thorsten Meinl, University of Konstanz
  */
 public final class Triple<F, S, T> {

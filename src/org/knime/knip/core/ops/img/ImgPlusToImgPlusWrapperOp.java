@@ -43,9 +43,8 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * ---------------------------------------------------------------------
+ * --------------------------------------------------------------------- *
  *
- * Created on 25.07.2013 by dietyc
  */
 package org.knime.knip.core.ops.img;
 
@@ -61,9 +60,11 @@ import org.knime.knip.core.util.ImgPlusFactory;
 /**
  * Simple wrapper class to wrap UnaryOperations to UnaryOutputOperations which run on ImgPlus basis
  *
- * @author Christian Dietz
  * @param <T> input type
  * @param <V> output type
+ * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
+ * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
+ * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
 public class ImgPlusToImgPlusWrapperOp<T extends RealType<T>, V extends RealType<V>> implements
         UnaryOutputOperation<ImgPlus<T>, ImgPlus<V>> {

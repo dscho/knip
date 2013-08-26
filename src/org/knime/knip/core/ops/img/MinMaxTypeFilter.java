@@ -43,9 +43,8 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * ---------------------------------------------------------------------
+ * --------------------------------------------------------------------- *
  *
- * Created on 03.06.2013 by dietyc
  */
 package org.knime.knip.core.ops.img;
 
@@ -57,6 +56,9 @@ import net.imglib2.util.ValuePair;
 /**
  * Needed, e.g. for ImgNormalize
  * 
+ * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
+ * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
+ * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  * @author dietyc
  */
 public class MinMaxTypeFilter<T extends RealType<T>> implements UnaryOutputOperation<T, T> {
