@@ -82,7 +82,6 @@ public class DirectConvolver<T extends RealType<T>, K extends RealType<K> & Nati
         }
 
         if (m_kernels.length > 1) {
-            System.out.println("decomposed");
             return new DirectIterativeConvolver<T, K, O>().compute(input, m_kernels, output);
         } else {
             long[] min = new long[input.numDimensions()];
