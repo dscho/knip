@@ -65,5 +65,5 @@ public interface LabelingMetadata extends Named, Sourced, CalibratedAxisSpace {
 
     LabelingColorTable getLabelingColorTable();
 
-    void setLabelToColorMapping(LabelingColorTable mapping);
+    void setLabelingColorTable(LabelingColorTable mapping);
 }

@@ -52,6 +52,7 @@ import org.apache.mahout.math.map.AbstractIntIntMap;
 import org.apache.mahout.math.map.OpenIntIntHashMap;
 
 /**
+ * TODO
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
@@ -92,7 +93,7 @@ public class DefaultLabelingColorTable implements LabelingColorTable {
             return -1;
         }
 
-        return LabelingColorTableUtils.getTransparentRGBA(res, 255);
+        return res;
     }
 
     /**
@@ -101,7 +102,7 @@ public class DefaultLabelingColorTable implements LabelingColorTable {
      */
     @Override
     public <L extends Comparable<L>> void setColor(final L l, final int color) {
-        m_colorTable.put(l.hashCode(), color);
+        m_colorTable.put(l.hashCode(), LabelingColorTableUtils.getTransparentRGBA(color, 255));
     }
 
     /**

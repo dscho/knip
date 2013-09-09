@@ -112,11 +112,11 @@ public class RandomMissingColorHandler implements MissingColorHandler {
         final int hashCode = label.hashCode();
         int res = m_colorTable.get(hashCode);
         if (res == 0) {
-            res = randomColor();
+            res = LabelingColorTableUtils.getTransparentRGBA(randomColor(), 255);
             m_colorTable.put(hashCode, res);
         }
 
-        return LabelingColorTableUtils.getTransparentRGBA(res, 255);
+        return res;
     }
 
     /**

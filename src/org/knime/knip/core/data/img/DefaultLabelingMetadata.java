@@ -118,7 +118,7 @@ public class DefaultLabelingMetadata extends AbstractGeneralMetadata implements 
     /**
      * {@inheritDoc}
      */
-    public void setLabelToColorMapping(final LabelingColorTable mapping) {
+    public void setLabelingColorTable(final LabelingColorTable mapping) {
         m_colorTable = mapping;
     }
 
