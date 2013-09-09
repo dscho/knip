@@ -46,24 +46,76 @@
  * --------------------------------------------------------------------- *
  *
  */
-package org.knime.knip.core.ui.event;
+package org.knime.knip.core.io.externalization.externalizers;
+
+import net.imglib2.meta.ImageMetadata;
+import net.imglib2.meta.Metadata;
+import net.imglib2.meta.Named;
+import net.imglib2.meta.Sourced;
+
+import org.knime.knip.core.data.img.CalibratedAxisSpace;
+import org.knime.knip.core.data.img.DefaultCalibratedAxisSpace;
+import org.knime.knip.core.data.img.DefaultImgMetadata;
+import org.knime.knip.core.io.externalization.BufferedDataInputStream;
+import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
+import org.knime.knip.core.io.externalization.Externalizer;
+import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
- *
- * TODO
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface KNIPEvent {
+public class ImgMetadataExt1 implements Externalizer<Metadata> {
 
-    enum ExecutionPriority {
-        NORMAL, LOW
-    };
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return this.getClass().getSimpleName();
+    }
 
-    ExecutionPriority getExecutionOrder();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<Metadata> getType() {
+        return Metadata.class;
+    }
 
-    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 1;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Metadata read(final BufferedDataInputStream in) throws Exception {
+        final CalibratedAxisSpace cs = ExternalizerManager.<CalibratedAxisSpace> read(in);
+        final Named name = ExternalizerManager.<Named> read(in);
+        final Sourced source = ExternalizerManager.<Sourced> read(in);
+        final ImageMetadata imageMetadata = ExternalizerManager.<ImageMetadata> read(in);
+
+        return new DefaultImgMetadata(cs, name, source, imageMetadata);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final Metadata obj) throws Exception {
+
+        // Workaround with DefaultCalibratedAxisSpace as Externalizers can't handle generic implementations
+        ExternalizerManager.write(out, new DefaultCalibratedAxisSpace(obj), CalibratedAxisSpace.class);
+        ExternalizerManager.write(out, obj, Named.class);
+        ExternalizerManager.write(out, obj, Sourced.class);
+        ExternalizerManager.write(out, obj, ImageMetadata.class);
+    }
 }

@@ -62,8 +62,6 @@ import net.imglib2.meta.TypedAxis;
 import net.imglib2.meta.TypedSpace;
 import net.imglib2.type.Type;
 
-import org.knime.knip.core.data.img.GeneralMetadataImpl;
-
 /**
  *
  * @param <T>
@@ -95,12 +93,6 @@ public class DetailedImgRenderer<T extends Type<T>> implements ImageRenderer<T> 
     }
 
     public void setMetaData(final Metadata meta) {
-        m_imgSource = meta;
-        m_imgName = meta;
-        m_axes = meta;
-    }
-
-    public void setMetaData(final GeneralMetadataImpl meta) {
         m_imgSource = meta;
         m_imgName = meta;
         m_axes = meta;

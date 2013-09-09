@@ -89,7 +89,7 @@ import javax.swing.event.ChangeListener;
 import net.imglib2.labeling.Labeling;
 import net.imglib2.labeling.LabelingType;
 
-import org.knime.knip.core.awt.SegmentColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableUtils;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
@@ -203,15 +203,15 @@ public class LabelFilterPanel<L extends Comparable<L>> extends ViewerComponent {
                 if ((m_hilitedLabels != null) && m_hilitedLabels.contains(value.toString())) {
 
                     if (isSelected) {
-                        c.setBackground(SegmentColorTable.HILITED_SELECTED);
+                        c.setBackground(LabelingColorTableUtils.HILITED_SELECTED);
                     } else {
-                        c.setBackground(SegmentColorTable.HILITED);
+                        c.setBackground(LabelingColorTableUtils.HILITED);
                     }
 
                 } else if (isSelected) {
-                    c.setBackground(SegmentColorTable.SELECTED);
+                    c.setBackground(LabelingColorTableUtils.SELECTED);
                 } else {
-                    c.setBackground(SegmentColorTable.STANDARD);
+                    c.setBackground(LabelingColorTableUtils.STANDARD);
                 }
 
                 return c;

@@ -50,7 +50,6 @@ package org.knime.knip.core.awt;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -61,21 +60,25 @@ import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 
+import org.apache.mahout.math.map.OpenIntIntHashMap;
 import org.knime.knip.core.awt.converter.LabelingTypeARGBConverter;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableRenderer;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableUtils;
 import org.knime.knip.core.awt.parametersupport.RendererWithHilite;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.awt.specializedrendering.Projector2D;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 /**
- * TODO Auto-generated 
- * 
+ * TODO Auto-generated
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class RandomColorLabelingRenderer<L extends Comparable<L>> extends ProjectingRenderer<LabelingType<L>> implements
-        RendererWithLabels<L>, RendererWithHilite {
+public class ColorLabelingRenderer<L extends Comparable<L>> extends ProjectingRenderer<LabelingType<L>> implements
+        RendererWithLabels<L>, RendererWithHilite, LabelingColorTableRenderer {
 
     private static int WHITE_RGB = Color.WHITE.getRGB();
 
@@ -93,7 +96,9 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends Projec
 
     private boolean m_rebuildRequired;
 
-    public RandomColorLabelingRenderer() {
+    private LabelingColorTable m_colorMapping;
+
+    public ColorLabelingRenderer() {
         m_rebuildRequired = true;
     }
 
@@ -150,7 +155,7 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends Projec
     private void rebuildLabelConverter() {
         m_rebuildRequired = false;
         final int labelListIndexSize = m_labelMapping.numLists();
-        final HashMap<Integer, Integer> colorTable = new HashMap<Integer, Integer>();
+        final OpenIntIntHashMap colorTable = new OpenIntIntHashMap();
 
         for (int i = 0; i < labelListIndexSize; i++) {
 
@@ -172,7 +177,7 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends Projec
 
         // standard case no filtering / highlighting
         if ((activeLabels == null) && (hilitedLabels == null) && !isHiliteMode) {
-            return SegmentColorTable.getColor(labeling);
+            return LabelingColorTableUtils.<L> getAverageColor(m_colorMapping, labeling);
         }
 
         List<L> filteredLabels;
@@ -187,9 +192,10 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends Projec
         } else {
             // highlight if necessary
             if (checkHilite(filteredLabels, hilitedLabels)) {
-                return SegmentColorTable.HILITED_RGB;
+                return LabelingColorTableUtils.HILITED_RGB;
             } else {
-                return isHiliteMode ? SegmentColorTable.NOTSELECTED_RGB : SegmentColorTable.getColor(labeling);
+                return isHiliteMode ? LabelingColorTableUtils.NOTSELECTED_RGB : LabelingColorTableUtils
+                        .<L> getAverageColor(m_colorMapping, labeling);
             }
         }
     }
@@ -243,6 +249,15 @@ public class RandomColorLabelingRenderer<L extends Comparable<L>> extends Projec
     @Override
     public void setRenderingWithLabelStrings(final boolean withNumbers) {
         // nothing to do here
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLabelToColorMapping(final LabelingColorTable mapping) {
+        m_rebuildRequired = true;
+        m_colorMapping = mapping;
     }
 
 }

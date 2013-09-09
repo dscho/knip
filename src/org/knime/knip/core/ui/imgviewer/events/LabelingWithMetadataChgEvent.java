@@ -46,24 +46,41 @@
  * --------------------------------------------------------------------- *
  *
  */
-package org.knime.knip.core.ui.event;
+package org.knime.knip.core.ui.imgviewer.events;
+
+import net.imglib2.labeling.Labeling;
+import net.imglib2.labeling.LabelingType;
+
+import org.knime.knip.core.data.img.LabelingMetadata;
 
 /**
- *
- * TODO
+ * TODO Auto-generated
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface KNIPEvent {
+public class LabelingWithMetadataChgEvent<L extends Comparable<L>> extends
+        IntervalWithMetadataChgEvent<LabelingType<L>> {
 
-    enum ExecutionPriority {
-        NORMAL, LOW
-    };
+    private final LabelingMetadata m_labelingMetadata;
 
-    ExecutionPriority getExecutionOrder();
+    /**
+     * TODO
+     *
+     * @param interval
+     * @param metadata
+     */
+    public LabelingWithMetadataChgEvent(final Labeling<L> interval, final LabelingMetadata metadata) {
+        super(interval, metadata, metadata, metadata);
+        m_labelingMetadata = metadata;
+    }
 
-    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
-
+    /**
+     *
+     * @return metadata of the labeling.
+     */
+    public LabelingMetadata getLabelingMetaData() {
+        return m_labelingMetadata;
+    }
 }

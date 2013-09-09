@@ -61,13 +61,15 @@ import org.knime.knip.core.io.externalization.externalizers.ArrayImgExt0;
 import org.knime.knip.core.io.externalization.externalizers.CalibratedSpaceExt0;
 import org.knime.knip.core.io.externalization.externalizers.CellImgExt0;
 import org.knime.knip.core.io.externalization.externalizers.ClassExt0;
-import org.knime.knip.core.io.externalization.externalizers.GeneralMetadataExt0;
+import org.knime.knip.core.io.externalization.externalizers.DefaultLabelingColorTableExt0;
 import org.knime.knip.core.io.externalization.externalizers.ImageMetadataExt0;
 import org.knime.knip.core.io.externalization.externalizers.ImageMetadataExt1;
 import org.knime.knip.core.io.externalization.externalizers.ImgExt0;
 import org.knime.knip.core.io.externalization.externalizers.ImgMetadataExt0;
+import org.knime.knip.core.io.externalization.externalizers.ImgMetadataExt1;
 import org.knime.knip.core.io.externalization.externalizers.ImgViewExt0;
 import org.knime.knip.core.io.externalization.externalizers.LabelingMappingExt0;
+import org.knime.knip.core.io.externalization.externalizers.LabelingMetadataExt0;
 import org.knime.knip.core.io.externalization.externalizers.NamedExt0;
 import org.knime.knip.core.io.externalization.externalizers.NativeImgLabelingExt0;
 import org.knime.knip.core.io.externalization.externalizers.NtreeImgExt0;
@@ -79,7 +81,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Manages a set of externalizers, e.g. registered via the according extension point.
- * 
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
@@ -123,11 +125,12 @@ public final class ExternalizerManager {
         registerExternalizer(new LabelingMappingExt0());
         registerExternalizer(new NativeImgLabelingExt0());
         registerExternalizer(new ObjectExt0());
-        registerExternalizer(new GeneralMetadataExt0());
         registerExternalizer(new ImgMetadataExt0());
+        registerExternalizer(new LabelingMetadataExt0());
+        registerExternalizer(new DefaultLabelingColorTableExt0());
 
-        // New externalizer for ImageMetadata
         registerExternalizer(new ImageMetadataExt1());
+        registerExternalizer(new ImgMetadataExt1());
 
         registerExtensionPoints();
 
@@ -154,9 +157,9 @@ public final class ExternalizerManager {
     /**
      * Recursively retrieves the right {@link Externalizer} for the given object, beginning with the class itself. If
      * for a class no externalizer is registered, the super-classes will be checked iteratively.
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param <T>
      * @param out
      * @param type
@@ -175,7 +178,7 @@ public final class ExternalizerManager {
     /**
      * Writes the given object to the output stream using the most specific externalizer from the registered
      * externalizers.
-     * 
+     *
      * @param <T>
      * @param out
      * @param obj
@@ -187,7 +190,7 @@ public final class ExternalizerManager {
 
     /**
      * Writes the object to the output stream assuming the given class.
-     * 
+     *
      * @param <T>
      * @param out
      * @param obj
@@ -208,7 +211,7 @@ public final class ExternalizerManager {
 
     /**
      * Writes the object to the output stream using the given externalizer.
-     * 
+     *
      * @param <T>
      * @param out
      * @param obj
@@ -224,7 +227,7 @@ public final class ExternalizerManager {
     /**
      * Registers a new externalizer at the manager. Already existing externalizers for a certain type or id will not be
      * replaced if they priority is higher.
-     * 
+     *
      * @param <T>
      * @param ext the externalizer - must not be a inner class of another class
      */

@@ -46,23 +46,19 @@
  * --------------------------------------------------------------------- *
  *
  */
-package org.knime.knip.core.awt;
+package org.knime.knip.core.awt.labelingcolortable;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.Random;
-
-import org.apache.mahout.math.map.OpenIntIntHashMap;
 
 /**
- * 
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public final class SegmentColorTable {
+public final class LabelingColorTableUtils {
 
-    // Color definitions for Hilite
     public static final Color HILITED = Color.ORANGE;
 
     public static final int HILITED_RGB = HILITED.getRGB();
@@ -81,130 +77,77 @@ public final class SegmentColorTable {
     private static Color m_boundingBoxColor = Color.YELLOW;
 
     /**
-     * counts from 0 on the incarnation nr of the color table (i.e. the color table is reset and newly build =>
-     * colorMapNr++)
+     * Globally set the Color of the BoundingBox in the Renderer
+     *
+     * @param color
      */
-    private static int m_colorMapNr;
-
-    // Fast HashMap implementation
-    private static OpenIntIntHashMap m_colorTable = new OpenIntIntHashMap();
+    public static void setBoundingBoxColor(final Color color) {
+        m_boundingBoxColor = color;
+    }
 
     /**
-     * Assigns a color to the given id.
-     * 
-     * @param segmentId
-     * @return the color
+     *
+     * @return Color for the bounding box
      */
-    public static <L extends Comparable<L>> int getColor(final L label) {
-        return getColor(label, 255);
-    }
-
-    public static int getTransparentRGBA(final int rgb, final int transparency) {
-        return (transparency << 24) | (rgb & 0x00FFFFFF);
-    }
-
     public static Color getBoundingBoxColor() {
         return m_boundingBoxColor;
     }
 
     /**
-     * @return {@link SegmentColorTable#m_colorMapNr}
+     * TODO
+     *
+     * @param rgb
+     * @param transparency
+     * @return
      */
-    public static int getColorMapNr() {
-        return m_colorMapNr;
+    public static int getTransparentRGBA(final int rgb, final int transparency) {
+        return (transparency << 24) | (rgb & 0x00FFFFFF);
     }
 
     /**
-     * resets the color table such that the label colors can be assigned again. Increases the ColorMapNr to indicate the
-     * change.
-     */
-    public static void resetColorMap() {
-        m_colorTable.clear();
-        m_colorMapNr++;
-    }
-
-    /**
-     * Assigns a color to the given id.
-     * 
-     * @param segmentId
+     * TODO
+     *
+     * @param r
+     * @param g
+     * @param b
      * @return the color
      */
-    public static <L extends Comparable<L>> int getColor(final L label, final int transparency) {
-
-        final int hashCode = label.hashCode();
-        int res = m_colorTable.get(hashCode);
-        if (res == 0) {
-            res = randomColor();
-            m_colorTable.put(hashCode, res);
-
-        }
-        return getTransparentRGBA(res, transparency);
-    }
-
-    /**
-     * Assigns a color to the given id.
-     * 
-     * @param segmentId
-     * @return the color
-     */
-    public static <L extends Comparable<L>> int getColor(final List<L> labels, final int transparency) {
-
-        double totalRes = 0;
-        for (int i = 0; i < labels.size(); i++) {
-            totalRes += (double)getColor(labels.get(i)) / (double)labels.size();
-        }
-
-        return getTransparentRGBA((int)totalRes, transparency);
-    }
-
-    /**
-     * Assigns a color to the given id.
-     * 
-     * @param segmentId
-     * @return the color
-     */
-    public static <L extends Comparable<L>> int getColor(final List<L> labels) {
-
-        return getColor(labels, 255);
-    }
-
-    public static <L extends Comparable<L>> void resetColor(final L o) {
-        m_colorTable.put(o.hashCode(), randomColor());
-
-    }
-
-    public static int randomColor() {
-        final Random rand = new Random();
-        int col = rand.nextInt(255);
-        col = col << 8;
-        col |= rand.nextInt(255);
-        col = col << 8;
-        col |= rand.nextInt(255);
-
-        if (col == 0) {
-            col = randomColor();
-        }
-
-        return col;
-
-    }
-
-    public static <L extends Comparable<L>> void setColor(final L l, int r, final int g, final int b) {
+    public static int getIntColorRepresentation(int r, final int g, final int b) {
         r = r << 8;
         r |= g;
         r = r << 8;
         r |= b;
 
-        m_colorTable.put(l.hashCode(), r);
+        return r;
     }
 
-    public static <L extends Comparable<L>> void setColor(final L l, final int col) {
+    /**
+     * TODO
+     *
+     * @param table
+     * @param labels
+     * @return
+     */
+    public static <L extends Comparable<L>> int getAverageColor(final LabelingColorTable table, final List<L> labels) {
 
-        m_colorTable.put(l.hashCode(), col);
+        double totalRes = 0;
+        for (int i = 0; i < labels.size(); i++) {
+            totalRes += (double)table.getColor(labels.get(i)) / labels.size();
+        }
+
+        return (int)totalRes;
     }
 
-    public static void setBoundingBoxColor(final Color color) {
-        m_boundingBoxColor = color;
+    /**
+     * TODO: Returns an {@link ExtendedLabelingColorTable}.
+     *
+     * @param table
+     * @param handler
+     * @return
+     */
+    public static <L extends Comparable<L>> ExtendedLabelingColorTable
+            extendLabelingColorTable(final LabelingColorTable table, final MissingColorHandler handler) {
+        return new ExtendedLabelingColorTable(table, handler);
     }
 
 }

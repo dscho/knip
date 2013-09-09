@@ -43,76 +43,21 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
+ * Created on Sep 4, 2013 by dietzc
  */
-package org.knime.knip.core.io.externalization.externalizers;
-
-import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.meta.Named;
-import net.imglib2.meta.Sourced;
-
-import org.knime.knip.core.data.img.CalibratedAxisSpace;
-import org.knime.knip.core.data.img.GeneralMetadata;
-import org.knime.knip.core.data.img.GeneralMetadataImpl;
-import org.knime.knip.core.io.externalization.BufferedDataInputStream;
-import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
-import org.knime.knip.core.io.externalization.Externalizer;
-import org.knime.knip.core.io.externalization.ExternalizerManager;
+package org.knime.knip.core.awt.labelingcolortable;
 
 /**
+ * TODO documentation
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class GeneralMetadataExt0 implements Externalizer<GeneralMetadata> {
+public interface LabelingColorTableRenderer {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getId() {
-        return this.getClass().getSimpleName();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<GeneralMetadata> getType() {
-        return GeneralMetadata.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getPriority() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GeneralMetadata read(final BufferedDataInputStream in) throws Exception {
-        final CalibratedSpace cs = ExternalizerManager.<CalibratedSpace> read(in);
-        final Named name = ExternalizerManager.<Named> read(in);
-        final Sourced source = ExternalizerManager.<Sourced> read(in);
-
-        return new GeneralMetadataImpl(cs, name, source);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void write(final BufferedDataOutputStream out, final GeneralMetadata obj) throws Exception {
-        ExternalizerManager.write(out, obj, CalibratedAxisSpace.class);
-        ExternalizerManager.write(out, obj, Named.class);
-        ExternalizerManager.write(out, obj, Sourced.class);
-
-    }
-
+    // TODO
+    public void setLabelToColorMapping(LabelingColorTable mapping);
 }

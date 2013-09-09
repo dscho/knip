@@ -73,7 +73,7 @@ public class RendererFactory {
         final List<ImageRenderer> res = new ArrayList<ImageRenderer>();
 
         if (img instanceof Labeling) {
-            res.add(new RandomColorLabelingRenderer());
+            res.add(new ColorLabelingRenderer());
             res.add(new BoundingBoxLabelRenderer());
             res.add(new BoundingBoxRandomColorLabelRenderer());
         } else {

@@ -48,24 +48,24 @@
  */
 package org.knime.knip.core.awt.converter;
 
-import java.util.HashMap;
-
 import net.imglib2.converter.Converter;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 
+import org.apache.mahout.math.map.OpenIntIntHashMap;
+
 /**
- * TODO Auto-generated 
- * 
+ * TODO Auto-generated
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
 public class LabelingTypeARGBConverter<L extends Comparable<L>> implements Converter<LabelingType<L>, ARGBType> {
 
-    private final HashMap<Integer, Integer> m_colorTable;
+    private final OpenIntIntHashMap m_colorTable;
 
-    public LabelingTypeARGBConverter(final HashMap<Integer, Integer> colorTable) {
+    public LabelingTypeARGBConverter(final OpenIntIntHashMap colorTable) {
         this.m_colorTable = colorTable;
     }
 

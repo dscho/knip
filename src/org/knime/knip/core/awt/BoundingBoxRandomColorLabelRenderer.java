@@ -58,18 +58,21 @@ import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 import net.imglib2.type.Type;
 
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableRenderer;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 /**
- * TODO Auto-generated 
- * 
+ * TODO Auto-generated
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<L>> extends BoundingBoxLabelRenderer<L> {
+public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<L>> extends BoundingBoxLabelRenderer<L>
+        implements LabelingColorTableRenderer {
 
-    private final RandomColorLabelingRenderer<L> m_labelRenderer;
+    private final ColorLabelingRenderer<L> m_labelRenderer;
 
     private RandomAccessibleInterval<LabelingType<L>> m_source;
 
@@ -79,8 +82,10 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
 
     private long[] m_planePos;
 
+    private LabelingColorTable m_mapping;
+
     public BoundingBoxRandomColorLabelRenderer() {
-        m_labelRenderer = new RandomColorLabelingRenderer<L>();
+        m_labelRenderer = new ColorLabelingRenderer<L>();
     }
 
     @Override
@@ -98,6 +103,7 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
     protected ScreenImage createCanvas(final int width, final int height) {
 
         final ScreenImage ret = new ARGBScreenImage(width, height);
+        m_labelRenderer.setLabelToColorMapping(m_mapping);
         final ScreenImage labelRendererResult = m_labelRenderer.render(m_source, m_dimX, m_dimY, m_planePos);
         final Graphics g = ret.image().getGraphics();
         g.drawImage(labelRendererResult.image(), 0, 0, width, height, null);
@@ -138,5 +144,13 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
     public void setOperator(final Operator operator) {
         super.setOperator(operator);
         m_labelRenderer.setOperator(operator);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLabelToColorMapping(final LabelingColorTable mapping) {
+        m_mapping = mapping;
     }
 }

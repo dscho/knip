@@ -43,20 +43,89 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
  */
-package org.knime.knip.core.data.img;
+package org.knime.knip.core.awt.labelingcolortable;
 
-import net.imglib2.meta.Metadata;
+import org.apache.mahout.math.map.AbstractIntIntMap;
+import org.apache.mahout.math.map.OpenIntIntHashMap;
 
 /**
- * TODO Auto-generated 
- * 
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface ImgMetadata extends GeneralMetadata, Metadata {
+public class DefaultLabelingColorTable implements LabelingColorTable {
 
+    // Fast HashMap implementation
+    private AbstractIntIntMap m_colorTable = null;
+
+    /**
+     * Default constructor.
+     */
+    public DefaultLabelingColorTable() {
+        m_colorTable = new OpenIntIntHashMap();
+    }
+
+    /**
+     * Constructor
+     *
+     * @param colorTable
+     */
+    public DefaultLabelingColorTable(final AbstractIntIntMap colorTable) {
+        m_colorTable = colorTable;
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public <L extends Comparable<L>> int getColor(final L label) {
+
+        final int hashCode = label.hashCode();
+        int res = m_colorTable.get(hashCode);
+
+        if (res == 0) {
+            return -1;
+        }
+
+        return LabelingColorTableUtils.getTransparentRGBA(res, 255);
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public <L extends Comparable<L>> void setColor(final L l, final int color) {
+        m_colorTable.put(l.hashCode(), color);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <L extends Comparable<L>> boolean isColorDefined(final L label) {
+        return m_colorTable.containsKey(label.hashCode());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LabelingColorTable copy() {
+        return new DefaultLabelingColorTable(m_colorTable.copy());
+    }
+
+    /**
+     * References is passed for serialization. No copy is made!
+     *
+     * @return
+     */
+    public AbstractIntIntMap getColorTable() {
+        return m_colorTable;
+    }
 }

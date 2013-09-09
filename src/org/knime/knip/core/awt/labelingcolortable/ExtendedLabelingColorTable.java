@@ -43,27 +43,69 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
+ * Created on Sep 4, 2013 by dietzc
  */
-package org.knime.knip.core.ui.event;
+package org.knime.knip.core.awt.labelingcolortable;
 
 /**
- *
- * TODO
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface KNIPEvent {
+public final class ExtendedLabelingColorTable implements LabelingColorTable {
 
-    enum ExecutionPriority {
-        NORMAL, LOW
-    };
+    protected MissingColorHandler m_missingColorHandler;
 
-    ExecutionPriority getExecutionOrder();
+    private LabelingColorTable m_table;
 
-    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
+    /**
+     * Default constructor.
+     */
+    public ExtendedLabelingColorTable(final LabelingColorTable table, final MissingColorHandler missingColorHandler) {
+        m_missingColorHandler = missingColorHandler;
+        m_table = table;
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public <L extends Comparable<L>> int getColor(final L label) {
+
+        if (isColorDefined(label)) {
+            return m_table.getColor(label);
+        }
+
+        return m_missingColorHandler.getColor(label);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <L extends Comparable<L>> void setColor(final L l, final int color) {
+        m_table.setColor(l, color);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <L extends Comparable<L>> boolean isColorDefined(final L label) {
+        // Every color is defined
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LabelingColorTable copy() {
+        return new ExtendedLabelingColorTable(m_table.copy(), m_missingColorHandler);
+    }
 
 }

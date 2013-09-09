@@ -49,166 +49,124 @@
 package org.knime.knip.core.data.img;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import net.imglib2.display.ColorTable;
-import net.imglib2.meta.Axes;
-import net.imglib2.meta.CalibratedAxis;
-import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.meta.DefaultCalibratedAxis;
-import net.imglib2.meta.DefaultCalibratedSpace;
-import net.imglib2.meta.DefaultNamed;
-import net.imglib2.meta.DefaultSourced;
 import net.imglib2.meta.ImageMetadata;
-import net.imglib2.meta.Metadata;
-import net.imglib2.meta.MetadataUtil;
-import net.imglib2.meta.Named;
-import net.imglib2.meta.Sourced;
 
 /**
- *
+ * TODO Auto-generated 
+ * 
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public final class ImgMetadataImpl extends GeneralMetadataImpl implements ImgMetadata {
+public class DefaultImageMetadata implements ImageMetadata {
 
-    private final ImageMetadata m_imgMetadata;
+    private int m_validBits;
 
-    /**
-     * @param cs
-     * @param named
-     * @param source
-     * @param imageMetadata
-     */
-    public ImgMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Named named, final Sourced source,
-                           final ImageMetadata imageMetadata) {
-        super(cs, named, source);
-        m_imgMetadata = MetadataUtil.copyImageMetadata(imageMetadata, new ImageMetadataImpl());
+    private final ArrayList<Double> m_channelMin;
 
-    }
+    private final ArrayList<Double> m_channelMax;
 
-    /**
-     * @param numDims
-     */
-    public ImgMetadataImpl(final int numDims) {
-        super(numDims);
-        m_imgMetadata = new ImageMetadataImpl();
-    }
+    private int m_compositeChannelCount = 1;
 
-    /**
-     * @param metadata
-     */
-    public ImgMetadataImpl(final Metadata metadata) {
-        this(metadata, metadata, metadata, metadata);
-    }
+    private final ArrayList<ColorTable> m_lut;
 
-    /**
-     * @param cSpace
-     * @param img
-     */
-    public ImgMetadataImpl(final CalibratedSpace<CalibratedAxis> cSpace, final Metadata img) {
-        this(cSpace, img, img, img);
-    }
+    public DefaultImageMetadata() {
+        this.m_channelMin = new ArrayList<Double>();
+        this.m_channelMax = new ArrayList<Double>();
 
-    /**
-     * @param generalMetadata
-     * @param imageMetadata
-     */
-    public ImgMetadataImpl(final GeneralMetadata generalMetadata, final ImageMetadata imageMetadata) {
-        this(generalMetadata, generalMetadata, generalMetadata, imageMetadata);
-    }
-
-    /**
-     * @param metadata
-     */
-    public ImgMetadataImpl(final GeneralMetadata metadata) {
-        this(metadata, metadata, metadata, new ImageMetadataImpl());
-    }
-
-    /**
-     * Convenience constructor
-     *
-     * @param name the name
-     * @param source the source
-     * @param axes the axes
-     */
-    public ImgMetadataImpl(final String name, final String source, final String... axes) {
-        super(new DefaultCalibratedSpace(createCalibratedAxis(axes)), new DefaultNamed(name),
-                new DefaultSourced(source));
-        m_imgMetadata = new ImageMetadataImpl();
-    }
-
-
-    /**
-     * @param axes
-     * @return
-     */
-    private static List<CalibratedAxis> createCalibratedAxis(final String[] axes) {
-        List<CalibratedAxis> list = new ArrayList<CalibratedAxis>();
-        for (int s = 0; s < axes.length; s++) {
-            list.add(new DefaultCalibratedAxis(Axes.get(axes[s])));
-        }
-        return list;
+        this.m_lut = new ArrayList<ColorTable>();
     }
 
     @Override
     public int getValidBits() {
-        return m_imgMetadata.getValidBits();
+        return m_validBits;
     }
 
     @Override
     public void setValidBits(final int bits) {
-        m_imgMetadata.setValidBits(bits);
+        m_validBits = bits;
     }
 
     @Override
     public double getChannelMinimum(final int c) {
-        return m_imgMetadata.getChannelMinimum(c);
+        if ((c < 0) || (c >= m_channelMin.size())) {
+            return Double.NaN;
+        }
+        final Double d = m_channelMin.get(c);
+        return d == null ? Double.NaN : d;
     }
 
     @Override
     public void setChannelMinimum(final int c, final double min) {
-        m_imgMetadata.setChannelMinimum(c, min);
+        if (c < 0) {
+            throw new IllegalArgumentException("Invalid channel: " + c);
+        }
+        if (c >= m_channelMin.size()) {
+            m_channelMin.ensureCapacity(c + 1);
+            for (int i = m_channelMin.size(); i <= c; i++) {
+                m_channelMin.add(null);
+            }
+        }
+        m_channelMin.set(c, min);
     }
 
     @Override
     public double getChannelMaximum(final int c) {
-        return m_imgMetadata.getChannelMaximum(c);
+        if ((c < 0) || (c >= m_channelMax.size())) {
+            return Double.NaN;
+        }
+        final Double d = m_channelMax.get(c);
+        return d == null ? Double.NaN : d;
     }
 
     @Override
     public void setChannelMaximum(final int c, final double max) {
-        m_imgMetadata.setChannelMaximum(c, max);
+        if (c < 0) {
+            throw new IllegalArgumentException("Invalid channel: " + c);
+        }
+        if (c >= m_channelMax.size()) {
+            m_channelMax.ensureCapacity(c + 1);
+            for (int i = m_channelMax.size(); i <= c; i++) {
+                m_channelMax.add(null);
+            }
+        }
+        m_channelMax.set(c, max);
     }
 
     @Override
     public int getCompositeChannelCount() {
-        return m_imgMetadata.getCompositeChannelCount();
+        return m_compositeChannelCount;
     }
 
     @Override
-    public void setCompositeChannelCount(final int count) {
-        m_imgMetadata.setCompositeChannelCount(count);
+    public void setCompositeChannelCount(final int value) {
+        m_compositeChannelCount = value;
     }
 
     @Override
     public void initializeColorTables(final int count) {
-        m_imgMetadata.initializeColorTables(count);
+        m_lut.ensureCapacity(count);
+        m_lut.clear();
+        for (int i = 0; i < count; i++) {
+            m_lut.add(null);
+        }
     }
 
     @Override
     public int getColorTableCount() {
-        return m_imgMetadata.getColorTableCount();
+        return m_lut.size();
     }
 
     @Override
     public ColorTable getColorTable(final int no) {
-        return m_imgMetadata.getColorTable(no);
+        return m_lut.get(no);
     }
 
     @Override
     public void setColorTable(final ColorTable colorTable, final int no) {
-        m_imgMetadata.setColorTable(colorTable, no);
+        m_lut.set(no, colorTable);
     }
+
 }

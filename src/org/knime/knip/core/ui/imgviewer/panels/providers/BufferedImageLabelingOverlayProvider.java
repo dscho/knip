@@ -66,6 +66,7 @@ import net.imglib2.type.numeric.RealType;
 import org.knime.knip.core.awt.AWTImageTools;
 import org.knime.knip.core.awt.Real2GreyRenderer;
 import org.knime.knip.core.awt.Transparency;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableRenderer;
 import org.knime.knip.core.awt.parametersupport.RendererWithHilite;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.ui.event.EventListener;
@@ -243,6 +244,11 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
             final RendererWithHilite r = (RendererWithHilite)m_renderer;
             r.setHilitedLabels(m_hilitedLabels);
             r.setHiliteMode(m_isHiliteMode);
+        }
+
+        if ((m_renderer instanceof LabelingColorTableRenderer)) {
+            final LabelingColorTableRenderer r = (LabelingColorTableRenderer)m_renderer;
+            r.setLabelToColorMapping(m_labelingColorMapping);
         }
 
         final ScreenImage ret =

@@ -50,9 +50,9 @@ package org.knime.knip.core.io.externalization.externalizers;
 
 import net.imglib2.meta.Axes;
 import net.imglib2.meta.DefaultCalibratedAxis;
-import net.imglib2.meta.DefaultCalibratedSpace;
 
 import org.knime.knip.core.data.img.CalibratedAxisSpace;
+import org.knime.knip.core.data.img.DefaultCalibratedAxisSpace;
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;
@@ -124,15 +124,4 @@ public class CalibratedSpaceExt0 implements Externalizer<CalibratedAxisSpace> {
 
     }
 
-    /*
-     * Simple marker class
-     *
-     * @author zinsmaie
-     */
-    class DefaultCalibratedAxisSpace extends DefaultCalibratedSpace implements CalibratedAxisSpace {
-
-        public DefaultCalibratedAxisSpace(final int numDims) {
-            super(numDims);
-        }
-    }
 }

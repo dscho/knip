@@ -43,24 +43,27 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
+ * Created on Sep 4, 2013 by dietzc
  */
 package org.knime.knip.core.data.img;
 
-import net.imglib2.img.Img;
-import net.imglib2.labeling.Labeling;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
+
 /**
- * Any metadata {@link Labeling} and {@link Img} have as common Metadata
- *
+ * TODO Auto-generated
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface GeneralMetadata extends CalibratedAxisSpace, Named, Sourced {
+public interface LabelingMetadata extends Named, Sourced, CalibratedAxisSpace {
 
+    LabelingColorTable getLabelingColorTable();
+
+    void setLabelToColorMapping(LabelingColorTable mapping);
 }

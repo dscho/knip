@@ -66,7 +66,7 @@ import org.knime.knip.core.ui.event.KNIPEvent;
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class IntervalWithMetadataChgEvent<T extends Type<T>> implements KNIPEvent {
+public abstract class IntervalWithMetadataChgEvent<T extends Type<T>> implements KNIPEvent {
 
     private final RandomAccessibleInterval<T> m_interval;
 
@@ -82,7 +82,6 @@ public class IntervalWithMetadataChgEvent<T extends Type<T>> implements KNIPEven
         m_name = name;
         m_source = source;
         m_cspace = cspace;
-
     }
 
     @Override

@@ -43,27 +43,23 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
+ * Created on Sep 4, 2013 by dietzc
  */
-package org.knime.knip.core.ui.event;
+package org.knime.knip.core.awt.labelingcolortable;
 
 /**
- *
- * TODO
+ * TODO documentation
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface KNIPEvent {
+public interface MissingColorHandler {
 
-    enum ExecutionPriority {
-        NORMAL, LOW
-    };
-
-    ExecutionPriority getExecutionOrder();
-
-    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
-
+    /**
+     * Retrieve the RGB color as int
+     */
+    public <L extends Comparable<L>> int getColor(L label);
 }

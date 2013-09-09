@@ -75,7 +75,10 @@ import net.imglib2.type.numeric.integer.ShortType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 
-import org.knime.knip.core.awt.SegmentColorTable;
+import org.knime.knip.core.awt.labelingcolortable.DefaultLabelingColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableUtils;
+import org.knime.knip.core.awt.labelingcolortable.RandomMissingColorHandler;
 import org.knime.knip.core.types.NativeTypes;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.event.EventServiceClient;
@@ -83,9 +86,9 @@ import org.knime.knip.core.ui.imgviewer.events.OverlayChgEvent;
 
 /**
  * Overlay
- * 
+ *
  * @TODO: Replace by ImageJ2 implementations or actually use ImageJ2?
- * 
+ *
  * @param <L>
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
@@ -95,7 +98,9 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient, Ext
 
     private long[] m_dims;
 
-    private List<OverlayElement2D<L>> m_elements;
+    private final List<OverlayElement2D<L>> m_elements;
+
+    private final LabelingColorTable m_defaultLabelingColorMapping;
 
     private EventService m_eventService;
 
@@ -103,13 +108,16 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient, Ext
 
     /**
      * No-arguments constructor need for externalization of overlays. Don't use this.
-     * 
+     *
      * @throws SecurityException
      * @throws IllegalArgumentException
-     * 
+     *
      */
     public Overlay() {
         m_elements = new ArrayList<OverlayElement2D<L>>();
+        m_defaultLabelingColorMapping =
+                LabelingColorTableUtils.extendLabelingColorTable(new DefaultLabelingColorTable(),
+                                                                 new RandomMissingColorHandler());
         m_activeColor = Color.YELLOW;
     }
 
@@ -231,19 +239,23 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient, Ext
                 g.setColor(m_activeColor);
                 e.renderBoundingBox(g);
                 e.renderOutline(g);
-                g.setColor(new Color(SegmentColorTable.getTransparentRGBA(m_activeColor.getRGB(), alpha), true));
+                g.setColor(new Color(LabelingColorTableUtils.getTransparentRGBA(m_activeColor.getRGB(), alpha), true));
                 e.renderInterior((Graphics2D)g);
                 break;
             case DRAWING:
-                g.setColor(new Color(SegmentColorTable.getColor(e.getLabels())).darker());
+                g.setColor(new Color(LabelingColorTableUtils.getAverageColor(m_defaultLabelingColorMapping,
+                                                                             e.getLabels())).darker());
                 e.renderOutline(g);
-                g.setColor(new Color(SegmentColorTable.getColor(e.getLabels(), alpha), true));
+                g.setColor(new Color(LabelingColorTableUtils.getTransparentRGBA(LabelingColorTableUtils
+                        .getAverageColor(m_defaultLabelingColorMapping, e.getLabels()), alpha), true));
                 e.renderInterior((Graphics2D)g);
                 break;
             case IDLE:
-                g.setColor(new Color(SegmentColorTable.getColor(e.getLabels())));
+                g.setColor(new Color(LabelingColorTableUtils.getAverageColor(m_defaultLabelingColorMapping,
+                                                                             e.getLabels())));
                 e.renderOutline(g);
-                g.setColor(new Color(SegmentColorTable.getColor(e.getLabels(), alpha), true));
+                g.setColor(new Color(LabelingColorTableUtils.getTransparentRGBA(LabelingColorTableUtils
+                        .getAverageColor(m_defaultLabelingColorMapping, e.getLabels()), alpha), true));
                 e.renderInterior((Graphics2D)g);
                 break;
             default:
@@ -259,7 +271,7 @@ public class Overlay<L extends Comparable<L>> implements EventServiceClient, Ext
     }
 
     /**
-     * 
+     *
      * @param addSegmentID if true, an additional label with a unique id for each segment is added
      * @return
      */

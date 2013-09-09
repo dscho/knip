@@ -46,21 +46,20 @@
  * --------------------------------------------------------------------- *
  *
  */
-package org.knime.knip.core.io.externalization.externalizers;
+package org.knime.knip.core.data.img;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.imglib2.display.ColorTable;
+import net.imglib2.meta.Axes;
 import net.imglib2.meta.CalibratedAxis;
 import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.DefaultCalibratedAxis;
 import net.imglib2.meta.ImageMetadata;
 import net.imglib2.meta.Metadata;
-import net.imglib2.meta.MetadataUtil;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
-
-import org.knime.knip.core.data.img.DefaultImgMetadata;
-import org.knime.knip.core.io.externalization.BufferedDataInputStream;
-import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
-import org.knime.knip.core.io.externalization.Externalizer;
-import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
  *
@@ -68,62 +67,111 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class ImgMetadataExt0 implements Externalizer<Metadata> {
+public final class DefaultImgMetadata extends AbstractGeneralMetadata implements Metadata {
+
+    private final ImageMetadata m_imageMetadata;
 
     /**
-     * {@inheritDoc}
+     * @param numDims
      */
-    @Override
-    public String getId() {
-        return this.getClass().getSimpleName();
+    public DefaultImgMetadata(final int numDims) {
+        super(numDims);
+        m_imageMetadata = new DefaultImageMetadata();
     }
 
     /**
-     * {@inheritDoc}
+     * @param cs
+     * @param named
+     * @param source
+     * @param imageMetadata
      */
-    @Override
-    public Class<Metadata> getType() {
-        return Metadata.class;
+    public DefaultImgMetadata(final Metadata imgMetadata) {
+        super(imgMetadata, imgMetadata, imgMetadata);
+        m_imageMetadata = imgMetadata;
+
     }
 
     /**
-     * {@inheritDoc}
+     * @param cs
+     * @param named, defaultSource
+     * @param sourced
+     * @param imageMetadata
      */
-    @Override
-    public int getPriority() {
-        return 0;
+    public DefaultImgMetadata(final CalibratedSpace<CalibratedAxis> cs, final Named named, final Sourced sourced,
+                              final ImageMetadata imageMetadata) {
+        super(cs, named, sourced);
+        m_imageMetadata = imageMetadata;
     }
 
     /**
-     * {@inheritDoc}
+     * @param axes
+     * @return
      */
-    @Override
-    public Metadata read(final BufferedDataInputStream in) throws Exception {
-
-        // For backwards compatibility
-        final char[] s = new char[in.readInt()];
-        in.read(s);
-
-        final CalibratedSpace<CalibratedAxis> cs = ExternalizerManager.<CalibratedSpace> read(in);
-        final Named name = ExternalizerManager.<Named> read(in);
-        final Sourced source = ExternalizerManager.<Sourced> read(in);
-
-        DefaultImgMetadata resMetadata = new DefaultImgMetadata(cs.numDimensions());
-
-        // Copy
-        MetadataUtil.copyImageMetadata(ExternalizerManager.<ImageMetadata> read(in), resMetadata);
-        MetadataUtil.copyName(name, resMetadata);
-        MetadataUtil.copySource(source, resMetadata);
-        MetadataUtil.copyTypedSpace(cs, resMetadata);
-
-        return resMetadata;
+    private static List<CalibratedAxis> createCalibratedAxis(final String[] axes) {
+        List<CalibratedAxis> list = new ArrayList<CalibratedAxis>();
+        for (int s = 0; s < axes.length; s++) {
+            list.add(new DefaultCalibratedAxis(Axes.get(axes[s])));
+        }
+        return list;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void write(final BufferedDataOutputStream out, final Metadata obj) throws Exception {
-        throw new IllegalStateException("Out shouldn't be called anymore");
+    public int getValidBits() {
+        return m_imageMetadata.getValidBits();
+    }
+
+    @Override
+    public void setValidBits(final int bits) {
+        m_imageMetadata.setValidBits(bits);
+    }
+
+    @Override
+    public double getChannelMinimum(final int c) {
+        return m_imageMetadata.getChannelMinimum(c);
+    }
+
+    @Override
+    public void setChannelMinimum(final int c, final double min) {
+        m_imageMetadata.setChannelMinimum(c, min);
+    }
+
+    @Override
+    public double getChannelMaximum(final int c) {
+        return m_imageMetadata.getChannelMaximum(c);
+    }
+
+    @Override
+    public void setChannelMaximum(final int c, final double max) {
+        m_imageMetadata.setChannelMaximum(c, max);
+    }
+
+    @Override
+    public int getCompositeChannelCount() {
+        return m_imageMetadata.getCompositeChannelCount();
+    }
+
+    @Override
+    public void setCompositeChannelCount(final int count) {
+        m_imageMetadata.setCompositeChannelCount(count);
+    }
+
+    @Override
+    public void initializeColorTables(final int count) {
+        m_imageMetadata.initializeColorTables(count);
+    }
+
+    @Override
+    public int getColorTableCount() {
+        return m_imageMetadata.getColorTableCount();
+    }
+
+    @Override
+    public ColorTable getColorTable(final int no) {
+        return m_imageMetadata.getColorTable(no);
+    }
+
+    @Override
+    public void setColorTable(final ColorTable colorTable, final int no) {
+        m_imageMetadata.setColorTable(colorTable, no);
     }
 }

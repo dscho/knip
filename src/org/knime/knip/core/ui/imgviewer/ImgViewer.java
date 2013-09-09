@@ -107,24 +107,20 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
-import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.meta.DefaultCalibratedAxis;
+import net.imglib2.labeling.Labeling;
 import net.imglib2.meta.DefaultCalibratedSpace;
-import net.imglib2.meta.ImageMetadata;
-import net.imglib2.meta.MetadataUtil;
-import net.imglib2.meta.Named;
-import net.imglib2.meta.Sourced;
-import net.imglib2.meta.TypedAxis;
-import net.imglib2.meta.TypedSpace;
-import net.imglib2.type.Type;
+import net.imglib2.meta.ImgPlus;
+import net.imglib2.ops.operation.subset.views.ImgPlusView;
+import net.imglib2.ops.operation.subset.views.LabelingView;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 
+import org.knime.knip.core.data.img.DefaultLabelingMetadata;
+import org.knime.knip.core.data.img.LabelingMetadata;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.events.ImgRedrawEvent;
 import org.knime.knip.core.ui.imgviewer.events.ImgWithMetadataChgEvent;
-import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.LabelingWithMetadataChgEvent;
 
 /**
  * A TableCellViewPane providing another view on image objects. It allows to browser through the individual
@@ -135,8 +131,7 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>> extends JPanel implements
-        ViewerComponentContainer {
+public class ImgViewer extends JPanel implements ViewerComponentContainer {
 
     /* def */
     private static final long serialVersionUID = 1L;
@@ -251,37 +246,39 @@ public class ImgViewer<T extends Type<T>, I extends RandomAccessibleInterval<T>>
     }
 
     /**
-     * Set the current {@link Img} of the viewer
+     * TODO
      *
-     * @param img {@link Img} to be set
-     * @param axes {@link CalibratedSpace} of the {@link Img}
-     * @param name {@link Named} of the {@link Img}
-     * @param imageMetaData {@link ImageMetadata} might be null if no metadata exists
+     * @param labeling
+     * @param metadata
      */
-    public void setImg(final I img, final TypedSpace<? extends TypedAxis> axes, final Named name, final Sourced source,
-                       final ImageMetadata imageMetaData) {
+    public <L extends Comparable<L>> void setLabeling(final Labeling<L> labeling, final LabelingMetadata metadata) {
+        // make sure that at least two dimensions exist
+        Labeling<L> labeling2d = labeling;
+        LabelingMetadata resMetadata = metadata;
+        if (labeling2d.numDimensions() <= 1) {
+            labeling2d = new LabelingView<L>(Views.addDimension(labeling2d, 0, 0), labeling2d.<L> factory());
+            resMetadata =
+                    new DefaultLabelingMetadata(new DefaultCalibratedSpace(2), resMetadata, resMetadata,
+                            resMetadata.getLabelingColorTable());
+        }
+
+        m_eventService.publish(new LabelingWithMetadataChgEvent(labeling2d, resMetadata));
+        m_eventService.publish(new ImgRedrawEvent());
+    }
+
+    /**
+     * TODO
+     */
+    public <T extends RealType<T>> void setImg(final ImgPlus<T> img) {
 
         // make sure that at least two dimensions exist
-        TypedSpace<? extends TypedAxis> axes2d;
-        RandomAccessibleInterval<T> img2d;
-        if (img.numDimensions() > 1) {
-            axes2d = axes;
-            img2d = img;
-        } else {
-            img2d = Views.addDimension(img, 0, 0);
-            DefaultCalibratedSpace out = (DefaultCalibratedSpace)MetadataUtil.copyAndCleanTypedSpace(img2d, new DefaultCalibratedSpace(new DefaultCalibratedAxis(axes.axis(0).type())), new DefaultCalibratedSpace(2));
-            axes2d = out;
+        ImgPlus<T> img2d = img;
+        if (img.numDimensions() <= 1) {
+            img2d = new ImgPlusView<T>(Views.addDimension(img, 0, 0), img.factory());
         }
 
-        if (imageMetaData != null) {
-            m_eventService.publish(new ImgWithMetadataChgEvent<T>(img2d, name, source, axes2d, imageMetaData));
-
-        } else {
-            m_eventService.publish(new IntervalWithMetadataChgEvent<T>(img2d, name, source, axes2d));
-
-        }
+        m_eventService.publish(new ImgWithMetadataChgEvent<T>(img2d, img));
         m_eventService.publish(new ImgRedrawEvent());
 
     }
-
 }

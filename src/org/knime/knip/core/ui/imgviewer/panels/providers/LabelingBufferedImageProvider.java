@@ -60,7 +60,10 @@ import net.imglib2.labeling.LabelingMapping;
 import net.imglib2.labeling.LabelingType;
 
 import org.knime.knip.core.awt.AWTImageTools;
-import org.knime.knip.core.awt.SegmentColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableRenderer;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableUtils;
+import org.knime.knip.core.awt.labelingcolortable.RandomMissingColorHandler;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.imgviewer.events.AWTImageChgEvent;
@@ -68,6 +71,7 @@ import org.knime.knip.core.ui.imgviewer.events.IntervalWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelColoringChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.LabelPanelVisibleLabelsChgEvent;
+import org.knime.knip.core.ui.imgviewer.events.LabelingWithMetadataChgEvent;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 
 /**
@@ -84,9 +88,9 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
      */
     private static final long serialVersionUID = 1L;
 
-    private int m_colorMapNr = SegmentColorTable.getColorMapNr();
+    private int m_colorMapGeneration = RandomMissingColorHandler.getGeneration();
 
-    private Color m_boundingBoxColor = SegmentColorTable.getBoundingBoxColor();
+    private Color m_boundingBoxColor = LabelingColorTableUtils.getBoundingBoxColor();
 
     protected Set<String> m_activeLabels;
 
@@ -96,6 +100,11 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
 
     protected boolean m_withLabelStrings = false;
 
+    protected LabelingColorTable m_labelingColorMapping;
+
+    /**
+     * TODO
+     */
     public LabelingBufferedImageProvider(final int cacheSize) {
         super(cacheSize);
     }
@@ -104,12 +113,16 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
     @EventListener
     public void onUpdated(final IntervalWithMetadataChgEvent<LabelingType<L>> e) {
         m_labelMapping = e.getIterableInterval().firstElement().getMapping();
+        m_labelingColorMapping =
+                LabelingColorTableUtils.extendLabelingColorTable(((LabelingWithMetadataChgEvent)e)
+                        .getLabelingMetaData().getLabelingColorTable(), new RandomMissingColorHandler());
+
         super.onUpdated(e);
     }
 
     @EventListener
     public void onLabelColoringChangeEvent(final LabelColoringChangeEvent e) {
-        m_colorMapNr = e.getColorMapNr();
+        m_colorMapGeneration = e.getColorMapNr();
         m_boundingBoxColor = e.getBoundingBoxColor();
     }
 
@@ -133,7 +146,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
         hash *= 31;
         hash += m_boundingBoxColor.hashCode();
         hash *= 31;
-        hash += m_colorMapNr;
+        hash += m_colorMapGeneration;
         hash *= 31;
         if (m_withLabelStrings) {
             hash += 1;
@@ -152,6 +165,11 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
             r.setOperator(m_operator);
             r.setLabelMapping(m_labelMapping);
             r.setRenderingWithLabelStrings(m_withLabelStrings);
+        }
+
+        if (m_renderer instanceof LabelingColorTableRenderer) {
+            final LabelingColorTableRenderer r = (LabelingColorTableRenderer)m_renderer;
+            r.setLabelToColorMapping(m_labelingColorMapping);
         }
 
         final ScreenImage ret =

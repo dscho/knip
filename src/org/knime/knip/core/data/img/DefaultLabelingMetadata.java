@@ -43,27 +43,83 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
+ * Created on Sep 4, 2013 by dietzc
  */
-package org.knime.knip.core.ui.event;
+package org.knime.knip.core.data.img;
+
+import net.imglib2.meta.CalibratedAxis;
+import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.MetadataUtil;
+import net.imglib2.meta.Named;
+import net.imglib2.meta.Sourced;
+
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
 
 /**
- *
- * TODO
+ * TODO Auto-generated
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface KNIPEvent {
+public class DefaultLabelingMetadata extends AbstractGeneralMetadata implements LabelingMetadata {
 
-    enum ExecutionPriority {
-        NORMAL, LOW
-    };
+    private LabelingColorTable m_colorTable;
 
-    ExecutionPriority getExecutionOrder();
+    /**
+     * TODO
+     *
+     * @param numDims
+     */
+    public DefaultLabelingMetadata(final int numDims, final LabelingColorTable colorTable) {
+        super(numDims);
+        m_colorTable = colorTable;
+    }
 
-    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
+    /**
+     * TODO
+     *
+     * @param metadata
+     */
+    public DefaultLabelingMetadata(final LabelingMetadata metadata) {
+        super(metadata.numDimensions());
+        m_colorTable = metadata.getLabelingColorTable().copy();
+        MetadataUtil.copyName(metadata, this);
+        MetadataUtil.copySource(metadata, this);
+        MetadataUtil.copyTypedSpace(metadata, this);
+    }
+
+    /**
+     * TODO
+     *
+     * @param space
+     * @param named
+     * @param sourced
+     * @param mapping
+     */
+    public DefaultLabelingMetadata(final CalibratedSpace<CalibratedAxis> space, final Named named,
+                                   final Sourced sourced, final LabelingColorTable mapping) {
+        super(space.numDimensions());
+        m_colorTable = mapping;
+        MetadataUtil.copyName(named, this);
+        MetadataUtil.copySource(sourced, this);
+        MetadataUtil.copyTypedSpace(space, this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public LabelingColorTable getLabelingColorTable() {
+        return m_colorTable;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLabelToColorMapping(final LabelingColorTable mapping) {
+        m_colorTable = mapping;
+    }
 
 }

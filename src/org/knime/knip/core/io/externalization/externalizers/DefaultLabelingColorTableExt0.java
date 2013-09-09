@@ -46,79 +46,80 @@
  * --------------------------------------------------------------------- *
  *
  */
-package org.knime.knip.core.data.img;
+package org.knime.knip.core.io.externalization.externalizers;
 
-import net.imglib2.meta.CalibratedAxis;
-import net.imglib2.meta.CalibratedSpace;
-import net.imglib2.meta.DefaultCalibratedSpace;
-import net.imglib2.meta.DefaultNamed;
-import net.imglib2.meta.DefaultSourced;
-import net.imglib2.meta.Metadata;
-import net.imglib2.meta.MetadataUtil;
-import net.imglib2.meta.Named;
-import net.imglib2.meta.Sourced;
+import org.apache.mahout.math.list.IntArrayList;
+import org.apache.mahout.math.map.AbstractIntIntMap;
+import org.knime.knip.core.awt.labelingcolortable.DefaultLabelingColorTable;
+import org.knime.knip.core.io.externalization.BufferedDataInputStream;
+import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
+import org.knime.knip.core.io.externalization.Externalizer;
 
 /**
- * Implementation of GeneralMetadata
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class GeneralMetadataImpl extends DefaultCalibratedSpace implements GeneralMetadata {
+public class DefaultLabelingColorTableExt0 implements Externalizer<DefaultLabelingColorTable> {
 
-    private final Named m_named;
-
-    private final Sourced m_sourced;
-
-    public GeneralMetadataImpl(final int numDimensions) {
-        super(numDimensions);
-        this.m_named = new DefaultNamed();
-        this.m_sourced = new DefaultSourced();
-    }
-
-    public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Named named, final Sourced sourced) {
-        this(cs.numDimensions());
-
-        MetadataUtil.copyName(named, m_named);
-        MetadataUtil.copySource(sourced, m_sourced);
-        MetadataUtil.copyTypedSpace(cs, this);
-    }
-
-    public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> cs, final Metadata metadata) {
-        this(cs, metadata, metadata);
-    }
-
-    public GeneralMetadataImpl(final CalibratedSpace<CalibratedAxis> space, final GeneralMetadata metadata) {
-        this(space, metadata, metadata);
-    }
-
-    public GeneralMetadataImpl(final GeneralMetadata metadata) {
-        this(metadata, metadata, metadata);
-    }
-
-    public GeneralMetadataImpl(final Metadata metadata) {
-        this(metadata, metadata, metadata);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getName() {
-        return m_named.getName();
+    public String getId() {
+        return this.getClass().getSimpleName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setName(final String name) {
-        m_named.setName(name);
+    public Class<DefaultLabelingColorTable> getType() {
+        return DefaultLabelingColorTable.class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getSource() {
-        return m_sourced.getSource();
+    public int getPriority() {
+        return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setSource(final String source) {
-        this.m_sourced.setSource(source);
+    public DefaultLabelingColorTable read(final BufferedDataInputStream in) throws Exception {
+
+        final DefaultLabelingColorTable colorMapping = new DefaultLabelingColorTable();
+
+        final int numLabels = in.readInt();
+
+        for (int i = 0; i < numLabels; i++) {
+            // This works as the hash of an int is an int again
+            colorMapping.setColor(in.readInt(), in.readInt());
+        }
+
+        return colorMapping;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final DefaultLabelingColorTable obj) throws Exception {
+
+        AbstractIntIntMap table = obj.getColorTable();
+        int size = 0;
+        out.writeInt(size = table.size());
+        IntArrayList keys = table.keys();
+
+        for (int i = 0; i < size; i++) {
+            int key = keys.get(i);
+            out.writeInt(key);
+            out.writeInt(table.get(key));
+        }
+    }
 }

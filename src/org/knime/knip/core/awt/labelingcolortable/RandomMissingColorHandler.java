@@ -43,27 +43,88 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
  */
-package org.knime.knip.core.ui.event;
+package org.knime.knip.core.awt.labelingcolortable;
+
+import java.util.Random;
+
+import org.apache.mahout.math.map.OpenIntIntHashMap;
 
 /**
- *
- * TODO
+ * TODO Auto-generated
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface KNIPEvent {
+public class RandomMissingColorHandler implements MissingColorHandler {
 
-    enum ExecutionPriority {
-        NORMAL, LOW
-    };
+    // Fast HashMap implementation
+    private static OpenIntIntHashMap m_colorTable = new OpenIntIntHashMap();
 
-    ExecutionPriority getExecutionOrder();
+    private static int m_generation;
 
-    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
+    private static int randomColor() {
+        final Random rand = new Random();
+        int col = rand.nextInt(255);
+        col = col << 8;
+        col |= rand.nextInt(255);
+        col = col << 8;
+        col |= rand.nextInt(255);
+
+        if (col == 0) {
+            col = randomColor();
+        }
+
+        return col;
+    }
+
+    public static <L extends Comparable<L>> void setColor(final L o, final int color) {
+        m_colorTable.put(o.hashCode(), color);
+        m_generation++;
+    }
+
+    public static <L extends Comparable<L>> void resetColor(final L o) {
+        m_colorTable.put(o.hashCode(), randomColor());
+        m_generation++;
+    }
+
+    /**
+     * resets the color table such that the label colors can be assigned again. Increases the ColorMapNr to indicate the
+     * change.
+     */
+    public static void resetColorMap() {
+        m_colorTable.clear();
+        m_generation++;
+    }
+
+    /**
+     * @return current generation (e.g. needed for caching)
+     */
+    public static int getGeneration() {
+        return m_generation;
+    }
+
+    public static <L extends Comparable<L>> int getLabelColor(final L label) {
+
+        final int hashCode = label.hashCode();
+        int res = m_colorTable.get(hashCode);
+        if (res == 0) {
+            res = randomColor();
+            m_colorTable.put(hashCode, res);
+        }
+
+        return LabelingColorTableUtils.getTransparentRGBA(res, 255);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final <L extends Comparable<L>> int getColor(final L label) {
+        return RandomMissingColorHandler.getLabelColor(label);
+    }
 
 }

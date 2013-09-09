@@ -49,37 +49,32 @@
 package org.knime.knip.core.ui.imgviewer.events;
 
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.meta.ImageMetadata;
-import net.imglib2.meta.Named;
-import net.imglib2.meta.Sourced;
-import net.imglib2.meta.TypedAxis;
-import net.imglib2.meta.TypedSpace;
+import net.imglib2.meta.Metadata;
 import net.imglib2.type.Type;
 
-import org.knime.knip.core.data.img.ImageMetadataImpl;
+import org.knime.knip.core.data.img.DefaultImageMetadata;
 
 /**
- * TODO Auto-generated 
- * 
+ * TODO Auto-generated
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
 public class ImgWithMetadataChgEvent<T extends Type<T>> extends IntervalWithMetadataChgEvent<T> {
 
-    private final ImageMetadata m_imageMetaData;
+    private final Metadata m_imgMetaData;
 
-    public ImgWithMetadataChgEvent(final RandomAccessibleInterval<T> interval, final Named name, final Sourced source,
-                                   final TypedSpace<? extends TypedAxis> cspace, final ImageMetadata imageMetaData) {
-        super(interval, name, source, cspace);
-        m_imageMetaData = imageMetaData;
+    public ImgWithMetadataChgEvent(final RandomAccessibleInterval<T> interval, final Metadata imageMetaData) {
+        super(interval, imageMetaData, imageMetaData, imageMetaData);
+        m_imgMetaData = imageMetaData;
     }
 
     /**
      *
-     * @return metadata of the image. This might be an empty instance of {@link ImageMetadataImpl}
+     * @return metadata of the image. This might be an empty instance of {@link DefaultImageMetadata}
      */
-    public ImageMetadata getImgMetaData() {
-        return m_imageMetaData;
+    public Metadata getImgMetaData() {
+        return m_imgMetaData;
     }
 }

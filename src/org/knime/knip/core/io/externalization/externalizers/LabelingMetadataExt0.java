@@ -43,27 +43,81 @@
  *  propagated with or for interoperation with KNIME.  The owner of a Node
  *  may freely choose the license terms applicable to such Node, including
  *  when such Node is propagated with or for interoperation with KNIME.
- * --------------------------------------------------------------------- *
+ * ---------------------------------------------------------------------
  *
+ * Created on Sep 4, 2013 by dietzc
  */
-package org.knime.knip.core.ui.event;
+package org.knime.knip.core.io.externalization.externalizers;
+
+import net.imglib2.meta.CalibratedAxis;
+import net.imglib2.meta.CalibratedSpace;
+import net.imglib2.meta.Named;
+import net.imglib2.meta.Sourced;
+
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
+import org.knime.knip.core.data.img.CalibratedAxisSpace;
+import org.knime.knip.core.data.img.DefaultLabelingMetadata;
+import org.knime.knip.core.data.img.LabelingMetadata;
+import org.knime.knip.core.io.externalization.BufferedDataInputStream;
+import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
+import org.knime.knip.core.io.externalization.Externalizer;
+import org.knime.knip.core.io.externalization.ExternalizerManager;
 
 /**
- *
  * TODO
  *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public interface KNIPEvent {
+public class LabelingMetadataExt0 implements Externalizer<LabelingMetadata> {
 
-    enum ExecutionPriority {
-        NORMAL, LOW
-    };
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return LabelingMetadata.class.getSimpleName();
+    }
 
-    ExecutionPriority getExecutionOrder();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends LabelingMetadata> getType() {
+        return LabelingMetadata.class;
+    }
 
-    <E extends KNIPEvent> boolean isRedundant(E thatEvent);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LabelingMetadata read(final BufferedDataInputStream in) throws Exception {
+        final CalibratedSpace<CalibratedAxis> cs = ExternalizerManager.<CalibratedSpace> read(in);
+        final Named name = ExternalizerManager.<Named> read(in);
+        final Sourced source = ExternalizerManager.<Sourced> read(in);
+        final LabelingColorTable mapping = ExternalizerManager.<LabelingColorTable> read(in);
+
+        return new DefaultLabelingMetadata(cs, name, source, mapping);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final BufferedDataOutputStream out, final LabelingMetadata obj) throws Exception {
+        ExternalizerManager.write(out, obj, CalibratedAxisSpace.class);
+        ExternalizerManager.write(out, obj, Named.class);
+        ExternalizerManager.write(out, obj, Sourced.class);
+        ExternalizerManager.write(out, obj.getLabelingColorTable());
+    }
 
 }

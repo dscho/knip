@@ -73,7 +73,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.knime.knip.core.awt.SegmentColorTable;
+import org.knime.knip.core.awt.labelingcolortable.RandomMissingColorHandler;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorLabelEditEvent;
@@ -83,8 +83,8 @@ import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorLabelsSelChgEv
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorLabelsSetEvent;
 
 /**
- * TODO Auto-generated 
- * 
+ * TODO Auto-generated
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
@@ -230,7 +230,7 @@ public class AnnotatorLabelPanel extends ViewerComponent {
             public void actionPerformed(final ActionEvent e) {
                 m_jLabelList.updateUI();
                 for (final Object o : m_jLabelList.getSelectedValues()) {
-                    SegmentColorTable.resetColor((String)o);
+                    RandomMissingColorHandler.resetColor((String)o);
                 }
 
                 m_eventService.publish(new AnnotatorLabelsColResetEvent(objectArrayAsStringArray(m_jLabelList

@@ -65,6 +65,7 @@ import net.imglib2.ops.operation.subset.views.LabelingView;
 import net.imglib2.roi.IterableRegionOfInterest;
 import net.imglib2.type.Type;
 
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableUtils;
 import org.knime.knip.core.awt.parametersupport.RendererWithHilite;
 import org.knime.knip.core.awt.parametersupport.RendererWithLabels;
 import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
@@ -79,7 +80,7 @@ import org.knime.knip.core.ui.imgviewer.events.RulebasedLabelFilter.Operator;
 public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>> implements ImageRenderer<LabelingType<L>>,
         RendererWithLabels<L>, RendererWithHilite {
 
-    private final Color HILITED_RGB_COLOR = new Color(SegmentColorTable.HILITED_RGB);
+    private final Color HILITED_RGB_COLOR = new Color(LabelingColorTableUtils.HILITED_RGB);
 
     //allows to bypass the segment color table
     private Color m_boxColor = null;
@@ -88,7 +89,7 @@ public class BoundingBoxLabelRenderer<L extends Comparable<L> & Type<L>> impleme
         if (m_boxColor != null) {
             return m_boxColor;
         } else {
-            return SegmentColorTable.getBoundingBoxColor();
+            return LabelingColorTableUtils.getBoundingBoxColor();
         }
     }
 

@@ -53,7 +53,7 @@ import java.util.Map;
 
 import net.imglib2.type.numeric.RealType;
 
-import org.knime.knip.core.awt.SegmentColorTable;
+import org.knime.knip.core.awt.labelingcolortable.RandomMissingColorHandler;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.annotator.events.AnnotatorImgAndOverlayChgEvent;
@@ -90,7 +90,6 @@ public abstract class AbstractAnnotatorManager<T extends RealType<T>> extends Hi
      */
     private static final long serialVersionUID = 1L;
 
-
     protected String[] m_selectedLabels;
 
     protected PlaneSelectionEvent m_sel;
@@ -117,7 +116,7 @@ public abstract class AbstractAnnotatorManager<T extends RealType<T>> extends Hi
     @EventListener
     public void onLabelsColorReset(final AnnotatorLabelsColResetEvent e) {
         for (final String label : e.getLabels()) {
-            SegmentColorTable.resetColor(label);
+            RandomMissingColorHandler.resetColor(label);
         }
 
         m_eventService.publish(new OverlayChgEvent(m_currentOverlay));
@@ -224,7 +223,8 @@ public abstract class AbstractAnnotatorManager<T extends RealType<T>> extends Hi
         }
         onSelectedLabelsChg(new AnnotatorLabelsSelChgEvent(e.getNewLabel()));
 
-        SegmentColorTable.setColor(e.getNewLabel(), SegmentColorTable.getColor(e.getOldLabel()));
+        RandomMissingColorHandler.setColor(e.getNewLabel(),
+                                             RandomMissingColorHandler.getLabelColor(e.getOldLabel()));
     }
 
     /*
@@ -258,7 +258,6 @@ public abstract class AbstractAnnotatorManager<T extends RealType<T>> extends Hi
 
         }
     }
-
 
     /**
      * {@inheritDoc}

@@ -52,7 +52,7 @@ import net.imglib2.display.ColorTable16;
 import net.imglib2.display.ColorTable8;
 import net.imglib2.meta.ImageMetadata;
 
-import org.knime.knip.core.data.img.ImageMetadataImpl;
+import org.knime.knip.core.data.img.DefaultImageMetadata;
 import org.knime.knip.core.io.externalization.BufferedDataInputStream;
 import org.knime.knip.core.io.externalization.BufferedDataOutputStream;
 import org.knime.knip.core.io.externalization.Externalizer;
@@ -83,7 +83,7 @@ public class ImageMetadataExt0 implements Externalizer<ImageMetadata> {
 
     @Override
     public ImageMetadata read(final BufferedDataInputStream in) throws Exception {
-        final ImageMetadataImpl obj = new ImageMetadataImpl();
+        final DefaultImageMetadata obj = new DefaultImageMetadata();
 
         // Valid bits are deserialized
         obj.setValidBits(in.readInt());

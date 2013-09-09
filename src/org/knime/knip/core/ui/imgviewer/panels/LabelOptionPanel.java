@@ -68,7 +68,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.knime.knip.core.awt.SegmentColorTable;
+import org.knime.knip.core.awt.labelingcolortable.LabelingColorTableUtils;
+import org.knime.knip.core.awt.labelingcolortable.RandomMissingColorHandler;
 import org.knime.knip.core.ui.event.EventListener;
 import org.knime.knip.core.ui.event.EventService;
 import org.knime.knip.core.ui.imgviewer.ViewerComponent;
@@ -78,7 +79,7 @@ import org.knime.knip.core.ui.imgviewer.events.LabelOptionsChangeEvent;
 import org.knime.knip.core.ui.imgviewer.events.ViewClosedEvent;
 
 /**
- * 
+ *
  * @author <a href="mailto:dietzc85@googlemail.com">Christian Dietz</a>
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
@@ -89,11 +90,11 @@ public class LabelOptionPanel extends ViewerComponent {
         @Override
         public void actionPerformed(final java.awt.event.ActionEvent evt) {
             final Color newColor = LabelOptionPanel.this.m_colorChooser.getColor();
-            SegmentColorTable.setBoundingBoxColor(newColor);
+            LabelingColorTableUtils.setBoundingBoxColor(newColor);
 
             m_eventService.publish(new LabelOptionsChangeEvent(true));
 
-            m_eventService.publish(new LabelColoringChangeEvent(newColor, SegmentColorTable.getColorMapNr()));
+            m_eventService.publish(new LabelColoringChangeEvent(newColor, RandomMissingColorHandler.getGeneration()));
             m_eventService.publish(new ImgRedrawEvent());
         }
     }
@@ -156,9 +157,9 @@ public class LabelOptionPanel extends ViewerComponent {
         m_resetColor.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(final java.awt.event.ActionEvent evt) {
-                SegmentColorTable.resetColorMap();
-                m_eventService.publish(new LabelColoringChangeEvent(SegmentColorTable.getBoundingBoxColor(),
-                        SegmentColorTable.getColorMapNr()));
+                RandomMissingColorHandler.resetColorMap();
+                m_eventService.publish(new LabelColoringChangeEvent(LabelingColorTableUtils.getBoundingBoxColor(),
+                        RandomMissingColorHandler.getGeneration()));
                 m_eventService.publish(new ImgRedrawEvent());
             }
         });
