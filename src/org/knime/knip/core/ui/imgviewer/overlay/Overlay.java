@@ -97,7 +97,7 @@ import org.knime.knip.core.ui.imgviewer.events.OverlayChgEvent;
 public class Overlay<L extends Comparable<L>> implements EventServiceClient, Externalizable {
 
     // we need this ID for backwards compability
-    private long serialVersionUID = -6681043404923479564l;
+    private static final long serialVersionUID = -6681043404923479564L;
 
     private long[] m_dims;
 
