@@ -76,7 +76,7 @@ public final class ExtendedLabelingColorTable implements LabelingColorTable {
     @Override
     public <L extends Comparable<L>> int getColor(final L label) {
 
-        if (isColorDefined(label)) {
+        if (m_table.isColorDefined(label)) {
             return m_table.getColor(label);
         }
 
