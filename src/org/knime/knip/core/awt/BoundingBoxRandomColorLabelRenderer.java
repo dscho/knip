@@ -103,7 +103,7 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
     protected ScreenImage createCanvas(final int width, final int height) {
 
         final ScreenImage ret = new ARGBScreenImage(width, height);
-        m_labelRenderer.setLabelToColorMapping(m_mapping);
+        m_labelRenderer.setLabelingColorTable(m_mapping);
         final ScreenImage labelRendererResult = m_labelRenderer.render(m_source, m_dimX, m_dimY, m_planePos);
         final Graphics g = ret.image().getGraphics();
         g.drawImage(labelRendererResult.image(), 0, 0, width, height, null);
@@ -150,7 +150,7 @@ public class BoundingBoxRandomColorLabelRenderer<L extends Comparable<L> & Type<
      * {@inheritDoc}
      */
     @Override
-    public void setLabelToColorMapping(final LabelingColorTable mapping) {
+    public void setLabelingColorTable(final LabelingColorTable mapping) {
         m_mapping = mapping;
     }
 }

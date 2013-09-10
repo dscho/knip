@@ -255,7 +255,7 @@ public class ColorLabelingRenderer<L extends Comparable<L>> extends ProjectingRe
      * {@inheritDoc}
      */
     @Override
-    public void setLabelToColorMapping(final LabelingColorTable mapping) {
+    public void setLabelingColorTable(final LabelingColorTable mapping) {
         m_rebuildRequired = true;
         m_colorMapping = mapping;
     }

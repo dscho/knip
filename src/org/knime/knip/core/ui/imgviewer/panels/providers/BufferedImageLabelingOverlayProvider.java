@@ -248,7 +248,7 @@ public class BufferedImageLabelingOverlayProvider<T extends RealType<T>, L exten
 
         if ((m_renderer instanceof LabelingColorTableRenderer)) {
             final LabelingColorTableRenderer r = (LabelingColorTableRenderer)m_renderer;
-            r.setLabelToColorMapping(m_labelingColorMapping);
+            r.setLabelingColorTable(m_labelingColorMapping);
         }
 
         final ScreenImage ret =

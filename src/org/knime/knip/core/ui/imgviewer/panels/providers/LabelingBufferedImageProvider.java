@@ -169,7 +169,7 @@ public class LabelingBufferedImageProvider<L extends Comparable<L>> extends AWTI
 
         if (m_renderer instanceof LabelingColorTableRenderer) {
             final LabelingColorTableRenderer r = (LabelingColorTableRenderer)m_renderer;
-            r.setLabelToColorMapping(m_labelingColorMapping);
+            r.setLabelingColorTable(m_labelingColorMapping);
         }
 
         final ScreenImage ret =

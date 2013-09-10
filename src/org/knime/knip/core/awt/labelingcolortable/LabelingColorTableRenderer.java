@@ -59,5 +59,5 @@ package org.knime.knip.core.awt.labelingcolortable;
 public interface LabelingColorTableRenderer {
 
     // TODO
-    public void setLabelToColorMapping(LabelingColorTable mapping);
+    public void setLabelingColorTable(LabelingColorTable mapping);
 }
