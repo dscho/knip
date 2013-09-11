@@ -51,7 +51,7 @@ package org.knime.knip.core.io.externalization.externalizers;
 import net.imglib2.meta.CalibratedAxis;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.ImageMetadata;
-import net.imglib2.meta.Metadata;
+import net.imglib2.meta.ImgPlusMetadata;
 import net.imglib2.meta.MetadataUtil;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
@@ -68,7 +68,7 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class ImgMetadataExt0 implements Externalizer<Metadata> {
+public class ImgMetadataExt0 implements Externalizer<ImgPlusMetadata> {
 
     /**
      * {@inheritDoc}
@@ -82,8 +82,8 @@ public class ImgMetadataExt0 implements Externalizer<Metadata> {
      * {@inheritDoc}
      */
     @Override
-    public Class<Metadata> getType() {
-        return Metadata.class;
+    public Class<ImgPlusMetadata> getType() {
+        return ImgPlusMetadata.class;
     }
 
     /**
@@ -98,7 +98,7 @@ public class ImgMetadataExt0 implements Externalizer<Metadata> {
      * {@inheritDoc}
      */
     @Override
-    public Metadata read(final BufferedDataInputStream in) throws Exception {
+    public ImgPlusMetadata read(final BufferedDataInputStream in) throws Exception {
 
         // For backwards compatibility
         final char[] s = new char[in.readInt()];
@@ -123,7 +123,7 @@ public class ImgMetadataExt0 implements Externalizer<Metadata> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final Metadata obj) throws Exception {
+    public void write(final BufferedDataOutputStream out, final ImgPlusMetadata obj) throws Exception {
         throw new IllegalStateException("Out shouldn't be called anymore");
     }
 }

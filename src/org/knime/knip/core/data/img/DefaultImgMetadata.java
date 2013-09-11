@@ -57,7 +57,7 @@ import net.imglib2.meta.CalibratedAxis;
 import net.imglib2.meta.CalibratedSpace;
 import net.imglib2.meta.DefaultCalibratedAxis;
 import net.imglib2.meta.ImageMetadata;
-import net.imglib2.meta.Metadata;
+import net.imglib2.meta.ImgPlusMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 
@@ -67,7 +67,7 @@ import net.imglib2.meta.Sourced;
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public final class DefaultImgMetadata extends AbstractGeneralMetadata implements Metadata {
+public final class DefaultImgMetadata extends AbstractGeneralMetadata implements ImgPlusMetadata {
 
     private final ImageMetadata m_imageMetadata;
 
@@ -85,7 +85,7 @@ public final class DefaultImgMetadata extends AbstractGeneralMetadata implements
      * @param source
      * @param imageMetadata
      */
-    public DefaultImgMetadata(final Metadata imgMetadata) {
+    public DefaultImgMetadata(final ImgPlusMetadata imgMetadata) {
         super(imgMetadata, imgMetadata, imgMetadata);
         m_imageMetadata = imgMetadata;
 

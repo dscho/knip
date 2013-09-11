@@ -55,7 +55,7 @@ import java.awt.Graphics;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.display.ARGBScreenImage;
 import net.imglib2.display.ScreenImage;
-import net.imglib2.meta.Metadata;
+import net.imglib2.meta.ImgPlusMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 import net.imglib2.meta.TypedAxis;
@@ -92,7 +92,7 @@ public class DetailedImgRenderer<T extends Type<T>> implements ImageRenderer<T> 
         m_height = height;
     }
 
-    public void setMetaData(final Metadata meta) {
+    public void setMetaData(final ImgPlusMetadata meta) {
         m_imgSource = meta;
         m_imgName = meta;
         m_axes = meta;

@@ -49,7 +49,7 @@
 package org.knime.knip.core.io.externalization.externalizers;
 
 import net.imglib2.meta.ImageMetadata;
-import net.imglib2.meta.Metadata;
+import net.imglib2.meta.ImgPlusMetadata;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 
@@ -67,7 +67,7 @@ import org.knime.knip.core.io.externalization.ExternalizerManager;
  * @author <a href="mailto:horn_martin@gmx.de">Martin Horn</a>
  * @author <a href="mailto:michael.zinsmaier@googlemail.com">Michael Zinsmaier</a>
  */
-public class ImgMetadataExt1 implements Externalizer<Metadata> {
+public class ImgMetadataExt1 implements Externalizer<ImgPlusMetadata> {
 
     /**
      * {@inheritDoc}
@@ -81,8 +81,8 @@ public class ImgMetadataExt1 implements Externalizer<Metadata> {
      * {@inheritDoc}
      */
     @Override
-    public Class<Metadata> getType() {
-        return Metadata.class;
+    public Class<ImgPlusMetadata> getType() {
+        return ImgPlusMetadata.class;
     }
 
     /**
@@ -97,7 +97,7 @@ public class ImgMetadataExt1 implements Externalizer<Metadata> {
      * {@inheritDoc}
      */
     @Override
-    public Metadata read(final BufferedDataInputStream in) throws Exception {
+    public ImgPlusMetadata read(final BufferedDataInputStream in) throws Exception {
         final CalibratedAxisSpace cs = ExternalizerManager.<CalibratedAxisSpace> read(in);
         final Named name = ExternalizerManager.<Named> read(in);
         final Sourced source = ExternalizerManager.<Sourced> read(in);
@@ -110,7 +110,7 @@ public class ImgMetadataExt1 implements Externalizer<Metadata> {
      * {@inheritDoc}
      */
     @Override
-    public void write(final BufferedDataOutputStream out, final Metadata obj) throws Exception {
+    public void write(final BufferedDataOutputStream out, final ImgPlusMetadata obj) throws Exception {
 
         // Workaround with DefaultCalibratedAxisSpace as Externalizers can't handle generic implementations
         ExternalizerManager.write(out, new DefaultCalibratedAxisSpace(obj), CalibratedAxisSpace.class);
