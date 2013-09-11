@@ -55,6 +55,7 @@ import net.imglib2.meta.MetadataUtil;
 import net.imglib2.meta.Named;
 import net.imglib2.meta.Sourced;
 
+import org.knime.knip.core.awt.labelingcolortable.DefaultLabelingColorTable;
 import org.knime.knip.core.awt.labelingcolortable.LabelingColorTable;
 
 /**
@@ -69,7 +70,7 @@ public class DefaultLabelingMetadata extends AbstractGeneralMetadata implements 
     private LabelingColorTable m_colorTable;
 
     /**
-     * TODO
+     * Creates a new DefaultLabelingMetadata object.
      *
      * @param numDims
      */
@@ -92,17 +93,21 @@ public class DefaultLabelingMetadata extends AbstractGeneralMetadata implements 
     }
 
     /**
-     * TODO
+     * Creates a new DefaultLabelingMetadata object. All given parameters will be copied.
      *
      * @param space
      * @param named
      * @param sourced
-     * @param mapping
+     * @param mapping if <code>null</code> an empty {@link DefaultLabelingColorTable} will be used.
      */
     public DefaultLabelingMetadata(final CalibratedSpace<CalibratedAxis> space, final Named named,
                                    final Sourced sourced, final LabelingColorTable mapping) {
         super(space.numDimensions());
-        m_colorTable = mapping;
+        if (mapping == null) {
+            m_colorTable = new DefaultLabelingColorTable();
+        } else {
+            m_colorTable = mapping.copy();
+        }
         MetadataUtil.copyName(named, this);
         MetadataUtil.copySource(sourced, this);
         MetadataUtil.copyTypedSpace(space, this);
