@@ -2,3 +2,5 @@
 */bin*
 !/org.knime.knip.scijava/bin/
 /org.knime.knip.scijava/target/
+!/org.knime.knip.imglib2/bin/
+/org.knime.knip.imglib2/target/
