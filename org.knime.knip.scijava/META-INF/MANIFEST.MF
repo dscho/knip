@@ -1,0 +1,49 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1394620104031
+Build-Jdk: 1.6.0_65
+Built-By: dscho
+Bundle-ClassPath: .,scijava-common-2.11.1.jar,eventbus-1.4.jar
+Bundle-Description: This bundle provides an implementation of the SciJav
+ a-Commons framework.
+Bundle-DocURL: http://www.scijava.org/
+Bundle-License: http://creativecommons.org/publicdomain/zero/1.0/
+Bundle-ManifestVersion: 2
+Bundle-Name: SciJava Commons
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-SymbolicName: org.knime.knip.scijava
+Bundle-Vendor: SciJava
+Bundle-Version: 2.11.1
+Created-By: Apache Maven Bundle Plugin
+Embed-Dependency: *;scope=compile
+Embed-Transitive: true
+Embedded-Artifacts: scijava-common-2.11.1.jar;g="org.scijava";a="scijava
+ -common";v="2.11.1",eventbus-1.4.jar;g="org.bushe";a="eventbus";v="1.4"
+Export-Package: org.scijava;version="2.11.1";uses:="org.scijava.app,org.
+ scijava.event,org.scijava.input,org.scijava.log,org.scijava.object,org.
+ scijava.plugin,org.scijava.service,org.scijava.thread",org.scijava.anno
+ tations;version="2.11.1";uses:="javax.annotation.processing,javax.lang.
+ model,javax.lang.model.element,org.scijava.util",org.scijava.annotation
+ s.legacy;version="2.11.1",org.scijava.app;version="2.11.1";uses:="org.s
+ cijava.app.event,org.scijava.plugin,org.scijava.service,org.scijava.uti
+ l",org.scijava.app.event;version="2.11.1";uses:="org.scijava.event",org
+ .scijava.event;version="2.11.1";uses:="org.scijava,org.scijava.log,org.
+ scijava.plugin,org.scijava.service,org.scijava.thread",org.scijava.inpu
+ t;version="2.11.1",org.scijava.log;version="2.11.1";uses:="org.scijava.
+ plugin,org.scijava.service",org.scijava.object;version="2.11.1";uses:="
+ org.scijava.event,org.scijava.object.event,org.scijava.plugin,org.scija
+ va.service",org.scijava.object.event;version="2.11.1";uses:="org.scijav
+ a.event",org.scijava.plugin;version="2.11.1";uses:="org.scijava,org.sci
+ java.annotations,org.scijava.object,org.scijava.service",org.scijava.pl
+ ugin.event;version="2.11.1";uses:="org.scijava.object.event,org.scijava
+ .plugin",org.scijava.service;version="2.11.1";uses:="org.scijava,org.sc
+ ijava.object,org.scijava.plugin",org.scijava.service.event;version="2.1
+ 1.1";uses:="org.scijava.event",org.scijava.thread;version="2.11.1";uses
+ :="org.scijava.plugin,org.scijava.service",org.scijava.util;version="2.
+ 11.1";uses:="javax.xml.parsers,javax.xml.transform,org.w3c.dom,org.xml.
+ sax"
+Import-Package: javax.annotation.processing,javax.lang.model,javax.lang.
+ model.element,javax.lang.model.type,javax.lang.model.util,javax.swing,j
+ avax.swing.event,javax.tools,javax.xml.namespace,javax.xml.parsers,java
+ x.xml.transform,javax.xml.transform.dom,javax.xml.transform.stream,java
+ x.xml.xpath,org.w3c.dom,org.xml.sax
+Tool: Bnd-2.1.0.20130426-122213
