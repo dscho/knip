@@ -1,2 +1,4 @@
 *.class
 */bin*
+!/org.knime.knip.scijava/bin/
+/org.knime.knip.scijava/target/
