@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+  <classpathentry kind="lib" path="imglib2-2.0.0-beta-25.jar"/>
+  <classpathentry kind="lib" path="imglib2-algorithms-2.0.0-beta-25.jar"/>
+  <classpathentry kind="lib" path="imglib2-meta-2.0.0-beta-25.jar" sourcepath="imglib2-meta-2.0.0-beta-25-sources.jar"/>
+  <classpathentry kind="lib" path="scijava-common-2.9.0.jar" sourcepath="scijava-common-2.9.0-sources.jar"/>
+  <classpathentry kind="lib" path="eventbus-1.4.jar"/>
+  <classpathentry kind="lib" path="udunits-4.3.18.jar"/>
+  <classpathentry kind="lib" path="mines-jtk-20100113.jar"/>
+  <classpathentry kind="lib" path="jama-1.0.3.jar"/>
+  <classpathentry kind="lib" path="imglib2-algorithms-gpl-2.0.0-beta-25.jar"/>
+  <classpathentry kind="lib" path="mpicbg-20111128.jar"/>
+  <classpathentry kind="lib" path="imglib2-algorithms-legacy-2.0.0-beta-25.jar"/>
+  <classpathentry kind="lib" path="imglib2-ops-2.0.0-beta-25.jar"/>
+  <classpathentry kind="lib" path="imglib2-realtransform-2.0.0-beta-25.jar"/>
+</classpath>
